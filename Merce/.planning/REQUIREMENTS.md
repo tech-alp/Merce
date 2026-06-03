@@ -15,17 +15,17 @@
 
 ### Token Pipeline
 
-- [ ] **TOKENS-01**: DTCG JSON is the source format for Merce design tokens.
-- [ ] **TOKENS-02**: Style Dictionary v5 resolves core, brand, and mode token layers in deterministic order.
-- [ ] **TOKENS-03**: Style Dictionary emits resolved Merce theme manifests instead of public QML token files.
-- [ ] **TOKENS-04**: The generated manifest schema is versioned and independent from raw DTCG token paths.
-- [ ] **TOKENS-05**: Generated manifests are committed or packaged so Merce consumers do not need Node at runtime.
+- [x] **TOKENS-01**: DTCG JSON is the source format for Merce design tokens.
+- [x] **TOKENS-02**: Style Dictionary v5 resolves core, brand, and mode token layers in deterministic order.
+- [x] **TOKENS-03**: Style Dictionary emits resolved Merce theme manifests instead of public QML token files.
+- [x] **TOKENS-04**: The generated manifest schema is versioned and independent from raw DTCG token paths.
+- [x] **TOKENS-05**: Generated manifests are committed or packaged so Merce consumers do not need Node at runtime.
 
 ### Manifest And Resources
 
-- [ ] **MANIFEST-01**: Theme manifests are available through `:/merce/themes/{brand}/{mode}.json`.
-- [ ] **MANIFEST-02**: `:/merce/themes/index.json` lists available brands, modes, defaults, display names, and manifest paths.
-- [ ] **MANIFEST-03**: The C++ loader rejects unknown brands or modes that are not registered in `index.json`.
+- [ ] **MANIFEST-01**: Theme manifests are available through resource paths listed by `:/merce/themes/index.json`.
+- [ ] **MANIFEST-02**: `:/merce/themes/index.json` lists available themes, optional variants, defaults, display names, and manifest paths.
+- [ ] **MANIFEST-03**: The C++ loader rejects unknown themes or variants that are not registered in `index.json`.
 - [ ] **MANIFEST-04**: The C++ loader validates schema version and required fields before applying a theme.
 - [ ] **MANIFEST-05**: Loader errors are logged clearly and fall back to a known default theme.
 
@@ -76,11 +76,11 @@
 | THEME-03 | Phase 1 | Complete |
 | THEME-04 | Phase 1 | Complete |
 | THEME-05 | Phase 1 | Complete |
-| TOKENS-01 | Phase 2 | Pending |
-| TOKENS-02 | Phase 2 | Pending |
-| TOKENS-03 | Phase 2 | Pending |
-| TOKENS-04 | Phase 2 | Pending |
-| TOKENS-05 | Phase 2 | Pending |
+| TOKENS-01 | Phase 2 | Complete |
+| TOKENS-02 | Phase 2 | Complete |
+| TOKENS-03 | Phase 2 | Complete |
+| TOKENS-04 | Phase 2 | Complete |
+| TOKENS-05 | Phase 2 | Complete |
 | MANIFEST-01 | Phase 3 | Pending |
 | MANIFEST-02 | Phase 3 | Pending |
 | MANIFEST-03 | Phase 3 | Pending |
@@ -102,6 +102,7 @@
 | EXT-03 | v2 Backlog | Pending |
 
 **Coverage:**
+
 - v1 requirements: 23 total
 - Mapped to phases: 23
 - Unmapped: 0

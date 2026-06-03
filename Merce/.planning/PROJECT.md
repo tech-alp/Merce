@@ -16,12 +16,13 @@ QML application and component authors can use a stable, typed `Theme` API while 
 
 - [x] Preserve a stable public QML theme contract for Merce components. Validated in Phase 1 with C++ `Theme` singleton plus compatibility paths.
 - [x] Move theme runtime ownership to typed C++ classes registered into QML. Validated in Phase 1 with `MerceTheme` and typed supporting objects.
+- [x] Keep DTCG JSON as the design-token source format. Validated in Phase 2 with source files under `tools/design-tokens/tokens/`.
+- [x] Use Style Dictionary v5 as a build-time resolver/converter, not as a runtime dependency. Validated in Phase 2 with the bounded `tools/design-tokens` workspace.
+- [x] Generate versioned Merce runtime manifests without exposing public QML token files. Validated in Phase 2 with committed manifests under `generated/themes/`.
 
 ### Active
 
-- [ ] Keep DTCG JSON as the design-token source format.
-- [ ] Use Style Dictionary v5 as a build-time resolver/converter, not as a runtime dependency.
-- [ ] Support multi-brand and multi-mode resource layout with `:/merce/themes/{brand}/{mode}.json`.
+- [ ] Package generated theme manifests through Qt resources using `:/merce/themes/index.json` as the authoritative path registry.
 - [ ] Keep component consumers unaware of raw DTCG paths, generated manifests, and internal token storage.
 - [ ] Provide runtime theme switching for Merce components without changing Qt Quick Controls style families at runtime.
 - [ ] Keep the system usable as an internal project while avoiding closed, app-specific assumptions that would block open-source use.
@@ -43,6 +44,7 @@ QML application and component authors can use a stable, typed `Theme` API while 
 - The current QML token files are separated and marked internal in CMake, but QML file visibility and tooling depth remain concerns.
 - User preference: keep token implementations separate from the public theme facade and avoid exposing every token file directly.
 - New architectural direction: keep DTCG as source, use Style Dictionary v5 to produce a resolved Merce runtime manifest, and implement typed theme objects in C++.
+- Phase 2 added `generated/themes/index.json` as the authoritative manifest path registry; future loaders should not derive file paths from theme and variant names.
 - QML intellisense can struggle with deep chained objects such as `Theme.colors.text.primary`; a shallower C++ API such as `Theme.palette.textPrimary` is preferred for the runtime layer.
 
 ## Constraints
@@ -61,9 +63,9 @@ QML application and component authors can use a stable, typed `Theme` API while 
 |----------|-----------|---------|
 | Use C++ as the theme runtime layer | Stronger type safety, better public/private control, runtime switching through `NOTIFY`, and less QML tooling friction | Validated in Phase 1 |
 | Keep DTCG JSON as token source | Compatible with design-token tooling and future Figma/Tokens Studio workflows | - Pending |
-| Use Style Dictionary v5 for build-time resolution | Avoid reimplementing alias resolution, merge order, and transforms in C++ | - Pending |
-| Emit resolved Merce theme manifests, not public QML token files | Runtime manifest is simpler for C++ and keeps generated artifacts out of the component contract | - Pending |
-| Use `:/merce/themes/{brand}/{mode}.json` layout | Scales cleanly for multi-brand and multi-mode packaging | - Pending |
+| Use Style Dictionary v5 for build-time resolution | Avoid reimplementing alias resolution, merge order, and transforms in C++ | Validated in Phase 2 |
+| Emit resolved Merce theme manifests, not public QML token files | Runtime manifest is simpler for C++ and keeps generated artifacts out of the component contract | Validated in Phase 2 |
+| Use `index.json` as the authoritative manifest path registry | Supports sparse single-manifest and variant-backed themes without fabricated modes | Validated in Phase 2 |
 | Prefer shallower QML API names | Improves intellisense and reduces brittle deep chaining | Validated in Phase 1 through `Theme.palette.*` aliases |
 
 ## Evolution
@@ -84,4 +86,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-03 after Phase 1 completion*
+*Last updated: 2026-06-03 after Phase 2 completion*
