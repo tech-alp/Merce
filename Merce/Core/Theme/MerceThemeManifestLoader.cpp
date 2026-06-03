@@ -187,11 +187,18 @@ void requireNumber(const QJsonObject &object, const QString &section, const QStr
     }
 }
 
+bool isUnresolvedTokenReference(const QString &value)
+{
+    const QString trimmed = value.trimmed();
+    return trimmed.startsWith(QLatin1Char('{')) && trimmed.endsWith(QLatin1Char('}'));
+}
+
 void requireString(const QJsonObject &object, const QString &section, const QString &field, QStringList *errors)
 {
     const QJsonValue value = object.value(field);
-    if (!value.isString() || value.toString().trimmed().isEmpty()) {
-        errors->append(QStringLiteral("runtime field %1.%2 must be a non-empty string").arg(section, field));
+    const QString text = value.toString().trimmed();
+    if (!value.isString() || text.isEmpty() || isUnresolvedTokenReference(text)) {
+        errors->append(QStringLiteral("runtime field %1.%2 must be a resolved non-empty string").arg(section, field));
     }
 }
 

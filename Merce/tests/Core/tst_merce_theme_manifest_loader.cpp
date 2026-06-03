@@ -298,7 +298,18 @@ void tst_merce_theme_manifest_loader::invalidRuntimeFieldValuesAreRejected()
     QVERIFY(!result.ok);
     QVERIFY(containsError(result.errors, QStringLiteral("runtime field palette.textPrimary must be a valid color string")));
     QVERIFY(containsError(result.errors, QStringLiteral("runtime field spacing.md must be numeric")));
-    QVERIFY(containsError(result.errors, QStringLiteral("runtime field typography.bodyFont must be a non-empty string")));
+    QVERIFY(containsError(result.errors, QStringLiteral("runtime field typography.bodyFont must be a resolved non-empty string")));
+
+    typography.insert(QStringLiteral("bodyFont"), QStringLiteral("{typography.bodyFont}"));
+    manifest.insert(QStringLiteral("typography"), typography);
+    QVERIFY(writeJson(pathIn(dir, QStringLiteral("merce.light.json")), manifest));
+
+    const MerceThemeLoadResult unresolvedResult =
+        MerceThemeManifestLoader(pathIn(dir, QStringLiteral("index.json"))).loadDefault();
+
+    QVERIFY(!unresolvedResult.ok);
+    QVERIFY(containsError(unresolvedResult.errors,
+                          QStringLiteral("runtime field typography.bodyFont must be a resolved non-empty string")));
 }
 
 void tst_merce_theme_manifest_loader::activePaletteCannotBorrowMissingFieldsFromBase()

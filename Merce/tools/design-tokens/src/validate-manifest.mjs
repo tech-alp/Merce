@@ -2,6 +2,7 @@ import { readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { FIELD_MAP } from './merce-manifest-format.mjs';
+import { validateManifestPath } from './theme-registry.mjs';
 
 const REQUIRED_TOP_LEVEL = [
   'schemaVersion',
@@ -86,6 +87,11 @@ export async function validateManifestFile(filePath, context = {}) {
 async function validateDirectory(directoryPath) {
   const indexPath = path.join(directoryPath, 'index.json');
   const index = JSON.parse(await readFile(indexPath, 'utf8'));
+  const indexErrors = validateIndex(index);
+  if (indexErrors.length > 0) {
+    throw new Error(`${indexPath}\n- ${indexErrors.join('\n- ')}`);
+  }
+
   const validations = [];
 
   for (const [theme, entry] of Object.entries(index.themes ?? {})) {
@@ -107,6 +113,100 @@ async function validateDirectory(directoryPath) {
   const files = await readdir(directoryPath);
   if (!files.includes('index.json')) {
     throw new Error(`${directoryPath} must include index.json`);
+  }
+}
+
+function validateIndex(index) {
+  const errors = [];
+
+  if (index.schemaVersion !== 1) {
+    errors.push('theme index schemaVersion must be 1');
+  }
+
+  if (typeof index.defaultTheme !== 'string' || index.defaultTheme.length === 0) {
+    errors.push('theme index must declare a non-empty defaultTheme');
+  }
+
+  if (!index.themes || typeof index.themes !== 'object' || Array.isArray(index.themes)
+      || Object.keys(index.themes).length === 0) {
+    errors.push('theme index must declare a non-empty themes object');
+    return errors;
+  }
+
+  let defaultThemeRegistered = false;
+
+  for (const [themeName, theme] of Object.entries(index.themes)) {
+    if (!themeName) {
+      errors.push('theme index contains an empty theme name');
+      continue;
+    }
+
+    if (!theme || typeof theme !== 'object' || Array.isArray(theme)) {
+      errors.push(`theme '${themeName}' must be an object`);
+      continue;
+    }
+
+    if (themeName === index.defaultTheme) {
+      defaultThemeRegistered = true;
+    }
+
+    if (typeof theme.displayName !== 'string' || theme.displayName.length === 0) {
+      errors.push(`theme '${themeName}' must declare a non-empty displayName`);
+    }
+
+    if ('basePath' in theme) {
+      validateIndexManifestPath(theme.basePath, `theme '${themeName}' basePath`, errors);
+    }
+
+    const hasPath = Object.prototype.hasOwnProperty.call(theme, 'path');
+    const hasVariants = Object.prototype.hasOwnProperty.call(theme, 'variants');
+    if (hasPath && hasVariants) {
+      errors.push(`theme '${themeName}' must not declare both path and variants`);
+    }
+
+    if (hasVariants) {
+      if (!theme.variants || typeof theme.variants !== 'object' || Array.isArray(theme.variants)
+          || Object.keys(theme.variants).length === 0) {
+        errors.push(`theme '${themeName}' variants must be a non-empty object`);
+        continue;
+      }
+
+      if (typeof theme.defaultVariant !== 'string' || theme.defaultVariant.length === 0) {
+        errors.push(`theme '${themeName}' must declare a non-empty defaultVariant`);
+      } else if (!Object.prototype.hasOwnProperty.call(theme.variants, theme.defaultVariant)) {
+        errors.push(`theme '${themeName}' defaultVariant '${theme.defaultVariant}' is not registered`);
+      }
+
+      for (const [variantName, manifestPath] of Object.entries(theme.variants)) {
+        if (!variantName) {
+          errors.push(`theme '${themeName}' contains an empty variant name`);
+          continue;
+        }
+        validateIndexManifestPath(manifestPath, `theme '${themeName}' variant '${variantName}' path`, errors);
+      }
+      continue;
+    }
+
+    if (!hasPath) {
+      errors.push(`theme '${themeName}' must declare path or variants`);
+      continue;
+    }
+
+    validateIndexManifestPath(theme.path, `theme '${themeName}' path`, errors);
+  }
+
+  if (index.defaultTheme && !defaultThemeRegistered) {
+    errors.push(`defaultTheme '${index.defaultTheme}' is not registered`);
+  }
+
+  return errors;
+}
+
+function validateIndexManifestPath(value, label, errors) {
+  try {
+    validateManifestPath(value, label);
+  } catch (error) {
+    errors.push(error.message);
   }
 }
 
@@ -145,8 +245,10 @@ function validateRuntimeField(manifest, dottedPath, errors) {
   }
 
   if (section === 'typography' && TYPOGRAPHY_STRING_FIELDS.has(field)) {
-    if (typeof value !== 'string' || value.trim().length === 0) {
-      errors.push(`runtime field ${dottedPath} must be a non-empty string`);
+    if (typeof value !== 'string'
+        || value.trim().length === 0
+        || isUnresolvedTokenReference(value)) {
+      errors.push(`runtime field ${dottedPath} must be a resolved non-empty string`);
     }
     return;
   }
@@ -154,6 +256,11 @@ function validateRuntimeField(manifest, dottedPath, errors) {
   if (typeof value !== 'number' || !Number.isFinite(value)) {
     errors.push(`runtime field ${dottedPath} must be numeric`);
   }
+}
+
+function isUnresolvedTokenReference(value) {
+  const trimmed = value.trim();
+  return trimmed.startsWith('{') && trimmed.endsWith('}');
 }
 
 function containsRawDtcg(value) {
