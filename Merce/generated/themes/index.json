@@ -4,6 +4,7 @@
   "themes": {
     "merce": {
       "displayName": "Merce",
+      "basePath": "merce.default.json",
       "defaultVariant": "light",
       "variants": {
         "light": "merce.light.json",

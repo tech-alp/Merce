@@ -11,7 +11,7 @@ This workspace converts reviewed DTCG token sources into Merce runtime manifest 
 
 ## Theme Registry
 
-`tools/design-tokens/themes.json` declares the sparse theme set. A single-manifest theme uses `path`. A variant theme uses `defaultVariant` and `variants`.
+`tools/design-tokens/themes.json` declares the sparse theme set. A single-manifest theme uses `path`. A variant theme uses `defaultVariant` and `variants`, and may also declare `basePath` for a resolved default manifest that loaders apply before the active variant.
 
 `generated/themes/index.json` is authoritative for physical manifest paths; in short, index.json is authoritative. Phase 3 loaders should read paths from the index instead of deriving paths from theme or variant names.
 
@@ -28,6 +28,17 @@ Generated manifests use shallow semantic sections aligned with the C++ runtime:
 - `typography`
 
 Generated manifests do not expose raw DTCG paths or compatibility sections from the old QML facade. Compatibility aliases should be derived inside the runtime layer when needed.
+
+## Phase 3 Runtime Support
+
+Phase 3 runtime apply validates and applies these manifest-backed sections:
+
+- `palette`
+- `spacing`
+- `radius`
+- `typography`
+
+`motion`, `iconography`, `zIndex`, `breakpoints`, and `shadows` remain construction defaults in Phase 3. They are still typed runtime objects, but this phase does not expand the generated token taxonomy to make those sections manifest-backed.
 
 ## Commands
 
