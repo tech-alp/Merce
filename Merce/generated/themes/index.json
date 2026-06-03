@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "defaultTheme": "merce",
+  "themes": {
+    "merce": {
+      "displayName": "Merce",
+      "defaultVariant": "light",
+      "variants": {
+        "light": "merce.light.json",
+        "dark": "merce.dark.json"
+      }
+    },
+    "stripe": {
+      "displayName": "Stripe Reference",
+      "path": "stripe.json"
+    }
+  }
+}
