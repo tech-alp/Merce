@@ -190,6 +190,7 @@ private slots:
     void unsafeManifestPathsAreRejected();
     void malformedJsonReportsParseError();
     void schemaVersionMismatchIsRejected();
+    void topLevelColorsCompatibilitySectionIsRejected();
     void invalidRuntimeFieldValuesAreRejected();
     void activePaletteCannotBorrowMissingFieldsFromBase();
     void basePlusActiveSectionOverlaySucceeds();
@@ -272,6 +273,27 @@ void tst_merce_theme_manifest_loader::schemaVersionMismatchIsRejected()
 
     QVERIFY(!result.ok);
     QVERIFY(containsError(result.errors, QStringLiteral("schemaVersion must be 1")));
+}
+
+void tst_merce_theme_manifest_loader::topLevelColorsCompatibilitySectionIsRejected()
+{
+    QTemporaryDir dir;
+    QVERIFY(dir.isValid());
+
+    QJsonObject manifest = fullManifest(QStringLiteral("merce"), QStringLiteral("light"));
+    manifest.insert(QStringLiteral("colors"), QJsonObject{
+        { QStringLiteral("background"), QJsonObject{
+            { QStringLiteral("base"), QStringLiteral("#ffffff") },
+        } },
+    });
+    QVERIFY(writeJson(pathIn(dir, QStringLiteral("merce.light.json")), manifest));
+    QVERIFY(writeJson(pathIn(dir, QStringLiteral("index.json")), indexForDefaultMerce(QStringLiteral("merce.light.json"))));
+
+    const MerceThemeLoadResult result = MerceThemeManifestLoader(pathIn(dir, QStringLiteral("index.json"))).loadDefault();
+
+    QVERIFY(!result.ok);
+    QVERIFY(containsError(result.errors,
+                          QStringLiteral("manifest must not contain a top-level colors compatibility section")));
 }
 
 void tst_merce_theme_manifest_loader::invalidRuntimeFieldValuesAreRejected()

@@ -265,6 +265,14 @@ QJsonObject overlayManifest(const QJsonObject &base, const QJsonObject &active)
     return merged;
 }
 
+QStringList validateNoCompatibilitySections(const QJsonObject &manifest)
+{
+    QStringList errors;
+    if (manifest.contains(QStringLiteral("colors")))
+        errors.append(QStringLiteral("manifest must not contain a top-level colors compatibility section"));
+    return errors;
+}
+
 QStringList validateSection(const QJsonObject &manifest, const QString &section)
 {
     QStringList errors;
@@ -336,6 +344,7 @@ MerceThemeLoadResult loadEntry(const MerceThemeRegistryEntry &entry)
             result.errors = base.errors;
             return result;
         }
+        result.errors.append(validateNoCompatibilitySections(base.object));
         mergedManifest = base.object;
     }
 
@@ -344,9 +353,10 @@ MerceThemeLoadResult loadEntry(const MerceThemeRegistryEntry &entry)
         result.errors = active.errors;
         return result;
     }
+    result.errors.append(validateNoCompatibilitySections(active.object));
 
     mergedManifest = overlayManifest(mergedManifest, active.object);
-    result.errors = validateManifest(mergedManifest, entry);
+    result.errors.append(validateManifest(mergedManifest, entry));
     result.ok = result.errors.isEmpty();
     result.finalManifest = mergedManifest;
     return result;
