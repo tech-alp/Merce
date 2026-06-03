@@ -24,10 +24,10 @@
 ### Manifest And Resources
 
 - [ ] **MANIFEST-01**: Theme manifests are available through resource paths listed by `:/merce/themes/index.json`.
-- [ ] **MANIFEST-02**: `:/merce/themes/index.json` lists available themes, optional variants, defaults, display names, and manifest paths.
-- [ ] **MANIFEST-03**: The C++ loader rejects unknown themes or variants that are not registered in `index.json`.
-- [ ] **MANIFEST-04**: The C++ loader validates schema version and required fields before applying a theme.
-- [ ] **MANIFEST-05**: Loader errors are logged clearly and fall back to a known default theme.
+- [x] **MANIFEST-02**: `:/merce/themes/index.json` lists available themes, optional variants, defaults, display names, and manifest paths.
+- [x] **MANIFEST-03**: The C++ loader rejects unknown themes or variants that are not registered in `index.json`.
+- [x] **MANIFEST-04**: The C++ loader validates schema version and required fields before applying a theme.
+- [x] **MANIFEST-05**: Loader errors are logged clearly and fall back to a known default theme.
 
 ### Runtime Switching
 
@@ -82,10 +82,10 @@
 | TOKENS-04 | Phase 2 | Complete |
 | TOKENS-05 | Phase 2 | Complete |
 | MANIFEST-01 | Phase 3 | Pending |
-| MANIFEST-02 | Phase 3 | Pending |
-| MANIFEST-03 | Phase 3 | Pending |
-| MANIFEST-04 | Phase 3 | Pending |
-| MANIFEST-05 | Phase 3 | Pending |
+| MANIFEST-02 | Phase 3 | Complete |
+| MANIFEST-03 | Phase 3 | Complete |
+| MANIFEST-04 | Phase 3 | Complete |
+| MANIFEST-05 | Phase 3 | Complete |
 | RUNTIME-01 | Phase 4 | Pending |
 | RUNTIME-02 | Phase 4 | Pending |
 | RUNTIME-03 | Phase 4 | Pending |
@@ -109,4 +109,4 @@
 
 ---
 *Requirements defined: 2026-06-03*
-*Last updated: 2026-06-03 after initialization*
+*Last updated: 2026-06-03 after Phase 3 Plan 04*
