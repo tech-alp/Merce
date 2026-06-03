@@ -1,0 +1,22 @@
+{
+  "mode": "yolo",
+  "granularity": "standard",
+  "parallelization": true,
+  "commit_docs": false,
+  "model_profile": "balanced",
+  "response_language": "tr",
+  "workflow": {
+    "research": false,
+    "plan_check": true,
+    "verifier": true,
+    "nyquist_validation": false,
+    "auto_advance": false,
+    "ui_phase": true,
+    "ui_safety_gate": true,
+    "security_enforcement": true,
+    "theme_runtime": "cpp",
+    "token_source": "dtcg",
+    "token_build": "style-dictionary-v5",
+    "_auto_chain_active": false
+  }
+}
