@@ -12,7 +12,7 @@ This roadmap phases Merce's theme work from current QML token facade toward a ty
 |---|-------|------|--------------|---------|
 | 1 | Theme Runtime Contract | 1/1 | Complete    | 2026-06-03 |
 | 2 | Token Build Pipeline | 1/1 | Complete    | 2026-06-03 |
-| 3 | Manifest Registry And Loader | Package generated manifests into Qt resources and load them through the generated index | MANIFEST-01..MANIFEST-05 | no |
+| 3 | Manifest Registry And Loader | 3/5 | In Progress | 2026-06-03 |
 | 4 | Runtime Brand/Mode Switching | Implement `Theme.setTheme(brand, mode)` and binding-safe value updates | RUNTIME-01..RUNTIME-04 | yes |
 | 5 | Verification And Gallery | Prove the runtime through tests, probes, smoke checks, and playground theme gallery | VERIFY-01..VERIFY-04 | yes |
 
@@ -85,7 +85,7 @@ This roadmap phases Merce's theme work from current QML token facade toward a ty
 
 - [x] `03-01-PLAN.md` - Main-repo test harness for manifest loader validation. Complete: `03-01-SUMMARY.md` (2026-06-03).
 - [x] `03-02-PLAN.md` - Generated index basePath and Merce base manifest artifacts. Complete: `03-02-SUMMARY.md` (2026-06-03).
-- [ ] `03-03-PLAN.md` - MerceCore Qt resource packaging for generated manifests.
+- [x] `03-03-PLAN.md` - MerceCore Qt resource packaging for generated manifests. Complete: `03-03-SUMMARY.md` (2026-06-03).
 - [ ] `03-04-PLAN.md` - Safe C++ registry/loader with validation, overlay, fallback, and tests.
 - [ ] `03-05-PLAN.md` - Default manifest apply to typed Theme runtime and probe verification.
 
