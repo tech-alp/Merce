@@ -84,7 +84,7 @@ This roadmap phases Merce's theme work from current QML token facade toward a ty
 5 plans.
 
 - [x] `03-01-PLAN.md` - Main-repo test harness for manifest loader validation. Complete: `03-01-SUMMARY.md` (2026-06-03).
-- [ ] `03-02-PLAN.md` - Generated index basePath and Merce base manifest artifacts.
+- [x] `03-02-PLAN.md` - Generated index basePath and Merce base manifest artifacts. Complete: `03-02-SUMMARY.md` (2026-06-03).
 - [ ] `03-03-PLAN.md` - MerceCore Qt resource packaging for generated manifests.
 - [ ] `03-04-PLAN.md` - Safe C++ registry/loader with validation, overlay, fallback, and tests.
 - [ ] `03-05-PLAN.md` - Default manifest apply to typed Theme runtime and probe verification.

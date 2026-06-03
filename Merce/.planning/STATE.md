@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Executing Phase 03
-last_updated: "2026-06-03T19:09:23Z"
+last_updated: "2026-06-03T19:16:04Z"
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 7
-  completed_plans: 3
-  percent: 43
+  completed_plans: 4
+  percent: 57
 ---
 
 # State: Merce Theme Runtime
@@ -31,7 +31,7 @@ Phase 2 is complete. DTCG token sources and Style Dictionary v5 tooling now gene
 |-------|------|--------|-------|
 | 1 | Theme Runtime Contract | Complete | 1/1 |
 | 2 | Token Build Pipeline | Complete | 1/1 |
-| 3 | Manifest Registry And Loader | In progress | 1/5 |
+| 3 | Manifest Registry And Loader | In progress | 2/5 |
 | 4 | Runtime Brand/Mode Switching | Not started | 0 |
 | 5 | Verification And Gallery | Not started | 0 |
 
@@ -43,6 +43,8 @@ Phase 2 is complete. DTCG token sources and Style Dictionary v5 tooling now gene
 - 2026-06-03: `Theme` is exported from C++ as `Merce.Core/Theme`; `Theme.colors` remains a compatibility alias to the preferred `Theme.palette` API.
 - 2026-06-03: Supporting theme objects are anonymous QML types and should be reached through `Theme`, not created by consumers.
 - 2026-06-03: Treat `generated/themes/index.json` as the authoritative physical manifest path registry; loaders should not derive paths from theme and variant names.
+- 2026-06-03: Merce generated index entries may include `basePath` for a resolved base manifest that loaders apply before the active variant.
+- 2026-06-03: Phase 3 manifest-backed apply is constrained to palette, spacing, radius, and typography; motion, iconography, zIndex, breakpoints, and shadows remain construction defaults.
 
 ## Last Activity
 
@@ -51,6 +53,7 @@ Phase 2 is complete. DTCG token sources and Style Dictionary v5 tooling now gene
 - 2026-06-03: Executed Phase 1, committed `328ca3f`, and wrote `.planning/phases/01-theme-runtime-contract/01-SUMMARY.md`.
 - 2026-06-03: Executed Phase 2, committed token build pipeline tasks through `a407a0a`, and wrote `.planning/phases/02-token-build-pipeline/02-01-SUMMARY.md`.
 - 2026-06-03: Executed Phase 3 Plan 01, committed test harness tasks through `d9a649d`, and wrote `.planning/phases/03-manifest-registry-and-loader/03-01-SUMMARY.md`.
+- 2026-06-03: Executed Phase 3 Plan 02, committed generated registry tasks through `c3eabef`, and wrote `.planning/phases/03-manifest-registry-and-loader/03-02-SUMMARY.md`.
 
 ## Performance Metrics
 
@@ -59,3 +62,4 @@ Phase 2 is complete. DTCG token sources and Style Dictionary v5 tooling now gene
 | Phase 01 P01 | 29 min | 6 tasks | 46 files |
 | Phase 02 P01 | 55 min | 6 tasks | 24 files |
 | Phase 03 P01 | 34 min | 2 tasks | 4 files |
+| Phase 03 P02 | 18 min | 2 tasks | 6 files |
