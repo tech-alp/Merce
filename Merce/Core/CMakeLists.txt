@@ -12,6 +12,8 @@ set(MERCE_CORE_TOKEN_QML_FILES
 
 set(MERCE_CORE_THEME_SOURCES
     Theme/MerceThemeManifest.h
+    Theme/MerceThemeManifestLoader.cpp
+    Theme/MerceThemeManifestLoader.h
     Theme/MerceThemeRegistry.cpp
     Theme/MerceThemeRegistry.h
     Theme/MerceTheme.cpp
