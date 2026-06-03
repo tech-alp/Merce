@@ -1,6 +1,7 @@
 # Merce Design System Configuration
 
 # Find dependencies
+include(CMakeFindDependencyMacro)
 find_dependency(Qt6 REQUIRED COMPONENTS Core Quick Qml)
 
 # Include module targets

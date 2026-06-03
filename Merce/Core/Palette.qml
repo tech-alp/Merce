@@ -1,4 +1,3 @@
-pragma Singleton
 import QtQuick
 
 /**
@@ -106,17 +105,17 @@ QtObject {
 
     // Background Colors
     property QtObject background: QtObject {
-        readonly property color default: root.raw.gray50
-        readonly property color surface: root.raw.surface
+        readonly property color base: root.raw.gray50
+        readonly property color surface: "#FFFFFF"
         readonly property color elevated: "#FFFFFF"
         readonly property color hover: root.raw.gray100
         readonly property color pressed: root.raw.gray200
-        readonly property color overlay: "rgba(31, 21, 16, 0.5)"
+        readonly property color overlay: Qt.rgba(31 / 255, 21 / 255, 16 / 255, 0.5)
     }
 
     // Border Colors
     property QtObject border: QtObject {
-        readonly property color default: root.raw.gray200
+        readonly property color base: root.raw.gray200
         readonly property color strong: root.raw.gray300
         readonly property color focus: root.raw.primary
         readonly property color error: root.raw.error
@@ -137,7 +136,7 @@ QtObject {
 
     // Surface Colors
     property QtObject surface: QtObject {
-        readonly property color default: "#FFFFFF"
+        readonly property color base: "#FFFFFF"
         readonly property color tinted: root.raw.gray100
         readonly property color raised: "#FFFFFF"
     }

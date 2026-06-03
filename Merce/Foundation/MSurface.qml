@@ -20,7 +20,7 @@ Rectangle {
 
     // Customizable properties
     virtual property color backgroundColor: Theme.colors.background.surface
-    virtual property color borderColor: Theme.colors.border.default
+    virtual property color borderColor: Theme.colors.border.base
     virtual property int borderWidth: 1
     virtual property int radiusValue: Theme.radius.medium
 

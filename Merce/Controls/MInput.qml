@@ -12,7 +12,7 @@ MSurface {
     // ====================================================================
     // REQUIRED PROPERTIES
     // ====================================================================
-    required property int surfaceType: types.default
+    surfaceType: types["default"]
 
     // ====================================================================
     // INPUT PROPERTIES
@@ -23,8 +23,8 @@ MSurface {
     property bool isRequired: false
 
     // Validation states
-    property enum State { Normal, Error, Success, Warning }
-    property int state: State.Normal
+    enum ValidationState { Normal, Error, Success, Warning }
+    property int validationState: MInput.Normal
 
     // Character limits
     property int maxLength: 0
@@ -47,12 +47,12 @@ MSurface {
     }
 
     override property color borderColor: {
-        if (root.isDisabled) return Theme.colors.border.default
-        if (root.state === State.Error) return Theme.colors.border.error
-        if (root.state === State.Success) return Theme.colors.border.success
+        if (root.isDisabled) return Theme.colors.border.base
+        if (root.validationState === MInput.Error) return Theme.colors.border.error
+        if (root.validationState === MInput.Success) return Theme.colors.border.success
         if (root.isFocused) return Theme.colors.border.focus
         if (root.isHovered) return Theme.colors.border.strong
-        return Theme.colors.border.default
+        return Theme.colors.border.base
     }
 
     override property int borderWidth: root.isFocused ? 2 : 1
@@ -67,9 +67,8 @@ MSurface {
     // ====================================================================
     // SIGNALS
     // ====================================================================
-    signal textChanged(string text)
+    signal inputTextChanged(string text)
     signal accepted()
-    signal rejected()
 
     // ====================================================================
     // INPUT HANDLING
@@ -106,9 +105,18 @@ MSurface {
             return Qt.ImhNone
         }
         validator: {
-            if (root.inputType === "email") return RegExpValidator { regExp: /.+@.+\..+/ }
-            if (root.inputType === "number") return IntValidator {}
+            if (root.inputType === "email") return emailValidator
+            if (root.inputType === "number") return numberValidator
             return null
+        }
+
+        RegularExpressionValidator {
+            id: emailValidator
+            regularExpression: /.+@.+\..+/
+        }
+
+        IntValidator {
+            id: numberValidator
         }
 
         // Behavior
@@ -132,12 +140,10 @@ MSurface {
         onTextChanged: {
             root.text = text
             root.currentLength = text.length
-            root.textChanged(text)
+            root.inputTextChanged(text)
         }
 
         onAccepted: root.accepted()
-        onRejected: root.rejected()
-
         // Focus handling
         onFocusChanged: {
             root.isFocused = focus
@@ -153,7 +159,7 @@ MSurface {
         size: Theme.icons.medium
         color: {
             if (root.isDisabled) return Theme.colors.text.disabled
-            if (root.state === State.Error) return Theme.colors.status.error
+            if (root.validationState === MInput.Error) return Theme.colors.status.error
             return Theme.colors.text.tertiary
         }
         anchors {
@@ -170,8 +176,8 @@ MSurface {
         size: Theme.icons.medium
         color: {
             if (root.isDisabled) return Theme.colors.text.disabled
-            if (root.state === State.Error) return Theme.colors.status.error
-            if (root.state === State.Success) return Theme.colors.status.success
+            if (root.validationState === MInput.Error) return Theme.colors.status.error
+            if (root.validationState === MInput.Success) return Theme.colors.status.success
             return Theme.colors.text.tertiary
         }
         anchors {

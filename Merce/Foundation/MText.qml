@@ -30,7 +30,7 @@ Text {
     // Customizable properties
     virtual property color textColor: Theme.colors.text.primary
     virtual property color textBackgroundColor: "transparent"
-    virtual property int lineHeight: Theme.typography.body.leading
+    virtual property real textLineHeight: (types[type]?.leading || Theme.typography.leadingNormal) * font.pixelSize
 
     // Final properties
     final property int minTouchArea: Theme.spacing.touchTarget
@@ -39,9 +39,9 @@ Text {
     font.family: types[type]?.family || Theme.typography.fontBody
     font.pixelSize: types[type]?.size || Theme.typography.sizeMedium
     font.weight: types[type]?.weight || Theme.typography.weightRegular
-    font.capitalization: types[type]?.uppercase ? Font.AllUppercase : Font.NormalM
+    font.capitalization: types[type]?.uppercase ? Font.AllUppercase : Font.MixedCase
     lineHeightMode: Text.FixedHeight
-    lineHeight: types[type]?.leading || Theme.typography.leadingNormal * font.pixelSize
+    lineHeight: textLineHeight
 
     // Apply colors
     color: textColor

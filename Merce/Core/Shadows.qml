@@ -1,4 +1,3 @@
-pragma Singleton
 import QtQuick
 
 /**
@@ -10,27 +9,27 @@ QtObject {
     readonly property var none: []
 
     readonly property var small: [
-        { xOffset: 0, yOffset: 1, blur: 2, color: "rgba(31, 21, 16, 0.04)" },
-        { xOffset: 0, yOffset: 1, blur: 3, color: "rgba(31, 21, 16, 0.08)" }
+        { xOffset: 0, yOffset: 1, blur: 2, color: Qt.rgba(31 / 255, 21 / 255, 16 / 255, 0.04) },
+        { xOffset: 0, yOffset: 1, blur: 3, color: Qt.rgba(31 / 255, 21 / 255, 16 / 255, 0.08) }
     ]
 
     readonly property var medium: [
-        { xOffset: 0, yOffset: 4, blur: 6, color: "rgba(31, 21, 16, 0.08)" },
-        { xOffset: 0, yOffset: 2, blur: 4, color: "rgba(31, 21, 16, 0.04)" }
+        { xOffset: 0, yOffset: 4, blur: 6, color: Qt.rgba(31 / 255, 21 / 255, 16 / 255, 0.08) },
+        { xOffset: 0, yOffset: 2, blur: 4, color: Qt.rgba(31 / 255, 21 / 255, 16 / 255, 0.04) }
     ]
 
     readonly property var large: [
-        { xOffset: 0, yOffset: 10, blur: 15, color: "rgba(31, 21, 16, 0.08)" },
-        { xOffset: 0, yOffset: 4, blur: 6, color: "rgba(31, 21, 16, 0.04)" }
+        { xOffset: 0, yOffset: 10, blur: 15, color: Qt.rgba(31 / 255, 21 / 255, 16 / 255, 0.08) },
+        { xOffset: 0, yOffset: 4, blur: 6, color: Qt.rgba(31 / 255, 21 / 255, 16 / 255, 0.04) }
     ]
 
     readonly property var xlarge: [
-        { xOffset: 0, yOffset: 20, blur: 25, color: "rgba(31, 21, 16, 0.08)" },
-        { xOffset: 0, yOffset: 10, blur: 10, color: "rgba(31, 21, 16, 0.04)" }
+        { xOffset: 0, yOffset: 20, blur: 25, color: Qt.rgba(31 / 255, 21 / 255, 16 / 255, 0.08) },
+        { xOffset: 0, yOffset: 10, blur: 10, color: Qt.rgba(31 / 255, 21 / 255, 16 / 255, 0.04) }
     ]
 
     readonly property var xxlarge: [
-        { xOffset: 0, yOffset: 25, blur: 50, color: "rgba(31, 21, 16, 0.15)" }
+        { xOffset: 0, yOffset: 25, blur: 50, color: Qt.rgba(31 / 255, 21 / 255, 16 / 255, 0.15) }
     ]
 
     // Component-specific shadows

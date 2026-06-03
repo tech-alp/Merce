@@ -1,4 +1,3 @@
-pragma Singleton
 import QtQuick
 
 /**
@@ -15,13 +14,13 @@ QtObject {
     readonly property int durationSlowest: 800
 
     // Easing functions (Qt compatible)
-    readonly property string easingDefault: Easing.InOutQuad
-    readonly property string easingIn: Easing.InQuad
-    readonly property string easingOut: Easing.OutQuad
-    readonly property string easingInOut: Easing.InOutQuad
-    readonly property string easingEaseIn: Easing.InCubic
-    readonly property string easingEaseOut: Easing.OutCubic
-    readonly property string easingBounce: Easing.OutBounce
+    readonly property int easingDefault: Easing.InOutQuad
+    readonly property int easingIn: Easing.InQuad
+    readonly property int easingOut: Easing.OutQuad
+    readonly property int easingInOut: Easing.InOutQuad
+    readonly property int easingEaseIn: Easing.InCubic
+    readonly property int easingEaseOut: Easing.OutCubic
+    readonly property int easingBounce: Easing.OutBounce
 
     // Spring animations (for physics-like feel)
     readonly property int springMass: 1
@@ -29,28 +28,28 @@ QtObject {
     readonly property int springDamping: 20
 
     // Preset animation configurations
-    readonly property var hover: {
+    readonly property var hover: ({
         "duration": durationFast,
         "easing": easingOut
-    }
+    })
 
-    readonly property var press: {
+    readonly property var press: ({
         "duration": durationInstant,
         "easing": easingIn
-    }
+    })
 
-    readonly property var appear: {
+    readonly property var appear: ({
         "duration": durationSlow,
         "easing": easingEaseOut
-    }
+    })
 
-    readonly property var enter: {
+    readonly property var enter: ({
         "duration": durationNormal,
         "easing": easingEaseOut
-    }
+    })
 
-    readonly property var exit: {
+    readonly property var exit: ({
         "duration": durationFast,
         "easing": easingIn
-    }
+    })
 }

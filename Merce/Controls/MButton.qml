@@ -1,5 +1,6 @@
 import QtQuick
 import Merce.Core
+import Merce.Core.Effects
 import Merce.Foundation
 
 /**
@@ -12,7 +13,7 @@ MBaseControl {
     // ====================================================================
     // REQUIRED PROPERTIES
     // ====================================================================
-    required property string controlType: "button"
+    controlType: "button"
 
     // ====================================================================
     // BUTTON PROPERTIES

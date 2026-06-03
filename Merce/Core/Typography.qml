@@ -1,4 +1,3 @@
-pragma Singleton
 import QtQuick
 
 /**
@@ -48,100 +47,100 @@ QtObject {
     readonly property real trackingWidest: 0.1
 
     // Text style presets
-    readonly property var display: {
+    readonly property var display: ({
         "family": fontDisplay,
         "size": size5XLarge,
         "weight": weightBold,
         "leading": leadingTight,
         "tracking": trackingTight
-    }
+    })
 
-    readonly property var h1: {
+    readonly property var h1: ({
         "family": fontDisplay,
         "size": size4XLarge,
         "weight": weightSemibold,
         "leading": leadingTight,
         "tracking": trackingTight
-    }
+    })
 
-    readonly property var h2: {
+    readonly property var h2: ({
         "family": fontDisplay,
         "size": size3XLarge,
         "weight": weightSemibold,
         "leading": leadingSnug,
         "tracking": trackingTight
-    }
+    })
 
-    readonly property var h3: {
+    readonly property var h3: ({
         "family": fontDisplay,
         "size": size2XLarge,
         "weight": weightMedium,
         "leading": leadingSnug,
         "tracking": trackingTight
-    }
+    })
 
-    readonly property var h4: {
+    readonly property var h4: ({
         "family": fontBody,
         "size": sizeXLarge,
         "weight": weightSemibold,
         "leading": leadingSnug,
         "tracking": trackingNormal
-    }
+    })
 
-    readonly property var body: {
+    readonly property var body: ({
         "family": fontBody,
         "size": sizeMedium,
         "weight": weightRegular,
         "leading": leadingNormal,
         "tracking": trackingNormal
-    }
+    })
 
-    readonly property var bodyLarge: {
+    readonly property var bodyLarge: ({
         "family": fontBody,
         "size": sizeLarge,
         "weight": weightRegular,
         "leading": leadingRelaxed,
         "tracking": trackingNormal
-    }
+    })
 
-    readonly property var bodySmall: {
+    readonly property var bodySmall: ({
         "family": fontBody,
         "size": sizeSmall,
         "weight": weightRegular,
         "leading": leadingRelaxed,
         "tracking": trackingNormal
-    }
+    })
 
-    readonly property var caption: {
+    readonly property var caption: ({
         "family": fontBody,
         "size": sizeXSmall,
         "weight": weightMedium,
         "leading": leadingNormal,
         "tracking": trackingWide
-    }
+    })
 
-    readonly property var overline: {
+    readonly property var overline: ({
         "family": fontBody,
         "size": sizeXSmall,
         "weight": weightSemibold,
         "leading": leadingNormal,
         "tracking": trackingWidest,
         "uppercase": true
-    }
+    })
 
-    readonly property var button: {
+    readonly property var button: ({
         "family": fontBody,
         "size": sizeSmall,
         "weight": weightSemibold,
         "leading": leadingTight,
         "tracking": trackingNormal
-    }
+    })
 
-    readonly property var price: {
+    readonly property var price: ({
         "family": fontBody,
         "size": size2XLarge,
         "weight": weightBold,
         "leading": leadingTight,
         "tracking": trackingTight
-    }
+    })
 }

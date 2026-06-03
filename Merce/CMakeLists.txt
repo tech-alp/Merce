@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.30)
 
 project(Merce VERSION 1.0.0 LANGUAGES CXX)
 
@@ -6,12 +6,10 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Qt 6.11+ required
-find_package(Qt6 REQUIRED COMPONENTS Core Quick Qml)
+find_package(Qt6 6.11 REQUIRED COMPONENTS Core Gui Quick Qml)
 
-# Qt 6.11 feature check
-if(CMAKE_VERSION VERSION_LESS "3.24")
-    message(FATAL_ERROR "CMake 3.24+ is required for Qt 6.11+ property semantics")
-endif()
+qt_standard_project_setup(REQUIRES 6.11)
+set(QT_QML_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/qml")
 
 # ========================================================================
 # Merce Design System Modules
@@ -25,58 +23,112 @@ add_subdirectory(Notifications)
 # ========================================================================
 # Example Application (optional, for testing)
 # ========================================================================
-option(BUILD_MERCE_EXAMPLES "Build Merce example applications" OFF)
+option(BUILD_MERCE_PLAYGROUND "Build Merce playground application" ON)
 
-if(BUILD_MERCE_EXAMPLES)
-    qt_add_executable(MerceExample
-        examples/Main.qml
-    )
-
-    qt_add_qml_module(MerceExample
-        URI "MerceExample"
-        VERSION 1.0
-        QML_FILES
-            examples/Main.qml
-    )
-
-    target_link_libraries(MerceExample
-        PRIVATE
-            Qt6::Core
-            Qt6::Quick
-            MerceControls
-            MerceNotifications
-    )
+if(BUILD_MERCE_PLAYGROUND)
+    add_subdirectory(playground)
 endif()
 
 # ========================================================================
 # Installation
 # ========================================================================
 
-install(TARGETS
+include(CMakePackageConfigHelpers)
+include(GNUInstallDirs)
+
+set(MERCE_QML_MODULE_TARGETS
     MerceCore
+    MerceCoreEffects
+    MerceCoreBase
+    MerceCoreUtils
     MerceFoundation
     MerceControls
     MerceNotifications
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
 )
 
-# Install QML modules
-install(QML_MODULE
-    MerceCore
-    MerceFoundation
-    MerceControls
-    MerceNotifications
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/qml
-)
+function(merce_install_qml_module_files module_dir files deploy_paths)
+    list(LENGTH files file_count)
+    if(file_count EQUAL 0)
+        return()
+    endif()
+
+    list(LENGTH deploy_paths deploy_path_count)
+    math(EXPR last_index "${file_count} - 1")
+    foreach(index RANGE 0 ${last_index})
+        list(GET files ${index} src_file)
+
+        if(index LESS deploy_path_count)
+            list(GET deploy_paths ${index} deploy_path)
+        else()
+            set(deploy_path "")
+        endif()
+
+        if(NOT deploy_path)
+            continue()
+        endif()
+
+        get_filename_component(dst_name "${deploy_path}" NAME)
+        get_filename_component(dst_dir "${deploy_path}" DIRECTORY)
+        install(FILES "${src_file}" DESTINATION "${module_dir}/${dst_dir}" RENAME "${dst_name}")
+    endforeach()
+endfunction()
+
+function(merce_install_qml_module target)
+    qt_query_qml_module(${target}
+        PLUGIN_TARGET module_plugin_target
+        TARGET_PATH module_target_path
+        QMLDIR module_qmldir
+        TYPEINFO module_typeinfo
+        QML_FILES module_qml_files
+        QML_FILES_DEPLOY_PATHS module_qml_file_deploy_paths
+        RESOURCES module_resources
+        RESOURCES_DEPLOY_PATHS module_resource_deploy_paths
+    )
+
+    set(module_dir "${CMAKE_INSTALL_LIBDIR}/qml/${module_target_path}")
+
+    install(TARGETS ${target}
+        EXPORT MerceTargets
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    )
+
+    if(module_plugin_target AND NOT module_plugin_target STREQUAL target)
+        install(TARGETS ${module_plugin_target}
+            RUNTIME DESTINATION ${module_dir}
+            LIBRARY DESTINATION ${module_dir}
+            ARCHIVE DESTINATION ${module_dir}
+        )
+    endif()
+
+    if(module_qmldir)
+        install(FILES "${module_qmldir}" DESTINATION "${module_dir}")
+    endif()
+
+    if(module_typeinfo)
+        install(FILES "${module_typeinfo}" DESTINATION "${module_dir}")
+    endif()
+
+    merce_install_qml_module_files(
+        "${module_dir}"
+        "${module_qml_files}"
+        "${module_qml_file_deploy_paths}"
+    )
+    merce_install_qml_module_files(
+        "${module_dir}"
+        "${module_resources}"
+        "${module_resource_deploy_paths}"
+    )
+endfunction()
+
+foreach(module_target IN LISTS MERCE_QML_MODULE_TARGETS)
+    merce_install_qml_module(${module_target})
+endforeach()
 
 # ========================================================================
 # Exports
 # ========================================================================
-
-include(CMakePackageConfigHelpers)
-include(GNUInstallDirs)
 
 write_basic_package_version_file(
     "${CMAKE_CURRENT_BINARY_DIR}/MerceConfigVersion.cmake"
@@ -87,6 +139,10 @@ write_basic_package_version_file(
 install(FILES
     "${CMAKE_CURRENT_BINARY_DIR}/MerceConfigVersion.cmake"
     "${CMAKE_CURRENT_SOURCE_DIR}/MerceConfig.cmake"
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Merce
+)
+
+install(EXPORT MerceTargets
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Merce
 )
 

@@ -1,5 +1,6 @@
 import QtQuick
 import Merce.Core
+import Merce.Controls
 import Merce.Foundation
 
 /**
@@ -250,5 +251,4 @@ Item {
     // ====================================================================
     Accessible.role: Accessible.AlertMessage
     Accessible.name: title + (title !== "" && message !== "" ? ". " : "") + message
-    Accessible.visible: isVisible
 }

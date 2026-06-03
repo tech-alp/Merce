@@ -48,7 +48,7 @@ Item {
     signal hoveredChanged(bool hovered)
 
     // Cursor
-    property string cursorShape: isDisabled ? Qt.ArrowCursor : Qt.PointingHandCursor
+    property int cursorShape: isDisabled ? Qt.ArrowCursor : Qt.PointingHandCursor
 
     // ====================================================================
     // DIMENSIONS (enforce touch targets)
@@ -56,8 +56,8 @@ Item {
     implicitWidth: Math.max(contentWidth, touchTarget)
     implicitHeight: Math.max(contentHeight, touchTarget)
 
-    property int contentWidth: 120
-    property int contentHeight: Theme.spacing.xl
+    virtual property int contentWidth: 120
+    virtual property int contentHeight: Theme.spacing.xl
 
     // ====================================================================
     // VISUAL FEEDBACK
@@ -85,7 +85,6 @@ Item {
     // ====================================================================
     Accessible.role: Accessible.Button
     Accessible.name: controlType
-    Accessible.enabled: !isDisabled
     Accessible.onPressAction: if (!isDisabled) clicked()
 
     // ====================================================================

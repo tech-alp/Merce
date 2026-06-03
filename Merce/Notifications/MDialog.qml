@@ -1,5 +1,8 @@
 import QtQuick
+import QtQuick.Layouts
 import Merce.Core
+import Merce.Core.Effects
+import Merce.Controls
 import Merce.Foundation
 
 /**
@@ -214,7 +217,7 @@ Item {
                 right: parent.right
             }
             height: 1
-            color: Theme.colors.border.default
+            color: Theme.colors.border.base
         }
 
         // ====================================================================
@@ -320,6 +323,4 @@ Item {
     // ====================================================================
     Accessible.role: Accessible.Dialog
     Accessible.name: root.title + (root.title !== "" && root.message !== "" ? ": " : "") + root.message
-    Accessible.modal: true
-    Accessible.visible: root.isOpen
 }
