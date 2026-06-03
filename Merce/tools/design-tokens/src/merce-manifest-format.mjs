@@ -1,6 +1,6 @@
 import { resolveReferences } from 'style-dictionary/utils';
 
-const FIELD_MAP = {
+export const FIELD_MAP = {
   palette: [
     ['textPrimary', 'palette.semantic.textPrimary'],
     ['textSecondary', 'palette.semantic.textSecondary'],

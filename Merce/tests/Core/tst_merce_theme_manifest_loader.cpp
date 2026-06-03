@@ -190,6 +190,7 @@ private slots:
     void unsafeManifestPathsAreRejected();
     void malformedJsonReportsParseError();
     void schemaVersionMismatchIsRejected();
+    void invalidRuntimeFieldValuesAreRejected();
     void activePaletteCannotBorrowMissingFieldsFromBase();
     void basePlusActiveSectionOverlaySucceeds();
     void requestedBadManifestFallsBackToRegistryDefault();
@@ -271,6 +272,33 @@ void tst_merce_theme_manifest_loader::schemaVersionMismatchIsRejected()
 
     QVERIFY(!result.ok);
     QVERIFY(containsError(result.errors, QStringLiteral("schemaVersion must be 1")));
+}
+
+void tst_merce_theme_manifest_loader::invalidRuntimeFieldValuesAreRejected()
+{
+    QTemporaryDir dir;
+    QVERIFY(dir.isValid());
+
+    QJsonObject manifest = fullManifest(QStringLiteral("merce"), QStringLiteral("light"));
+    QJsonObject palette = manifest.value(QStringLiteral("palette")).toObject();
+    palette.insert(QStringLiteral("textPrimary"), QStringLiteral("not-a-color"));
+    manifest.insert(QStringLiteral("palette"), palette);
+    QJsonObject spacing = manifest.value(QStringLiteral("spacing")).toObject();
+    spacing.insert(QStringLiteral("md"), QStringLiteral("large"));
+    manifest.insert(QStringLiteral("spacing"), spacing);
+    QJsonObject typography = manifest.value(QStringLiteral("typography")).toObject();
+    typography.insert(QStringLiteral("bodyFont"), QString());
+    manifest.insert(QStringLiteral("typography"), typography);
+
+    QVERIFY(writeJson(pathIn(dir, QStringLiteral("merce.light.json")), manifest));
+    QVERIFY(writeJson(pathIn(dir, QStringLiteral("index.json")), indexForDefaultMerce(QStringLiteral("merce.light.json"))));
+
+    const MerceThemeLoadResult result = MerceThemeManifestLoader(pathIn(dir, QStringLiteral("index.json"))).loadDefault();
+
+    QVERIFY(!result.ok);
+    QVERIFY(containsError(result.errors, QStringLiteral("runtime field palette.textPrimary must be a valid color string")));
+    QVERIFY(containsError(result.errors, QStringLiteral("runtime field spacing.md must be numeric")));
+    QVERIFY(containsError(result.errors, QStringLiteral("runtime field typography.bodyFont must be a non-empty string")));
 }
 
 void tst_merce_theme_manifest_loader::activePaletteCannotBorrowMissingFieldsFromBase()

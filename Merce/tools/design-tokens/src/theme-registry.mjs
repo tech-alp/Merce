@@ -42,7 +42,7 @@ export function themeEntries(registry) {
         entries.push({
           theme: themeName,
           displayName: theme.displayName ?? themeName,
-          path: theme.basePath,
+          path: validateManifestPath(theme.basePath, `Theme '${themeName}' basePath`),
           source: [...coreSources, ...themeSources],
         });
       }
@@ -56,7 +56,7 @@ export function themeEntries(registry) {
           theme: themeName,
           displayName: theme.displayName ?? themeName,
           variant: variantName,
-          path: destination,
+          path: validateManifestPath(destination, `Theme '${themeName}' variant '${variantName}' path`),
           source: [...coreSources, ...themeSources, ...variantSources],
         };
       }));
@@ -71,7 +71,7 @@ export function themeEntries(registry) {
     return [{
       theme: themeName,
       displayName: theme.displayName ?? themeName,
-      path: theme.path,
+      path: validateManifestPath(theme.path, `Theme '${themeName}' path`),
       source: [...coreSources, ...themeSources],
     }];
   });
@@ -83,15 +83,20 @@ export function generatedIndex(registry) {
       if (theme.variants) {
         return [themeName, {
           displayName: theme.displayName ?? themeName,
-          ...(theme.basePath ? { basePath: theme.basePath } : {}),
+          ...(theme.basePath ? { basePath: validateManifestPath(theme.basePath, `Theme '${themeName}' basePath`) } : {}),
           defaultVariant: theme.defaultVariant,
-          variants: theme.variants,
+          variants: Object.fromEntries(
+            Object.entries(theme.variants).map(([variantName, destination]) => [
+              variantName,
+              validateManifestPath(destination, `Theme '${themeName}' variant '${variantName}' path`),
+            ]),
+          ),
         }];
       }
 
       return [themeName, {
         displayName: theme.displayName ?? themeName,
-        path: theme.path,
+        path: validateManifestPath(theme.path, `Theme '${themeName}' path`),
       }];
     }),
   );
@@ -117,4 +122,18 @@ function containsKey(value, key) {
   }
 
   return Object.values(value).some((child) => containsKey(child, key));
+}
+
+export function validateManifestPath(value, label) {
+  if (typeof value !== 'string'
+      || value.length === 0
+      || path.isAbsolute(value)
+      || value.startsWith(':')
+      || value.includes('/')
+      || value.includes('\\')
+      || value.includes('..')) {
+    throw new Error(`${label} must be a safe manifest filename`);
+  }
+
+  return value;
 }

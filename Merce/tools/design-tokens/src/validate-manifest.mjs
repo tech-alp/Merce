@@ -1,6 +1,7 @@
 import { readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { FIELD_MAP } from './merce-manifest-format.mjs';
 
 const REQUIRED_TOP_LEVEL = [
   'schemaVersion',
@@ -11,15 +12,17 @@ const REQUIRED_TOP_LEVEL = [
   'typography',
 ];
 
-const REQUIRED_FIELDS = [
-  'palette.textPrimary',
-  'palette.backgroundBase',
-  'palette.actionPrimary',
-  'spacing.md',
-  'spacing.touchTarget',
-  'radius.button',
-  'typography.bodyFont',
-];
+const TYPOGRAPHY_STRING_FIELDS = new Set([
+  'displayFont',
+  'bodyFont',
+  'monoFont',
+  'displayFontFallback',
+  'bodyFontFallback',
+]);
+
+const REQUIRED_FIELDS = Object.entries(FIELD_MAP).flatMap(([section, fields]) => (
+  fields.map(([field]) => `${section}.${field}`)
+));
 
 export function validateManifest(manifest, context = {}) {
   const errors = [];
@@ -53,7 +56,10 @@ export function validateManifest(manifest, context = {}) {
   for (const field of REQUIRED_FIELDS) {
     if (!hasPath(manifest, field)) {
       errors.push(`missing required runtime field: ${field}`);
+      continue;
     }
+
+    validateRuntimeField(manifest, field, errors);
   }
 
   if (containsRawDtcg(manifest)) {
@@ -115,6 +121,39 @@ function hasPath(object, dottedPath) {
   }
 
   return true;
+}
+
+function valueAtPath(object, dottedPath) {
+  let current = object;
+
+  for (const part of dottedPath.split('.')) {
+    current = current[part];
+  }
+
+  return current;
+}
+
+function validateRuntimeField(manifest, dottedPath, errors) {
+  const [section, field] = dottedPath.split('.');
+  const value = valueAtPath(manifest, dottedPath);
+
+  if (section === 'palette') {
+    if (typeof value !== 'string' || !/^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(value)) {
+      errors.push(`runtime field ${dottedPath} must be a valid color string`);
+    }
+    return;
+  }
+
+  if (section === 'typography' && TYPOGRAPHY_STRING_FIELDS.has(field)) {
+    if (typeof value !== 'string' || value.trim().length === 0) {
+      errors.push(`runtime field ${dottedPath} must be a non-empty string`);
+    }
+    return;
+  }
+
+  if (typeof value !== 'number' || !Number.isFinite(value)) {
+    errors.push(`runtime field ${dottedPath} must be numeric`);
+  }
 }
 
 function containsRawDtcg(value) {

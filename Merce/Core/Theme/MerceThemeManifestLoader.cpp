@@ -2,6 +2,7 @@
 
 #include "MerceThemeRegistry.h"
 
+#include <QColor>
 #include <QFile>
 #include <QJsonDocument>
 #include <QJsonParseError>
@@ -159,6 +160,41 @@ const QStringList requiredFieldsForSection(const QString &section)
     return {};
 }
 
+const QStringList typographyStringFields()
+{
+    return {
+        QStringLiteral("displayFont"),
+        QStringLiteral("bodyFont"),
+        QStringLiteral("monoFont"),
+        QStringLiteral("displayFontFallback"),
+        QStringLiteral("bodyFontFallback"),
+    };
+}
+
+void requireColor(const QJsonObject &object, const QString &field, QStringList *errors)
+{
+    const QJsonValue value = object.value(field);
+    if (!value.isString() || !QColor(value.toString()).isValid()) {
+        errors->append(QStringLiteral("runtime field palette.%1 must be a valid color string").arg(field));
+    }
+}
+
+void requireNumber(const QJsonObject &object, const QString &section, const QString &field, QStringList *errors)
+{
+    const QJsonValue value = object.value(field);
+    if (!value.isDouble()) {
+        errors->append(QStringLiteral("runtime field %1.%2 must be numeric").arg(section, field));
+    }
+}
+
+void requireString(const QJsonObject &object, const QString &section, const QString &field, QStringList *errors)
+{
+    const QJsonValue value = object.value(field);
+    if (!value.isString() || value.toString().trimmed().isEmpty()) {
+        errors->append(QStringLiteral("runtime field %1.%2 must be a non-empty string").arg(section, field));
+    }
+}
+
 JsonObjectResult readJsonObject(const QString &path, const QString &label)
 {
     JsonObjectResult result;
@@ -235,6 +271,16 @@ QStringList validateSection(const QJsonObject &manifest, const QString &section)
     for (const QString &field : requiredFieldsForSection(section)) {
         if (!object.contains(field)) {
             errors.append(QStringLiteral("missing required runtime field: %1.%2").arg(section, field));
+            continue;
+        }
+
+        if (section == QStringLiteral("palette")) {
+            requireColor(object, field, &errors);
+        } else if (section == QStringLiteral("typography")
+                   && typographyStringFields().contains(field)) {
+            requireString(object, section, field, &errors);
+        } else {
+            requireNumber(object, section, field, &errors);
         }
     }
 
