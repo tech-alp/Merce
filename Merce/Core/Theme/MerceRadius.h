@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QJsonObject>
 #include <QObject>
 #include <QtQml/qqmlregistration.h>
 
@@ -24,20 +25,53 @@ class MerceRadius : public QObject
 public:
     explicit MerceRadius(QObject *parent = nullptr) : QObject(parent) {}
 
-    int none() const { return 0; }
-    int small() const { return 4; }
-    int medium() const { return 8; }
-    int large() const { return 12; }
-    int xlarge() const { return 16; }
-    int xxlarge() const { return 24; }
-    int full() const { return 9999; }
-    int button() const { return large(); }
-    int input() const { return medium(); }
-    int card() const { return xlarge(); }
-    int badge() const { return full(); }
-    int dialog() const { return xxlarge(); }
-    int tooltip() const { return small(); }
+    int none() const { return m_none; }
+    int small() const { return m_small; }
+    int medium() const { return m_medium; }
+    int large() const { return m_large; }
+    int xlarge() const { return m_xlarge; }
+    int xxlarge() const { return m_xxlarge; }
+    int full() const { return m_full; }
+    int button() const { return m_button; }
+    int input() const { return m_input; }
+    int card() const { return m_card; }
+    int badge() const { return m_badge; }
+    int dialog() const { return m_dialog; }
+    int tooltip() const { return m_tooltip; }
+
+    void applyManifestSection(const QJsonObject &section)
+    {
+        m_none = section.value(QStringLiteral("none")).toInt();
+        m_small = section.value(QStringLiteral("small")).toInt();
+        m_medium = section.value(QStringLiteral("medium")).toInt();
+        m_large = section.value(QStringLiteral("large")).toInt();
+        m_xlarge = section.value(QStringLiteral("xlarge")).toInt();
+        m_xxlarge = section.value(QStringLiteral("xxlarge")).toInt();
+        m_full = section.value(QStringLiteral("full")).toInt();
+        m_button = section.value(QStringLiteral("button")).toInt();
+        m_input = section.value(QStringLiteral("input")).toInt();
+        m_card = section.value(QStringLiteral("card")).toInt();
+        m_badge = section.value(QStringLiteral("badge")).toInt();
+        m_dialog = section.value(QStringLiteral("dialog")).toInt();
+        m_tooltip = section.value(QStringLiteral("tooltip")).toInt();
+        emit changed();
+    }
 
 signals:
     void changed();
+
+private:
+    int m_none = 0;
+    int m_small = 4;
+    int m_medium = 8;
+    int m_large = 12;
+    int m_xlarge = 16;
+    int m_xxlarge = 24;
+    int m_full = 9999;
+    int m_button = 12;
+    int m_input = 8;
+    int m_card = 16;
+    int m_badge = 9999;
+    int m_dialog = 24;
+    int m_tooltip = 4;
 };

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QJsonObject>
 #include <QObject>
 #include <QVariantMap>
 #include <QtQml/qqmlregistration.h>
@@ -53,35 +54,35 @@ class MerceTypography : public QObject
 public:
     explicit MerceTypography(QObject *parent = nullptr) : QObject(parent) {}
 
-    QString fontDisplay() const { return QStringLiteral("Playfair Display"); }
-    QString fontBody() const { return QStringLiteral("DM Sans"); }
-    QString fontMono() const { return QStringLiteral("SF Mono"); }
-    QString fontDisplayFallback() const { return QStringLiteral("Georgia, serif"); }
-    QString fontBodyFallback() const { return QStringLiteral("-apple-system, BlinkMacSystemFont, sans-serif"); }
-    int sizeXSmall() const { return 12; }
-    int sizeSmall() const { return 14; }
-    int sizeMedium() const { return 16; }
-    int sizeLarge() const { return 18; }
-    int sizeXLarge() const { return 20; }
-    int size2XLarge() const { return 24; }
-    int size3XLarge() const { return 30; }
-    int size4XLarge() const { return 36; }
-    int size5XLarge() const { return 48; }
-    int size6XLarge() const { return 60; }
-    int size7XLarge() const { return 72; }
-    int weightRegular() const { return 400; }
-    int weightMedium() const { return 500; }
-    int weightSemibold() const { return 600; }
-    int weightBold() const { return 700; }
-    qreal leadingTight() const { return 1.2; }
-    qreal leadingSnug() const { return 1.35; }
-    qreal leadingNormal() const { return 1.5; }
-    qreal leadingRelaxed() const { return 1.7; }
-    qreal trackingTight() const { return -0.02; }
-    qreal trackingNormal() const { return 0.0; }
-    qreal trackingWide() const { return 0.02; }
-    qreal trackingWider() const { return 0.05; }
-    qreal trackingWidest() const { return 0.1; }
+    QString fontDisplay() const { return m_fontDisplay; }
+    QString fontBody() const { return m_fontBody; }
+    QString fontMono() const { return m_fontMono; }
+    QString fontDisplayFallback() const { return m_fontDisplayFallback; }
+    QString fontBodyFallback() const { return m_fontBodyFallback; }
+    int sizeXSmall() const { return m_sizeXSmall; }
+    int sizeSmall() const { return m_sizeSmall; }
+    int sizeMedium() const { return m_sizeMedium; }
+    int sizeLarge() const { return m_sizeLarge; }
+    int sizeXLarge() const { return m_sizeXLarge; }
+    int size2XLarge() const { return m_size2XLarge; }
+    int size3XLarge() const { return m_size3XLarge; }
+    int size4XLarge() const { return m_size4XLarge; }
+    int size5XLarge() const { return m_size5XLarge; }
+    int size6XLarge() const { return m_size6XLarge; }
+    int size7XLarge() const { return m_size7XLarge; }
+    int weightRegular() const { return m_weightRegular; }
+    int weightMedium() const { return m_weightMedium; }
+    int weightSemibold() const { return m_weightSemibold; }
+    int weightBold() const { return m_weightBold; }
+    qreal leadingTight() const { return m_leadingTight; }
+    qreal leadingSnug() const { return m_leadingSnug; }
+    qreal leadingNormal() const { return m_leadingNormal; }
+    qreal leadingRelaxed() const { return m_leadingRelaxed; }
+    qreal trackingTight() const { return m_trackingTight; }
+    qreal trackingNormal() const { return m_trackingNormal; }
+    qreal trackingWide() const { return m_trackingWide; }
+    qreal trackingWider() const { return m_trackingWider; }
+    qreal trackingWidest() const { return m_trackingWidest; }
 
     QVariantMap display() const { return preset(fontDisplay(), size5XLarge(), weightBold(), leadingTight(), trackingTight()); }
     QVariantMap h1() const { return preset(fontDisplay(), size4XLarge(), weightSemibold(), leadingTight(), trackingTight()); }
@@ -95,6 +96,40 @@ public:
     QVariantMap overline() const { return preset(fontBody(), sizeXSmall(), weightSemibold(), leadingNormal(), trackingWidest(), true); }
     QVariantMap button() const { return preset(fontBody(), sizeSmall(), weightSemibold(), leadingTight(), trackingNormal()); }
     QVariantMap price() const { return preset(fontBody(), size2XLarge(), weightBold(), leadingTight(), trackingTight()); }
+
+    void applyManifestSection(const QJsonObject &section)
+    {
+        m_fontDisplay = section.value(QStringLiteral("displayFont")).toString();
+        m_fontBody = section.value(QStringLiteral("bodyFont")).toString();
+        m_fontMono = section.value(QStringLiteral("monoFont")).toString();
+        m_fontDisplayFallback = section.value(QStringLiteral("displayFontFallback")).toString();
+        m_fontBodyFallback = section.value(QStringLiteral("bodyFontFallback")).toString();
+        m_sizeXSmall = section.value(QStringLiteral("sizeXSmall")).toInt();
+        m_sizeSmall = section.value(QStringLiteral("sizeSmall")).toInt();
+        m_sizeMedium = section.value(QStringLiteral("sizeMedium")).toInt();
+        m_sizeLarge = section.value(QStringLiteral("sizeLarge")).toInt();
+        m_sizeXLarge = section.value(QStringLiteral("sizeXLarge")).toInt();
+        m_size2XLarge = section.value(QStringLiteral("size2XLarge")).toInt();
+        m_size3XLarge = section.value(QStringLiteral("size3XLarge")).toInt();
+        m_size4XLarge = section.value(QStringLiteral("size4XLarge")).toInt();
+        m_size5XLarge = section.value(QStringLiteral("size5XLarge")).toInt();
+        m_size6XLarge = section.value(QStringLiteral("size6XLarge")).toInt();
+        m_size7XLarge = section.value(QStringLiteral("size7XLarge")).toInt();
+        m_weightRegular = section.value(QStringLiteral("weightRegular")).toInt();
+        m_weightMedium = section.value(QStringLiteral("weightMedium")).toInt();
+        m_weightSemibold = section.value(QStringLiteral("weightSemibold")).toInt();
+        m_weightBold = section.value(QStringLiteral("weightBold")).toInt();
+        m_leadingTight = section.value(QStringLiteral("leadingTight")).toDouble();
+        m_leadingSnug = section.value(QStringLiteral("leadingSnug")).toDouble();
+        m_leadingNormal = section.value(QStringLiteral("leadingNormal")).toDouble();
+        m_leadingRelaxed = section.value(QStringLiteral("leadingRelaxed")).toDouble();
+        m_trackingTight = section.value(QStringLiteral("trackingTight")).toDouble();
+        m_trackingNormal = section.value(QStringLiteral("trackingNormal")).toDouble();
+        m_trackingWide = section.value(QStringLiteral("trackingWide")).toDouble();
+        m_trackingWider = section.value(QStringLiteral("trackingWider")).toDouble();
+        m_trackingWidest = section.value(QStringLiteral("trackingWidest")).toDouble();
+        emit changed();
+    }
 
 signals:
     void changed();
@@ -112,4 +147,34 @@ private:
             map.insert(QStringLiteral("uppercase"), true);
         return map;
     }
+
+    QString m_fontDisplay = QStringLiteral("Playfair Display");
+    QString m_fontBody = QStringLiteral("DM Sans");
+    QString m_fontMono = QStringLiteral("SF Mono");
+    QString m_fontDisplayFallback = QStringLiteral("Georgia, serif");
+    QString m_fontBodyFallback = QStringLiteral("-apple-system, BlinkMacSystemFont, sans-serif");
+    int m_sizeXSmall = 12;
+    int m_sizeSmall = 14;
+    int m_sizeMedium = 16;
+    int m_sizeLarge = 18;
+    int m_sizeXLarge = 20;
+    int m_size2XLarge = 24;
+    int m_size3XLarge = 30;
+    int m_size4XLarge = 36;
+    int m_size5XLarge = 48;
+    int m_size6XLarge = 60;
+    int m_size7XLarge = 72;
+    int m_weightRegular = 400;
+    int m_weightMedium = 500;
+    int m_weightSemibold = 600;
+    int m_weightBold = 700;
+    qreal m_leadingTight = 1.2;
+    qreal m_leadingSnug = 1.35;
+    qreal m_leadingNormal = 1.5;
+    qreal m_leadingRelaxed = 1.7;
+    qreal m_trackingTight = -0.02;
+    qreal m_trackingNormal = 0.0;
+    qreal m_trackingWide = 0.02;
+    qreal m_trackingWider = 0.05;
+    qreal m_trackingWidest = 0.1;
 };
