@@ -83,6 +83,10 @@ async function validateDirectory(directoryPath) {
   const validations = [];
 
   for (const [theme, entry] of Object.entries(index.themes ?? {})) {
+    if (entry.basePath) {
+      validations.push(validateManifestFile(path.join(directoryPath, entry.basePath), { theme, variant: undefined }));
+    }
+
     if (entry.variants) {
       for (const [variant, manifestPath] of Object.entries(entry.variants)) {
         validations.push(validateManifestFile(path.join(directoryPath, manifestPath), { theme, variant }));

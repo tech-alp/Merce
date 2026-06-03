@@ -36,7 +36,18 @@ export function themeEntries(registry) {
     const themeSources = theme.source ?? [];
 
     if (theme.variants) {
-      return Object.entries(theme.variants).map(([variantName, destination]) => {
+      const entries = [];
+
+      if (theme.basePath) {
+        entries.push({
+          theme: themeName,
+          displayName: theme.displayName ?? themeName,
+          path: theme.basePath,
+          source: [...coreSources, ...themeSources],
+        });
+      }
+
+      entries.push(...Object.entries(theme.variants).map(([variantName, destination]) => {
         const variantSources = theme.variantSources?.[variantName] ?? [
           `tokens/themes/${themeName}/variants/${variantName}.json`,
         ];
@@ -48,7 +59,9 @@ export function themeEntries(registry) {
           path: destination,
           source: [...coreSources, ...themeSources, ...variantSources],
         };
-      });
+      }));
+
+      return entries;
     }
 
     if (!theme.path) {
@@ -70,6 +83,7 @@ export function generatedIndex(registry) {
       if (theme.variants) {
         return [themeName, {
           displayName: theme.displayName ?? themeName,
+          ...(theme.basePath ? { basePath: theme.basePath } : {}),
           defaultVariant: theme.defaultVariant,
           variants: theme.variants,
         }];
