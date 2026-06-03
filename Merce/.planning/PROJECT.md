@@ -19,11 +19,11 @@ QML application and component authors can use a stable, typed `Theme` API while 
 - [x] Keep DTCG JSON as the design-token source format. Validated in Phase 2 with source files under `tools/design-tokens/tokens/`.
 - [x] Use Style Dictionary v5 as a build-time resolver/converter, not as a runtime dependency. Validated in Phase 2 with the bounded `tools/design-tokens` workspace.
 - [x] Generate versioned Merce runtime manifests without exposing public QML token files. Validated in Phase 2 with committed manifests under `generated/themes/`.
+- [x] Package generated theme manifests through Qt resources using `:/merce/themes/index.json` as the authoritative path registry. Validated in Phase 3 with MerceCore-owned resources and configure-time index validation.
+- [x] Keep component consumers unaware of raw DTCG paths, generated manifests, and internal token storage. Validated in Phase 3 by applying validated manifest data behind the existing typed `Theme` API.
 
 ### Active
 
-- [ ] Package generated theme manifests through Qt resources using `:/merce/themes/index.json` as the authoritative path registry.
-- [ ] Keep component consumers unaware of raw DTCG paths, generated manifests, and internal token storage.
 - [ ] Provide runtime theme switching for Merce components without changing Qt Quick Controls style families at runtime.
 - [ ] Keep the system usable as an internal project while avoiding closed, app-specific assumptions that would block open-source use.
 
@@ -45,6 +45,7 @@ QML application and component authors can use a stable, typed `Theme` API while 
 - User preference: keep token implementations separate from the public theme facade and avoid exposing every token file directly.
 - New architectural direction: keep DTCG as source, use Style Dictionary v5 to produce a resolved Merce runtime manifest, and implement typed theme objects in C++.
 - Phase 2 added `generated/themes/index.json` as the authoritative manifest path registry; future loaders should not derive file paths from theme and variant names.
+- Phase 3 packages generated manifests into `MerceCore` resources under `:/merce/themes/`, validates registry entries, and applies the default manifest to palette, spacing, radius, and typography.
 - QML intellisense can struggle with deep chained objects such as `Theme.colors.text.primary`; a shallower C++ API such as `Theme.palette.textPrimary` is preferred for the runtime layer.
 
 ## Constraints
@@ -53,7 +54,7 @@ QML application and component authors can use a stable, typed `Theme` API while 
 - **Runtime dependency**: no Node or Style Dictionary at application runtime - all token processing is build-time.
 - **API stability**: public QML contract must remain stable across token format and manifest changes.
 - **Type safety**: theme values exposed to QML should use typed C++ properties such as `QColor`, `int`, `qreal`, and enums where useful.
-- **Resource layout**: multi-brand manifests use `:/merce/themes/{brand}/{mode}.json` plus a registry index.
+- **Resource layout**: generated manifests live under `:/merce/themes/` and physical filenames are read from `index.json`, not derived from brand and mode names.
 - **Scope control**: first implementation proves the runtime contract and one brand/light-dark flow before adding advanced token families.
 - **Open-source friendliness**: avoid hardcoding private brand names, paths, or app-specific kiosk assumptions into core Merce APIs.
 
@@ -65,7 +66,8 @@ QML application and component authors can use a stable, typed `Theme` API while 
 | Keep DTCG JSON as token source | Compatible with design-token tooling and future Figma/Tokens Studio workflows | - Pending |
 | Use Style Dictionary v5 for build-time resolution | Avoid reimplementing alias resolution, merge order, and transforms in C++ | Validated in Phase 2 |
 | Emit resolved Merce theme manifests, not public QML token files | Runtime manifest is simpler for C++ and keeps generated artifacts out of the component contract | Validated in Phase 2 |
-| Use `index.json` as the authoritative manifest path registry | Supports sparse single-manifest and variant-backed themes without fabricated modes | Validated in Phase 2 |
+| Use `index.json` as the authoritative manifest path registry | Supports sparse single-manifest and variant-backed themes without fabricated modes | Validated in Phase 3 |
+| Apply manifests behind the existing typed `Theme` API | Keeps components independent from generated manifest shape and preserves Phase 1 QML contract | Validated in Phase 3 |
 | Prefer shallower QML API names | Improves intellisense and reduces brittle deep chaining | Validated in Phase 1 through `Theme.palette.*` aliases |
 
 ## Evolution
@@ -86,4 +88,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-03 after Phase 2 completion*
+*Last updated: 2026-06-03 after Phase 3 completion*
