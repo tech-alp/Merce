@@ -2,7 +2,7 @@
 
 # Find dependencies
 include(CMakeFindDependencyMacro)
-find_dependency(Qt6 REQUIRED COMPONENTS Core Quick Qml)
+find_dependency(Qt6 REQUIRED COMPONENTS Core Gui Quick Qml)
 
 # Include module targets
 include("${CMAKE_CURRENT_LIST_DIR}/MerceTargets.cmake")

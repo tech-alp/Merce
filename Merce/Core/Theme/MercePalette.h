@@ -104,6 +104,8 @@ public:
             return warning();
         if (variant == QStringLiteral("destructive") || variant == QStringLiteral("error"))
             return destructive();
+        if (variant == QStringLiteral("destructiveDark") || variant == QStringLiteral("errorDark"))
+            return destructive();
         if (variant == QStringLiteral("secondary"))
             return secondary();
         if (variant == QStringLiteral("secondaryDark"))
