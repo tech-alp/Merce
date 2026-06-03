@@ -1,0 +1,120 @@
+{
+  "typography": {
+    "displayFont": {
+      "$type": "fontFamily",
+      "$value": "Playfair Display"
+    },
+    "bodyFont": {
+      "$type": "fontFamily",
+      "$value": "DM Sans"
+    },
+    "monoFont": {
+      "$type": "fontFamily",
+      "$value": "SF Mono"
+    },
+    "displayFontFallback": {
+      "$type": "fontFamily",
+      "$value": "Georgia, serif"
+    },
+    "bodyFontFallback": {
+      "$type": "fontFamily",
+      "$value": "-apple-system, BlinkMacSystemFont, sans-serif"
+    },
+    "sizeXSmall": {
+      "$type": "dimension",
+      "$value": 12
+    },
+    "sizeSmall": {
+      "$type": "dimension",
+      "$value": 14
+    },
+    "sizeMedium": {
+      "$type": "dimension",
+      "$value": 16
+    },
+    "sizeLarge": {
+      "$type": "dimension",
+      "$value": 18
+    },
+    "sizeXLarge": {
+      "$type": "dimension",
+      "$value": 20
+    },
+    "size2XLarge": {
+      "$type": "dimension",
+      "$value": 24
+    },
+    "size3XLarge": {
+      "$type": "dimension",
+      "$value": 30
+    },
+    "size4XLarge": {
+      "$type": "dimension",
+      "$value": 36
+    },
+    "size5XLarge": {
+      "$type": "dimension",
+      "$value": 48
+    },
+    "size6XLarge": {
+      "$type": "dimension",
+      "$value": 60
+    },
+    "size7XLarge": {
+      "$type": "dimension",
+      "$value": 72
+    },
+    "weightRegular": {
+      "$type": "fontWeight",
+      "$value": 400
+    },
+    "weightMedium": {
+      "$type": "fontWeight",
+      "$value": 500
+    },
+    "weightSemibold": {
+      "$type": "fontWeight",
+      "$value": 600
+    },
+    "weightBold": {
+      "$type": "fontWeight",
+      "$value": 700
+    },
+    "leadingTight": {
+      "$type": "number",
+      "$value": 1.2
+    },
+    "leadingSnug": {
+      "$type": "number",
+      "$value": 1.35
+    },
+    "leadingNormal": {
+      "$type": "number",
+      "$value": 1.5
+    },
+    "leadingRelaxed": {
+      "$type": "number",
+      "$value": 1.7
+    },
+    "trackingTight": {
+      "$type": "number",
+      "$value": -0.02
+    },
+    "trackingNormal": {
+      "$type": "number",
+      "$value": 0
+    },
+    "trackingWide": {
+      "$type": "number",
+      "$value": 0.02
+    },
+    "trackingWider": {
+      "$type": "number",
+      "$value": 0.05
+    },
+    "trackingWidest": {
+      "$type": "number",
+      "$value": 0.1
+    }
+  }
+}

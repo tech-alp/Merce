@@ -1,0 +1,22 @@
+{
+  "palette": {
+    "semantic": {
+      "textPrimary": {
+        "$type": "color",
+        "$value": "{palette.raw.gray900}"
+      },
+      "textInverse": {
+        "$type": "color",
+        "$value": "{palette.raw.gray50}"
+      },
+      "backgroundBase": {
+        "$type": "color",
+        "$value": "{palette.raw.gray50}"
+      },
+      "backgroundSurface": {
+        "$type": "color",
+        "$value": "{palette.raw.white}"
+      }
+    }
+  }
+}

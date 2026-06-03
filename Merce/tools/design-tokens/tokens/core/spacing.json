@@ -1,0 +1,88 @@
+{
+  "spacing": {
+    "base": {
+      "$type": "dimension",
+      "$value": 8
+    },
+    "none": {
+      "$type": "dimension",
+      "$value": 0
+    },
+    "xxs": {
+      "$type": "dimension",
+      "$value": 4
+    },
+    "xs": {
+      "$type": "dimension",
+      "$value": 8
+    },
+    "sm": {
+      "$type": "dimension",
+      "$value": 12
+    },
+    "md": {
+      "$type": "dimension",
+      "$value": 16
+    },
+    "lg": {
+      "$type": "dimension",
+      "$value": 20
+    },
+    "xl": {
+      "$type": "dimension",
+      "$value": 24
+    },
+    "xl2": {
+      "$type": "dimension",
+      "$value": 32
+    },
+    "xl3": {
+      "$type": "dimension",
+      "$value": 40
+    },
+    "xl4": {
+      "$type": "dimension",
+      "$value": 48
+    },
+    "xl5": {
+      "$type": "dimension",
+      "$value": 64
+    },
+    "xl6": {
+      "$type": "dimension",
+      "$value": 80
+    },
+    "componentGap": {
+      "$type": "dimension",
+      "$value": "{spacing.md}"
+    },
+    "sectionGap": {
+      "$type": "dimension",
+      "$value": "{spacing.xl4}"
+    },
+    "pagePadding": {
+      "$type": "dimension",
+      "$value": "{spacing.xl}"
+    },
+    "touchTarget": {
+      "$type": "dimension",
+      "$value": 44
+    },
+    "touchTargetCompact": {
+      "$type": "dimension",
+      "$value": 36
+    },
+    "gridGap": {
+      "$type": "dimension",
+      "$value": "{spacing.md}"
+    },
+    "stackGap": {
+      "$type": "dimension",
+      "$value": "{spacing.sm}"
+    },
+    "inlineGap": {
+      "$type": "dimension",
+      "$value": "{spacing.xs}"
+    }
+  }
+}

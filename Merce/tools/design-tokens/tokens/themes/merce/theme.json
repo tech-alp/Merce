@@ -1,0 +1,28 @@
+{
+  "palette": {
+    "semantic": {
+      "actionPrimary": {
+        "$type": "color",
+        "$value": "{palette.raw.primary}"
+      },
+      "actionSecondary": {
+        "$type": "color",
+        "$value": "{palette.raw.secondary}"
+      },
+      "borderFocus": {
+        "$type": "color",
+        "$value": "{palette.raw.primary}"
+      }
+    }
+  },
+  "typography": {
+    "bodyFont": {
+      "$type": "fontFamily",
+      "$value": "DM Sans"
+    },
+    "displayFont": {
+      "$type": "fontFamily",
+      "$value": "Playfair Display"
+    }
+  }
+}

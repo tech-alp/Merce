@@ -1,0 +1,64 @@
+{
+  "palette": {
+    "raw": {
+      "white": {
+        "$type": "color",
+        "$value": "#18120F"
+      }
+    },
+    "semantic": {
+      "textPrimary": {
+        "$type": "color",
+        "$value": "{palette.raw.gray50}"
+      },
+      "textSecondary": {
+        "$type": "color",
+        "$value": "{palette.raw.gray200}"
+      },
+      "textTertiary": {
+        "$type": "color",
+        "$value": "{palette.raw.gray400}"
+      },
+      "textInverse": {
+        "$type": "color",
+        "$value": "{palette.raw.gray900}"
+      },
+      "backgroundBase": {
+        "$type": "color",
+        "$value": "{palette.raw.gray900}"
+      },
+      "backgroundSurface": {
+        "$type": "color",
+        "$value": "#2A211C"
+      },
+      "backgroundElevated": {
+        "$type": "color",
+        "$value": "#342923"
+      },
+      "backgroundHover": {
+        "$type": "color",
+        "$value": "{palette.raw.gray800}"
+      },
+      "backgroundPressed": {
+        "$type": "color",
+        "$value": "{palette.raw.gray700}"
+      },
+      "borderBase": {
+        "$type": "color",
+        "$value": "{palette.raw.gray700}"
+      },
+      "borderStrong": {
+        "$type": "color",
+        "$value": "{palette.raw.gray600}"
+      },
+      "surfaceBase": {
+        "$type": "color",
+        "$value": "#2A211C"
+      },
+      "surfaceTinted": {
+        "$type": "color",
+        "$value": "#342923"
+      }
+    }
+  }
+}

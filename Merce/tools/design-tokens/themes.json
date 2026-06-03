@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "defaultTheme": "merce",
+  "core": [
+    "tokens/core/palette.json",
+    "tokens/core/spacing.json",
+    "tokens/core/radius.json",
+    "tokens/core/typography.json"
+  ],
+  "themes": {
+    "merce": {
+      "displayName": "Merce",
+      "source": [
+        "tokens/themes/merce/theme.json"
+      ],
+      "defaultVariant": "light",
+      "variants": {
+        "light": "merce.light.json",
+        "dark": "merce.dark.json"
+      },
+      "variantSources": {
+        "light": [
+          "tokens/themes/merce/variants/light.json"
+        ],
+        "dark": [
+          "tokens/themes/merce/variants/dark.json"
+        ]
+      }
+    },
+    "stripe": {
+      "displayName": "Stripe Reference",
+      "source": [
+        "tokens/themes/stripe/theme.json"
+      ],
+      "path": "stripe.json"
+    }
+  }
+}

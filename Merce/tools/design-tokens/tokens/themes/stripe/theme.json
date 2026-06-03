@@ -1,0 +1,96 @@
+{
+  "palette": {
+    "raw": {
+      "primary": {
+        "$type": "color",
+        "$value": "#635BFF"
+      },
+      "primaryLight": {
+        "$type": "color",
+        "$value": "#A5A1FF"
+      },
+      "primaryDark": {
+        "$type": "color",
+        "$value": "#3F37C9"
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "#00D4FF"
+      },
+      "secondaryLight": {
+        "$type": "color",
+        "$value": "#7BE7FF"
+      },
+      "secondaryDark": {
+        "$type": "color",
+        "$value": "#0098B8"
+      },
+      "gray50": {
+        "$type": "color",
+        "$value": "#F6F9FC"
+      },
+      "gray100": {
+        "$type": "color",
+        "$value": "#E7ECF3"
+      },
+      "gray200": {
+        "$type": "color",
+        "$value": "#D8DEE8"
+      },
+      "gray300": {
+        "$type": "color",
+        "$value": "#C1CAD8"
+      },
+      "gray500": {
+        "$type": "color",
+        "$value": "#697386"
+      },
+      "gray700": {
+        "$type": "color",
+        "$value": "#3C4257"
+      },
+      "gray900": {
+        "$type": "color",
+        "$value": "#1A1F36"
+      }
+    },
+    "semantic": {
+      "actionPrimary": {
+        "$type": "color",
+        "$value": "{palette.raw.primary}"
+      },
+      "actionSecondary": {
+        "$type": "color",
+        "$value": "{palette.raw.secondary}"
+      },
+      "borderFocus": {
+        "$type": "color",
+        "$value": "{palette.raw.primary}"
+      },
+      "backgroundBase": {
+        "$type": "color",
+        "$value": "{palette.raw.gray50}"
+      }
+    }
+  },
+  "radius": {
+    "button": {
+      "$type": "dimension",
+      "$value": "{radius.medium}"
+    },
+    "card": {
+      "$type": "dimension",
+      "$value": "{radius.large}"
+    }
+  },
+  "typography": {
+    "bodyFont": {
+      "$type": "fontFamily",
+      "$value": "-apple-system, BlinkMacSystemFont, sans-serif"
+    },
+    "displayFont": {
+      "$type": "fontFamily",
+      "$value": "-apple-system, BlinkMacSystemFont, sans-serif"
+    }
+  }
+}

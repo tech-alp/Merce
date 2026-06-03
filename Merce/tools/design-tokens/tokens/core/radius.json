@@ -1,0 +1,56 @@
+{
+  "radius": {
+    "none": {
+      "$type": "dimension",
+      "$value": 0
+    },
+    "small": {
+      "$type": "dimension",
+      "$value": 4
+    },
+    "medium": {
+      "$type": "dimension",
+      "$value": 8
+    },
+    "large": {
+      "$type": "dimension",
+      "$value": 12
+    },
+    "xlarge": {
+      "$type": "dimension",
+      "$value": 16
+    },
+    "xxlarge": {
+      "$type": "dimension",
+      "$value": 24
+    },
+    "full": {
+      "$type": "dimension",
+      "$value": 9999
+    },
+    "button": {
+      "$type": "dimension",
+      "$value": "{radius.large}"
+    },
+    "input": {
+      "$type": "dimension",
+      "$value": "{radius.medium}"
+    },
+    "card": {
+      "$type": "dimension",
+      "$value": "{radius.xlarge}"
+    },
+    "badge": {
+      "$type": "dimension",
+      "$value": "{radius.full}"
+    },
+    "dialog": {
+      "$type": "dimension",
+      "$value": "{radius.xxlarge}"
+    },
+    "tooltip": {
+      "$type": "dimension",
+      "$value": "{radius.small}"
+    }
+  }
+}
