@@ -11,7 +11,7 @@ This roadmap phases Merce's theme work from current QML token facade toward a ty
 | # | Phase | Goal | Requirements | UI hint |
 |---|-------|------|--------------|---------|
 | 1 | Theme Runtime Contract | 1/1 | Complete    | 2026-06-03 |
-| 2 | Token Build Pipeline | 1/1 | Complete   | 2026-06-03 |
+| 2 | Token Build Pipeline | 1/1 | Complete    | 2026-06-03 |
 | 3 | Manifest Registry And Loader | Package generated manifests into Qt resources and load them through the generated index | MANIFEST-01..MANIFEST-05 | no |
 | 4 | Runtime Brand/Mode Switching | Implement `Theme.setTheme(brand, mode)` and binding-safe value updates | RUNTIME-01..RUNTIME-04 | yes |
 | 5 | Verification And Gallery | Prove the runtime through tests, probes, smoke checks, and playground theme gallery | VERIFY-01..VERIFY-04 | yes |
@@ -63,7 +63,7 @@ This roadmap phases Merce's theme work from current QML token facade toward a ty
 
 **Plans:**
 
-- Wave 1: `02-01-PLAN.md` - Style Dictionary Token Build Pipeline. Complete: `02-01-SUMMARY.md` (2026-06-03).
+1/1 plans complete. Wave 1: `02-01-PLAN.md` - Style Dictionary Token Build Pipeline. Complete: `02-01-SUMMARY.md` (2026-06-03).
 
 ### Phase 3: Manifest Registry And Loader
 
