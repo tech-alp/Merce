@@ -27,6 +27,7 @@ endif()
 find_package(Qt6 6.11 REQUIRED COMPONENTS Core Gui Quick Qml)
 
 qt_standard_project_setup(REQUIRES 6.11)
+include(CTest)
 set(QT_QML_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/qml")
 
 # ========================================================================
@@ -37,6 +38,13 @@ add_subdirectory(Core)
 add_subdirectory(Foundation)
 add_subdirectory(Controls)
 add_subdirectory(Notifications)
+
+if(BUILD_TESTING)
+    find_package(Qt6 6.11 REQUIRED COMPONENTS Test)
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests/CMakeLists.txt")
+        add_subdirectory(tests)
+    endif()
+endif()
 
 # ========================================================================
 # Example Application (optional, for testing)
