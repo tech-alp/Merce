@@ -1,5 +1,13 @@
 #include "MerceTheme.h"
 
+#include "MerceThemeManifestLoader.h"
+
+#include <QJsonObject>
+#include <QJsonValue>
+#include <QLoggingCategory>
+
+Q_LOGGING_CATEGORY(merceThemeLog, "merce.theme")
+
 MerceTheme::MerceTheme(QObject *parent)
     : QObject(parent),
       m_palette(new MercePalette(this)),
@@ -12,4 +20,21 @@ MerceTheme::MerceTheme(QObject *parent)
       m_breakpoints(new MerceBreakpoints(this)),
       m_shadows(new MerceShadows(this))
 {
+    const MerceThemeLoadResult theme = MerceThemeManifestLoader().loadDefault();
+    if (!theme.ok) {
+        for (const QString &error : theme.errors)
+            qCWarning(merceThemeLog) << "default manifest load failed:" << error;
+        return;
+    }
+
+    const QJsonObject manifest = theme.finalManifest;
+    m_palette->applyManifestSection(manifest.value(QStringLiteral("palette")).toObject());
+    m_spacing->applyManifestSection(manifest.value(QStringLiteral("spacing")).toObject());
+    m_radius->applyManifestSection(manifest.value(QStringLiteral("radius")).toObject());
+    m_typography->applyManifestSection(manifest.value(QStringLiteral("typography")).toObject());
+
+    emit paletteChanged();
+    emit spacingChanged();
+    emit radiusChanged();
+    emit typographyChanged();
 }
