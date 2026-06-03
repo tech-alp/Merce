@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Executing Phase 03
-last_updated: "2026-06-03T19:34:30.000Z"
+status: Phase 03 Complete
+last_updated: "2026-06-03T19:44:39.150Z"
 progress:
   total_phases: 5
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 7
-  completed_plans: 6
-  percent: 86
+  completed_plans: 7
+  percent: 60
 ---
 
 # State: Merce Theme Runtime
@@ -19,11 +19,11 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-06-03)
 
 **Core value:** QML application and component authors can use a stable, typed `Theme` API while brands and modes are driven from validated token manifests.
-**Current focus:** Phase 03 — manifest-registry-and-loader
+**Current focus:** Phase 04 — runtime-brand-mode-switching
 
 ## Status
 
-Phase 2 is complete. DTCG token sources and Style Dictionary v5 tooling now generate validated Merce runtime manifests; Phase 3 is ready to package and load them through the generated index.
+Phase 3 is complete. MerceCore packages generated manifests, validates and loads the default resource manifest, and applies palette, spacing, radius, and typography values behind the stable `Theme` API.
 
 ## Phase Status
 
@@ -31,7 +31,7 @@ Phase 2 is complete. DTCG token sources and Style Dictionary v5 tooling now gene
 |-------|------|--------|-------|
 | 1 | Theme Runtime Contract | Complete | 1/1 |
 | 2 | Token Build Pipeline | Complete | 1/1 |
-| 3 | Manifest Registry And Loader | In progress | 4/5 |
+| 3 | Manifest Registry And Loader | Complete | 5/5 |
 | 4 | Runtime Brand/Mode Switching | Not started | 0 |
 | 5 | Verification And Gallery | Not started | 0 |
 
@@ -46,6 +46,8 @@ Phase 2 is complete. DTCG token sources and Style Dictionary v5 tooling now gene
 - 2026-06-03: Merce generated index entries may include `basePath` for a resolved base manifest that loaders apply before the active variant.
 - 2026-06-03: Phase 3 manifest-backed apply is constrained to palette, spacing, radius, and typography; motion, iconography, zIndex, breakpoints, and shadows remain construction defaults.
 - 2026-06-03: MerceCore owns generated theme manifest resources under `:/merce/themes`; CMake reads `generated/themes/index.json` for `basePath`, `path`, and `variants`.
+- 2026-06-03: MerceTheme applies the validated default manifest during construction and leaves construction defaults intact on default load failure.
+- 2026-06-03: ThemeProbe verifies typography through existing `Theme.typography.fontBody` to preserve the Phase 1 public API.
 
 ## Last Activity
 
@@ -57,6 +59,7 @@ Phase 2 is complete. DTCG token sources and Style Dictionary v5 tooling now gene
 - 2026-06-03: Executed Phase 3 Plan 02, committed generated registry tasks through `c3eabef`, and wrote `.planning/phases/03-manifest-registry-and-loader/03-02-SUMMARY.md`.
 - 2026-06-03: Executed Phase 3 Plan 03, committed resource packaging tasks through `79c15bc`, and wrote `.planning/phases/03-manifest-registry-and-loader/03-03-SUMMARY.md`.
 - 2026-06-03: Executed Phase 3 Plan 04, committed manifest registry/loader tests through `27280d5`, and wrote `.planning/phases/03-manifest-registry-and-loader/03-04-SUMMARY.md`.
+- 2026-06-03: Executed Phase 3 Plan 05, committed default manifest apply and probe verification through `c22b0e8`, and wrote `.planning/phases/03-manifest-registry-and-loader/03-05-SUMMARY.md`.
 
 ## Performance Metrics
 
@@ -68,3 +71,4 @@ Phase 2 is complete. DTCG token sources and Style Dictionary v5 tooling now gene
 | Phase 03 P02 | 18 min | 2 tasks | 6 files |
 | Phase 03 P03 | 24 min | 2 tasks | 1 file |
 | Phase 03 P04 | 6 min | 3 tasks | 8 files |
+| Phase 03 P05 | 9 min | 3 tasks | 6 files |
