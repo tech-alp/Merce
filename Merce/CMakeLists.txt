@@ -5,6 +5,24 @@ project(Merce VERSION 1.0.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Optional design-token build tooling. This stays off by default so normal
+# Qt configure/build paths never require Node or npm.
+option(MERCE_ENABLE_TOKEN_BUILD "Enable the Style Dictionary token manifest build target" OFF)
+
+if(MERCE_ENABLE_TOKEN_BUILD)
+    find_program(NPM_EXECUTABLE npm)
+    if(NOT NPM_EXECUTABLE)
+        message(FATAL_ERROR "MERCE_ENABLE_TOKEN_BUILD=ON requires npm, but npm was not found.")
+    endif()
+
+    add_custom_target(merce_tokens
+        COMMAND "${NPM_EXECUTABLE}" run build
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/tools/design-tokens"
+        COMMENT "Generating Merce theme manifests"
+        VERBATIM
+    )
+endif()
+
 # Qt 6.11+ required
 find_package(Qt6 6.11 REQUIRED COMPONENTS Core Gui Quick Qml)
 
