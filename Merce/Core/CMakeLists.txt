@@ -106,6 +106,13 @@ qt_add_qml_module(MerceCore
         ${MERCE_CORE_TOKEN_QML_FILES}
 )
 
+qt_add_resources(MerceCore "merce_theme_manifests"
+    PREFIX "/merce/themes"
+    BASE "${MERCE_THEME_MANIFEST_DIR}"
+    FILES
+        ${MERCE_THEME_MANIFEST_FILES}
+)
+
 target_link_libraries(MerceCore
     PUBLIC
         Qt6::Core
