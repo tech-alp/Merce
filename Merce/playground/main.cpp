@@ -1,4 +1,5 @@
 #include <QDebug>
+#include <QCoreApplication>
 #include <QDir>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -49,9 +50,15 @@ int main(int argc, char *argv[])
     engine.loadFromModule("Merce.Playground", component);
 
     if (exportThemeGallery) {
-        QTimer::singleShot(6000, &app, &QCoreApplication::quit);
+        QTimer::singleShot(6000, &app, []() {
+            qCritical().noquote() << "Theme gallery export timed out";
+            QCoreApplication::exit(3);
+        });
     } else if (themeGalleryProbe) {
-        QTimer::singleShot(1500, &app, &QCoreApplication::quit);
+        QTimer::singleShot(3000, &app, []() {
+            qCritical().noquote() << "Theme gallery probe timed out";
+            QCoreApplication::exit(3);
+        });
     } else if (themeProbe || themeSwitchProbe || arguments.contains(QStringLiteral("--smoke-test"))) {
         QTimer::singleShot(250, &app, &QCoreApplication::quit);
     }
