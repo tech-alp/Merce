@@ -1,5 +1,6 @@
 import QtQuick
 import Merce.Core
+import Merce.Icons.FontAwesome
 
 Main {
     id: root
@@ -171,23 +172,31 @@ Main {
                     return
                 }
                 iconsShowcase.searchQuery = ""
-                iconsShowcase.selectedIconFont = "fa-solid"
+                iconsFontSelect.selectOption("fa-solid")
+                const audioDescriptionIcon = FontAwesomeRegistry.resolve("fa-solid:audio-description")
                 if (iconsShowcase.activeIconPrefix !== "fa-solid:"
+                        || iconsShowcase.selectedIconFont !== "fa-solid"
                         || iconsShowcase.iconCount !== iconsShowcase.fontAwesomeSolidIconCount
-                        || iconsShowcase.iconCount < 1000) {
+                        || iconsShowcase.iconCount < 1000
+                        || audioDescriptionIcon === null
+                        || audioDescriptionIcon.path.length === 0) {
                     root.fail("icons solid font switch", [
                                   iconsShowcase.activeIconPrefix,
+                                  iconsShowcase.selectedIconFont,
                                   iconsShowcase.iconCount,
-                                  iconsShowcase.fontAwesomeSolidIconCount
+                                  iconsShowcase.fontAwesomeSolidIconCount,
+                                  audioDescriptionIcon !== null
                               ])
                     return
                 }
-                iconsShowcase.selectedIconFont = "fa-brands"
+                iconsFontSelect.selectOption("fa-brands")
                 if (iconsShowcase.activeIconPrefix !== "fa-brands:"
+                        || iconsShowcase.selectedIconFont !== "fa-brands"
                         || iconsShowcase.iconCount !== iconsShowcase.fontAwesomeBrandsIconCount
                         || iconsShowcase.iconCount < 100) {
                     root.fail("icons brands font switch", [
                                   iconsShowcase.activeIconPrefix,
+                                  iconsShowcase.selectedIconFont,
                                   iconsShowcase.iconCount,
                                   iconsShowcase.fontAwesomeBrandsIconCount
                               ])

@@ -14,6 +14,7 @@ set(MERCE_PLAYGROUND_VIEW_QML
 )
 
 set(MERCE_PLAYGROUND_COMPONENT_QML
+    component/MerceToastifyStyleProvider.qml
     component/MerceLogo.qml
     component/NavigationBar.qml
     component/NavigationButton.qml
@@ -23,6 +24,8 @@ set(MERCE_PLAYGROUND_COMPONENT_QML
 )
 
 set(MERCE_PLAYGROUND_PROBE_QML
+    probe/FontAwesomeGridProbe.qml
+    probe/FontAwesomeIconProbe.qml
     probe/PlaygroundProbe.qml
     probe/ThemeGalleryProbe.qml
     probe/ThemeProbe.qml
@@ -57,8 +60,13 @@ target_link_libraries(MercePlayground
         MerceCore
         MerceCoreEffects
         MerceFoundation
+        MerceIconsFontAwesome
         MerceControls
         MerceNotifications
+        Toastify
+        ToastifyStyle
+        Toastifyplugin
+        ToastifyStyleplugin
 )
 
 target_compile_definitions(MercePlayground

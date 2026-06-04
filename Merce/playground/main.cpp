@@ -56,6 +56,8 @@ int main(int argc, char *argv[])
     const bool themeProbe = arguments.contains(QStringLiteral("--theme-probe"));
     const bool themeSwitchProbe = arguments.contains(QStringLiteral("--theme-switch-probe"));
     const bool playgroundProbe = arguments.contains(QStringLiteral("--playground-probe"));
+    const bool fontAwesomeIconProbe = arguments.contains(QStringLiteral("--fontawesome-icon-probe"));
+    const bool fontAwesomeGridProbe = arguments.contains(QStringLiteral("--fontawesome-grid-probe"));
     const bool themeGalleryProbe = arguments.contains(QStringLiteral("--theme-gallery-probe"));
     const int exportThemeGalleryIndex = arguments.indexOf(QStringLiteral("--export-theme-gallery"));
     const bool exportThemeGallery = exportThemeGalleryIndex >= 0;
@@ -63,15 +65,6 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty(
         QStringLiteral("playgroundMaterialIcons"),
         loadIconCodepoints(QStringLiteral(":/qt/qml/Merce/Foundation/fonts/MaterialSymbolsRounded/MaterialSymbolsRounded.codepoints")));
-    engine.rootContext()->setContextProperty(
-        QStringLiteral("playgroundFontAwesomeSolidIcons"),
-        loadIconCodepoints(QStringLiteral(":/qt/qml/Merce/Foundation/fonts/FontAwesome/FontAwesomeSolid.codepoints")));
-    engine.rootContext()->setContextProperty(
-        QStringLiteral("playgroundFontAwesomeRegularIcons"),
-        loadIconCodepoints(QStringLiteral(":/qt/qml/Merce/Foundation/fonts/FontAwesome/FontAwesomeRegular.codepoints")));
-    engine.rootContext()->setContextProperty(
-        QStringLiteral("playgroundFontAwesomeBrandsIcons"),
-        loadIconCodepoints(QStringLiteral(":/qt/qml/Merce/Foundation/fonts/FontAwesome/FontAwesomeBrands.codepoints")));
 
     if (exportThemeGallery) {
         if (exportThemeGalleryIndex + 1 >= arguments.size()
@@ -92,9 +85,11 @@ int main(int argc, char *argv[])
 
     const char *component = exportThemeGallery ? "ThemeGalleryExport"
                                                : (themeGalleryProbe ? "ThemeGalleryProbe"
-                                                                    : (playgroundProbe ? "PlaygroundProbe"
-                                                                                       : (themeSwitchProbe ? "ThemeSwitchProbe"
-                                                                                                           : (themeProbe ? "ThemeProbe" : "Main"))));
+                                                                    : (fontAwesomeGridProbe ? "FontAwesomeGridProbe"
+                                                                                            : (fontAwesomeIconProbe ? "FontAwesomeIconProbe"
+                                                                                                                    : (playgroundProbe ? "PlaygroundProbe"
+                                                                                                                                       : (themeSwitchProbe ? "ThemeSwitchProbe"
+                                                                                                                                                           : (themeProbe ? "ThemeProbe" : "Main"))))));
     engine.loadFromModule("Merce.Playground", component);
 
     if (exportThemeGallery) {
@@ -110,6 +105,16 @@ int main(int argc, char *argv[])
     } else if (playgroundProbe) {
         QTimer::singleShot(3000, &app, []() {
             qCritical().noquote() << "Playground probe timed out";
+            QCoreApplication::exit(3);
+        });
+    } else if (fontAwesomeIconProbe) {
+        QTimer::singleShot(3000, &app, []() {
+            qCritical().noquote() << "Font Awesome icon probe timed out";
+            QCoreApplication::exit(3);
+        });
+    } else if (fontAwesomeGridProbe) {
+        QTimer::singleShot(5000, &app, []() {
+            qCritical().noquote() << "Font Awesome grid probe timed out";
             QCoreApplication::exit(3);
         });
     } else if (themeProbe || themeSwitchProbe || arguments.contains(QStringLiteral("--smoke-test"))) {

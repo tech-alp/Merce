@@ -15,9 +15,6 @@ Basic.ApplicationWindow {
 
     property string selectedPage: "theme"
     readonly property var materialIcons: playgroundMaterialIcons
-    readonly property var fontAwesomeSolidIcons: playgroundFontAwesomeSolidIcons
-    readonly property var fontAwesomeRegularIcons: playgroundFontAwesomeRegularIcons
-    readonly property var fontAwesomeBrandsIcons: playgroundFontAwesomeBrandsIcons
 
     ListModel {
         id: pageModel
@@ -275,9 +272,6 @@ Basic.ApplicationWindow {
         IconsShowcase {
             objectName: "merce.playground.iconsShowcase"
             materialIcons: root.materialIcons
-            fontAwesomeSolidIcons: root.fontAwesomeSolidIcons
-            fontAwesomeRegularIcons: root.fontAwesomeRegularIcons
-            fontAwesomeBrandsIcons: root.fontAwesomeBrandsIcons
         }
     }
 

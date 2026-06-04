@@ -35,24 +35,6 @@ Item {
         opticalSize: root.opticalSize
     }
 
-    InterStatusIcon {
-        anchors.fill: parent
-        visible: root.iconSpec.kind === "status"
-        glyph: root.iconSpec.glyph
-        size: root.size
-        color: root.color
-        weight: root.weight
-    }
-
-    FontAwesomeIcon {
-        anchors.fill: parent
-        visible: root.iconSpec.kind === "fontawesome"
-        glyph: root.iconSpec.glyph
-        iconStyle: root.iconSpec.family
-        size: root.size
-        color: root.color
-    }
-
     Image {
         anchors.fill: parent
         visible: root.iconSpec.kind === "image" && root.iconSpec.source !== ""

@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Optional design-token build tooling. This stays off by default so normal
 # Qt configure/build paths never require Node or npm.
 option(MERCE_ENABLE_TOKEN_BUILD "Enable the Style Dictionary token manifest build target" OFF)
+option(MERCE_ENABLE_FONTAWESOME "Build the optional Font Awesome SVG QML module" ON)
 
 if(MERCE_ENABLE_TOKEN_BUILD)
     find_program(NPM_EXECUTABLE npm)
@@ -28,7 +29,19 @@ find_package(Qt6 6.11 REQUIRED COMPONENTS Core Gui Quick Qml)
 
 qt_standard_project_setup(REQUIRES 6.11)
 include(CTest)
+include(FetchContent)
 set(QT_QML_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/qml")
+
+# External QML modules
+set(MERCE_QTTOASTIFY_GIT_TAG "09e7e12f7228a00efbb0c25920545de134620359" CACHE STRING "Pinned QtToastify revision")
+set(BUILD_PLAYGROUND OFF CACHE BOOL "Build QtToastify playground examples" FORCE)
+set(BUILD_TESTS OFF CACHE BOOL "Build QtToastify tests" FORCE)
+
+FetchContent_Declare(QtToastify
+    GIT_REPOSITORY https://github.com/tech-alp/QtToastify.git
+    GIT_TAG ${MERCE_QTTOASTIFY_GIT_TAG}
+)
+FetchContent_MakeAvailable(QtToastify)
 
 # ========================================================================
 # Merce Design System Modules
@@ -36,6 +49,9 @@ set(QT_QML_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/qml")
 
 add_subdirectory(Core)
 add_subdirectory(Foundation)
+if(MERCE_ENABLE_FONTAWESOME)
+    add_subdirectory(Icons/FontAwesome)
+endif()
 add_subdirectory(Controls)
 add_subdirectory(Notifications)
 
@@ -52,6 +68,9 @@ endif()
 option(BUILD_MERCE_PLAYGROUND "Build Merce playground application" ON)
 
 if(BUILD_MERCE_PLAYGROUND)
+    if(NOT MERCE_ENABLE_FONTAWESOME)
+        message(FATAL_ERROR "BUILD_MERCE_PLAYGROUND=ON requires MERCE_ENABLE_FONTAWESOME=ON for the Icons gallery.")
+    endif()
     add_subdirectory(playground)
 endif()
 
@@ -71,6 +90,10 @@ set(MERCE_QML_MODULE_TARGETS
     MerceControls
     MerceNotifications
 )
+
+if(MERCE_ENABLE_FONTAWESOME)
+    list(APPEND MERCE_QML_MODULE_TARGETS MerceIconsFontAwesome)
+endif()
 
 function(merce_install_qml_module_files module_dir files deploy_paths)
     list(LENGTH files file_count)

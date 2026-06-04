@@ -10,9 +10,7 @@ qt_add_qml_module(MerceFoundation
     QML_FILES
         AppIcon.qml
         FoundationFonts.qml
-        FontAwesomeIcon.qml
         IconRegistry.qml
-        InterStatusIcon.qml
         MaterialIcon.qml
         MSurface.qml
         MText.qml
@@ -26,23 +24,6 @@ qt_add_qml_module(MerceFoundation
         fonts/Inter/Inter-Medium.otf
         fonts/Inter/Inter-Regular.otf
         fonts/Inter/Inter-Thin.otf
-        fonts/InterStatus/InterStatus-Black.otf
-        fonts/InterStatus/InterStatus-Bold.otf
-        fonts/InterStatus/InterStatus-ExtraBold.otf
-        fonts/InterStatus/InterStatus-ExtraBoldItalic.otf
-        fonts/InterStatus/InterStatus-ExtraLight.otf
-        fonts/InterStatus/InterStatus-Light.otf
-        fonts/InterStatus/InterStatus-Medium.otf
-        fonts/InterStatus/InterStatus-Regular.otf
-        fonts/InterStatus/InterStatus-Thin.otf
-        fonts/InterStatus/InterStatus.codepoints
-        fonts/FontAwesome/FontAwesomeBrands-Regular-400.otf
-        fonts/FontAwesome/FontAwesomeBrands.codepoints
-        fonts/FontAwesome/FontAwesomeFree-Regular-400.otf
-        fonts/FontAwesome/FontAwesomeFree-Solid-900.otf
-        fonts/FontAwesome/FontAwesomeRegular.codepoints
-        fonts/FontAwesome/FontAwesomeSolid.codepoints
-        fonts/FontAwesome/LICENSE.txt
         fonts/MaterialSymbolsRounded/MaterialSymbolsRounded.ttf
         fonts/MaterialSymbolsRounded/MaterialSymbolsRounded.codepoints
         fonts/MaterialSymbolsRounded/LICENSE

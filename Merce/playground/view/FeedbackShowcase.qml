@@ -3,6 +3,7 @@ import Merce.Core
 import Merce.Foundation
 import Merce.Controls
 import Merce.Notifications
+import Toastify
 
 Item {
     id: root
@@ -17,13 +18,24 @@ Item {
         wrap: "word"
     }
 
-    MToast {
-        id: toast
-        objectName: "merce.playground.feedback.toast"
-        title: "Merce"
-        message: "Theme-aware notification sample."
-        variant: "info"
-        position: "bottom-right"
+    MerceToastifyStyleProvider {
+        id: toastStyle
+    }
+
+    Toastify {
+        id: toastify
+        objectName: "merce.playground.feedback.toastify"
+        style: toastStyle
+    }
+
+    function showToast(type, message) {
+        toastify.createMessage(message, {
+            type: type,
+            position: Toastify.BottomRightCorner,
+            autoClose: 4000,
+            closeOnClick: true,
+            hideProgressBar: false
+        })
     }
 
     MDialog {
@@ -71,41 +83,25 @@ Item {
                     MButton {
                         text: "Info"
                         variant: "outline"
-                        onClicked: {
-                            toast.variant = "info"
-                            toast.message = "Informational toast"
-                            toast.show()
-                        }
+                        onClicked: root.showToast(Toastify.Info, "Informational toast")
                     }
 
                     MButton {
                         text: "Success"
                         variant: "primary"
-                        onClicked: {
-                            toast.variant = "success"
-                            toast.message = "Success toast"
-                            toast.show()
-                        }
+                        onClicked: root.showToast(Toastify.Success, "Success toast")
                     }
 
                     MButton {
                         text: "Warning"
                         variant: "secondary"
-                        onClicked: {
-                            toast.variant = "warning"
-                            toast.message = "Warning toast"
-                            toast.show()
-                        }
+                        onClicked: root.showToast(Toastify.Warning, "Warning toast")
                     }
 
                     MButton {
                         text: "Error"
                         variant: "destructive"
-                        onClicked: {
-                            toast.variant = "error"
-                            toast.message = "Error toast"
-                            toast.show()
-                        }
+                        onClicked: root.showToast(Toastify.Error, "Error toast")
                     }
                 }
             }

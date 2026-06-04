@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls.Basic as Basic
 import Merce.Core
 import Merce.Foundation
+import Merce.Icons.FontAwesome
 import Merce.Controls
 
 Item {
@@ -14,26 +15,17 @@ Item {
     property string searchQuery: ""
     property string selectedIconFont: "material"
     property var materialIcons: []
-    property var fontAwesomeSolidIcons: []
-    property var fontAwesomeRegularIcons: []
-    property var fontAwesomeBrandsIcons: []
     property var materialIconList: []
-    property var fontAwesomeSolidIconList: []
-    property var fontAwesomeRegularIconList: []
-    property var fontAwesomeBrandsIconList: []
+    readonly property var fontAwesomeSolidIconList: FontAwesomeRegistry.iconNames("solid")
+    readonly property var fontAwesomeRegularIconList: FontAwesomeRegistry.iconNames("regular")
+    readonly property var fontAwesomeBrandsIconList: FontAwesomeRegistry.iconNames("brands")
     readonly property var iconFontOptions: [
         { "value": "material", "label": "Material Symbols" },
         { "value": "fa-solid", "label": "Font Awesome Solid" },
         { "value": "fa-regular", "label": "Font Awesome Regular" },
         { "value": "fa-brands", "label": "Font Awesome Brands" }
     ]
-    readonly property string activeIconPrefix: selectedIconFont === "fa-solid"
-                                               ? "fa-solid:"
-                                               : (selectedIconFont === "fa-regular"
-                                                  ? "fa-regular:"
-                                                  : (selectedIconFont === "fa-brands"
-                                                     ? "fa-brands:"
-                                                     : "material:"))
+    readonly property string activeIconPrefix: iconPrefix(selectedIconFont)
     readonly property string activeIconFontLabel: iconFontLabel(selectedIconFont)
     readonly property int iconCount: filteredIcons.count
     readonly property int fontAwesomeSolidIconCount: fontAwesomeSolidIconList.length
@@ -65,24 +57,6 @@ Item {
             refreshFilteredIcons()
     }
 
-    function setFontAwesomeSolidIcons(iconEntries) {
-        root.fontAwesomeSolidIconList = normalizeIconEntries(iconEntries)
-        if (root.selectedIconFont === "fa-solid")
-            refreshFilteredIcons()
-    }
-
-    function setFontAwesomeRegularIcons(iconEntries) {
-        root.fontAwesomeRegularIconList = normalizeIconEntries(iconEntries)
-        if (root.selectedIconFont === "fa-regular")
-            refreshFilteredIcons()
-    }
-
-    function setFontAwesomeBrandsIcons(iconEntries) {
-        root.fontAwesomeBrandsIconList = normalizeIconEntries(iconEntries)
-        if (root.selectedIconFont === "fa-brands")
-            refreshFilteredIcons()
-    }
-
     function wildcardToRegExp(query) {
         const escaped = query.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*")
         return new RegExp(escaped, "i")
@@ -91,7 +65,7 @@ Item {
     function matchesQuery(iconEntry, query) {
         if (query.length === 0)
             return true
-        const haystack = iconEntry.name + " " + iconEntry.codepoint
+        const haystack = iconEntry.name + " " + String(iconEntry.codepoint || "") + " " + String(iconEntry.style || "")
         if (query.indexOf("*") >= 0)
             return wildcardToRegExp(query).test(haystack)
         return haystack.toLowerCase().indexOf(query.toLowerCase()) >= 0
@@ -104,6 +78,16 @@ Item {
                 return option.label
         }
         return "Material Symbols"
+    }
+
+    function iconPrefix(iconFont) {
+        if (iconFont === "fa-solid")
+            return "fa-solid:"
+        if (iconFont === "fa-regular")
+            return "fa-regular:"
+        if (iconFont === "fa-brands")
+            return "fa-brands:"
+        return "material:"
     }
 
     function iconEntriesForSelectedFont() {
@@ -119,13 +103,14 @@ Item {
     function iconValueForEntry(iconEntry) {
         if (root.selectedIconFont === "material")
             return "material:" + iconEntry.name
-        return root.activeIconPrefix + iconEntry.codepoint
+        return iconPrefix(root.selectedIconFont) + iconEntry.name
     }
 
     function tooltipForEntry(iconEntry) {
-        if (iconEntry.codepoint.length === 0)
+        const codepoint = String(iconEntry.codepoint || "")
+        if (codepoint.length === 0)
             return iconEntry.name
-        return iconEntry.name + " / U+" + iconEntry.codepoint.toUpperCase()
+        return iconEntry.name + " / U+" + codepoint.toUpperCase()
     }
 
     function refreshFilteredIcons() {
@@ -147,14 +132,8 @@ Item {
     onSearchQueryChanged: refreshFilteredIcons()
     onSelectedIconFontChanged: refreshFilteredIcons()
     onMaterialIconsChanged: setMaterialIcons(materialIcons)
-    onFontAwesomeSolidIconsChanged: setFontAwesomeSolidIcons(fontAwesomeSolidIcons)
-    onFontAwesomeRegularIconsChanged: setFontAwesomeRegularIcons(fontAwesomeRegularIcons)
-    onFontAwesomeBrandsIconsChanged: setFontAwesomeBrandsIcons(fontAwesomeBrandsIcons)
     Component.onCompleted: {
         root.materialIconList = normalizeIconEntries(materialIcons)
-        root.fontAwesomeSolidIconList = normalizeIconEntries(fontAwesomeSolidIcons)
-        root.fontAwesomeRegularIconList = normalizeIconEntries(fontAwesomeRegularIcons)
-        root.fontAwesomeBrandsIconList = normalizeIconEntries(fontAwesomeBrandsIcons)
         refreshFilteredIcons()
     }
 
@@ -261,6 +240,15 @@ Item {
 
                             AppIcon {
                                 anchors.centerIn: parent
+                                visible: root.selectedIconFont === "material"
+                                name: iconTile.iconValue
+                                size: Theme.icons.large
+                                color: Theme.palette.textPrimary
+                            }
+
+                            FontAwesomeIcon {
+                                anchors.centerIn: parent
+                                visible: root.selectedIconFont !== "material"
                                 name: iconTile.iconValue
                                 size: Theme.icons.large
                                 color: Theme.palette.textPrimary

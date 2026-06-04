@@ -3,6 +3,7 @@ import Merce.Core
 import Merce.Foundation
 import Merce.Controls
 import Merce.Notifications
+import Toastify
 
 Item {
     id: root
@@ -19,7 +20,7 @@ Item {
     readonly property color observedInputBorderColor: emailInput.borderColor
     readonly property color observedToggleColor: switchSample.trackColor
     readonly property color observedSelectColor: selectSample.observedPaletteColor
-    readonly property color observedToastColor: galleryToast.variantConfig[galleryToast.variant].color
+    readonly property color observedToastColor: toastStyle.colors.success
     readonly property color observedDialogColor: galleryDialog.observedSurfaceColor
     readonly property bool hasRequiredAnchors: activeThemeSection.objectName === "merce.playground.gallery.activeTheme"
                                             && paletteSection.objectName === "merce.playground.gallery.palette"
@@ -456,7 +457,12 @@ Item {
                         objectName: "merce.playground.gallery.primaryButton"
                         text: "Primary"
                         variant: "primary"
-                        onClicked: galleryToast.show()
+                        onClicked: galleryToast.success("Galeri örneği yüklendi.", {
+                            position: Toastify.BottomRightCorner,
+                            autoClose: 4000,
+                            closeOnClick: true,
+                            hideProgressBar: false
+                        })
                     }
 
                     MButton {
@@ -581,12 +587,14 @@ Item {
         }
     }
 
-    MToast {
+    MerceToastifyStyleProvider {
+        id: toastStyle
+    }
+
+    Toastify {
         id: galleryToast
-        objectName: "merce.playground.gallery.toast"
-        title: "Merce"
-        message: "Galeri örneği yüklendi."
-        variant: "success"
+        objectName: "merce.playground.gallery.toastify"
+        style: toastStyle
     }
 
     MDialog {
