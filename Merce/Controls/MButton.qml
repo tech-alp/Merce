@@ -36,21 +36,31 @@ MBaseControl {
     // OVERRIDEN PROPERTIES (from MBaseControl)
     // ====================================================================
     override property color accentColor: {
-        if (variant === "secondary") return Theme.colors.action.secondary
-        if (variant === "outline") return Theme.colors.action.primary
-        if (variant === "ghost") return Theme.colors.action.primary
-        if (variant === "destructive") return Theme.colors.action.destructive
-        return Theme.colors.action.primary
+        if (variant === "secondary") return Theme.palette.actionSecondary
+        if (variant === "outline") return Theme.palette.actionPrimary
+        if (variant === "ghost") return Theme.palette.actionPrimary
+        if (variant === "destructive") return Theme.palette.statusError
+        return Theme.palette.actionPrimary
     }
 
     override property color backgroundColor: {
         if (root.isDisabled) return Theme.colors.background.hover
         if (variant === "outline" || variant === "ghost") return "transparent"
-        if (root.isHovered || root.isPressed) return Theme.colors.action.base(variant + "Dark")
-        return Theme.colors.action.base(variant)
+        if (root.isHovered || root.isPressed) {
+            if (variant === "secondary") return Theme.palette.action.secondaryDark
+            if (variant === "destructive") return Theme.palette.statusError
+            return Theme.palette.action.primaryDark
+        }
+        if (variant === "secondary") return Theme.palette.actionSecondary
+        if (variant === "destructive") return Theme.palette.statusError
+        return Theme.palette.actionPrimary
     }
 
-    override property color accentHoverColor: Theme.colors.action.base(variant + "Dark")
+    override property color accentHoverColor: {
+        if (variant === "secondary") return Theme.palette.action.secondaryDark
+        if (variant === "destructive") return Theme.palette.statusError
+        return Theme.palette.action.primaryDark
+    }
 
     // Size dimensions
     readonly property var sizeConfig: {

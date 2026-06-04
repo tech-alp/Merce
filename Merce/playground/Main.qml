@@ -49,6 +49,11 @@ Window {
                 wrap: "word"
             }
 
+            ThemeGallery {
+                objectName: "merce.playground.themeGallery"
+                width: parent.width
+            }
+
             MSurface {
                 objectName: "merce.playground.controlsSurface"
                 width: parent.width
