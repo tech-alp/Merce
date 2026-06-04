@@ -13,7 +13,7 @@ Item {
         return String(value).toUpperCase()
     }
 
-    component SectionTitle: MText {
+    component SectionTitle: ThemedText {
         type: "h4"
         textColor: Theme.palette.textPrimary
         wrap: "word"
@@ -46,7 +46,7 @@ Item {
             }
             spacing: Theme.spacing.xxs
 
-            MText {
+            ThemedText {
                 width: parent.width
                 type: "caption"
                 text: label
@@ -54,7 +54,7 @@ Item {
                 wrap: "word"
             }
 
-            MText {
+            ThemedText {
                 width: parent.width
                 type: "caption"
                 text: root.colorLabel(swatchColor)
@@ -64,7 +64,7 @@ Item {
         }
     }
 
-    component PaletteGroup: MSurface {
+    component PaletteGroup: Surface {
         required property string title
         default property alias content: groupFlow.data
 

@@ -6,7 +6,7 @@ import Merce.Foundation
  * MInput - Text input component
  * Touch-optimized input field with validation states
  */
-MSurface {
+Surface {
     id: root
 
     // ====================================================================

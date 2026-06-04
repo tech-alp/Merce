@@ -2,7 +2,7 @@ import QtQuick
 import Merce.Core
 
 /**
- * MBaseControl - Base component for all interactive controls
+ * BaseControl - Base primitive for interactive controls
  * Provides common properties and behaviors
  */
 Item {

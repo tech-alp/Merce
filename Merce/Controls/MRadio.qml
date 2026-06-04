@@ -6,7 +6,7 @@ import Merce.Foundation
  * MRadio - Radio button component
  * Touch-optimized radio button with dot indicator
  */
-MBaseControl {
+BaseControl {
     id: root
 
     // ====================================================================

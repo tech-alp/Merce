@@ -52,7 +52,7 @@ Item {
             color: root.checked ? Theme.palette.actionPrimary : Theme.palette.text.secondary
         }
 
-        MText {
+        ThemedText {
             width: parent.width - Theme.icons.small - parent.spacing
             anchors.verticalCenter: parent.verticalCenter
             type: "body"

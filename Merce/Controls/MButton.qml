@@ -6,7 +6,7 @@ import Merce.Foundation
  * MButton - Primary button component
  * Touch-optimized button with variant support
  */
-MBaseControl {
+BaseControl {
     id: root
 
     // ====================================================================
@@ -32,7 +32,7 @@ MBaseControl {
     property bool fullWidth: false
 
     // ====================================================================
-    // OVERRIDEN PROPERTIES (from MBaseControl)
+    // OVERRIDEN PROPERTIES (from BaseControl)
     // ====================================================================
     override property color accentColor: {
         if (variant === "secondary") return Theme.palette.actionSecondary

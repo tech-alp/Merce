@@ -29,20 +29,20 @@ Rectangle {
         }
         spacing: Theme.spacing.lg
 
-        MText {
+        ThemedText {
             type: "caption"
             text: root.activePage
             textColor: Theme.palette.textPrimary
         }
 
-        MText {
+        ThemedText {
             type: "caption"
             text: root.activeTheme
             textColor: Theme.palette.text.secondary
         }
     }
 
-    MText {
+    ThemedText {
         anchors {
             right: parent.right
             rightMargin: Theme.spacing.xl

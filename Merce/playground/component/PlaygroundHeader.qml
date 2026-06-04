@@ -15,7 +15,7 @@ Rectangle {
 
     color: Theme.palette.backgroundBase
 
-    MText {
+    ThemedText {
         id: titleText
         anchors {
             left: parent.left

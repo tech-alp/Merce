@@ -6,7 +6,7 @@ import Merce.Foundation
  * MCheckbox - Checkbox component with indeterminate state
  * Touch-optimized checkbox with validation states
  */
-MBaseControl {
+BaseControl {
     id: root
 
     // ====================================================================

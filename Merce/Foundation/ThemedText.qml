@@ -2,8 +2,8 @@ import QtQuick
 import Merce.Core
 
 /**
- * MText - Typography component
- * Provides consistent text styling with preset types
+ * ThemedText - Theme-aware text primitive
+ * Applies Merce typography presets to QtQuick Text
  */
 Text {
     id: root

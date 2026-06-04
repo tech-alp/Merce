@@ -7,7 +7,7 @@ import QtQuick.Effects
  * MSwitch - Toggle switch component
  * Touch-optimized toggle with animated thumb
  */
-MBaseControl {
+BaseControl {
     id: root
 
     // ====================================================================

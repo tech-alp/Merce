@@ -2,8 +2,8 @@ import QtQuick
 import Merce.Core
 
 /**
- * MSurface - Base surface component
- * Provides common surface properties with optional customization
+ * Surface - Theme-aware surface primitive
+ * Applies Merce surface colors, borders, radius, and state tokens
  */
 Rectangle {
     id: root

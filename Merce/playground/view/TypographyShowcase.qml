@@ -62,7 +62,7 @@ Item {
         width: root.width
         spacing: Theme.spacing.lg
 
-        MSurface {
+        Surface {
             objectName: "merce.playground.typography.scale"
             width: parent.width
             height: scaleColumn.implicitHeight + Theme.spacing.xl2

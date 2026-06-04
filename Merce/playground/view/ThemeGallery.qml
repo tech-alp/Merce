@@ -86,13 +86,13 @@ Item {
         return String(value).toUpperCase()
     }
 
-    component SectionTitle: MText {
+    component SectionTitle: ThemedText {
         type: "h4"
         textColor: Theme.palette.textPrimary
         wrap: "word"
     }
 
-    component FieldLabel: MText {
+    component FieldLabel: ThemedText {
         type: "caption"
         textColor: Theme.palette.text.secondary
         wrap: "word"
@@ -125,7 +125,7 @@ Item {
             }
             spacing: Theme.spacing.xxs
 
-            MText {
+            ThemedText {
                 width: parent.width
                 type: "caption"
                 text: label
@@ -133,7 +133,7 @@ Item {
                 wrap: "word"
             }
 
-            MText {
+            ThemedText {
                 width: parent.width
                 type: "caption"
                 text: root.colorLabel(swatchColor)
@@ -177,7 +177,7 @@ Item {
         width: root.width
         spacing: Theme.spacing.xl
 
-        MSurface {
+        Surface {
             id: activeThemeSection
             objectName: "merce.playground.gallery.activeTheme"
             width: parent.width
@@ -208,7 +208,7 @@ Item {
                             text: "Tema doğrulama galerisi"
                         }
 
-                        MText {
+                        ThemedText {
                             width: parent.width
                             type: "body"
                             text: Theme.activeBrand + " / " + root.displayMode
@@ -271,7 +271,7 @@ Item {
             }
         }
 
-        MSurface {
+        Surface {
             id: paletteSection
             objectName: "merce.playground.gallery.palette"
             width: parent.width
@@ -313,7 +313,7 @@ Item {
             }
         }
 
-        MSurface {
+        Surface {
             id: typographySection
             objectName: "merce.playground.gallery.typography"
             width: parent.width
@@ -336,7 +336,7 @@ Item {
                     text: "Typography"
                 }
 
-                MText {
+                ThemedText {
                     objectName: "merce.playground.gallery.typography.titleSample"
                     width: parent.width
                     type: "h2"
@@ -345,7 +345,7 @@ Item {
                     wrap: "word"
                 }
 
-                MText {
+                ThemedText {
                     id: bodySample
                     objectName: "merce.playground.gallery.typography.bodySample"
                     width: parent.width
@@ -355,7 +355,7 @@ Item {
                     wrap: "word"
                 }
 
-                MText {
+                ThemedText {
                     width: parent.width
                     type: "caption"
                     text: "Label " + Theme.typography.sizeSmall + " px / " + Theme.typography.weightSemibold
@@ -365,7 +365,7 @@ Item {
             }
         }
 
-        MSurface {
+        Surface {
             id: spacingRadiusSection
             objectName: "merce.playground.gallery.spacingRadius"
             width: parent.width
@@ -425,7 +425,7 @@ Item {
             }
         }
 
-        MSurface {
+        Surface {
             id: componentsSection
             objectName: "merce.playground.gallery.components"
             width: parent.width
@@ -533,7 +533,7 @@ Item {
             }
         }
 
-        MSurface {
+        Surface {
             id: exportStatusSection
             objectName: "merce.playground.gallery.exportStatus"
             width: parent.width
@@ -574,7 +574,7 @@ Item {
                     }
                 }
 
-                MText {
+                ThemedText {
                     id: exportState
                     objectName: "merce.playground.gallery.exportStateText"
                     width: parent.width

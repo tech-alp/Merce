@@ -14,13 +14,13 @@ Item {
     property bool radioValue: true
     property bool switchValue: true
 
-    component SectionTitle: MText {
+    component SectionTitle: ThemedText {
         type: "h4"
         textColor: Theme.palette.textPrimary
         wrap: "word"
     }
 
-    component DemoSection: MSurface {
+    component DemoSection: Surface {
         required property string title
         default property alias content: sectionContent.data
 

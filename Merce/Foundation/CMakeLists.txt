@@ -12,9 +12,8 @@ qt_add_qml_module(MerceFoundation
         FoundationFonts.qml
         IconRegistry.qml
         MaterialIcon.qml
-        MSurface.qml
-        MText.qml
-        MBaseControl.qml
+        Surface.qml
+        ThemedText.qml
     RESOURCES
         fonts/Inter/Inter-Black.otf
         fonts/Inter/Inter-Bold.otf

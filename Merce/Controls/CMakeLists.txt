@@ -2,6 +2,7 @@ qt_add_qml_module(MerceControls
     URI "Merce.Controls"
     VERSION 1.0
     QML_FILES
+        BaseControl.qml
         MButton.qml
         MInput.qml
         MCheckbox.qml

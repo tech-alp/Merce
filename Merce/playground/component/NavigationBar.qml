@@ -74,7 +74,7 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: Theme.spacing.xxs
 
-                MText {
+                ThemedText {
                     width: parent.width
                     type: "bodyLarge"
                     text: "Merce"
@@ -82,7 +82,7 @@ Rectangle {
                     wrap: "word"
                 }
 
-                MText {
+                ThemedText {
                     width: parent.width
                     type: "caption"
                     text: root.activeTheme
@@ -138,7 +138,7 @@ Rectangle {
                     width: parent.width
                     spacing: Theme.spacing.xs
 
-                    MText {
+                    ThemedText {
                         width: parent.width
                         text: category
                         type: "caption"

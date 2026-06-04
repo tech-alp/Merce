@@ -137,7 +137,7 @@ Item {
         refreshFilteredIcons()
     }
 
-    component SectionTitle: MText {
+    component SectionTitle: ThemedText {
         type: "h4"
         textColor: Theme.palette.textPrimary
         wrap: "word"
@@ -148,7 +148,7 @@ Item {
         width: root.width
         spacing: Theme.spacing.lg
 
-        MSurface {
+        Surface {
             width: parent.width
             height: iconsColumn.implicitHeight + Theme.spacing.xl2
             surfaceType: types["default"]
@@ -264,7 +264,7 @@ Item {
                     }
                 }
 
-                MText {
+                ThemedText {
                     width: parent.width
                     type: "caption"
                     text: root.activeIconFontLabel + " / " + filteredIcons.count + " icons"
