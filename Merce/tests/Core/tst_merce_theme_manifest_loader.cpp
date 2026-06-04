@@ -190,6 +190,8 @@ private slots:
     void unsafeManifestPathsAreRejected();
     void malformedJsonReportsParseError();
     void schemaVersionMismatchIsRejected();
+    void missingTopLevelRequiredSectionsAreRejected_data();
+    void missingTopLevelRequiredSectionsAreRejected();
     void topLevelColorsCompatibilitySectionIsRejected();
     void invalidRuntimeFieldValuesAreRejected();
     void activePaletteCannotBorrowMissingFieldsFromBase();
@@ -273,6 +275,35 @@ void tst_merce_theme_manifest_loader::schemaVersionMismatchIsRejected()
 
     QVERIFY(!result.ok);
     QVERIFY(containsError(result.errors, QStringLiteral("schemaVersion must be 1")));
+}
+
+void tst_merce_theme_manifest_loader::missingTopLevelRequiredSectionsAreRejected_data()
+{
+    QTest::addColumn<QString>("section");
+
+    QTest::newRow("palette") << QStringLiteral("palette");
+    QTest::newRow("spacing") << QStringLiteral("spacing");
+    QTest::newRow("radius") << QStringLiteral("radius");
+    QTest::newRow("typography") << QStringLiteral("typography");
+}
+
+void tst_merce_theme_manifest_loader::missingTopLevelRequiredSectionsAreRejected()
+{
+    QFETCH(QString, section);
+
+    QTemporaryDir dir;
+    QVERIFY(dir.isValid());
+
+    QJsonObject manifest = fullManifest(QStringLiteral("merce"), QStringLiteral("light"));
+    manifest.remove(section);
+    QVERIFY(writeJson(pathIn(dir, QStringLiteral("merce.light.json")), manifest));
+    QVERIFY(writeJson(pathIn(dir, QStringLiteral("index.json")), indexForDefaultMerce(QStringLiteral("merce.light.json"))));
+
+    const MerceThemeLoadResult result = MerceThemeManifestLoader(pathIn(dir, QStringLiteral("index.json"))).loadDefault();
+
+    QVERIFY(!result.ok);
+    QVERIFY(!result.usedFallback);
+    QVERIFY(containsError(result.errors, QStringLiteral("missing required field: %1").arg(section)));
 }
 
 void tst_merce_theme_manifest_loader::topLevelColorsCompatibilitySectionIsRejected()
