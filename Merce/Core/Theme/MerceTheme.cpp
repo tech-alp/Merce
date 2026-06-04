@@ -26,23 +26,14 @@ MerceTheme::MerceTheme(const QString &manifestIndexPath, QObject *parent)
       m_breakpoints(new MerceBreakpoints(this)),
       m_shadows(new MerceShadows(this))
 {
-    const MerceThemeLoadResult theme = MerceThemeManifestLoader().loadDefault();
+    const MerceThemeLoadResult theme = MerceThemeManifestLoader(m_manifestIndexPath).loadDefault();
     if (!theme.ok) {
         for (const QString &error : theme.errors)
             qCWarning(merceThemeLog) << "default manifest load failed:" << error;
         return;
     }
 
-    const QJsonObject manifest = theme.finalManifest;
-    m_palette->applyManifestSection(manifest.value(QStringLiteral("palette")).toObject());
-    m_spacing->applyManifestSection(manifest.value(QStringLiteral("spacing")).toObject());
-    m_radius->applyManifestSection(manifest.value(QStringLiteral("radius")).toObject());
-    m_typography->applyManifestSection(manifest.value(QStringLiteral("typography")).toObject());
-
-    emit paletteChanged();
-    emit spacingChanged();
-    emit radiusChanged();
-    emit typographyChanged();
+    applyLoadedTheme(theme);
 }
 
 QString MerceTheme::activeBrand() const
@@ -57,8 +48,36 @@ QString MerceTheme::activeMode() const
 
 bool MerceTheme::setTheme(const QString &brand, const QString &mode)
 {
-    Q_UNUSED(brand)
-    Q_UNUSED(mode)
-    qCWarning(merceThemeLog) << "runtime theme switch failed: runtime switching is not initialized";
-    return false;
+    const MerceThemeLoadResult theme = MerceThemeManifestLoader(m_manifestIndexPath).load(brand, mode);
+    if (!theme.ok) {
+        for (const QString &error : theme.errors)
+            qCWarning(merceThemeLog) << "runtime theme switch failed:" << error;
+        return false;
+    }
+
+    return applyLoadedTheme(theme);
+}
+
+bool MerceTheme::applyLoadedTheme(const MerceThemeLoadResult &result)
+{
+    if (!result.ok)
+        return false;
+
+    const QJsonObject manifest = result.finalManifest;
+    m_palette->applyManifestSection(manifest.value(QStringLiteral("palette")).toObject());
+    m_spacing->applyManifestSection(manifest.value(QStringLiteral("spacing")).toObject());
+    m_radius->applyManifestSection(manifest.value(QStringLiteral("radius")).toObject());
+    m_typography->applyManifestSection(manifest.value(QStringLiteral("typography")).toObject());
+    setActiveThemeState(result.theme, result.variant);
+    return true;
+}
+
+void MerceTheme::setActiveThemeState(const QString &brand, const QString &mode)
+{
+    if (m_activeBrand == brand && m_activeMode == mode)
+        return;
+
+    m_activeBrand = brand;
+    m_activeMode = mode;
+    emit activeThemeChanged();
 }
