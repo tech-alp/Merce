@@ -22,3 +22,4 @@ endfunction()
 
 merce_add_qtest(tst_merce_test_harness tst_merce_test_harness.cpp)
 merce_add_qtest(tst_merce_theme_manifest_loader tst_merce_theme_manifest_loader.cpp)
+merce_add_qtest(tst_merce_theme_runtime_switch tst_merce_theme_runtime_switch.cpp)
