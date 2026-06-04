@@ -1,6 +1,5 @@
 import QtQuick
 import Merce.Core
-import Merce.Core.Effects
 import Merce.Foundation
 
 /**
@@ -115,11 +114,7 @@ MBaseControl {
         border.width: root.borderWidth
         border.color: root.borderColor
 
-        // Shadow for non-ghost variants
-        layer.enabled: variant !== "ghost" && variant !== "outline" && !root.isLoading
-        layer.effect: ElevationEffect {
-            elevation: root.isPressed ? 0 : (root.isHovered ? 2 : 1)
-        }
+        layer.enabled: false
     }
 
     // Content

@@ -7,6 +7,7 @@ qt_add_qml_module(MercePlayground
     VERSION 1.0
     QML_FILES
         Main.qml
+        ThemeGalleryExport.qml
         ThemeGallery.qml
         ThemeGalleryProbe.qml
         ThemeProbe.qml
