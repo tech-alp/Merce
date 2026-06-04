@@ -8,6 +8,7 @@ qt_add_qml_module(MercePlayground
     QML_FILES
         Main.qml
         ThemeProbe.qml
+        ThemeSwitchProbe.qml
 )
 
 target_link_libraries(MercePlayground
