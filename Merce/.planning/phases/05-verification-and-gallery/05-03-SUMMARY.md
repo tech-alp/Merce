@@ -64,6 +64,7 @@ Each task was committed atomically:
 
 1. **Task 1: Add deterministic gallery export route** - `3f67a34` (`feat(05-03): add theme gallery export`)
 2. **Task 2: Document evidence and optional qmlagent selectors** - `2d6c89a` (`docs(05-03): document gallery evidence`)
+3. **Pre-review fix: Fail timed out gallery routes** - `e20e105` (`fix(05-03): fail timed out gallery routes`)
 
 ## Files Created/Modified
 
@@ -95,10 +96,18 @@ Each task was committed atomically:
 - **Verification:** Re-exported all three PNGs and visually inspected light, dark, and Stripe artifacts.
 - **Committed in:** `3f67a34`
 
+**2. [Rule 2 - Missing Critical] Gallery probe/export timeout fallback could return success**
+- **Found during:** Phase-level code review pre-pass after Task 2
+- **Issue:** `main.cpp` used safety timers for `--theme-gallery-probe` and `--export-theme-gallery` that would quit with exit 0 if the QML route hung before logging success.
+- **Fix:** Converted those timers to nonzero timeout exits with explicit diagnostics.
+- **Files modified:** `playground/main.cpp`
+- **Verification:** Rebuilt `MercePlayground`; `--theme-gallery-probe` and `--export-theme-gallery docs/assets/theme-gallery` both passed and logged their ok markers.
+- **Committed in:** `e20e105`
+
 ---
 
-**Total deviations:** 1 auto-fixed (blocking visual evidence issue).
-**Impact on plan:** Narrow rendering fix required for README-ready artifacts; no dependency or runtime API change.
+**Total deviations:** 2 auto-fixed (1 blocking visual evidence issue, 1 missing critical timeout guard).
+**Impact on plan:** Narrow fixes required for trustworthy README-ready artifacts and deterministic route failure semantics; no dependency or runtime API change.
 
 ## Issues Encountered
 
