@@ -9,7 +9,13 @@
 Q_LOGGING_CATEGORY(merceThemeLog, "merce.theme")
 
 MerceTheme::MerceTheme(QObject *parent)
+    : MerceTheme(QStringLiteral(":/merce/themes/index.json"), parent)
+{
+}
+
+MerceTheme::MerceTheme(const QString &manifestIndexPath, QObject *parent)
     : QObject(parent),
+      m_manifestIndexPath(manifestIndexPath),
       m_palette(new MercePalette(this)),
       m_spacing(new MerceSpacing(this)),
       m_radius(new MerceRadius(this)),
@@ -37,4 +43,22 @@ MerceTheme::MerceTheme(QObject *parent)
     emit spacingChanged();
     emit radiusChanged();
     emit typographyChanged();
+}
+
+QString MerceTheme::activeBrand() const
+{
+    return m_activeBrand;
+}
+
+QString MerceTheme::activeMode() const
+{
+    return m_activeMode;
+}
+
+bool MerceTheme::setTheme(const QString &brand, const QString &mode)
+{
+    Q_UNUSED(brand)
+    Q_UNUSED(mode)
+    qCWarning(merceThemeLog) << "runtime theme switch failed: runtime switching is not initialized";
+    return false;
 }

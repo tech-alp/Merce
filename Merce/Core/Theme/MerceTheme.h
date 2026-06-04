@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QObject>
+#include <QString>
 #include <QtQml/qqmlregistration.h>
 
 #include "MerceBreakpoints.h"
@@ -13,14 +14,16 @@
 #include "MerceTypography.h"
 #include "MerceZIndex.h"
 
+struct MerceThemeLoadResult;
+
 class MerceTheme : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(MercePalette *palette READ palette NOTIFY paletteChanged FINAL)
-    Q_PROPERTY(MercePalette *colors READ colors NOTIFY paletteChanged FINAL)
-    Q_PROPERTY(MerceSpacing *spacing READ spacing NOTIFY spacingChanged FINAL)
-    Q_PROPERTY(MerceRadius *radius READ radius NOTIFY radiusChanged FINAL)
-    Q_PROPERTY(MerceTypography *typography READ typography NOTIFY typographyChanged FINAL)
+    Q_PROPERTY(MercePalette *palette READ palette CONSTANT FINAL)
+    Q_PROPERTY(MercePalette *colors READ colors CONSTANT FINAL)
+    Q_PROPERTY(MerceSpacing *spacing READ spacing CONSTANT FINAL)
+    Q_PROPERTY(MerceRadius *radius READ radius CONSTANT FINAL)
+    Q_PROPERTY(MerceTypography *typography READ typography CONSTANT FINAL)
     Q_PROPERTY(MerceMotion *motion READ motion NOTIFY motionChanged FINAL)
     Q_PROPERTY(MerceIconography *icons READ icons NOTIFY iconsChanged FINAL)
     Q_PROPERTY(MerceIconography *iconography READ iconography NOTIFY iconsChanged FINAL)
@@ -28,6 +31,8 @@ class MerceTheme : public QObject
     Q_PROPERTY(MerceBreakpoints *breakpoint READ breakpoint NOTIFY breakpointsChanged FINAL)
     Q_PROPERTY(MerceBreakpoints *breakpoints READ breakpoints NOTIFY breakpointsChanged FINAL)
     Q_PROPERTY(MerceShadows *shadows READ shadows NOTIFY shadowsChanged FINAL)
+    Q_PROPERTY(QString activeBrand READ activeBrand NOTIFY activeThemeChanged FINAL)
+    Q_PROPERTY(QString activeMode READ activeMode NOTIFY activeThemeChanged FINAL)
     QML_NAMED_ELEMENT(Theme)
     QML_SINGLETON
 
@@ -46,6 +51,10 @@ public:
     MerceBreakpoints *breakpoint() const { return m_breakpoints; }
     MerceBreakpoints *breakpoints() const { return m_breakpoints; }
     MerceShadows *shadows() const { return m_shadows; }
+    QString activeBrand() const;
+    QString activeMode() const;
+
+    Q_INVOKABLE bool setTheme(const QString &brand, const QString &mode = QString());
 
 signals:
     void paletteChanged();
@@ -57,8 +66,19 @@ signals:
     void zIndexChanged();
     void breakpointsChanged();
     void shadowsChanged();
+    void activeThemeChanged();
 
 private:
+    explicit MerceTheme(const QString &manifestIndexPath, QObject *parent = nullptr);
+
+    bool applyLoadedTheme(const MerceThemeLoadResult &result);
+    void setActiveThemeState(const QString &brand, const QString &mode);
+
+    friend class tst_merce_theme_runtime_switch;
+
+    QString m_manifestIndexPath;
+    QString m_activeBrand;
+    QString m_activeMode;
     MercePalette *m_palette = nullptr;
     MerceSpacing *m_spacing = nullptr;
     MerceRadius *m_radius = nullptr;
