@@ -22,7 +22,7 @@ MBaseControl {
     property string size: "medium"      // small, medium, large
 
     // Icon support
-    property url iconSource: ""
+    property string icon: ""
     property string iconPosition: "left"  // left, right
 
     // Loading state
@@ -91,7 +91,7 @@ MBaseControl {
 
     property int implicitContentWidth: {
         const paddingH = sizeConfig[size].paddingH
-        const iconWidth = iconSource !== "" ? sizeConfig[size].iconSize + Theme.spacing.sm : 0
+        const iconWidth = icon !== "" ? sizeConfig[size].iconSize + Theme.spacing.sm : 0
         const textWidth = textMetrics.width
         return paddingH * 2 + iconWidth + textWidth + Theme.spacing.sm
     }
@@ -124,23 +124,23 @@ MBaseControl {
         layoutDirection: iconPosition === "right" ? Qt.RightToLeft : Qt.LeftToRight
 
         // Icon
-        Icon {
-            id: icon
-            source: root.iconSource
+        AppIcon {
+            id: iconItem
+            name: root.icon
             size: root.sizeConfig[root.size].iconSize
             color: {
                 if (root.isDisabled) return Theme.colors.text.disabled
                 if (variant === "outline" || variant === "ghost") return root.accentColor
                 return Theme.colors.text.inverse
             }
-            visible: root.iconSource !== "" && !root.isLoading
+            visible: root.icon !== "" && !root.isLoading
         }
 
         // Text
         Text {
             id: buttonText
             text: root.text
-            font.family: Theme.typography.fontBody
+            font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
             font.pixelSize: root.sizeConfig[root.size].fontSize
             font.weight: Theme.typography.weightSemibold
             color: {
@@ -168,7 +168,7 @@ MBaseControl {
     TextMetrics {
         id: textMetrics
         text: root.text
-        font.family: Theme.typography.fontBody
+        font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
         font.pixelSize: sizeConfig[size].fontSize
         font.weight: Theme.typography.weightSemibold
     }

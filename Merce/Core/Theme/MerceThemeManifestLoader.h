@@ -3,6 +3,7 @@
 #include "MerceThemeManifest.h"
 
 #include <QString>
+#include <QVariantList>
 
 class MerceThemeManifestLoader
 {
@@ -11,6 +12,7 @@ public:
 
     MerceThemeLoadResult loadDefault() const;
     MerceThemeLoadResult load(const QString &theme, const QString &variant = QString()) const;
+    QVariantList availableThemes() const;
 
 private:
     QString m_indexPath;

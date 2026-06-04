@@ -1,14 +1,15 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Basic as Basic
+import QtQuick.Window
 import Merce.Core
 import Merce.Foundation
 import QtQuick.Effects
 
 /**
  * MSelect - Dropdown select component
- * Touch-optimized select with keyboard navigation
+ * Touch-optimized select built on Qt Quick Controls ComboBox.
  */
-Item {
+Basic.ComboBox {
     id: root
 
     // ====================================================================
@@ -25,10 +26,23 @@ Item {
     property string valueField: "value"
     property string labelField: "label"
 
-    // State
-    property bool isOpen: false
-    property bool isHovered: false
-    property bool isFocused: false
+    // State aliases kept for consumers and styling
+    readonly property bool isOpen: root.popup.visible
+    readonly property bool isHovered: root.hovered
+    readonly property bool isFocused: root.activeFocus || root.visualFocus
+    readonly property real dropdownMargin: Theme.spacing.sm
+    readonly property real dropdownVerticalOffset: 4
+    readonly property int optionHeight: Theme.spacing.touchTargetCompact
+    readonly property int optionCount: root.options ? root.options.length : 0
+    readonly property real dropdownContentHeight: {
+        const spacingHeight = Math.max(0, root.optionCount - 1) * Theme.spacing.xxs
+        return root.optionCount * root.optionHeight + spacingHeight
+    }
+    readonly property real dropdownPopupHeight: Math.min(root.dropdownContentHeight + Theme.spacing.xs * 2, 300)
+    readonly property real dropdownAvailableHeight: {
+        const windowHeight = root.Window.height > 0 ? root.Window.height : 300
+        return Math.max(root.optionHeight + Theme.spacing.xs * 2, windowHeight - root.dropdownMargin * 2)
+    }
 
     // ====================================================================
     // SIGNALS
@@ -50,112 +64,92 @@ Item {
             "fontSize": Theme.typography.sizeMedium
         }
     }
+    readonly property var currentSizeConfig: root.sizeConfig[root.size] || root.sizeConfig["medium"]
 
     // ====================================================================
-    // DIMENSIONS
+    // DIMENSIONS AND MODEL
     // ====================================================================
     implicitWidth: 280
-    implicitHeight: root.sizeConfig[root.size].height
+    implicitHeight: root.currentSizeConfig.height
+    z: root.isOpen ? Theme.zIndex.dropdown : 0
+    enabled: !root.isDisabled
+    focus: true
+    currentIndex: -1
+    model: root.options || []
+    textRole: root.labelField
+    valueRole: root.valueField
 
     // Get selected option
-    readonly property var selectedOption: {
-        if (root.selectedValue === null) return null
-        return root.options.find(opt => opt[root.valueField] === root.selectedValue)
-    }
+    readonly property var selectedOption: root.optionAt(root.indexOfValue(root.selectedValue))
 
-    // Get display text
-    readonly property string displayText: {
-        if (root.selectedOption) return root.selectedOption[root.labelField]
-        return root.placeholder
+    displayText: root.selectedOption ? root.optionLabel(root.selectedOption) : root.placeholder
+
+    onSelectedValueChanged: root.syncCurrentIndex()
+    onOptionsChanged: root.syncCurrentIndex()
+    Component.onCompleted: root.syncCurrentIndex()
+
+    onActivated: function(index) {
+        const option = root.optionAt(index)
+        if (!option)
+            return
+
+        root.selectOption(root.optionValue(option))
     }
 
     // ====================================================================
     // TRIGGER BUTTON
     // ====================================================================
-    MSurface {
-        id: selectTrigger
-        anchors.fill: parent
-        surfaceType: types["default"]
+    indicator: AppIcon {
+        id: chevronIcon
+        x: root.width - width - Theme.spacing.md
+        y: root.topPadding + (root.availableHeight - height) / 2
+        name: "material:keyboard_arrow_down"
+        size: Theme.icons.small
+        color: root.enabled ? Theme.palette.text.tertiary : Theme.palette.text.disabled
+        rotation: root.isOpen ? 180 : 0
 
-        override property color borderColor: {
-            if (root.isDisabled) return Theme.colors.border.base
-            if (root.isOpen || root.isFocused) return Theme.colors.border.focus
-            if (root.isHovered) return Theme.colors.border.strong
-            return Theme.colors.border.base
-        }
-
-        override property int borderWidth: root.isOpen || root.isFocused ? 2 : 1
-        override property int radiusValue: Theme.radius.input
-
-        // Content
-        Item {
-            anchors {
-                fill: parent
-                leftMargin: Theme.spacing.md
-                rightMargin: Theme.spacing.md
-            }
-
-            // Selected text
-            Text {
-                id: selectedText
-                anchors {
-                    left: parent.left
-                    right: chevronIcon.left
-                    rightMargin: Theme.spacing.sm
-                    verticalCenter: parent.verticalCenter
-                }
-                text: root.displayText
-                font.family: Theme.typography.fontBody
-                font.pixelSize: root.sizeConfig[root.size].fontSize
-                color: {
-                    if (root.isDisabled) return Theme.colors.text.disabled
-                    if (root.selectedOption) return Theme.colors.text.primary
-                    return Theme.colors.text.tertiary
-                }
-                elide: Text.ElideRight
-            }
-
-            // Chevron icon
-            Text {
-                id: chevronIcon
-                anchors {
-                    right: parent.right
-                    verticalCenter: parent.verticalCenter
-                }
-                text: root.isOpen ? "\ue5e7" : "\ue5c5"  // Material up/down arrows
-                font.family: "Material Symbols Outlined"
-                font.pixelSize: Theme.icons.small
-                color: {
-                    if (root.isDisabled) return Theme.colors.text.disabled
-                    return Theme.colors.text.tertiary
-                }
-
-                // Rotate animation
-                rotation: root.isOpen ? 180 : 0
-
-                Behavior on rotation {
-                    NumberAnimation {
-                        duration: Theme.motion.durationFast
-                        easing: Theme.motion.easingOut
-                    }
-                }
+        Behavior on rotation {
+            NumberAnimation {
+                duration: Theme.motion.durationFast
+                easing: Theme.motion.easingOut
             }
         }
+    }
 
-        // Mouse area for trigger
-        MouseArea {
-            anchors.fill: parent
-            cursorShape: root.isDisabled ? Qt.ArrowCursor : Qt.PointingHandCursor
-            enabled: !root.isDisabled
-            hoverEnabled: true
+    contentItem: Text {
+        leftPadding: Theme.spacing.md
+        rightPadding: chevronIcon.width + Theme.spacing.md + Theme.spacing.sm
+        text: root.displayText
+        font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
+        font.pixelSize: root.currentSizeConfig.fontSize
+        color: {
+            if (!root.enabled)
+                return Theme.palette.text.disabled
+            if (root.selectedOption)
+                return Theme.palette.text.primary
+            return Theme.palette.text.tertiary
+        }
+        verticalAlignment: Text.AlignVCenter
+        elide: Text.ElideRight
+    }
 
-            onClicked: root.toggleDropdown()
-            onEntered: root.isHovered = true
-            onExited: root.isHovered = false
+    background: Rectangle {
+        implicitWidth: 280
+        implicitHeight: root.currentSizeConfig.height
+        radius: Theme.radius.input
+        color: root.enabled ? Theme.palette.background.surface : Theme.palette.background.base
+        border.width: root.isOpen || root.isFocused ? 2 : 1
+        border.color: {
+            if (!root.enabled)
+                return Theme.palette.border.base
+            if (root.isOpen || root.isFocused)
+                return Theme.palette.border.focus
+            if (root.isHovered)
+                return Theme.palette.border.strong
+            return Theme.palette.border.base
         }
 
-        // Animation for border color
-        Behavior on borderColor {
+        Behavior on border.color {
             ColorAnimation {
                 duration: Theme.motion.durationFast
                 easing: Theme.motion.easingOut
@@ -164,38 +158,102 @@ Item {
     }
 
     // ====================================================================
-    // DROPDOWN OVERLAY
+    // OPTION DELEGATE
     // ====================================================================
-    Item {
-        id: dropdownOverlay
-        anchors.fill: parent
-        visible: root.isOpen
-        z: 1000
+    delegate: Basic.ItemDelegate {
+        id: optionDelegate
 
-        // Backdrop (click outside to close)
-        Rectangle {
-            id: backdrop
-            anchors.fill: parent
-            color: "transparent"
-            visible: root.isOpen
+        required property var modelData
+        required property int index
 
-            MouseArea {
-                anchors.fill: parent
-                onClicked: root.closeDropdown()
+        readonly property var optionValue: root.optionValue(modelData)
+        readonly property string optionLabel: root.optionLabel(modelData)
+        readonly property bool selectedOption: root.selectedValue === optionValue
+
+        objectName: root.objectName !== "" ? root.objectName + ".popup.option." + String(optionValue) : ""
+        width: root.width
+        height: root.optionHeight
+        highlighted: root.highlightedIndex === index
+
+        contentItem: Item {
+            Text {
+                id: optionText
+                anchors {
+                    left: parent.left
+                    right: checkmark.left
+                    leftMargin: Theme.spacing.md
+                    rightMargin: Theme.spacing.md
+                    verticalCenter: parent.verticalCenter
+                }
+                text: optionDelegate.optionLabel
+                font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
+                font.pixelSize: root.currentSizeConfig.fontSize
+                color: optionDelegate.selectedOption ? Theme.palette.action.primary : Theme.palette.text.primary
+                font.weight: optionDelegate.selectedOption ?
+                             Theme.typography.weightSemibold : Theme.typography.weightRegular
+                elide: Text.ElideRight
+            }
+
+            AppIcon {
+                id: checkmark
+                anchors {
+                    right: parent.right
+                    rightMargin: Theme.spacing.md
+                    verticalCenter: parent.verticalCenter
+                }
+                name: "material:check"
+                size: Theme.icons.small
+                color: Theme.palette.action.primary
+                visible: optionDelegate.selectedOption
             }
         }
 
-        // Dropdown menu
-        Rectangle {
-            id: dropdownMenu
-            x: 0
-            y: selectTrigger.height + 4
-            width: root.width
-            height: Math.min(dropdownContent.height + Theme.spacing.md, 300)
-            radius: Theme.radius.input
-            color: Theme.colors.background.surface
+        background: Rectangle {
+            radius: Theme.radius.small
+            color: {
+                if (optionDelegate.selectedOption)
+                    return Theme.palette.action.light("primary")
+                if (optionDelegate.highlighted || optionDelegate.hovered)
+                    return Theme.palette.background.hover
+                return "transparent"
+            }
 
-            // Shadow
+            Behavior on color {
+                ColorAnimation {
+                    duration: Theme.motion.durationFast
+                    easing: Theme.motion.easingOut
+                }
+            }
+        }
+    }
+
+    // ====================================================================
+    // POPUP
+    // ====================================================================
+    popup: Basic.Popup {
+        id: dropdownPopup
+        objectName: root.objectName !== "" ? root.objectName + ".popup" : "merce.select.popup"
+        popupType: Basic.Popup.Item
+        y: root.height + root.dropdownVerticalOffset
+        width: root.width
+        height: Math.min(root.dropdownPopupHeight, root.dropdownAvailableHeight)
+        padding: Theme.spacing.xs
+        margins: root.dropdownMargin
+        modal: false
+        dim: false
+        focus: true
+        closePolicy: Basic.Popup.CloseOnEscape | Basic.Popup.CloseOnPressOutsideParent
+        z: Theme.zIndex.dropdown
+
+        onOpened: root.opened()
+        onClosed: root.closed()
+
+        background: Rectangle {
+            radius: Theme.radius.input
+            color: Theme.palette.background.surface
+            border.width: 1
+            border.color: Theme.palette.border.base
+
             layer.enabled: true
             layer.effect: MultiEffect {
                 shadowEnabled: true
@@ -203,124 +261,21 @@ Item {
                 shadowBlur: 1.0
                 shadowOpacity: 0.3
             }
+        }
 
-            // Border
-            border.width: 1
-            border.color: Theme.colors.border.base
-
-            // Opacity and scale animation
-            opacity: root.isOpen ? 1.0 : 0.0
-            scale: root.isOpen ? 1.0 : 0.95
-
-            Behavior on opacity {
-                NumberAnimation {
-                    duration: Theme.motion.durationFast
-                    easing: Theme.motion.easingOut
-                }
-            }
-
-            Behavior on scale {
-                NumberAnimation {
-                    duration: Theme.motion.durationFast
-                    easing: Theme.motion.easingOut
-                }
-            }
-
-            // Clip content
+        contentItem: ListView {
+            id: dropdownContent
+            objectName: root.objectName !== "" ? root.objectName + ".popup.content" : "merce.select.popup.content"
             clip: true
+            implicitHeight: contentHeight
+            model: root.popup.visible ? root.delegateModel : null
+            currentIndex: root.highlightedIndex
+            spacing: Theme.spacing.xxs
+            interactive: contentHeight > height
+            boundsBehavior: Flickable.StopAtBounds
 
-            // Dropdown content (scrollable)
-            ListView {
-                id: dropdownContent
-                anchors {
-                    top: parent.top
-                    left: parent.left
-                    right: parent.right
-                    margins: Theme.spacing.xs
-                }
-                height: Math.min(contentHeight, 280)
-                model: root.options
-                spacing: Theme.spacing.xxs
-                interactive: contentHeight > 280
-                clip: true
-
-                // Scroll bar
-                ScrollBar.vertical: ScrollBar {
-                    policy: dropdownContent.contentHeight > 280 ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
-                }
-
-                delegate: Rectangle {
-                    id: optionItem
-                    width: dropdownMenu.width - Theme.spacing.sm
-                    height: Theme.spacing.touchTargetCompact
-                    radius: Theme.radius.small
-                    color: {
-                        if (root.selectedValue === modelData[root.valueField]) {
-                            return Theme.colors.action.light("primary")
-                        }
-                        if (optionMouseArea.containsMouse) {
-                            return Theme.colors.background.hover
-                        }
-                        return "transparent"
-                    }
-
-                    // Option text
-                    Text {
-                        id: optionText
-                        anchors {
-                            left: parent.left
-                            right: checkmark.left
-                            leftMargin: Theme.spacing.md
-                            rightMargin: Theme.spacing.md
-                            verticalCenter: parent.verticalCenter
-                        }
-                        text: modelData[root.labelField]
-                        font.family: Theme.typography.fontBody
-                        font.pixelSize: root.sizeConfig[root.size].fontSize
-                        color: {
-                            if (root.selectedValue === modelData[root.valueField]) {
-                                return Theme.colors.action.primary
-                            }
-                            return Theme.colors.text.primary
-                        }
-                        font.weight: root.selectedValue === modelData[root.valueField] ?
-                                   Theme.typography.weightSemibold : Theme.typography.weightRegular
-                        elide: Text.ElideRight
-                    }
-
-                    // Checkmark for selected option
-                    Text {
-                        id: checkmark
-                        anchors {
-                            right: parent.right
-                            rightMargin: Theme.spacing.md
-                            verticalCenter: parent.verticalCenter
-                        }
-                        text: "\ue834"  // Material check icon
-                        font.family: "Material Symbols Outlined"
-                        font.pixelSize: Theme.icons.small
-                        color: Theme.colors.action.primary
-                        visible: root.selectedValue === modelData[root.valueField]
-                    }
-
-                    // Mouse area for option
-                    MouseArea {
-                        id: optionMouseArea
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        hoverEnabled: true
-
-                        onClicked: root.selectOption(modelData[root.valueField])
-                    }
-
-                    // Animation for background color
-                    Behavior on color {
-                        ColorAnimation {
-                            duration: Theme.motion.durationFast
-                            easing: Theme.motion.easingOut
-                        }
-                    }
-                }
+            Basic.ScrollBar.vertical: Basic.ScrollBar {
+                policy: dropdownContent.contentHeight > dropdownContent.height ? Basic.ScrollBar.AlwaysOn : Basic.ScrollBar.AlwaysOff
             }
         }
     }
@@ -329,64 +284,69 @@ Item {
     // PUBLIC METHODS
     // ====================================================================
     function toggleDropdown() {
-        if (root.isOpen) {
+        if (root.isOpen)
             root.closeDropdown()
-        } else {
+        else
             root.openDropdown()
-        }
     }
 
     function openDropdown() {
-        root.isOpen = true
-        root.opened()
+        if (root.isDisabled || root.isOpen)
+            return
+
+        root.syncCurrentIndex()
+        root.popup.open()
     }
 
     function closeDropdown() {
-        root.isOpen = false
-        root.closed()
+        if (!root.isOpen)
+            return
+
+        root.popup.close()
     }
 
     function selectOption(value) {
         root.selectedValue = value
+        root.syncCurrentIndex()
         root.selected(value)
         root.closeDropdown()
     }
 
-    // ====================================================================
-    // KEYBOARD HANDLING
-    // ====================================================================
-    focus: true
-    Keys.onSpacePressed: {
-        if (!root.isDisabled && !root.isOpen) {
-            root.toggleDropdown()
+    function indexOfValue(value) {
+        if (!root.options)
+            return -1
+
+        for (let i = 0; i < root.options.length; ++i) {
+            if (root.optionValue(root.options[i]) === value)
+                return i
         }
+        return -1
     }
-    Keys.onUpPressed: {
-        if (root.isOpen) {
-            let currentIndex = dropdownContent.currentIndex
-            if (currentIndex > 0) {
-                dropdownContent.currentIndex = currentIndex - 1
-            }
-        }
+
+    function optionAt(index) {
+        if (!root.options || index < 0 || index >= root.options.length)
+            return null
+        return root.options[index]
     }
-    Keys.onDownPressed: {
-        if (root.isOpen) {
-            let currentIndex = dropdownContent.currentIndex
-            if (currentIndex < root.options.length - 1) {
-                dropdownContent.currentIndex = currentIndex + 1
-            }
-        } else if (!root.isDisabled) {
-            root.openDropdown()
-        }
+
+    function optionValue(option) {
+        if (!option)
+            return null
+        return option[root.valueField]
     }
-    Keys.onEnterPressed: {
-        if (root.isOpen && dropdownContent.currentIndex >= 0) {
-            let selectedOption = root.options[dropdownContent.currentIndex]
-            root.selectOption(selectedOption[root.valueField])
-        }
+
+    function optionLabel(option) {
+        if (!option)
+            return ""
+        const value = option[root.labelField]
+        return value === undefined || value === null ? "" : String(value)
     }
-    Keys.onReturnPressed: root.Keys.onEnterPressed(event)
-    Keys.onEscapePressed: root.closeDropdown()
+
+    function syncCurrentIndex() {
+        const nextIndex = root.indexOfValue(root.selectedValue)
+        if (root.currentIndex !== nextIndex)
+            root.currentIndex = nextIndex
+    }
 
     // ====================================================================
     // ACCESSIBILITY

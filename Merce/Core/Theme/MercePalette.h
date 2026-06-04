@@ -435,6 +435,7 @@ class MercePalette : public QObject
     Q_PROPERTY(QColor actionPrimary READ actionPrimary NOTIFY changed FINAL)
     Q_PROPERTY(QColor actionSecondary READ actionSecondary NOTIFY changed FINAL)
     Q_PROPERTY(QColor borderBase READ borderBase NOTIFY changed FINAL)
+    Q_PROPERTY(QColor statusSuccess READ statusSuccess NOTIFY changed FINAL)
     Q_PROPERTY(QColor statusError READ statusError NOTIFY changed FINAL)
     QML_ANONYMOUS
 
@@ -468,6 +469,7 @@ public:
     QColor actionPrimary() const { return m_action->primary(); }
     QColor actionSecondary() const { return m_action->secondary(); }
     QColor borderBase() const { return m_border->base(); }
+    QColor statusSuccess() const { return m_status->success(); }
     QColor statusError() const { return m_status->error(); }
 
     void applyManifestSection(const QJsonObject &section)

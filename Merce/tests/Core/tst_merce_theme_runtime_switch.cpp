@@ -8,6 +8,8 @@
 #include <QMetaProperty>
 #include <QSignalSpy>
 #include <QTemporaryDir>
+#include <QVariantMap>
+#include <QVariantList>
 #include <QtTest/QtTest>
 
 namespace {
@@ -39,6 +41,16 @@ QMetaProperty propertyByName(const QMetaObject *metaObject, const char *name)
     return metaObject->property(index);
 }
 
+QVariantMap mapByValue(const QVariantList &items, const QString &value)
+{
+    for (const QVariant &item : items) {
+        const QVariantMap map = item.toMap();
+        if (map.value(QStringLiteral("value")).toString() == value)
+            return map;
+    }
+    return {};
+}
+
 } // namespace
 
 class tst_merce_theme_runtime_switch : public QObject
@@ -50,6 +62,7 @@ private slots:
     void successfulSwitchesUpdateStateAndKeepObjectPointers();
     void invalidRequestsPreserveActiveStateAndValues();
     void registeredBrokenManifestAppliesFallbackState();
+    void availableThemesExposeRegistryOptions();
     void metaObjectContractKeepsStablePointersAndValueNotifySignals();
 };
 
@@ -105,6 +118,36 @@ void tst_merce_theme_runtime_switch::successfulSwitchesUpdateStateAndKeepObjectP
     QCOMPARE(theme.spacing(), spacing);
     QCOMPARE(theme.radius(), radius);
     QCOMPARE(theme.typography(), typography);
+
+    struct ReferenceThemeExpectation {
+        QString brand;
+        QColor backgroundBase;
+        QColor actionPrimary;
+        int buttonRadius;
+    };
+
+    const ReferenceThemeExpectation referenceThemes[] = {
+        { QStringLiteral("apple"), QColor(QStringLiteral("#F5F5F7")), QColor(QStringLiteral("#0066CC")), 9999 },
+        { QStringLiteral("claude"), QColor(QStringLiteral("#FAF9F5")), QColor(QStringLiteral("#CC785C")), 8 },
+        { QStringLiteral("airbnb"), QColor(QStringLiteral("#FFFFFF")), QColor(QStringLiteral("#FF385C")), 8 },
+    };
+
+    int expectedSignalCount = activeThemeChanged.count();
+    for (const ReferenceThemeExpectation &expectation : referenceThemes) {
+        QVERIFY(theme.setTheme(expectation.brand));
+        ++expectedSignalCount;
+        QCOMPARE(theme.activeBrand(), expectation.brand);
+        QCOMPARE(theme.activeMode(), QString());
+        QCOMPARE(theme.palette()->backgroundBase(), expectation.backgroundBase);
+        QCOMPARE(theme.palette()->actionPrimary(), expectation.actionPrimary);
+        QCOMPARE(theme.radius()->button(), expectation.buttonRadius);
+        QCOMPARE(activeThemeChanged.count(), expectedSignalCount);
+        QCOMPARE(theme.palette(), palette);
+        QCOMPARE(theme.colors(), colors);
+        QCOMPARE(theme.spacing(), spacing);
+        QCOMPARE(theme.radius(), radius);
+        QCOMPARE(theme.typography(), typography);
+    }
 }
 
 void tst_merce_theme_runtime_switch::invalidRequestsPreserveActiveStateAndValues()
@@ -171,6 +214,42 @@ void tst_merce_theme_runtime_switch::registeredBrokenManifestAppliesFallbackStat
     QCOMPARE(theme.palette()->backgroundBase(), QColor(QStringLiteral("#FAF8F6")));
 }
 
+void tst_merce_theme_runtime_switch::availableThemesExposeRegistryOptions()
+{
+    MerceTheme theme;
+
+    const QVariantList themes = theme.availableThemes();
+    QCOMPARE(themes.size(), 5);
+
+    const QVariantMap merce = mapByValue(themes, QStringLiteral("merce"));
+    QCOMPARE(merce.value(QStringLiteral("label")).toString(), QStringLiteral("Merce"));
+    QCOMPARE(merce.value(QStringLiteral("defaultMode")).toString(), QStringLiteral("light"));
+    QCOMPARE(merce.value(QStringLiteral("hasModes")).toBool(), true);
+
+    const QVariantList merceModes = merce.value(QStringLiteral("modes")).toList();
+    QCOMPARE(merceModes.size(), 2);
+    QVERIFY(!mapByValue(merceModes, QStringLiteral("light")).isEmpty());
+    QVERIFY(!mapByValue(merceModes, QStringLiteral("dark")).isEmpty());
+
+    const QVariantMap stripe = mapByValue(themes, QStringLiteral("stripe"));
+    QCOMPARE(stripe.value(QStringLiteral("label")).toString(), QStringLiteral("Stripe Reference"));
+    QCOMPARE(stripe.value(QStringLiteral("defaultMode")).toString(), QString());
+    QCOMPARE(stripe.value(QStringLiteral("hasModes")).toBool(), false);
+    QCOMPARE(stripe.value(QStringLiteral("modes")).toList().size(), 0);
+
+    const QVariantMap apple = mapByValue(themes, QStringLiteral("apple"));
+    QCOMPARE(apple.value(QStringLiteral("label")).toString(), QStringLiteral("Apple Reference"));
+    QCOMPARE(apple.value(QStringLiteral("hasModes")).toBool(), false);
+
+    const QVariantMap claude = mapByValue(themes, QStringLiteral("claude"));
+    QCOMPARE(claude.value(QStringLiteral("label")).toString(), QStringLiteral("Claude Reference"));
+    QCOMPARE(claude.value(QStringLiteral("hasModes")).toBool(), false);
+
+    const QVariantMap airbnb = mapByValue(themes, QStringLiteral("airbnb"));
+    QCOMPARE(airbnb.value(QStringLiteral("label")).toString(), QStringLiteral("Airbnb Reference"));
+    QCOMPARE(airbnb.value(QStringLiteral("hasModes")).toBool(), false);
+}
+
 void tst_merce_theme_runtime_switch::metaObjectContractKeepsStablePointersAndValueNotifySignals()
 {
     MerceTheme theme;
@@ -181,6 +260,7 @@ void tst_merce_theme_runtime_switch::metaObjectContractKeepsStablePointersAndVal
     QVERIFY(propertyByName(themeMetaObject, "spacing").isConstant());
     QVERIFY(propertyByName(themeMetaObject, "radius").isConstant());
     QVERIFY(propertyByName(themeMetaObject, "typography").isConstant());
+    QVERIFY(propertyByName(themeMetaObject, "availableThemes").isConstant());
 
     QVERIFY(propertyByName(theme.palette()->metaObject(), "backgroundBase").hasNotifySignal());
     QVERIFY(propertyByName(theme.spacing()->metaObject(), "md").hasNotifySignal());

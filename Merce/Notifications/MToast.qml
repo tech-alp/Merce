@@ -39,22 +39,22 @@ Item {
     // Variant configuration
     readonly property var variantConfig: {
         "success": {
-            "icon": "\ue87b",  // Checkmark
+            "icon": "material:check_circle",
             "color": Theme.colors.status.success,
             "bgColor": Theme.colors.status.successLight
         },
         "warning": {
-            "icon": "\ue002",  // Warning
+            "icon": "material:warning",
             "color": Theme.colors.status.warning,
             "bgColor": Theme.colors.status.warningLight
         },
         "error": {
-            "icon": "\ue87e",  // Error/close
+            "icon": "material:error",
             "color": Theme.colors.status.error,
             "bgColor": Theme.colors.status.errorLight
         },
         "info": {
-            "icon": "\ue88e",  // Info
+            "icon": "material:info",
             "color": Theme.colors.status.info,
             "bgColor": Theme.colors.status.infoLight
         }
@@ -126,11 +126,10 @@ Item {
         spacing: Theme.spacing.md
 
         // Icon
-        Text {
+        AppIcon {
             id: icon
-            text: variantConfig[root.variant].icon
-            font.family: "Material Symbols Outlined"
-            font.pixelSize: Theme.icons.medium
+            name: variantConfig[root.variant].icon
+            size: Theme.icons.medium
             color: variantConfig[root.variant].color
             anchors.verticalCenter: parent.verticalCenter
         }
@@ -145,7 +144,7 @@ Item {
             Text {
                 id: titleText
                 text: root.title
-                font.family: Theme.typography.fontBody
+                font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
                 font.pixelSize: Theme.typography.sizeSmall
                 font.weight: Theme.typography.weightSemibold
                 color: Theme.colors.text.primary
@@ -158,7 +157,7 @@ Item {
             Text {
                 id: messageText
                 text: root.message
-                font.family: Theme.typography.fontBody
+                font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
                 font.pixelSize: Theme.typography.sizeSmall
                 color: Theme.colors.text.secondary
                 visible: root.message !== ""
@@ -202,11 +201,10 @@ Item {
                 }
             }
 
-            Text {
+            AppIcon {
                 anchors.centerIn: parent
-                text: "\ue87e"
-                font.family: "Material Symbols Outlined"
-                font.pixelSize: Theme.icons.small
+                name: "material:close"
+                size: Theme.icons.small
                 color: Theme.colors.text.tertiary
             }
 

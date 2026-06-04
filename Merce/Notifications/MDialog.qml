@@ -140,15 +140,14 @@ Item {
                 spacing: Theme.spacing.md
 
                 // Icon (for variant)
-                Text {
+                AppIcon {
                     id: variantIcon
-                    text: {
-                        if (root.variant === "destructive") return "\ue87e"
-                        if (root.variant === "warning") return "\ue002"
+                    name: {
+                        if (root.variant === "destructive") return "material:error"
+                        if (root.variant === "warning") return "material:warning"
                         return ""
                     }
-                    font.family: "Material Symbols Outlined"
-                    font.pixelSize: Theme.icons.large
+                    size: Theme.icons.large
                     color: {
                         if (root.variant === "destructive") return Theme.colors.status.error
                         if (root.variant === "warning") return Theme.colors.status.warning
@@ -162,7 +161,7 @@ Item {
                 Text {
                     id: titleText
                     text: root.title
-                    font.family: Theme.typography.fontDisplay
+                    font.family: FoundationFonts.resolveFamily(Theme.typography.fontDisplay)
                     font.pixelSize: Theme.typography.size2XLarge
                     font.weight: Theme.typography.weightSemibold
                     color: Theme.colors.text.primary
@@ -194,11 +193,10 @@ Item {
                         }
                     }
 
-                    Text {
+                    AppIcon {
                         anchors.centerIn: parent
-                        text: "\ue87e"
-                        font.family: "Material Symbols Outlined"
-                        font.pixelSize: Theme.icons.small
+                        name: "material:close"
+                        size: Theme.icons.small
                         color: Theme.colors.text.tertiary
                     }
 
@@ -237,7 +235,7 @@ Item {
             Text {
                 id: messageText
                 text: root.message
-                font.family: Theme.typography.fontBody
+                font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
                 font.pixelSize: Theme.typography.sizeMedium
                 color: Theme.colors.text.secondary
                 width: parent.width

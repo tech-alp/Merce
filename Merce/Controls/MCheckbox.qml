@@ -101,11 +101,10 @@ MBaseControl {
         }
 
         // Checkmark (when checked)
-        Text {
+        AppIcon {
             anchors.centerIn: parent
-            text: "\ue834"  // Material check icon
-            font.family: "Material Symbols Outlined"
-            font.pixelSize: root.sizeConfig[root.size].iconSize
+            name: "material:check"
+            size: root.sizeConfig[root.size].iconSize
             color: root.checkmarkColor
             visible: root.checked && !root.indeterminate
         }
@@ -143,7 +142,7 @@ MBaseControl {
     Text {
         id: checkboxLabel
         text: root.label
-        font.family: Theme.typography.fontBody
+        font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
         font.pixelSize: root.sizeConfig[root.size].fontSize
         color: root.isDisabled ? Theme.colors.text.disabled : Theme.colors.text.primary
 
@@ -163,7 +162,7 @@ MBaseControl {
     TextMetrics {
         id: textMetrics
         text: root.label
-        font.family: Theme.typography.fontBody
+        font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
         font.pixelSize: root.sizeConfig[root.size].fontSize
     }
 

@@ -12,6 +12,8 @@ Item {
     height: implicitHeight
 
     readonly property string displayMode: Theme.activeMode === "" ? "default" : Theme.activeMode
+    readonly property var themeOptions: Theme.availableThemes
+    readonly property var modeOptions: root.modeOptionsFor(Theme.activeBrand)
     readonly property color observedButtonColor: primaryButton.backgroundColor
     readonly property color observedTextColor: bodySample.textColor
     readonly property color observedInputBorderColor: emailInput.borderColor
@@ -26,31 +28,57 @@ Item {
                                             && componentsSection.objectName === "merce.playground.gallery.components"
                                             && exportStatusSection.objectName === "merce.playground.gallery.exportStatus"
 
-    function setMerceLight() {
+    function themeOptionFor(brand) {
+        for (let i = 0; i < root.themeOptions.length; ++i) {
+            const option = root.themeOptions[i]
+            if (option.value === brand)
+                return option
+        }
+        return null
+    }
+
+    function modeOptionsFor(brand) {
+        const option = root.themeOptionFor(brand)
+        if (!option || !option.modes)
+            return []
+        return option.modes
+    }
+
+    function defaultModeFor(brand) {
+        const option = root.themeOptionFor(brand)
+        if (!option)
+            return ""
+        if (option.defaultMode && String(option.defaultMode).length > 0)
+            return String(option.defaultMode)
+        const modes = root.modeOptionsFor(brand)
+        if (modes.length > 0)
+            return String(modes[0].value)
+        return ""
+    }
+
+    function applyTheme(brand, mode) {
         const previousBrand = Theme.activeBrand
         const previousMode = Theme.activeMode
-        const ok = Theme.setTheme("merce", "light")
+        const modes = root.modeOptionsFor(brand)
+        const effectiveMode = modes.length > 0
+                ? (mode && String(mode).length > 0 ? String(mode) : root.defaultModeFor(brand))
+                : ""
+        const ok = modes.length > 0 ? Theme.setTheme(brand, effectiveMode) : Theme.setTheme(brand)
         if (!ok)
             exportState.text = "Tema korunuyor: " + previousBrand + "/" + (previousMode === "" ? "default" : previousMode)
         return ok
+    }
+
+    function setMerceLight() {
+        return root.applyTheme("merce", "light")
     }
 
     function setMerceDark() {
-        const previousBrand = Theme.activeBrand
-        const previousMode = Theme.activeMode
-        const ok = Theme.setTheme("merce", "dark")
-        if (!ok)
-            exportState.text = "Tema korunuyor: " + previousBrand + "/" + (previousMode === "" ? "default" : previousMode)
-        return ok
+        return root.applyTheme("merce", "dark")
     }
 
     function setStripeReference() {
-        const previousBrand = Theme.activeBrand
-        const previousMode = Theme.activeMode
-        const ok = Theme.setTheme("stripe")
-        if (!ok)
-            exportState.text = "Tema korunuyor: " + previousBrand + "/" + (previousMode === "" ? "default" : previousMode)
-        return ok
+        return root.applyTheme("stripe", "")
     }
 
     function colorLabel(value) {
@@ -171,7 +199,7 @@ Item {
                     spacing: Theme.spacing.md
 
                     Column {
-                        width: parent.width - selectorRow.width - parent.spacing
+                        width: Math.max(260, parent.width - selectorRow.width - parent.spacing)
                         spacing: Theme.spacing.xxs
 
                         SectionTitle {
@@ -190,28 +218,52 @@ Item {
 
                     Row {
                         id: selectorRow
+                        width: implicitWidth
                         spacing: Theme.spacing.sm
                         anchors.verticalCenter: parent.verticalCenter
 
-                        MButton {
-                            objectName: "merce.playground.gallery.selector.merceLight"
-                            text: "Merce Light"
-                            variant: Theme.activeBrand === "merce" && Theme.activeMode === "light" ? "primary" : "outline"
-                            onClicked: root.setMerceLight()
+                        Column {
+                            id: themeSelectorField
+                            width: 280
+                            spacing: Theme.spacing.xxs
+
+                            FieldLabel {
+                                width: parent.width
+                                text: "Tasarım sistemi"
+                            }
+
+                            MSelect {
+                                objectName: "merce.playground.gallery.selector.theme"
+                                width: parent.width
+                                selectedValue: Theme.activeBrand
+                                options: root.themeOptions
+                                onSelected: function(value) {
+                                    const brand = String(value)
+                                    root.applyTheme(brand, root.defaultModeFor(brand))
+                                }
+                            }
                         }
 
-                        MButton {
-                            objectName: "merce.playground.gallery.selector.merceDark"
-                            text: "Merce Dark"
-                            variant: Theme.activeBrand === "merce" && Theme.activeMode === "dark" ? "primary" : "outline"
-                            onClicked: root.setMerceDark()
-                        }
+                        Column {
+                            id: modeSelectorField
+                            width: 180
+                            spacing: Theme.spacing.xxs
+                            visible: root.modeOptions.length > 0
 
-                        MButton {
-                            objectName: "merce.playground.gallery.selector.stripe"
-                            text: "Stripe Reference"
-                            variant: Theme.activeBrand === "stripe" ? "primary" : "outline"
-                            onClicked: root.setStripeReference()
+                            FieldLabel {
+                                width: parent.width
+                                text: "Mode"
+                            }
+
+                            MSelect {
+                                objectName: "merce.playground.gallery.selector.mode"
+                                width: parent.width
+                                selectedValue: Theme.activeMode
+                                options: root.modeOptions
+                                onSelected: function(value) {
+                                    root.applyTheme(Theme.activeBrand, String(value))
+                                }
+                            }
                         }
                     }
                 }
@@ -249,6 +301,9 @@ Item {
                     TokenSwatch { label: "backgroundSurface"; swatchColor: Theme.palette.backgroundSurface }
                     TokenSwatch { label: "textPrimary"; swatchColor: Theme.palette.textPrimary }
                     TokenSwatch { label: "actionPrimary"; swatchColor: Theme.palette.actionPrimary }
+                    TokenSwatch { label: "actionPrimaryDark"; swatchColor: Theme.palette.action.primaryDark }
+                    TokenSwatch { label: "actionSecondary"; swatchColor: Theme.palette.actionSecondary }
+                    TokenSwatch { label: "actionSecondaryDark"; swatchColor: Theme.palette.action.secondaryDark }
                     TokenSwatch { label: "borderBase"; swatchColor: Theme.palette.borderBase }
                     TokenSwatch { label: "borderFocus"; swatchColor: Theme.palette.border.focus }
                     TokenSwatch { label: "statusError"; swatchColor: Theme.palette.statusError }

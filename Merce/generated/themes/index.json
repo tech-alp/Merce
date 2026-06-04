@@ -11,6 +11,18 @@
         "dark": "merce.dark.json"
       }
     },
+    "apple": {
+      "displayName": "Apple Reference",
+      "path": "apple.json"
+    },
+    "claude": {
+      "displayName": "Claude Reference",
+      "path": "claude.json"
+    },
+    "airbnb": {
+      "displayName": "Airbnb Reference",
+      "path": "airbnb.json"
+    },
     "stripe": {
       "displayName": "Stripe Reference",
       "path": "stripe.json"

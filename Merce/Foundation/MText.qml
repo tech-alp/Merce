@@ -36,7 +36,7 @@ Text {
     final property int minTouchArea: Theme.spacing.touchTarget
 
     // Apply typography preset based on type
-    font.family: types[type]?.family || Theme.typography.fontBody
+    font.family: FoundationFonts.resolveFamily(types[type]?.family || Theme.typography.fontBody)
     font.pixelSize: types[type]?.size || Theme.typography.sizeMedium
     font.weight: types[type]?.weight || Theme.typography.weightRegular
     font.capitalization: types[type]?.uppercase ? Font.AllUppercase : Font.MixedCase

@@ -35,8 +35,8 @@ MSurface {
     property bool isDisabled: false
 
     // Icon support
-    property url iconSource: ""
-    property url trailingIconSource: ""
+    property string icon: ""
+    property string trailingIcon: ""
 
     // ====================================================================
     // OVERRIDEN PROPERTIES
@@ -81,12 +81,12 @@ MSurface {
             left: parent.left
             right: parent.right
             verticalCenter: parent.verticalCenter
-            leftMargin: root.iconSource !== "" ? Theme.spacing.xl2 : Theme.spacing.md
-            rightMargin: root.trailingIconSource !== "" ? Theme.spacing.xl2 : Theme.spacing.md
+            leftMargin: root.icon !== "" ? Theme.spacing.xl2 : Theme.spacing.md
+            rightMargin: root.trailingIcon !== "" ? Theme.spacing.xl2 : Theme.spacing.md
         }
 
         text: root.text
-        font.family: Theme.typography.fontBody
+        font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
         font.pixelSize: Theme.typography.sizeMedium
         color: {
             if (root.isDisabled) return Theme.colors.text.disabled
@@ -129,7 +129,7 @@ MSurface {
         Text {
             anchors.fill: parent
             text: root.placeholder
-            font.family: Theme.typography.fontBody
+            font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
             font.pixelSize: Theme.typography.sizeMedium
             color: Theme.colors.text.tertiary
             visible: root.text === "" && !root.isFocused
@@ -153,9 +153,9 @@ MSurface {
     // ====================================================================
     // ICONS
     // ====================================================================
-    Icon {
+    AppIcon {
         id: leadingIcon
-        source: root.iconSource
+        name: root.icon
         size: Theme.icons.medium
         color: {
             if (root.isDisabled) return Theme.colors.text.disabled
@@ -167,12 +167,12 @@ MSurface {
             leftMargin: Theme.spacing.md
             verticalCenter: parent.verticalCenter
         }
-        visible: root.iconSource !== ""
+        visible: root.icon !== ""
     }
 
-    Icon {
+    AppIcon {
         id: trailingIcon
-        source: root.trailingIconSource
+        name: root.trailingIcon
         size: Theme.icons.medium
         color: {
             if (root.isDisabled) return Theme.colors.text.disabled
@@ -185,7 +185,7 @@ MSurface {
             rightMargin: Theme.spacing.md
             verticalCenter: parent.verticalCenter
         }
-        visible: root.trailingIconSource !== ""
+        visible: root.trailingIcon !== ""
 
         MouseArea {
             anchors.fill: parent
@@ -207,7 +207,7 @@ MSurface {
             bottomMargin: Theme.spacing.xxs
         }
         text: root.currentLength + (root.maxLength > 0 ? " / " + root.maxLength : "")
-        font.family: Theme.typography.fontBody
+        font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
         font.pixelSize: Theme.typography.sizeXSmall
         color: {
             if (root.currentLength > root.maxLength && root.maxLength > 0) {

@@ -28,6 +28,27 @@
         ]
       }
     },
+    "apple": {
+      "displayName": "Apple Reference",
+      "source": [
+        "tokens/themes/apple/theme.json"
+      ],
+      "path": "apple.json"
+    },
+    "claude": {
+      "displayName": "Claude Reference",
+      "source": [
+        "tokens/themes/claude/theme.json"
+      ],
+      "path": "claude.json"
+    },
+    "airbnb": {
+      "displayName": "Airbnb Reference",
+      "source": [
+        "tokens/themes/airbnb/theme.json"
+      ],
+      "path": "airbnb.json"
+    },
     "stripe": {
       "displayName": "Stripe Reference",
       "source": [

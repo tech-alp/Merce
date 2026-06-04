@@ -145,7 +145,7 @@ MBaseControl {
     Text {
         id: switchLabel
         text: root.label
-        font.family: Theme.typography.fontBody
+        font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
         font.pixelSize: root.sizeConfig[root.size].fontSize
         color: root.isDisabled ? Theme.colors.text.disabled : Theme.colors.text.primary
 
@@ -165,7 +165,7 @@ MBaseControl {
     TextMetrics {
         id: textMetrics
         text: root.label
-        font.family: Theme.typography.fontBody
+        font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
         font.pixelSize: root.sizeConfig[root.size].fontSize
     }
 

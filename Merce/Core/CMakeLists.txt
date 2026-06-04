@@ -36,6 +36,8 @@ if(NOT EXISTS "${MERCE_THEME_INDEX_FILE}")
     message(FATAL_ERROR "Missing generated theme index: ${MERCE_THEME_INDEX_FILE}")
 endif()
 
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${MERCE_THEME_INDEX_FILE}")
+
 file(READ "${MERCE_THEME_INDEX_FILE}" MERCE_THEME_INDEX_JSON)
 set(MERCE_THEME_MANIFEST_RELATIVE_FILES index.json)
 
@@ -53,6 +55,7 @@ function(merce_collect_theme_manifest_path out_var path_value)
         message(FATAL_ERROR "Missing generated theme manifest listed by ${MERCE_THEME_INDEX_FILE}: ${path_file}")
     endif()
 
+    set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${path_file}")
     set(${out_var} "${${out_var}};${path_value}" PARENT_SCOPE)
 endfunction()
 

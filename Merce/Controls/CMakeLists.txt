@@ -8,7 +8,6 @@ qt_add_qml_module(MerceControls
         MRadio.qml
         MSwitch.qml
         MSelect.qml
-        Icon.qml
         LoadingIndicator.qml
 )
 

@@ -15,6 +15,12 @@ This workspace converts reviewed DTCG token sources into Merce runtime manifest 
 
 `generated/themes/index.json` is authoritative for physical manifest paths; in short, index.json is authoritative. Phase 3 loaders should read paths from the index instead of deriving paths from theme or variant names.
 
+## Reference Themes
+
+`apple`, `claude`, and `airbnb` are reference themes converted from public VoltAgent `awesome-design-md` `DESIGN.md` files into reviewed DTCG source tokens. They intentionally map only into Merce runtime sections (`palette`, `spacing`, `radius`, and `typography`). Component-level guidance, imagery rules, shadows, and motion notes from the source `DESIGN.md` files are not emitted into runtime manifests.
+
+Proprietary font family names are preserved as font stack preferences, but no third-party font files are vendored by this workspace.
+
 ## Manifest Shape
 
 Generated manifests use shallow semantic sections aligned with the C++ runtime:

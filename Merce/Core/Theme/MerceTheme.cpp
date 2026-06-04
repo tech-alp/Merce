@@ -26,7 +26,10 @@ MerceTheme::MerceTheme(const QString &manifestIndexPath, QObject *parent)
       m_breakpoints(new MerceBreakpoints(this)),
       m_shadows(new MerceShadows(this))
 {
-    const MerceThemeLoadResult theme = MerceThemeManifestLoader(m_manifestIndexPath).loadDefault();
+    const MerceThemeManifestLoader loader(m_manifestIndexPath);
+    m_availableThemes = loader.availableThemes();
+
+    const MerceThemeLoadResult theme = loader.loadDefault();
     if (!theme.ok) {
         for (const QString &error : theme.errors)
             qCWarning(merceThemeLog) << "default manifest load failed:" << error;

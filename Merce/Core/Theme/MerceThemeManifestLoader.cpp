@@ -8,6 +8,7 @@
 #include <QJsonParseError>
 #include <QJsonValue>
 #include <QLoggingCategory>
+#include <QVariantMap>
 
 Q_LOGGING_CATEGORY(merceThemeLoaderLog, "merce.theme.loader")
 
@@ -373,6 +374,15 @@ bool isDefaultEntry(const MerceThemeRegistry &registry, const MerceThemeRegistry
     return entry.theme == registry.defaultTheme() && entry.variant == registry.defaultVariant();
 }
 
+QString modeDisplayName(QString variant)
+{
+    if (variant.isEmpty())
+        return QStringLiteral("Default");
+
+    variant[0] = variant.at(0).toUpper();
+    return variant;
+}
+
 MerceThemeLoadResult loadDefaultFromRegistry(const MerceThemeRegistry &registry)
 {
     const MerceThemeRegistryLookupResult lookup = registry.defaultEntry();
@@ -449,4 +459,73 @@ MerceThemeLoadResult MerceThemeManifestLoader::load(const QString &theme, const 
     fallback.errors.prepend(QStringLiteral("fallback to default theme failed"));
     fallback.errors.append(requested.errors);
     return fallback;
+}
+
+QVariantList MerceThemeManifestLoader::availableThemes() const
+{
+    const RegistryLoadResult registry = loadRegistry(m_indexPath);
+    if (!registry.ok) {
+        logErrors(QStringLiteral("theme registry discovery failed:"), registry.errors);
+        return {};
+    }
+
+    struct ThemeOption
+    {
+        QString value;
+        QString label;
+        QString defaultMode;
+        QVariantList modes;
+    };
+
+    QList<ThemeOption> options;
+    for (const auto &entry : registry.registry.entries()) {
+        int optionIndex = -1;
+        for (int i = 0; i < options.size(); ++i) {
+            if (options.at(i).value == entry.theme) {
+                optionIndex = i;
+                break;
+            }
+        }
+
+        if (optionIndex < 0) {
+            options.append({
+                entry.theme,
+                entry.displayName.isEmpty() ? entry.theme : entry.displayName,
+                entry.theme == registry.registry.defaultTheme() ? registry.registry.defaultVariant() : QString(),
+                {},
+            });
+            optionIndex = options.size() - 1;
+        }
+
+        if (!entry.variant.isEmpty()) {
+            QVariantMap mode;
+            mode.insert(QStringLiteral("value"), entry.variant);
+            mode.insert(QStringLiteral("label"), modeDisplayName(entry.variant));
+            options[optionIndex].modes.append(mode);
+        }
+    }
+
+    QVariantList themes;
+    for (ThemeOption option : options) {
+        if (option.defaultMode.isEmpty() && !option.modes.isEmpty())
+            option.defaultMode = option.modes.constFirst().toMap().value(QStringLiteral("value")).toString();
+
+        for (int i = 0; i < option.modes.size(); ++i) {
+            if (option.modes.at(i).toMap().value(QStringLiteral("value")).toString() == option.defaultMode) {
+                if (i > 0)
+                    option.modes.move(i, 0);
+                break;
+            }
+        }
+
+        QVariantMap theme;
+        theme.insert(QStringLiteral("value"), option.value);
+        theme.insert(QStringLiteral("label"), option.label);
+        theme.insert(QStringLiteral("defaultMode"), option.defaultMode);
+        theme.insert(QStringLiteral("hasModes"), !option.modes.isEmpty());
+        theme.insert(QStringLiteral("modes"), option.modes);
+        themes.append(theme);
+    }
+
+    return themes;
 }

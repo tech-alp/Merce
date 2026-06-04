@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QVariantList>
 #include <QtQml/qqmlregistration.h>
 
 #include "MerceBreakpoints.h"
@@ -33,6 +34,7 @@ class MerceTheme : public QObject
     Q_PROPERTY(MerceShadows *shadows READ shadows NOTIFY shadowsChanged FINAL)
     Q_PROPERTY(QString activeBrand READ activeBrand NOTIFY activeThemeChanged FINAL)
     Q_PROPERTY(QString activeMode READ activeMode NOTIFY activeThemeChanged FINAL)
+    Q_PROPERTY(QVariantList availableThemes READ availableThemes CONSTANT FINAL)
     QML_NAMED_ELEMENT(Theme)
     QML_SINGLETON
 
@@ -53,6 +55,7 @@ public:
     MerceShadows *shadows() const { return m_shadows; }
     QString activeBrand() const;
     QString activeMode() const;
+    QVariantList availableThemes() const { return m_availableThemes; }
 
     Q_INVOKABLE bool setTheme(const QString &brand, const QString &mode = QString());
 
@@ -79,6 +82,7 @@ private:
     QString m_manifestIndexPath;
     QString m_activeBrand;
     QString m_activeMode;
+    QVariantList m_availableThemes;
     MercePalette *m_palette = nullptr;
     MerceSpacing *m_spacing = nullptr;
     MerceRadius *m_radius = nullptr;

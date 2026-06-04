@@ -1,11 +1,44 @@
 #include <QDebug>
 #include <QCoreApplication>
 #include <QDir>
+#include <QFile>
 #include <QGuiApplication>
+#include <QIODevice>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QStringList>
 #include <QTimer>
+#include <QVariantList>
+#include <QVariantMap>
+
+static QVariantList loadIconCodepoints(const QString &resourcePath)
+{
+    QFile file(resourcePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning().noquote() << "Could not load icon codepoints:" << resourcePath << file.errorString();
+        return {};
+    }
+
+    QVariantList icons;
+    while (!file.atEnd()) {
+        const QString line = QString::fromUtf8(file.readLine()).trimmed();
+        if (line.isEmpty())
+            continue;
+
+        const qsizetype separator = line.indexOf(QLatin1Char(' '));
+        const QString name = separator >= 0 ? line.left(separator) : line;
+        const QString codepoint = separator >= 0 ? line.sliced(separator + 1).trimmed() : QString();
+        if (name.isEmpty())
+            continue;
+
+        QVariantMap icon;
+        icon.insert(QStringLiteral("name"), name);
+        icon.insert(QStringLiteral("codepoint"), codepoint);
+        icons.append(icon);
+    }
+
+    return icons;
+}
 
 int main(int argc, char *argv[])
 {
@@ -22,9 +55,23 @@ int main(int argc, char *argv[])
     const QStringList arguments = app.arguments();
     const bool themeProbe = arguments.contains(QStringLiteral("--theme-probe"));
     const bool themeSwitchProbe = arguments.contains(QStringLiteral("--theme-switch-probe"));
+    const bool playgroundProbe = arguments.contains(QStringLiteral("--playground-probe"));
     const bool themeGalleryProbe = arguments.contains(QStringLiteral("--theme-gallery-probe"));
     const int exportThemeGalleryIndex = arguments.indexOf(QStringLiteral("--export-theme-gallery"));
     const bool exportThemeGallery = exportThemeGalleryIndex >= 0;
+
+    engine.rootContext()->setContextProperty(
+        QStringLiteral("playgroundMaterialIcons"),
+        loadIconCodepoints(QStringLiteral(":/qt/qml/Merce/Foundation/fonts/MaterialSymbolsRounded/MaterialSymbolsRounded.codepoints")));
+    engine.rootContext()->setContextProperty(
+        QStringLiteral("playgroundFontAwesomeSolidIcons"),
+        loadIconCodepoints(QStringLiteral(":/qt/qml/Merce/Foundation/fonts/FontAwesome/FontAwesomeSolid.codepoints")));
+    engine.rootContext()->setContextProperty(
+        QStringLiteral("playgroundFontAwesomeRegularIcons"),
+        loadIconCodepoints(QStringLiteral(":/qt/qml/Merce/Foundation/fonts/FontAwesome/FontAwesomeRegular.codepoints")));
+    engine.rootContext()->setContextProperty(
+        QStringLiteral("playgroundFontAwesomeBrandsIcons"),
+        loadIconCodepoints(QStringLiteral(":/qt/qml/Merce/Foundation/fonts/FontAwesome/FontAwesomeBrands.codepoints")));
 
     if (exportThemeGallery) {
         if (exportThemeGalleryIndex + 1 >= arguments.size()
@@ -45,8 +92,9 @@ int main(int argc, char *argv[])
 
     const char *component = exportThemeGallery ? "ThemeGalleryExport"
                                                : (themeGalleryProbe ? "ThemeGalleryProbe"
-                                                                    : (themeSwitchProbe ? "ThemeSwitchProbe"
-                                                                                        : (themeProbe ? "ThemeProbe" : "Main")));
+                                                                    : (playgroundProbe ? "PlaygroundProbe"
+                                                                                       : (themeSwitchProbe ? "ThemeSwitchProbe"
+                                                                                                           : (themeProbe ? "ThemeProbe" : "Main"))));
     engine.loadFromModule("Merce.Playground", component);
 
     if (exportThemeGallery) {
@@ -57,6 +105,11 @@ int main(int argc, char *argv[])
     } else if (themeGalleryProbe) {
         QTimer::singleShot(3000, &app, []() {
             qCritical().noquote() << "Theme gallery probe timed out";
+            QCoreApplication::exit(3);
+        });
+    } else if (playgroundProbe) {
+        QTimer::singleShot(3000, &app, []() {
+            qCritical().noquote() << "Playground probe timed out";
             QCoreApplication::exit(3);
         });
     } else if (themeProbe || themeSwitchProbe || arguments.contains(QStringLiteral("--smoke-test"))) {

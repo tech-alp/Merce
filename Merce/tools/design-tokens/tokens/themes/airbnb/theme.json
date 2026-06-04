@@ -1,0 +1,422 @@
+{
+  "palette": {
+    "raw": {
+      "primary": {
+        "$type": "color",
+        "$value": "#FF385C"
+      },
+      "primaryActive": {
+        "$type": "color",
+        "$value": "#E00B41"
+      },
+      "primaryDisabled": {
+        "$type": "color",
+        "$value": "#FFD1DA"
+      },
+      "primaryErrorText": {
+        "$type": "color",
+        "$value": "#C13515"
+      },
+      "luxe": {
+        "$type": "color",
+        "$value": "#460479"
+      },
+      "plus": {
+        "$type": "color",
+        "$value": "#92174D"
+      },
+      "ink": {
+        "$type": "color",
+        "$value": "#222222"
+      },
+      "body": {
+        "$type": "color",
+        "$value": "#3F3F3F"
+      },
+      "muted": {
+        "$type": "color",
+        "$value": "#6A6A6A"
+      },
+      "mutedSoft": {
+        "$type": "color",
+        "$value": "#929292"
+      },
+      "hairline": {
+        "$type": "color",
+        "$value": "#DDDDDD"
+      },
+      "hairlineSoft": {
+        "$type": "color",
+        "$value": "#EBEBEB"
+      },
+      "borderStrong": {
+        "$type": "color",
+        "$value": "#C1C1C1"
+      },
+      "canvas": {
+        "$type": "color",
+        "$value": "#FFFFFF"
+      },
+      "surfaceSoft": {
+        "$type": "color",
+        "$value": "#F7F7F7"
+      },
+      "surfaceStrong": {
+        "$type": "color",
+        "$value": "#F2F2F2"
+      },
+      "onPrimary": {
+        "$type": "color",
+        "$value": "#FFFFFF"
+      },
+      "onDark": {
+        "$type": "color",
+        "$value": "#FFFFFF"
+      },
+      "legalLink": {
+        "$type": "color",
+        "$value": "#428BFF"
+      },
+      "scrim": {
+        "$type": "color",
+        "$value": "#000000"
+      }
+    },
+    "semantic": {
+      "textPrimary": {
+        "$type": "color",
+        "$value": "{palette.raw.ink}"
+      },
+      "textSecondary": {
+        "$type": "color",
+        "$value": "{palette.raw.body}"
+      },
+      "textTertiary": {
+        "$type": "color",
+        "$value": "{palette.raw.muted}"
+      },
+      "textInverse": {
+        "$type": "color",
+        "$value": "{palette.raw.onDark}"
+      },
+      "link": {
+        "$type": "color",
+        "$value": "{palette.raw.primary}"
+      },
+      "backgroundBase": {
+        "$type": "color",
+        "$value": "{palette.raw.canvas}"
+      },
+      "backgroundSurface": {
+        "$type": "color",
+        "$value": "{palette.raw.canvas}"
+      },
+      "backgroundElevated": {
+        "$type": "color",
+        "$value": "{palette.raw.canvas}"
+      },
+      "backgroundHover": {
+        "$type": "color",
+        "$value": "{palette.raw.surfaceSoft}"
+      },
+      "backgroundPressed": {
+        "$type": "color",
+        "$value": "{palette.raw.surfaceStrong}"
+      },
+      "actionPrimary": {
+        "$type": "color",
+        "$value": "{palette.raw.primary}"
+      },
+      "actionPrimaryLight": {
+        "$type": "color",
+        "$value": "{palette.raw.primaryDisabled}"
+      },
+      "actionPrimaryDark": {
+        "$type": "color",
+        "$value": "{palette.raw.primaryActive}"
+      },
+      "actionSecondary": {
+        "$type": "color",
+        "$value": "{palette.raw.ink}"
+      },
+      "borderBase": {
+        "$type": "color",
+        "$value": "{palette.raw.hairline}"
+      },
+      "borderStrong": {
+        "$type": "color",
+        "$value": "{palette.raw.borderStrong}"
+      },
+      "borderFocus": {
+        "$type": "color",
+        "$value": "{palette.raw.ink}"
+      },
+      "statusError": {
+        "$type": "color",
+        "$value": "{palette.raw.primaryErrorText}"
+      },
+      "statusInfo": {
+        "$type": "color",
+        "$value": "{palette.raw.legalLink}"
+      },
+      "surfaceBase": {
+        "$type": "color",
+        "$value": "{palette.raw.canvas}"
+      },
+      "surfaceTinted": {
+        "$type": "color",
+        "$value": "{palette.raw.surfaceSoft}"
+      }
+    }
+  },
+  "spacing": {
+    "base": {
+      "$type": "dimension",
+      "$value": 8
+    },
+    "xxs": {
+      "$type": "dimension",
+      "$value": 2
+    },
+    "xs": {
+      "$type": "dimension",
+      "$value": 4
+    },
+    "sm": {
+      "$type": "dimension",
+      "$value": 8
+    },
+    "md": {
+      "$type": "dimension",
+      "$value": 12
+    },
+    "lg": {
+      "$type": "dimension",
+      "$value": 24
+    },
+    "xl": {
+      "$type": "dimension",
+      "$value": 32
+    },
+    "xl2": {
+      "$type": "dimension",
+      "$value": 48
+    },
+    "xl3": {
+      "$type": "dimension",
+      "$value": 64
+    },
+    "xl4": {
+      "$type": "dimension",
+      "$value": 80
+    },
+    "xl5": {
+      "$type": "dimension",
+      "$value": 96
+    },
+    "xl6": {
+      "$type": "dimension",
+      "$value": 128
+    },
+    "componentGap": {
+      "$type": "dimension",
+      "$value": 16
+    },
+    "sectionGap": {
+      "$type": "dimension",
+      "$value": "{spacing.xl3}"
+    },
+    "pagePadding": {
+      "$type": "dimension",
+      "$value": "{spacing.lg}"
+    },
+    "touchTarget": {
+      "$type": "dimension",
+      "$value": 48
+    },
+    "touchTargetCompact": {
+      "$type": "dimension",
+      "$value": 40
+    },
+    "gridGap": {
+      "$type": "dimension",
+      "$value": "{spacing.lg}"
+    },
+    "stackGap": {
+      "$type": "dimension",
+      "$value": "{spacing.sm}"
+    },
+    "inlineGap": {
+      "$type": "dimension",
+      "$value": "{spacing.xs}"
+    }
+  },
+  "radius": {
+    "none": {
+      "$type": "dimension",
+      "$value": 0
+    },
+    "small": {
+      "$type": "dimension",
+      "$value": 4
+    },
+    "medium": {
+      "$type": "dimension",
+      "$value": 8
+    },
+    "large": {
+      "$type": "dimension",
+      "$value": 14
+    },
+    "xlarge": {
+      "$type": "dimension",
+      "$value": 20
+    },
+    "xxlarge": {
+      "$type": "dimension",
+      "$value": 32
+    },
+    "full": {
+      "$type": "dimension",
+      "$value": 9999
+    },
+    "button": {
+      "$type": "dimension",
+      "$value": "{radius.medium}"
+    },
+    "input": {
+      "$type": "dimension",
+      "$value": "{radius.medium}"
+    },
+    "card": {
+      "$type": "dimension",
+      "$value": "{radius.large}"
+    },
+    "badge": {
+      "$type": "dimension",
+      "$value": "{radius.full}"
+    },
+    "dialog": {
+      "$type": "dimension",
+      "$value": "{radius.xlarge}"
+    },
+    "tooltip": {
+      "$type": "dimension",
+      "$value": "{radius.small}"
+    }
+  },
+  "typography": {
+    "displayFont": {
+      "$type": "fontFamily",
+      "$value": "'Airbnb Cereal VF', Circular, -apple-system, system-ui, Roboto, 'Helvetica Neue', sans-serif"
+    },
+    "bodyFont": {
+      "$type": "fontFamily",
+      "$value": "'Airbnb Cereal VF', Circular, -apple-system, system-ui, Roboto, 'Helvetica Neue', sans-serif"
+    },
+    "monoFont": {
+      "$type": "fontFamily",
+      "$value": "ui-monospace, SFMono-Regular, Menlo, monospace"
+    },
+    "displayFontFallback": {
+      "$type": "fontFamily",
+      "$value": "Circular, -apple-system, system-ui, Roboto, sans-serif"
+    },
+    "bodyFontFallback": {
+      "$type": "fontFamily",
+      "$value": "Circular, -apple-system, system-ui, Roboto, sans-serif"
+    },
+    "sizeXSmall": {
+      "$type": "dimension",
+      "$value": 11
+    },
+    "sizeSmall": {
+      "$type": "dimension",
+      "$value": 13
+    },
+    "sizeMedium": {
+      "$type": "dimension",
+      "$value": 14
+    },
+    "sizeLarge": {
+      "$type": "dimension",
+      "$value": 16
+    },
+    "sizeXLarge": {
+      "$type": "dimension",
+      "$value": 20
+    },
+    "size2XLarge": {
+      "$type": "dimension",
+      "$value": 21
+    },
+    "size3XLarge": {
+      "$type": "dimension",
+      "$value": 22
+    },
+    "size4XLarge": {
+      "$type": "dimension",
+      "$value": 28
+    },
+    "size5XLarge": {
+      "$type": "dimension",
+      "$value": 40
+    },
+    "size6XLarge": {
+      "$type": "dimension",
+      "$value": 64
+    },
+    "weightRegular": {
+      "$type": "fontWeight",
+      "$value": 400
+    },
+    "weightMedium": {
+      "$type": "fontWeight",
+      "$value": 500
+    },
+    "weightSemibold": {
+      "$type": "fontWeight",
+      "$value": 600
+    },
+    "weightBold": {
+      "$type": "fontWeight",
+      "$value": 700
+    },
+    "leadingTight": {
+      "$type": "number",
+      "$value": 1.18
+    },
+    "leadingSnug": {
+      "$type": "number",
+      "$value": 1.25
+    },
+    "leadingNormal": {
+      "$type": "number",
+      "$value": 1.43
+    },
+    "leadingRelaxed": {
+      "$type": "number",
+      "$value": 1.5
+    },
+    "trackingTight": {
+      "$type": "number",
+      "$value": -0.02
+    },
+    "trackingNormal": {
+      "$type": "number",
+      "$value": 0
+    },
+    "trackingWide": {
+      "$type": "number",
+      "$value": 0.02
+    },
+    "trackingWider": {
+      "$type": "number",
+      "$value": 0.04
+    },
+    "trackingWidest": {
+      "$type": "number",
+      "$value": 0.08
+    }
+  }
+}
