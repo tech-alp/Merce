@@ -1,20 +1,4 @@
 {
-  "palette": {
-    "semantic": {
-      "actionPrimary": {
-        "$type": "color",
-        "$value": "{palette.raw.primary}"
-      },
-      "actionSecondary": {
-        "$type": "color",
-        "$value": "{palette.raw.secondary}"
-      },
-      "borderFocus": {
-        "$type": "color",
-        "$value": "{palette.raw.primary}"
-      }
-    }
-  },
   "typography": {
     "bodyFont": {
       "$type": "fontFamily",
@@ -23,6 +7,24 @@
     "displayFont": {
       "$type": "fontFamily",
       "$value": "Playfair Display"
+    }
+  },
+  "color": {
+    "action": {
+      "primary": {
+        "$type": "color",
+        "$value": "{color.palette.primary}"
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "{color.palette.secondary}"
+      }
+    },
+    "border": {
+      "focus": {
+        "$type": "color",
+        "$value": "{color.palette.primary}"
+      }
     }
   }
 }

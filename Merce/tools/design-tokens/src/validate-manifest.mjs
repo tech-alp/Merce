@@ -1,13 +1,13 @@
 import { readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { FIELD_MAP } from './merce-manifest-format.mjs';
+import { COLOR_FIELD_MAP, FIELD_MAP } from './merce-manifest-format.mjs';
 import { validateManifestPath } from './theme-registry.mjs';
 
 const REQUIRED_TOP_LEVEL = [
   'schemaVersion',
   'theme',
-  'palette',
+  'colors',
   'spacing',
   'radius',
   'typography',
@@ -23,6 +23,10 @@ const TYPOGRAPHY_STRING_FIELDS = new Set([
 
 const REQUIRED_FIELDS = Object.entries(FIELD_MAP).flatMap(([section, fields]) => (
   fields.map(([field]) => `${section}.${field}`)
+));
+
+const REQUIRED_COLOR_FIELDS = Object.entries(COLOR_FIELD_MAP).flatMap(([group, fields]) => (
+  fields.map(([field]) => `colors.${group}.${field}`)
 ));
 
 export function validateManifest(manifest, context = {}) {
@@ -50,8 +54,22 @@ export function validateManifest(manifest, context = {}) {
     errors.push('single-manifest themes must not include variant');
   }
 
-  if ('colors' in manifest) {
-    errors.push('manifest must not contain a top-level colors compatibility section');
+  if ('palette' in manifest) {
+    errors.push('manifest must not contain a top-level palette section');
+  }
+
+  if (manifest.colors && typeof manifest.colors === 'object' && !Array.isArray(manifest.colors)
+      && 'raw' in manifest.colors) {
+    errors.push('runtime colors must not expose raw color scales');
+  }
+
+  for (const field of REQUIRED_COLOR_FIELDS) {
+    if (!hasPath(manifest, field)) {
+      errors.push(`missing required runtime field: ${field}`);
+      continue;
+    }
+
+    validateRuntimeField(manifest, field, errors);
   }
 
   for (const field of REQUIRED_FIELDS) {
@@ -237,7 +255,7 @@ function validateRuntimeField(manifest, dottedPath, errors) {
   const [section, field] = dottedPath.split('.');
   const value = valueAtPath(manifest, dottedPath);
 
-  if (section === 'palette') {
+  if (section === 'colors') {
     if (typeof value !== 'string' || !/^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(value)) {
       errors.push(`runtime field ${dottedPath} must be a valid color string`);
     }

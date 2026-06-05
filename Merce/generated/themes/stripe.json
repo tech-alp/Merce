@@ -1,30 +1,57 @@
 {
   "schemaVersion": 1,
   "theme": "stripe",
-  "palette": {
-    "textPrimary": "#1A1F36",
-    "textSecondary": "#3C4257",
-    "textTertiary": "#697386",
-    "textInverse": "#F6F9FC",
-    "link": "#635BFF",
-    "backgroundBase": "#F6F9FC",
-    "backgroundSurface": "#FFFFFF",
-    "backgroundElevated": "#FFFFFF",
-    "backgroundHover": "#E7ECF3",
-    "backgroundPressed": "#D8DEE8",
-    "actionPrimary": "#635BFF",
-    "actionPrimaryLight": "#A5A1FF",
-    "actionPrimaryDark": "#3F37C9",
-    "actionSecondary": "#00D4FF",
-    "borderBase": "#D8DEE8",
-    "borderStrong": "#C1CAD8",
-    "borderFocus": "#635BFF",
-    "statusError": "#C45A5A",
-    "statusSuccess": "#4A7C59",
-    "statusWarning": "#D4A854",
-    "statusInfo": "#5A8FC4",
-    "surfaceBase": "#FFFFFF",
-    "surfaceTinted": "#E7ECF3"
+  "colors": {
+    "text": {
+      "primary": "#1A1F36",
+      "secondary": "#3C4257",
+      "tertiary": "#697386",
+      "inverse": "#F6F9FC",
+      "disabled": "#B8A494",
+      "link": "#635BFF",
+      "linkHover": "#3F37C9"
+    },
+    "background": {
+      "base": "#F6F9FC",
+      "surface": "#FFFFFF",
+      "elevated": "#FFFFFF",
+      "hover": "#E7ECF3",
+      "pressed": "#D8DEE8",
+      "tinted": "#E7ECF3",
+      "overlay": "#000000"
+    },
+    "border": {
+      "base": "#D8DEE8",
+      "strong": "#C1CAD8",
+      "focus": "#635BFF",
+      "error": "#C45A5A",
+      "success": "#4A7C59"
+    },
+    "action": {
+      "primary": "#635BFF",
+      "primaryHover": "#3F37C9",
+      "primaryPressed": "#3F37C9",
+      "primarySubtle": "#A5A1FF",
+      "secondary": "#00D4FF",
+      "secondaryHover": "#0098B8",
+      "secondaryPressed": "#0098B8",
+      "disabled": "#B8A494"
+    },
+    "status": {
+      "success": "#4A7C59",
+      "successSubtle": "#A8D4B8",
+      "warning": "#D4A854",
+      "warningSubtle": "#F0D9A8",
+      "error": "#C45A5A",
+      "errorSubtle": "#E8A8A8",
+      "info": "#5A8FC4",
+      "infoSubtle": "#A8CCE8"
+    },
+    "surface": {
+      "base": "#FFFFFF",
+      "tinted": "#E7ECF3",
+      "raised": "#FFFFFF"
+    }
   },
   "spacing": {
     "base": 8,

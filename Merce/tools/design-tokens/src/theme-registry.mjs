@@ -26,7 +26,7 @@ export async function loadThemeRegistry(registryPath = new URL('../themes.json',
 
 export function themeEntries(registry) {
   const coreSources = registry.core ?? [
-    'tokens/core/palette.json',
+    'tokens/core/color.json',
     'tokens/core/spacing.json',
     'tokens/core/radius.json',
     'tokens/core/typography.json',

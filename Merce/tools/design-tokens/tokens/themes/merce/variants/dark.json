@@ -1,61 +1,75 @@
 {
-  "palette": {
-    "raw": {
+  "color": {
+    "palette": {
       "white": {
         "$type": "color",
         "$value": "#18120F"
       }
     },
-    "semantic": {
-      "textPrimary": {
+    "text": {
+      "primary": {
         "$type": "color",
-        "$value": "{palette.raw.gray50}"
+        "$value": "{color.palette.gray50}"
       },
-      "textSecondary": {
+      "secondary": {
         "$type": "color",
-        "$value": "{palette.raw.gray200}"
+        "$value": "{color.palette.gray200}"
       },
-      "textTertiary": {
+      "tertiary": {
         "$type": "color",
-        "$value": "{palette.raw.gray400}"
+        "$value": "{color.palette.gray400}"
       },
-      "textInverse": {
+      "inverse": {
         "$type": "color",
-        "$value": "{palette.raw.gray900}"
-      },
-      "backgroundBase": {
+        "$value": "{color.palette.gray900}"
+      }
+    },
+    "background": {
+      "base": {
         "$type": "color",
-        "$value": "{palette.raw.gray900}"
+        "$value": "{color.palette.gray900}"
       },
-      "backgroundSurface": {
+      "surface": {
         "$type": "color",
         "$value": "#2A211C"
       },
-      "backgroundElevated": {
+      "elevated": {
         "$type": "color",
         "$value": "#342923"
       },
-      "backgroundHover": {
+      "hover": {
         "$type": "color",
-        "$value": "{palette.raw.gray800}"
+        "$value": "{color.palette.gray800}"
       },
-      "backgroundPressed": {
+      "pressed": {
         "$type": "color",
-        "$value": "{palette.raw.gray700}"
+        "$value": "{color.palette.gray700}"
       },
-      "borderBase": {
+      "tinted": {
         "$type": "color",
-        "$value": "{palette.raw.gray700}"
-      },
-      "borderStrong": {
+        "$value": "#342923"
+      }
+    },
+    "border": {
+      "base": {
         "$type": "color",
-        "$value": "{palette.raw.gray600}"
+        "$value": "{color.palette.gray700}"
       },
-      "surfaceBase": {
+      "strong": {
+        "$type": "color",
+        "$value": "{color.palette.gray600}"
+      }
+    },
+    "surface": {
+      "base": {
         "$type": "color",
         "$value": "#2A211C"
       },
-      "surfaceTinted": {
+      "tinted": {
+        "$type": "color",
+        "$value": "#342923"
+      },
+      "raised": {
         "$type": "color",
         "$value": "#342923"
       }

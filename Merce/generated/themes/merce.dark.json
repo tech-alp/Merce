@@ -2,30 +2,57 @@
   "schemaVersion": 1,
   "theme": "merce",
   "variant": "dark",
-  "palette": {
-    "textPrimary": "#FAF8F6",
-    "textSecondary": "#E8DFD5",
-    "textTertiary": "#B8A494",
-    "textInverse": "#1F1510",
-    "link": "#C4785A",
-    "backgroundBase": "#1F1510",
-    "backgroundSurface": "#2A211C",
-    "backgroundElevated": "#342923",
-    "backgroundHover": "#3D2F26",
-    "backgroundPressed": "#5C4A3D",
-    "actionPrimary": "#C4785A",
-    "actionPrimaryLight": "#E8B5A3",
-    "actionPrimaryDark": "#9A4F34",
-    "actionSecondary": "#2D4A3E",
-    "borderBase": "#5C4A3D",
-    "borderStrong": "#7A6556",
-    "borderFocus": "#C4785A",
-    "statusError": "#C45A5A",
-    "statusSuccess": "#4A7C59",
-    "statusWarning": "#D4A854",
-    "statusInfo": "#5A8FC4",
-    "surfaceBase": "#2A211C",
-    "surfaceTinted": "#342923"
+  "colors": {
+    "text": {
+      "primary": "#FAF8F6",
+      "secondary": "#E8DFD5",
+      "tertiary": "#B8A494",
+      "inverse": "#1F1510",
+      "disabled": "#B8A494",
+      "link": "#C4785A",
+      "linkHover": "#9A4F34"
+    },
+    "background": {
+      "base": "#1F1510",
+      "surface": "#2A211C",
+      "elevated": "#342923",
+      "hover": "#3D2F26",
+      "pressed": "#5C4A3D",
+      "tinted": "#342923",
+      "overlay": "#000000"
+    },
+    "border": {
+      "base": "#5C4A3D",
+      "strong": "#7A6556",
+      "focus": "#C4785A",
+      "error": "#C45A5A",
+      "success": "#4A7C59"
+    },
+    "action": {
+      "primary": "#C4785A",
+      "primaryHover": "#9A4F34",
+      "primaryPressed": "#9A4F34",
+      "primarySubtle": "#E8B5A3",
+      "secondary": "#2D4A3E",
+      "secondaryHover": "#1A2C24",
+      "secondaryPressed": "#1A2C24",
+      "disabled": "#B8A494"
+    },
+    "status": {
+      "success": "#4A7C59",
+      "successSubtle": "#A8D4B8",
+      "warning": "#D4A854",
+      "warningSubtle": "#F0D9A8",
+      "error": "#C45A5A",
+      "errorSubtle": "#E8A8A8",
+      "info": "#5A8FC4",
+      "infoSubtle": "#A8CCE8"
+    },
+    "surface": {
+      "base": "#2A211C",
+      "tinted": "#342923",
+      "raised": "#342923"
+    }
   },
   "spacing": {
     "base": 8,
