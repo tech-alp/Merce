@@ -227,7 +227,7 @@ private slots:
     void topLevelPaletteSectionIsRejected();
     void rawRuntimeColorsSectionIsRejected();
     void invalidRuntimeFieldValuesAreRejected();
-    void activePaletteCannotBorrowMissingFieldsFromBase();
+    void activeColorsCannotBorrowMissingFieldsFromBase();
     void basePlusActiveSectionOverlaySucceeds();
     void requestedBadManifestFallsBackToRegistryDefault();
     void brokenDefaultReturnsFailure();
@@ -315,7 +315,7 @@ void tst_merce_theme_manifest_loader::missingTopLevelRequiredSectionsAreRejected
 {
     QTest::addColumn<QString>("section");
 
-    QTest::newRow("palette") << QStringLiteral("palette");
+    QTest::newRow("colors") << QStringLiteral("colors");
     QTest::newRow("spacing") << QStringLiteral("spacing");
     QTest::newRow("radius") << QStringLiteral("radius");
     QTest::newRow("typography") << QStringLiteral("typography");
@@ -384,9 +384,11 @@ void tst_merce_theme_manifest_loader::invalidRuntimeFieldValuesAreRejected()
     QVERIFY(dir.isValid());
 
     QJsonObject manifest = fullManifest(QStringLiteral("merce"), QStringLiteral("light"));
-    QJsonObject palette = manifest.value(QStringLiteral("palette")).toObject();
-    palette.insert(QStringLiteral("textPrimary"), QStringLiteral("not-a-color"));
-    manifest.insert(QStringLiteral("palette"), palette);
+    QJsonObject colors = manifest.value(QStringLiteral("colors")).toObject();
+    QJsonObject text = colors.value(QStringLiteral("text")).toObject();
+    text.insert(QStringLiteral("primary"), QStringLiteral("not-a-color"));
+    colors.insert(QStringLiteral("text"), text);
+    manifest.insert(QStringLiteral("colors"), colors);
     QJsonObject spacing = manifest.value(QStringLiteral("spacing")).toObject();
     spacing.insert(QStringLiteral("md"), QStringLiteral("large"));
     manifest.insert(QStringLiteral("spacing"), spacing);
@@ -400,7 +402,7 @@ void tst_merce_theme_manifest_loader::invalidRuntimeFieldValuesAreRejected()
     const MerceThemeLoadResult result = MerceThemeManifestLoader(pathIn(dir, QStringLiteral("index.json"))).loadDefault();
 
     QVERIFY(!result.ok);
-    QVERIFY(containsError(result.errors, QStringLiteral("runtime field palette.textPrimary must be a valid color string")));
+    QVERIFY(containsError(result.errors, QStringLiteral("runtime field colors.text.primary must be a valid color string")));
     QVERIFY(containsError(result.errors, QStringLiteral("runtime field spacing.md must be numeric")));
     QVERIFY(containsError(result.errors, QStringLiteral("runtime field typography.bodyFont must be a resolved non-empty string")));
 
@@ -416,7 +418,7 @@ void tst_merce_theme_manifest_loader::invalidRuntimeFieldValuesAreRejected()
                           QStringLiteral("runtime field typography.bodyFont must be a resolved non-empty string")));
 }
 
-void tst_merce_theme_manifest_loader::activePaletteCannotBorrowMissingFieldsFromBase()
+void tst_merce_theme_manifest_loader::activeColorsCannotBorrowMissingFieldsFromBase()
 {
     QTemporaryDir dir;
     QVERIFY(dir.isValid());
@@ -427,8 +429,10 @@ void tst_merce_theme_manifest_loader::activePaletteCannotBorrowMissingFieldsFrom
     active.insert(QStringLiteral("schemaVersion"), 1);
     active.insert(QStringLiteral("theme"), QStringLiteral("merce"));
     active.insert(QStringLiteral("variant"), QStringLiteral("light"));
-    active.insert(QStringLiteral("palette"), QJsonObject{
-        { QStringLiteral("textPrimary"), QStringLiteral("#000000") },
+    active.insert(QStringLiteral("colors"), QJsonObject{
+        { QStringLiteral("text"), QJsonObject{
+            { QStringLiteral("primary"), QStringLiteral("#000000") },
+        } },
     });
     QVERIFY(writeJson(pathIn(dir, QStringLiteral("active.json")), active));
 
@@ -451,7 +455,7 @@ void tst_merce_theme_manifest_loader::activePaletteCannotBorrowMissingFieldsFrom
     const MerceThemeLoadResult result = MerceThemeManifestLoader(pathIn(dir, QStringLiteral("index.json"))).loadDefault();
 
     QVERIFY(!result.ok);
-    QVERIFY(containsError(result.errors, QStringLiteral("missing required runtime field: palette.textSecondary")));
+    QVERIFY(containsError(result.errors, QStringLiteral("missing required runtime field: colors.text.secondary")));
     QVERIFY(!containsError(result.errors, QStringLiteral("missing required runtime field: spacing.md")));
 }
 
@@ -470,7 +474,7 @@ void tst_merce_theme_manifest_loader::basePlusActiveSectionOverlaySucceeds()
     active.insert(QStringLiteral("schemaVersion"), 1);
     active.insert(QStringLiteral("theme"), QStringLiteral("merce"));
     active.insert(QStringLiteral("variant"), QStringLiteral("light"));
-    active.insert(QStringLiteral("palette"), fullManifest(QStringLiteral("merce"), QStringLiteral("light")).value(QStringLiteral("palette")));
+    active.insert(QStringLiteral("colors"), fullManifest(QStringLiteral("merce"), QStringLiteral("light")).value(QStringLiteral("colors")));
     QVERIFY(writeJson(pathIn(dir, QStringLiteral("active.json")), active));
 
     const QJsonObject index = {
@@ -541,7 +545,7 @@ void tst_merce_theme_manifest_loader::brokenDefaultReturnsFailure()
     QVERIFY(dir.isValid());
 
     QJsonObject manifest = fullManifest(QStringLiteral("merce"), QStringLiteral("light"));
-    manifest.remove(QStringLiteral("palette"));
+    manifest.remove(QStringLiteral("colors"));
     QVERIFY(writeJson(pathIn(dir, QStringLiteral("merce.light.json")), manifest));
     QVERIFY(writeJson(pathIn(dir, QStringLiteral("index.json")), indexForDefaultMerce(QStringLiteral("merce.light.json"))));
 
@@ -549,7 +553,7 @@ void tst_merce_theme_manifest_loader::brokenDefaultReturnsFailure()
 
     QVERIFY(!result.ok);
     QVERIFY(!result.usedFallback);
-    QVERIFY(containsError(result.errors, QStringLiteral("missing required field: palette")));
+    QVERIFY(containsError(result.errors, QStringLiteral("missing required field: colors")));
 }
 
 QTEST_MAIN(tst_merce_theme_manifest_loader)

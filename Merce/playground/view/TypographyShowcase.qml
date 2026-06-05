@@ -12,8 +12,8 @@ Item {
     readonly property int specimenCount: 14
     readonly property int labelColumnWidth: 78
     readonly property bool darkMode: Theme.activeMode === "dark"
-    readonly property color specimenBackground: darkMode ? Theme.palette.backgroundSurface : Theme.palette.textPrimary
-    readonly property color specimenForeground: darkMode ? Theme.palette.textPrimary : Theme.palette.backgroundSurface
+    readonly property color specimenBackground: darkMode ? Theme.colors.background.surface : Theme.colors.text.primary
+    readonly property color specimenForeground: darkMode ? Theme.colors.text.primary : Theme.colors.background.surface
     readonly property color specimenMuted: Qt.rgba(specimenForeground.r, specimenForeground.g, specimenForeground.b, 0.64)
 
     component ScaleRow: Item {

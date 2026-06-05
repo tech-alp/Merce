@@ -79,8 +79,7 @@ void tst_merce_theme_runtime_switch::defaultStateIsMerceLight()
 void tst_merce_theme_runtime_switch::successfulSwitchesUpdateStateAndKeepObjectPointers()
 {
     MerceTheme theme;
-    MercePalette *palette = theme.palette();
-    MercePalette *colors = theme.colors();
+    MerceColors *colors = theme.colors();
     MerceSpacing *spacing = theme.spacing();
     MerceRadius *radius = theme.radius();
     MerceTypography *typography = theme.typography();
@@ -89,9 +88,8 @@ void tst_merce_theme_runtime_switch::successfulSwitchesUpdateStateAndKeepObjectP
     QVERIFY(theme.setTheme(QStringLiteral("merce"), QStringLiteral("dark")));
     QCOMPARE(theme.activeBrand(), QStringLiteral("merce"));
     QCOMPARE(theme.activeMode(), QStringLiteral("dark"));
-    QCOMPARE(theme.palette()->backgroundBase(), QColor(QStringLiteral("#1F1510")));
+    QCOMPARE(theme.colors()->background()->base(), QColor(QStringLiteral("#1F1510")));
     QCOMPARE(activeThemeChanged.count(), 1);
-    QCOMPARE(theme.palette(), palette);
     QCOMPARE(theme.colors(), colors);
     QCOMPARE(theme.spacing(), spacing);
     QCOMPARE(theme.radius(), radius);
@@ -100,9 +98,8 @@ void tst_merce_theme_runtime_switch::successfulSwitchesUpdateStateAndKeepObjectP
     QVERIFY(theme.setTheme(QStringLiteral("merce"), QStringLiteral("light")));
     QCOMPARE(theme.activeBrand(), QStringLiteral("merce"));
     QCOMPARE(theme.activeMode(), QStringLiteral("light"));
-    QCOMPARE(theme.palette()->backgroundBase(), QColor(QStringLiteral("#FAF8F6")));
+    QCOMPARE(theme.colors()->background()->base(), QColor(QStringLiteral("#FAF8F6")));
     QCOMPARE(activeThemeChanged.count(), 2);
-    QCOMPARE(theme.palette(), palette);
     QCOMPARE(theme.colors(), colors);
     QCOMPARE(theme.spacing(), spacing);
     QCOMPARE(theme.radius(), radius);
@@ -111,10 +108,9 @@ void tst_merce_theme_runtime_switch::successfulSwitchesUpdateStateAndKeepObjectP
     QVERIFY(theme.setTheme(QStringLiteral("stripe")));
     QCOMPARE(theme.activeBrand(), QStringLiteral("stripe"));
     QCOMPARE(theme.activeMode(), QString());
-    QCOMPARE(theme.palette()->backgroundBase(), QColor(QStringLiteral("#F6F9FC")));
+    QCOMPARE(theme.colors()->background()->base(), QColor(QStringLiteral("#F6F9FC")));
     QCOMPARE(theme.radius()->button(), 8);
     QCOMPARE(activeThemeChanged.count(), 3);
-    QCOMPARE(theme.palette(), palette);
     QCOMPARE(theme.colors(), colors);
     QCOMPARE(theme.spacing(), spacing);
     QCOMPARE(theme.radius(), radius);
@@ -139,11 +135,10 @@ void tst_merce_theme_runtime_switch::successfulSwitchesUpdateStateAndKeepObjectP
         ++expectedSignalCount;
         QCOMPARE(theme.activeBrand(), expectation.brand);
         QCOMPARE(theme.activeMode(), QString());
-        QCOMPARE(theme.palette()->backgroundBase(), expectation.backgroundBase);
-        QCOMPARE(theme.palette()->actionPrimary(), expectation.actionPrimary);
+        QCOMPARE(theme.colors()->background()->base(), expectation.backgroundBase);
+        QCOMPARE(theme.colors()->action()->primary(), expectation.actionPrimary);
         QCOMPARE(theme.radius()->button(), expectation.buttonRadius);
         QCOMPARE(activeThemeChanged.count(), expectedSignalCount);
-        QCOMPARE(theme.palette(), palette);
         QCOMPARE(theme.colors(), colors);
         QCOMPARE(theme.spacing(), spacing);
         QCOMPARE(theme.radius(), radius);
@@ -158,21 +153,21 @@ void tst_merce_theme_runtime_switch::invalidRequestsPreserveActiveStateAndValues
 
     const QString activeBrand = theme.activeBrand();
     const QString activeMode = theme.activeMode();
-    const QColor backgroundBase = theme.palette()->backgroundBase();
+    const QColor backgroundBase = theme.colors()->background()->base();
     const int buttonRadius = theme.radius()->button();
     QSignalSpy activeThemeChanged(&theme, &MerceTheme::activeThemeChanged);
 
     QVERIFY(!theme.setTheme(QStringLiteral("unknown"), QStringLiteral("dark")));
     QCOMPARE(theme.activeBrand(), activeBrand);
     QCOMPARE(theme.activeMode(), activeMode);
-    QCOMPARE(theme.palette()->backgroundBase(), backgroundBase);
+    QCOMPARE(theme.colors()->background()->base(), backgroundBase);
     QCOMPARE(theme.radius()->button(), buttonRadius);
     QCOMPARE(activeThemeChanged.count(), 0);
 
     QVERIFY(!theme.setTheme(QStringLiteral("merce"), QStringLiteral("unknown")));
     QCOMPARE(theme.activeBrand(), activeBrand);
     QCOMPARE(theme.activeMode(), activeMode);
-    QCOMPARE(theme.palette()->backgroundBase(), backgroundBase);
+    QCOMPARE(theme.colors()->background()->base(), backgroundBase);
     QCOMPARE(theme.radius()->button(), buttonRadius);
     QCOMPARE(activeThemeChanged.count(), 0);
 }
@@ -212,7 +207,7 @@ void tst_merce_theme_runtime_switch::registeredBrokenManifestAppliesFallbackStat
     QVERIFY(theme.setTheme(QStringLiteral("broken")));
     QCOMPARE(theme.activeBrand(), QStringLiteral("merce"));
     QCOMPARE(theme.activeMode(), QStringLiteral("light"));
-    QCOMPARE(theme.palette()->backgroundBase(), QColor(QStringLiteral("#FAF8F6")));
+    QCOMPARE(theme.colors()->background()->base(), QColor(QStringLiteral("#FAF8F6")));
 }
 
 void tst_merce_theme_runtime_switch::availableThemesExposeRegistryOptions()
@@ -256,14 +251,15 @@ void tst_merce_theme_runtime_switch::metaObjectContractKeepsStablePointersAndVal
     MerceTheme theme;
 
     const QMetaObject *themeMetaObject = theme.metaObject();
-    QVERIFY(propertyByName(themeMetaObject, "palette").isConstant());
+    QCOMPARE(themeMetaObject->indexOfProperty("palette"), -1);
     QVERIFY(propertyByName(themeMetaObject, "colors").isConstant());
     QVERIFY(propertyByName(themeMetaObject, "spacing").isConstant());
     QVERIFY(propertyByName(themeMetaObject, "radius").isConstant());
     QVERIFY(propertyByName(themeMetaObject, "typography").isConstant());
     QVERIFY(propertyByName(themeMetaObject, "availableThemes").isConstant());
 
-    QVERIFY(propertyByName(theme.palette()->metaObject(), "backgroundBase").hasNotifySignal());
+    QVERIFY(propertyByName(theme.colors()->background()->metaObject(), "base").hasNotifySignal());
+    QVERIFY(propertyByName(theme.colors()->action()->metaObject(), "primary").hasNotifySignal());
     QVERIFY(propertyByName(theme.spacing()->metaObject(), "md").hasNotifySignal());
     QVERIFY(propertyByName(theme.radius()->metaObject(), "button").hasNotifySignal());
     QVERIFY(propertyByName(theme.typography()->metaObject(), "fontBody").hasNotifySignal());

@@ -31,39 +31,54 @@ struct RegistryLoadResult
 const QStringList supportedSections()
 {
     return {
-        QStringLiteral("palette"),
+        QStringLiteral("colors"),
         QStringLiteral("spacing"),
         QStringLiteral("radius"),
         QStringLiteral("typography"),
     };
 }
 
-const QStringList paletteFields()
+const QStringList colorFields()
 {
     return {
-        QStringLiteral("textPrimary"),
-        QStringLiteral("textSecondary"),
-        QStringLiteral("textTertiary"),
-        QStringLiteral("textInverse"),
-        QStringLiteral("link"),
-        QStringLiteral("backgroundBase"),
-        QStringLiteral("backgroundSurface"),
-        QStringLiteral("backgroundElevated"),
-        QStringLiteral("backgroundHover"),
-        QStringLiteral("backgroundPressed"),
-        QStringLiteral("actionPrimary"),
-        QStringLiteral("actionPrimaryLight"),
-        QStringLiteral("actionPrimaryDark"),
-        QStringLiteral("actionSecondary"),
-        QStringLiteral("borderBase"),
-        QStringLiteral("borderStrong"),
-        QStringLiteral("borderFocus"),
-        QStringLiteral("statusError"),
-        QStringLiteral("statusSuccess"),
-        QStringLiteral("statusWarning"),
-        QStringLiteral("statusInfo"),
-        QStringLiteral("surfaceBase"),
-        QStringLiteral("surfaceTinted"),
+        QStringLiteral("text.primary"),
+        QStringLiteral("text.secondary"),
+        QStringLiteral("text.tertiary"),
+        QStringLiteral("text.inverse"),
+        QStringLiteral("text.disabled"),
+        QStringLiteral("text.link"),
+        QStringLiteral("text.linkHover"),
+        QStringLiteral("background.base"),
+        QStringLiteral("background.surface"),
+        QStringLiteral("background.elevated"),
+        QStringLiteral("background.hover"),
+        QStringLiteral("background.pressed"),
+        QStringLiteral("background.tinted"),
+        QStringLiteral("background.overlay"),
+        QStringLiteral("border.base"),
+        QStringLiteral("border.strong"),
+        QStringLiteral("border.focus"),
+        QStringLiteral("border.error"),
+        QStringLiteral("border.success"),
+        QStringLiteral("action.primary"),
+        QStringLiteral("action.primaryHover"),
+        QStringLiteral("action.primaryPressed"),
+        QStringLiteral("action.primarySubtle"),
+        QStringLiteral("action.secondary"),
+        QStringLiteral("action.secondaryHover"),
+        QStringLiteral("action.secondaryPressed"),
+        QStringLiteral("action.disabled"),
+        QStringLiteral("status.success"),
+        QStringLiteral("status.successSubtle"),
+        QStringLiteral("status.warning"),
+        QStringLiteral("status.warningSubtle"),
+        QStringLiteral("status.error"),
+        QStringLiteral("status.errorSubtle"),
+        QStringLiteral("status.info"),
+        QStringLiteral("status.infoSubtle"),
+        QStringLiteral("surface.base"),
+        QStringLiteral("surface.tinted"),
+        QStringLiteral("surface.raised"),
     };
 }
 
@@ -150,8 +165,6 @@ const QStringList typographyFields()
 
 const QStringList requiredFieldsForSection(const QString &section)
 {
-    if (section == QStringLiteral("palette"))
-        return paletteFields();
     if (section == QStringLiteral("spacing"))
         return spacingFields();
     if (section == QStringLiteral("radius"))
@@ -172,11 +185,29 @@ const QStringList typographyStringFields()
     };
 }
 
-void requireColor(const QJsonObject &object, const QString &field, QStringList *errors)
+QJsonValue valueAtPath(const QJsonObject &object, const QString &path)
 {
-    const QJsonValue value = object.value(field);
+    QJsonValue value = object;
+    const QStringList segments = path.split(QLatin1Char('.'));
+    for (const QString &segment : segments) {
+        if (!value.isObject())
+            return {};
+        value = value.toObject().value(segment);
+    }
+    return value;
+}
+
+void requireColorPath(const QJsonObject &object, const QString &fieldPath, QStringList *errors)
+{
+    const QJsonValue value = valueAtPath(object, fieldPath);
+    const QString fullPath = QStringLiteral("colors.%1").arg(fieldPath);
+    if (value.isUndefined()) {
+        errors->append(QStringLiteral("missing required runtime field: %1").arg(fullPath));
+        return;
+    }
+
     if (!value.isString() || !QColor(value.toString()).isValid()) {
-        errors->append(QStringLiteral("runtime field palette.%1 must be a valid color string").arg(field));
+        errors->append(QStringLiteral("runtime field %1 must be a valid color string").arg(fullPath));
     }
 }
 
@@ -266,16 +297,42 @@ QJsonObject overlayManifest(const QJsonObject &base, const QJsonObject &active)
     return merged;
 }
 
-QStringList validateNoCompatibilitySections(const QJsonObject &manifest)
+QStringList validateNoLegacySections(const QJsonObject &manifest)
 {
     QStringList errors;
-    if (manifest.contains(QStringLiteral("colors")))
-        errors.append(QStringLiteral("manifest must not contain a top-level colors compatibility section"));
+    if (manifest.contains(QStringLiteral("palette")))
+        errors.append(QStringLiteral("manifest must not contain a top-level palette section"));
+
+    const QJsonValue colorsValue = manifest.value(QStringLiteral("colors"));
+    if (colorsValue.isObject() && colorsValue.toObject().contains(QStringLiteral("raw")))
+        errors.append(QStringLiteral("runtime colors must not expose raw color scales"));
+    return errors;
+}
+
+QStringList validateColorsSection(const QJsonObject &manifest)
+{
+    QStringList errors;
+    const QJsonValue sectionValue = manifest.value(QStringLiteral("colors"));
+    if (!sectionValue.isObject()) {
+        errors.append(QStringLiteral("missing required field: colors"));
+        return errors;
+    }
+
+    const QJsonObject colors = sectionValue.toObject();
+    if (colors.contains(QStringLiteral("raw")))
+        errors.append(QStringLiteral("runtime colors must not expose raw color scales"));
+
+    for (const QString &fieldPath : colorFields())
+        requireColorPath(colors, fieldPath, &errors);
+
     return errors;
 }
 
 QStringList validateSection(const QJsonObject &manifest, const QString &section)
 {
+    if (section == QStringLiteral("colors"))
+        return validateColorsSection(manifest);
+
     QStringList errors;
     const QJsonValue sectionValue = manifest.value(section);
     if (!sectionValue.isObject()) {
@@ -290,10 +347,8 @@ QStringList validateSection(const QJsonObject &manifest, const QString &section)
             continue;
         }
 
-        if (section == QStringLiteral("palette")) {
-            requireColor(object, field, &errors);
-        } else if (section == QStringLiteral("typography")
-                   && typographyStringFields().contains(field)) {
+        if (section == QStringLiteral("typography")
+            && typographyStringFields().contains(field)) {
             requireString(object, section, field, &errors);
         } else {
             requireNumber(object, section, field, &errors);
@@ -323,8 +378,7 @@ QStringList validateManifest(const QJsonObject &manifest, const MerceThemeRegist
             errors.append(QStringLiteral("variant must be '%1'").arg(entry.variant));
     }
 
-    if (manifest.contains(QStringLiteral("colors")))
-        errors.append(QStringLiteral("manifest must not contain a top-level colors compatibility section"));
+    errors.append(validateNoLegacySections(manifest));
 
     for (const QString &section : supportedSections())
         errors.append(validateSection(manifest, section));
@@ -345,7 +399,7 @@ MerceThemeLoadResult loadEntry(const MerceThemeRegistryEntry &entry)
             result.errors = base.errors;
             return result;
         }
-        result.errors.append(validateNoCompatibilitySections(base.object));
+        result.errors.append(validateNoLegacySections(base.object));
         mergedManifest = base.object;
     }
 
@@ -354,7 +408,7 @@ MerceThemeLoadResult loadEntry(const MerceThemeRegistryEntry &entry)
         result.errors = active.errors;
         return result;
     }
-    result.errors.append(validateNoCompatibilitySections(active.object));
+    result.errors.append(validateNoLegacySections(active.object));
 
     mergedManifest = overlayManifest(mergedManifest, active.object);
     result.errors.append(validateManifest(mergedManifest, entry));

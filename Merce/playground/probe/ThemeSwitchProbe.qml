@@ -3,7 +3,7 @@ import QtQuick
 import Merce.Core
 
 QtObject {
-    property color observedBackground: Theme.palette.backgroundBase
+    property color observedBackground: Theme.colors.background.base
 
     function fail(message, values) {
         console.error("theme-switch-probe failed", message, values)
@@ -11,7 +11,7 @@ QtObject {
     }
 
     Component.onCompleted: {
-        const palette = Theme.palette
+        const palette = Theme.colors
         const spacing = Theme.spacing
         const radius = Theme.radius
         const typography = Theme.typography
@@ -32,7 +32,7 @@ QtObject {
         if (String(observedBackground).toLowerCase() !== "#1f1510"
                 || Theme.activeBrand !== "merce"
                 || Theme.activeMode !== "dark"
-                || Theme.palette !== palette
+                || Theme.colors !== palette
                 || Theme.spacing !== spacing
                 || Theme.radius !== radius
                 || Theme.typography !== typography) {
@@ -62,7 +62,7 @@ QtObject {
         if (String(observedBackground).toLowerCase() !== "#f6f9fc"
                 || Theme.activeBrand !== "stripe"
                 || Theme.activeMode !== ""
-                || Theme.palette !== palette
+                || Theme.colors !== palette
                 || Theme.spacing !== spacing
                 || Theme.radius !== radius
                 || Theme.typography !== typography) {
@@ -74,7 +74,7 @@ QtObject {
         console.log("theme-switch-probe ok",
                     Theme.activeBrand,
                     Theme.activeMode,
-                    Theme.palette.backgroundBase)
+                    Theme.colors.background.base)
         Qt.quit()
     }
 }

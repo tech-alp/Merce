@@ -10,7 +10,7 @@ Basic.ApplicationWindow {
     width: 1180
     height: 760
     visible: true
-    color: Theme.palette.backgroundBase
+    color: Theme.colors.background.base
     title: "Merce Playground"
 
     property string selectedPage: "theme"

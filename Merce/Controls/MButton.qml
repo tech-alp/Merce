@@ -35,30 +35,35 @@ BaseControl {
     // OVERRIDEN PROPERTIES (from BaseControl)
     // ====================================================================
     override property color accentColor: {
-        if (variant === "secondary") return Theme.palette.actionSecondary
-        if (variant === "outline") return Theme.palette.actionPrimary
-        if (variant === "ghost") return Theme.palette.actionPrimary
-        if (variant === "destructive") return Theme.palette.statusError
-        return Theme.palette.actionPrimary
+        if (variant === "secondary") return Theme.colors.action.secondary
+        if (variant === "outline") return Theme.colors.action.primary
+        if (variant === "ghost") return Theme.colors.action.primary
+        if (variant === "destructive") return Theme.colors.status.error
+        return Theme.colors.action.primary
     }
 
     override property color backgroundColor: {
         if (root.isDisabled) return Theme.colors.background.hover
         if (variant === "outline" || variant === "ghost") return "transparent"
-        if (root.isHovered || root.isPressed) {
-            if (variant === "secondary") return Theme.palette.action.secondaryDark
-            if (variant === "destructive") return Theme.palette.statusError
-            return Theme.palette.action.primaryDark
+        if (root.isPressed) {
+            if (variant === "secondary") return Theme.colors.action.secondaryPressed
+            if (variant === "destructive") return Theme.colors.status.error
+            return Theme.colors.action.primaryPressed
         }
-        if (variant === "secondary") return Theme.palette.actionSecondary
-        if (variant === "destructive") return Theme.palette.statusError
-        return Theme.palette.actionPrimary
+        if (root.isHovered) {
+            if (variant === "secondary") return Theme.colors.action.secondaryHover
+            if (variant === "destructive") return Theme.colors.status.error
+            return Theme.colors.action.primaryHover
+        }
+        if (variant === "secondary") return Theme.colors.action.secondary
+        if (variant === "destructive") return Theme.colors.status.error
+        return Theme.colors.action.primary
     }
 
     override property color accentHoverColor: {
-        if (variant === "secondary") return Theme.palette.action.secondaryDark
-        if (variant === "destructive") return Theme.palette.statusError
-        return Theme.palette.action.primaryDark
+        if (variant === "secondary") return Theme.colors.action.secondaryHover
+        if (variant === "destructive") return Theme.colors.status.error
+        return Theme.colors.action.primaryHover
     }
 
     // Size dimensions

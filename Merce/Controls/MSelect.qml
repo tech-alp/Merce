@@ -105,7 +105,7 @@ Basic.ComboBox {
         y: root.topPadding + (root.availableHeight - height) / 2
         name: "material:keyboard_arrow_down"
         size: Theme.icons.small
-        color: root.enabled ? Theme.palette.text.tertiary : Theme.palette.text.disabled
+        color: root.enabled ? Theme.colors.text.tertiary : Theme.colors.text.disabled
         rotation: root.isOpen ? 180 : 0
 
         Behavior on rotation {
@@ -124,10 +124,10 @@ Basic.ComboBox {
         font.pixelSize: root.currentSizeConfig.fontSize
         color: {
             if (!root.enabled)
-                return Theme.palette.text.disabled
+                return Theme.colors.text.disabled
             if (root.selectedOption)
-                return Theme.palette.text.primary
-            return Theme.palette.text.tertiary
+                return Theme.colors.text.primary
+            return Theme.colors.text.tertiary
         }
         verticalAlignment: Text.AlignVCenter
         elide: Text.ElideRight
@@ -137,16 +137,16 @@ Basic.ComboBox {
         implicitWidth: 280
         implicitHeight: root.currentSizeConfig.height
         radius: Theme.radius.input
-        color: root.enabled ? Theme.palette.background.surface : Theme.palette.background.base
+        color: root.enabled ? Theme.colors.background.surface : Theme.colors.background.base
         border.width: root.isOpen || root.isFocused ? 2 : 1
         border.color: {
             if (!root.enabled)
-                return Theme.palette.border.base
+                return Theme.colors.border.base
             if (root.isOpen || root.isFocused)
-                return Theme.palette.border.focus
+                return Theme.colors.border.focus
             if (root.isHovered)
-                return Theme.palette.border.strong
-            return Theme.palette.border.base
+                return Theme.colors.border.strong
+            return Theme.colors.border.base
         }
 
         Behavior on border.color {
@@ -188,7 +188,7 @@ Basic.ComboBox {
                 text: optionDelegate.optionLabel
                 font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
                 font.pixelSize: root.currentSizeConfig.fontSize
-                color: optionDelegate.selectedOption ? Theme.palette.action.primary : Theme.palette.text.primary
+                color: optionDelegate.selectedOption ? Theme.colors.action.primary : Theme.colors.text.primary
                 font.weight: optionDelegate.selectedOption ?
                              Theme.typography.weightSemibold : Theme.typography.weightRegular
                 elide: Text.ElideRight
@@ -203,7 +203,7 @@ Basic.ComboBox {
                 }
                 name: "material:check"
                 size: Theme.icons.small
-                color: Theme.palette.action.primary
+                color: Theme.colors.action.primary
                 visible: optionDelegate.selectedOption
             }
         }
@@ -212,9 +212,9 @@ Basic.ComboBox {
             radius: Theme.radius.small
             color: {
                 if (optionDelegate.selectedOption)
-                    return Theme.palette.action.light("primary")
+                    return Theme.colors.action.hover("primary")
                 if (optionDelegate.highlighted || optionDelegate.hovered)
-                    return Theme.palette.background.hover
+                    return Theme.colors.background.hover
                 return "transparent"
             }
 
@@ -250,9 +250,9 @@ Basic.ComboBox {
 
         background: Rectangle {
             radius: Theme.radius.input
-            color: Theme.palette.background.surface
+            color: Theme.colors.background.surface
             border.width: 1
-            border.color: Theme.palette.border.base
+            border.color: Theme.colors.border.base
 
             layer.enabled: true
             layer.effect: MultiEffect {

@@ -9,7 +9,7 @@ Rectangle {
     property string activeTheme: ""
     property int stackDepth: 0
 
-    color: Theme.palette.backgroundSurface
+    color: Theme.colors.background.surface
 
     Rectangle {
         anchors {
@@ -18,7 +18,7 @@ Rectangle {
             top: parent.top
         }
         height: 1
-        color: Theme.palette.borderBase
+        color: Theme.colors.border.base
     }
 
     Row {
@@ -32,13 +32,13 @@ Rectangle {
         ThemedText {
             type: "caption"
             text: root.activePage
-            textColor: Theme.palette.textPrimary
+            textColor: Theme.colors.text.primary
         }
 
         ThemedText {
             type: "caption"
             text: root.activeTheme
-            textColor: Theme.palette.text.secondary
+            textColor: Theme.colors.text.secondary
         }
     }
 
@@ -50,6 +50,6 @@ Rectangle {
         }
         type: "caption"
         text: "Stack " + root.stackDepth
-        textColor: Theme.palette.text.tertiary
+        textColor: Theme.colors.text.tertiary
     }
 }

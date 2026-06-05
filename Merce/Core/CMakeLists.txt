@@ -6,7 +6,7 @@ set(MERCE_CORE_THEME_SOURCES
     Theme/MerceThemeRegistry.h
     Theme/MerceTheme.cpp
     Theme/MerceTheme.h
-    Theme/MercePalette.h
+    Theme/MerceColors.h
     Theme/MerceSpacing.h
     Theme/MerceRadius.h
     Theme/MerceTypography.h

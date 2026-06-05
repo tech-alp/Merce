@@ -16,7 +16,7 @@ MerceTheme::MerceTheme(QObject *parent)
 MerceTheme::MerceTheme(const QString &manifestIndexPath, QObject *parent)
     : QObject(parent),
       m_manifestIndexPath(manifestIndexPath),
-      m_palette(new MercePalette(this)),
+      m_colors(new MerceColors(this)),
       m_spacing(new MerceSpacing(this)),
       m_radius(new MerceRadius(this)),
       m_typography(new MerceTypography(this)),
@@ -67,7 +67,7 @@ bool MerceTheme::applyLoadedTheme(const MerceThemeLoadResult &result)
         return false;
 
     const QJsonObject manifest = result.finalManifest;
-    m_palette->applyManifestSection(manifest.value(QStringLiteral("palette")).toObject());
+    m_colors->applyManifestSection(manifest.value(QStringLiteral("colors")).toObject());
     m_spacing->applyManifestSection(manifest.value(QStringLiteral("spacing")).toObject());
     m_radius->applyManifestSection(manifest.value(QStringLiteral("radius")).toObject());
     m_typography->applyManifestSection(manifest.value(QStringLiteral("typography")).toObject());

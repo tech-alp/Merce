@@ -5,10 +5,10 @@ import Toastify.Style
 
 ToastifyStyleProvider {
     colors: ({
-        info: Theme.palette.status.info,
-        success: Theme.palette.status.success,
-        warning: Theme.palette.status.warning,
-        error: Theme.palette.status.error
+        info: Theme.colors.status.info,
+        success: Theme.colors.status.success,
+        warning: Theme.colors.status.warning,
+        error: Theme.colors.status.error
     })
 
     fonts: ({
@@ -57,7 +57,7 @@ ToastifyStyleProvider {
     })
 
     textColors: ({
-        color: Theme.palette.text.inverse
+        color: Theme.colors.text.inverse
     })
 
     progressBar: ({

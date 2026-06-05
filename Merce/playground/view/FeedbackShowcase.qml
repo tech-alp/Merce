@@ -14,7 +14,7 @@ Item {
 
     component SectionTitle: ThemedText {
         type: "h4"
-        textColor: Theme.palette.textPrimary
+        textColor: Theme.colors.text.primary
         wrap: "word"
     }
 

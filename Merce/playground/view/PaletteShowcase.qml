@@ -15,7 +15,7 @@ Item {
 
     component SectionTitle: ThemedText {
         type: "h4"
-        textColor: Theme.palette.textPrimary
+        textColor: Theme.colors.text.primary
         wrap: "word"
     }
 
@@ -34,7 +34,7 @@ Item {
             radius: Theme.radius.medium
             color: swatchColor
             border.width: 1
-            border.color: Theme.palette.borderBase
+            border.color: Theme.colors.border.base
         }
 
         Column {
@@ -50,7 +50,7 @@ Item {
                 width: parent.width
                 type: "caption"
                 text: label
-                textColor: Theme.palette.textPrimary
+                textColor: Theme.colors.text.primary
                 wrap: "word"
             }
 
@@ -58,7 +58,7 @@ Item {
                 width: parent.width
                 type: "caption"
                 text: root.colorLabel(swatchColor)
-                textColor: Theme.palette.text.secondary
+                textColor: Theme.colors.text.secondary
                 wrap: "word"
             }
         }
@@ -104,33 +104,33 @@ Item {
         PaletteGroup {
             title: "Button variants"
 
-            ColorTile { label: "button.primary.bg"; swatchColor: Theme.palette.actionPrimary }
-            ColorTile { label: "button.primary.hover"; swatchColor: Theme.palette.action.primaryDark }
-            ColorTile { label: "button.secondary.bg"; swatchColor: Theme.palette.actionSecondary }
-            ColorTile { label: "button.secondary.hover"; swatchColor: Theme.palette.action.secondaryDark }
-            ColorTile { label: "button.outline.border"; swatchColor: Theme.palette.actionPrimary }
-            ColorTile { label: "button.destructive.bg"; swatchColor: Theme.palette.statusError }
+            ColorTile { label: "button.primary.bg"; swatchColor: Theme.colors.action.primary }
+            ColorTile { label: "button.primary.hover"; swatchColor: Theme.colors.action.primaryPressed }
+            ColorTile { label: "button.secondary.bg"; swatchColor: Theme.colors.action.secondary }
+            ColorTile { label: "button.secondary.hover"; swatchColor: Theme.colors.action.secondaryPressed }
+            ColorTile { label: "button.outline.border"; swatchColor: Theme.colors.action.primary }
+            ColorTile { label: "button.destructive.bg"; swatchColor: Theme.colors.status.error }
         }
 
         PaletteGroup {
             title: "Semantic palette"
 
-            ColorTile { label: "backgroundBase"; swatchColor: Theme.palette.backgroundBase }
-            ColorTile { label: "backgroundSurface"; swatchColor: Theme.palette.backgroundSurface }
-            ColorTile { label: "backgroundElevated"; swatchColor: Theme.palette.background.elevated }
-            ColorTile { label: "textPrimary"; swatchColor: Theme.palette.textPrimary }
-            ColorTile { label: "textSecondary"; swatchColor: Theme.palette.text.secondary }
-            ColorTile { label: "borderBase"; swatchColor: Theme.palette.borderBase }
-            ColorTile { label: "borderFocus"; swatchColor: Theme.palette.border.focus }
+            ColorTile { label: "backgroundBase"; swatchColor: Theme.colors.background.base }
+            ColorTile { label: "backgroundSurface"; swatchColor: Theme.colors.background.surface }
+            ColorTile { label: "backgroundElevated"; swatchColor: Theme.colors.background.elevated }
+            ColorTile { label: "textPrimary"; swatchColor: Theme.colors.text.primary }
+            ColorTile { label: "textSecondary"; swatchColor: Theme.colors.text.secondary }
+            ColorTile { label: "borderBase"; swatchColor: Theme.colors.border.base }
+            ColorTile { label: "borderFocus"; swatchColor: Theme.colors.border.focus }
         }
 
         PaletteGroup {
             title: "Status palette"
 
-            ColorTile { label: "success"; swatchColor: Theme.palette.status.success }
-            ColorTile { label: "warning"; swatchColor: Theme.palette.status.warning }
-            ColorTile { label: "error"; swatchColor: Theme.palette.statusError }
-            ColorTile { label: "info"; swatchColor: Theme.palette.status.info }
+            ColorTile { label: "success"; swatchColor: Theme.colors.status.success }
+            ColorTile { label: "warning"; swatchColor: Theme.colors.status.warning }
+            ColorTile { label: "error"; swatchColor: Theme.colors.status.error }
+            ColorTile { label: "info"; swatchColor: Theme.colors.status.info }
         }
     }
 }

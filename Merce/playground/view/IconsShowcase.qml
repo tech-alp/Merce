@@ -139,7 +139,7 @@ Item {
 
     component SectionTitle: ThemedText {
         type: "h4"
-        textColor: Theme.palette.textPrimary
+        textColor: Theme.colors.text.primary
         wrap: "word"
     }
 
@@ -236,14 +236,14 @@ Item {
                             width: 52
                             height: 52
                             radius: Theme.radius.medium
-                            color: tileMouse.containsMouse ? Theme.palette.background.hover : "transparent"
+                            color: tileMouse.containsMouse ? Theme.colors.background.hover : "transparent"
 
                             AppIcon {
                                 anchors.centerIn: parent
                                 visible: root.selectedIconFont === "material"
                                 name: iconTile.iconValue
                                 size: Theme.icons.large
-                                color: Theme.palette.textPrimary
+                                color: Theme.colors.text.primary
                             }
 
                             FontAwesomeIcon {
@@ -251,7 +251,7 @@ Item {
                                 visible: root.selectedIconFont !== "material"
                                 name: iconTile.iconValue
                                 size: Theme.icons.large
-                                color: Theme.palette.textPrimary
+                                color: Theme.colors.text.primary
                             }
                         }
 
@@ -268,7 +268,7 @@ Item {
                     width: parent.width
                     type: "caption"
                     text: root.activeIconFontLabel + " / " + filteredIcons.count + " icons"
-                    textColor: Theme.palette.text.tertiary
+                    textColor: Theme.colors.text.tertiary
                     wrap: "word"
                 }
             }

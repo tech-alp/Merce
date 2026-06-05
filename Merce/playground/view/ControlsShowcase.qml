@@ -16,7 +16,7 @@ Item {
 
     component SectionTitle: ThemedText {
         type: "h4"
-        textColor: Theme.palette.textPrimary
+        textColor: Theme.colors.text.primary
         wrap: "word"
     }
 
@@ -112,25 +112,25 @@ Item {
             AppIcon {
                 name: "material:palette"
                 size: Theme.icons.large
-                color: Theme.palette.actionPrimary
+                color: Theme.colors.action.primary
             }
 
             AppIcon {
                 name: "status:check"
                 size: Theme.icons.large
-                color: Theme.palette.statusSuccess
+                color: Theme.colors.status.success
             }
 
             AppIcon {
                 name: "material:wallet"
                 size: Theme.icons.large
-                color: Theme.palette.textPrimary
+                color: Theme.colors.text.primary
             }
 
             AppIcon {
                 name: "material:dark_mode"
                 size: Theme.icons.large
-                color: Theme.palette.textPrimary
+                color: Theme.colors.text.primary
             }
         }
 

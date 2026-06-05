@@ -5,7 +5,7 @@ import Merce.Core
 Item {
     id: root
 
-    property color color: Theme.palette.actionPrimary
+    property color color: Theme.colors.action.primary
 
     implicitWidth: 24
     implicitHeight: 20

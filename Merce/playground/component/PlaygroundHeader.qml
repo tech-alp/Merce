@@ -13,7 +13,7 @@ Rectangle {
     signal themeSelected(var value)
     signal modeSelected(var value)
 
-    color: Theme.palette.backgroundBase
+    color: Theme.colors.background.base
 
     ThemedText {
         id: titleText
@@ -25,7 +25,7 @@ Rectangle {
         width: Math.max(160, parent.width - selectorRow.width - Theme.spacing.xl * 3)
         type: "h3"
         text: root.pageTitle
-        textColor: Theme.palette.textPrimary
+        textColor: Theme.colors.text.primary
         wrap: "word"
     }
 
@@ -67,6 +67,6 @@ Rectangle {
             bottom: parent.bottom
         }
         height: 1
-        color: Theme.palette.borderBase
+        color: Theme.colors.border.base
     }
 }

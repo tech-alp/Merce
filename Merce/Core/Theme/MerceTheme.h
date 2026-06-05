@@ -8,7 +8,7 @@
 #include "MerceBreakpoints.h"
 #include "MerceIconography.h"
 #include "MerceMotion.h"
-#include "MercePalette.h"
+#include "MerceColors.h"
 #include "MerceRadius.h"
 #include "MerceShadows.h"
 #include "MerceSpacing.h"
@@ -20,8 +20,7 @@ struct MerceThemeLoadResult;
 class MerceTheme : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(MercePalette *palette READ palette CONSTANT FINAL)
-    Q_PROPERTY(MercePalette *colors READ colors CONSTANT FINAL)
+    Q_PROPERTY(MerceColors *colors READ colors CONSTANT FINAL)
     Q_PROPERTY(MerceSpacing *spacing READ spacing CONSTANT FINAL)
     Q_PROPERTY(MerceRadius *radius READ radius CONSTANT FINAL)
     Q_PROPERTY(MerceTypography *typography READ typography CONSTANT FINAL)
@@ -41,8 +40,7 @@ class MerceTheme : public QObject
 public:
     explicit MerceTheme(QObject *parent = nullptr);
 
-    MercePalette *palette() const { return m_palette; }
-    MercePalette *colors() const { return m_palette; }
+    MerceColors *colors() const { return m_colors; }
     MerceSpacing *spacing() const { return m_spacing; }
     MerceRadius *radius() const { return m_radius; }
     MerceTypography *typography() const { return m_typography; }
@@ -60,7 +58,7 @@ public:
     Q_INVOKABLE bool setTheme(const QString &brand, const QString &mode = QString());
 
 signals:
-    void paletteChanged();
+    void colorsChanged();
     void spacingChanged();
     void radiusChanged();
     void typographyChanged();
@@ -83,7 +81,7 @@ private:
     QString m_activeBrand;
     QString m_activeMode;
     QVariantList m_availableThemes;
-    MercePalette *m_palette = nullptr;
+    MerceColors *m_colors = nullptr;
     MerceSpacing *m_spacing = nullptr;
     MerceRadius *m_radius = nullptr;
     MerceTypography *m_typography = nullptr;

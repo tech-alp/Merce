@@ -6,7 +6,7 @@ Window {
     width: 1100
     height: 760
     visible: true
-    color: Theme.palette.backgroundBase
+    color: Theme.colors.background.base
 
     ThemeGallery {
         id: gallery
@@ -27,13 +27,13 @@ Window {
     }
 
     function assertSamples(label) {
-        if (colorKey(gallery.observedButtonColor) !== colorKey(Theme.palette.actionPrimary)
-                || colorKey(gallery.observedTextColor) !== colorKey(Theme.palette.textPrimary)
-                || colorKey(gallery.observedInputBorderColor) !== colorKey(Theme.palette.borderBase)
-                || colorKey(gallery.observedToggleColor) !== colorKey(Theme.palette.actionPrimary)
-                || colorKey(gallery.observedSelectColor) !== colorKey(Theme.palette.textPrimary)
-                || colorKey(gallery.observedToastColor) !== colorKey(Theme.palette.status.success)
-                || colorKey(gallery.observedDialogColor) !== colorKey(Theme.palette.backgroundSurface)) {
+        if (colorKey(gallery.observedButtonColor) !== colorKey(Theme.colors.action.primary)
+                || colorKey(gallery.observedTextColor) !== colorKey(Theme.colors.text.primary)
+                || colorKey(gallery.observedInputBorderColor) !== colorKey(Theme.colors.border.base)
+                || colorKey(gallery.observedToggleColor) !== colorKey(Theme.colors.action.primary)
+                || colorKey(gallery.observedSelectColor) !== colorKey(Theme.colors.text.primary)
+                || colorKey(gallery.observedToastColor) !== colorKey(Theme.colors.status.success)
+                || colorKey(gallery.observedDialogColor) !== colorKey(Theme.colors.background.surface)) {
             fail(label + " sample observations",
                  [gallery.observedButtonColor,
                   gallery.observedTextColor,
@@ -42,11 +42,11 @@ Window {
                   gallery.observedSelectColor,
                   gallery.observedToastColor,
                   gallery.observedDialogColor,
-                  Theme.palette.actionPrimary,
-                  Theme.palette.textPrimary,
-                  Theme.palette.borderBase,
-                  Theme.palette.status.success,
-                  Theme.palette.backgroundSurface])
+                  Theme.colors.action.primary,
+                  Theme.colors.text.primary,
+                  Theme.colors.border.base,
+                  Theme.colors.status.success,
+                  Theme.colors.background.surface])
             return false
         }
 
@@ -125,7 +125,7 @@ Window {
                 return
             }
 
-            console.log("theme-gallery-probe ok", Theme.activeBrand, Theme.activeMode, Theme.palette.backgroundBase)
+            console.log("theme-gallery-probe ok", Theme.activeBrand, Theme.activeMode, Theme.colors.background.base)
             Qt.quit()
         }
 

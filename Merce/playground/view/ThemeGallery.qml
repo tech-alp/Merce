@@ -88,13 +88,13 @@ Item {
 
     component SectionTitle: ThemedText {
         type: "h4"
-        textColor: Theme.palette.textPrimary
+        textColor: Theme.colors.text.primary
         wrap: "word"
     }
 
     component FieldLabel: ThemedText {
         type: "caption"
-        textColor: Theme.palette.text.secondary
+        textColor: Theme.colors.text.secondary
         wrap: "word"
     }
 
@@ -113,7 +113,7 @@ Item {
             radius: Theme.radius.medium
             color: swatchColor
             border.width: 1
-            border.color: Theme.palette.borderBase
+            border.color: Theme.colors.border.base
         }
 
         Column {
@@ -129,7 +129,7 @@ Item {
                 width: parent.width
                 type: "caption"
                 text: label
-                textColor: Theme.palette.textPrimary
+                textColor: Theme.colors.text.primary
                 wrap: "word"
             }
 
@@ -137,7 +137,7 @@ Item {
                 width: parent.width
                 type: "caption"
                 text: root.colorLabel(swatchColor)
-                textColor: Theme.palette.text.secondary
+                textColor: Theme.colors.text.secondary
                 wrap: "word"
             }
         }
@@ -163,7 +163,7 @@ Item {
             height: Math.max(8, Math.min(28, tokenValue))
             anchors.verticalCenter: parent.verticalCenter
             radius: Theme.radius.small
-            color: Theme.palette.actionPrimary
+            color: Theme.colors.action.primary
         }
 
         FieldLabel {
@@ -212,7 +212,7 @@ Item {
                             width: parent.width
                             type: "body"
                             text: Theme.activeBrand + " / " + root.displayMode
-                            textColor: Theme.palette.text.secondary
+                            textColor: Theme.colors.text.secondary
                             wrap: "word"
                         }
                     }
@@ -298,17 +298,17 @@ Item {
                     width: parent.width
                     spacing: Theme.spacing.md
 
-                    TokenSwatch { label: "backgroundBase"; swatchColor: Theme.palette.backgroundBase }
-                    TokenSwatch { label: "backgroundSurface"; swatchColor: Theme.palette.backgroundSurface }
-                    TokenSwatch { label: "textPrimary"; swatchColor: Theme.palette.textPrimary }
-                    TokenSwatch { label: "actionPrimary"; swatchColor: Theme.palette.actionPrimary }
-                    TokenSwatch { label: "actionPrimaryDark"; swatchColor: Theme.palette.action.primaryDark }
-                    TokenSwatch { label: "actionSecondary"; swatchColor: Theme.palette.actionSecondary }
-                    TokenSwatch { label: "actionSecondaryDark"; swatchColor: Theme.palette.action.secondaryDark }
-                    TokenSwatch { label: "borderBase"; swatchColor: Theme.palette.borderBase }
-                    TokenSwatch { label: "borderFocus"; swatchColor: Theme.palette.border.focus }
-                    TokenSwatch { label: "statusError"; swatchColor: Theme.palette.statusError }
-                    TokenSwatch { label: "statusSuccess"; swatchColor: Theme.palette.status.success }
+                    TokenSwatch { label: "backgroundBase"; swatchColor: Theme.colors.background.base }
+                    TokenSwatch { label: "backgroundSurface"; swatchColor: Theme.colors.background.surface }
+                    TokenSwatch { label: "textPrimary"; swatchColor: Theme.colors.text.primary }
+                    TokenSwatch { label: "actionPrimary"; swatchColor: Theme.colors.action.primary }
+                    TokenSwatch { label: "actionPrimaryDark"; swatchColor: Theme.colors.action.primaryPressed }
+                    TokenSwatch { label: "actionSecondary"; swatchColor: Theme.colors.action.secondary }
+                    TokenSwatch { label: "actionSecondaryDark"; swatchColor: Theme.colors.action.secondaryPressed }
+                    TokenSwatch { label: "borderBase"; swatchColor: Theme.colors.border.base }
+                    TokenSwatch { label: "borderFocus"; swatchColor: Theme.colors.border.focus }
+                    TokenSwatch { label: "statusError"; swatchColor: Theme.colors.status.error }
+                    TokenSwatch { label: "statusSuccess"; swatchColor: Theme.colors.status.success }
                 }
             }
         }
@@ -341,7 +341,7 @@ Item {
                     width: parent.width
                     type: "h2"
                     text: "Başlık örneği"
-                    textColor: Theme.palette.textPrimary
+                    textColor: Theme.colors.text.primary
                     wrap: "word"
                 }
 
@@ -351,7 +351,7 @@ Item {
                     width: parent.width
                     type: "body"
                     text: "Body metni " + Theme.typography.fontBody + " / " + Theme.typography.sizeMedium + " px"
-                    textColor: Theme.palette.textPrimary
+                    textColor: Theme.colors.text.primary
                     wrap: "word"
                 }
 
@@ -359,7 +359,7 @@ Item {
                     width: parent.width
                     type: "caption"
                     text: "Label " + Theme.typography.sizeSmall + " px / " + Theme.typography.weightSemibold
-                    textColor: Theme.palette.text.secondary
+                    textColor: Theme.colors.text.secondary
                     wrap: "word"
                 }
             }
@@ -399,27 +399,27 @@ Item {
                         width: 96
                         height: 54
                         radius: Theme.radius.button
-                        color: Theme.palette.backgroundSurface
+                        color: Theme.colors.background.surface
                         border.width: 1
-                        border.color: Theme.palette.borderBase
+                        border.color: Theme.colors.border.base
                     }
 
                     Rectangle {
                         width: 96
                         height: 54
                         radius: Theme.radius.input
-                        color: Theme.palette.backgroundSurface
+                        color: Theme.colors.background.surface
                         border.width: 1
-                        border.color: Theme.palette.border.focus
+                        border.color: Theme.colors.border.focus
                     }
 
                     Rectangle {
                         width: 96
                         height: 54
                         radius: Theme.radius.dialog
-                        color: Theme.palette.background.elevated
+                        color: Theme.colors.background.elevated
                         border.width: 1
-                        border.color: Theme.palette.borderBase
+                        border.color: Theme.colors.border.base
                     }
                 }
             }
@@ -523,7 +523,7 @@ Item {
                     objectName: "merce.playground.gallery.select"
                     width: 360
                     selectedValue: "runtime"
-                    property color observedPaletteColor: Theme.palette.textPrimary
+                    property color observedPaletteColor: Theme.colors.text.primary
                     options: [
                         { "value": "runtime", "label": "Runtime theme" },
                         { "value": "gallery", "label": "Gallery proof" },
@@ -580,7 +580,7 @@ Item {
                     width: parent.width
                     type: "body"
                     text: "Galeri görselleri hazır"
-                    textColor: Theme.palette.text.secondary
+                    textColor: Theme.colors.text.secondary
                     wrap: "word"
                 }
             }
@@ -604,7 +604,7 @@ Item {
         message: "Tema değerleri okunuyor."
         confirmText: "OK"
         showCancel: false
-        property color observedSurfaceColor: Theme.palette.backgroundSurface
+        property color observedSurfaceColor: Theme.colors.background.surface
         onConfirmed: isOpen = false
     }
 }

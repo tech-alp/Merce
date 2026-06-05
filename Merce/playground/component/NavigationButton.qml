@@ -8,7 +8,7 @@ Item {
     property string text: ""
     property string icon: "material:circle"
     property bool checked: false
-    property color hoverColor: Theme.palette.background.hover
+    property color hoverColor: Theme.colors.background.hover
 
     signal clicked()
 
@@ -23,7 +23,7 @@ Item {
         radius: Theme.radius.medium
         color: {
             if (root.checked)
-                return Theme.palette.action.light("primary")
+                return Theme.colors.action.hover("primary")
             if (mouseArea.containsMouse)
                 return root.hoverColor
             return "transparent"
@@ -49,7 +49,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             name: root.icon
             size: Theme.icons.small
-            color: root.checked ? Theme.palette.actionPrimary : Theme.palette.text.secondary
+            color: root.checked ? Theme.colors.action.primary : Theme.colors.text.secondary
         }
 
         ThemedText {
@@ -57,7 +57,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             type: "body"
             text: root.text
-            textColor: root.checked ? Theme.palette.actionPrimary : Theme.palette.textPrimary
+            textColor: root.checked ? Theme.colors.action.primary : Theme.colors.text.primary
             wrap: "word"
         }
     }

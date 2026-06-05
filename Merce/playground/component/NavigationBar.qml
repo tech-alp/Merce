@@ -11,9 +11,9 @@ Rectangle {
 
     signal pageRequested(string key)
 
-    color: Theme.palette.backgroundSurface
+    color: Theme.colors.background.surface
     border.width: 1
-    border.color: Theme.palette.borderBase
+    border.color: Theme.colors.border.base
     clip: true
 
     function pageAt(index) {
@@ -56,16 +56,16 @@ Rectangle {
                 height: 44
                 radius: Theme.radius.medium
                 anchors.verticalCenter: parent.verticalCenter
-                color: Theme.palette.background.base
+                color: Theme.colors.background.base
                 border.width: 1
-                border.color: Theme.palette.borderBase
+                border.color: Theme.colors.border.base
 
                 MerceLogo {
                     objectName: "merce.playground.logo"
                     anchors.centerIn: parent
                     width: 26
                     height: 24
-                    color: Theme.palette.actionPrimary
+                    color: Theme.colors.action.primary
                 }
             }
 
@@ -78,7 +78,7 @@ Rectangle {
                     width: parent.width
                     type: "bodyLarge"
                     text: "Merce"
-                    textColor: Theme.palette.textPrimary
+                    textColor: Theme.colors.text.primary
                     wrap: "word"
                 }
 
@@ -86,7 +86,7 @@ Rectangle {
                     width: parent.width
                     type: "caption"
                     text: root.activeTheme
-                    textColor: Theme.palette.text.secondary
+                    textColor: Theme.colors.text.secondary
                     wrap: "word"
                 }
             }
@@ -101,7 +101,7 @@ Rectangle {
                 topMargin: Theme.spacing.md
             }
             height: 1
-            color: Theme.palette.borderBase
+            color: Theme.colors.border.base
         }
 
         ListView {
@@ -142,7 +142,7 @@ Rectangle {
                         width: parent.width
                         text: category
                         type: "caption"
-                        textColor: Theme.palette.text.tertiary
+                        textColor: Theme.colors.text.tertiary
                         visible: showCategory
                         height: visible ? implicitHeight : 0
                         wrap: "word"
