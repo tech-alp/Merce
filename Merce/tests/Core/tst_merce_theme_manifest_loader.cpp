@@ -18,6 +18,62 @@ QJsonObject objectFromPairs(const QList<QPair<QString, QJsonValue>> &pairs)
     return object;
 }
 
+QJsonObject colorsSection()
+{
+    return {
+        { QStringLiteral("text"), QJsonObject{
+            { QStringLiteral("primary"), QStringLiteral("#111111") },
+            { QStringLiteral("secondary"), QStringLiteral("#222222") },
+            { QStringLiteral("tertiary"), QStringLiteral("#333333") },
+            { QStringLiteral("inverse"), QStringLiteral("#ffffff") },
+            { QStringLiteral("disabled"), QStringLiteral("#aaaaaa") },
+            { QStringLiteral("link"), QStringLiteral("#0000ff") },
+            { QStringLiteral("linkHover"), QStringLiteral("#000099") },
+        } },
+        { QStringLiteral("background"), QJsonObject{
+            { QStringLiteral("base"), QStringLiteral("#fafafa") },
+            { QStringLiteral("surface"), QStringLiteral("#ffffff") },
+            { QStringLiteral("elevated"), QStringLiteral("#ffffff") },
+            { QStringLiteral("hover"), QStringLiteral("#eeeeee") },
+            { QStringLiteral("pressed"), QStringLiteral("#dddddd") },
+            { QStringLiteral("tinted"), QStringLiteral("#f0f0f0") },
+            { QStringLiteral("overlay"), QStringLiteral("#000000") },
+        } },
+        { QStringLiteral("border"), QJsonObject{
+            { QStringLiteral("base"), QStringLiteral("#cccccc") },
+            { QStringLiteral("strong"), QStringLiteral("#999999") },
+            { QStringLiteral("focus"), QStringLiteral("#777777") },
+            { QStringLiteral("error"), QStringLiteral("#ff0000") },
+            { QStringLiteral("success"), QStringLiteral("#00ff00") },
+        } },
+        { QStringLiteral("action"), QJsonObject{
+            { QStringLiteral("primary"), QStringLiteral("#444444") },
+            { QStringLiteral("primaryHover"), QStringLiteral("#333333") },
+            { QStringLiteral("primaryPressed"), QStringLiteral("#222222") },
+            { QStringLiteral("primarySubtle"), QStringLiteral("#555555") },
+            { QStringLiteral("secondary"), QStringLiteral("#666666") },
+            { QStringLiteral("secondaryHover"), QStringLiteral("#555555") },
+            { QStringLiteral("secondaryPressed"), QStringLiteral("#444444") },
+            { QStringLiteral("disabled"), QStringLiteral("#aaaaaa") },
+        } },
+        { QStringLiteral("status"), QJsonObject{
+            { QStringLiteral("success"), QStringLiteral("#00ff00") },
+            { QStringLiteral("successSubtle"), QStringLiteral("#ccffcc") },
+            { QStringLiteral("warning"), QStringLiteral("#ffff00") },
+            { QStringLiteral("warningSubtle"), QStringLiteral("#ffffcc") },
+            { QStringLiteral("error"), QStringLiteral("#ff0000") },
+            { QStringLiteral("errorSubtle"), QStringLiteral("#ffcccc") },
+            { QStringLiteral("info"), QStringLiteral("#0000ff") },
+            { QStringLiteral("infoSubtle"), QStringLiteral("#ccccff") },
+        } },
+        { QStringLiteral("surface"), QJsonObject{
+            { QStringLiteral("base"), QStringLiteral("#ffffff") },
+            { QStringLiteral("tinted"), QStringLiteral("#f0f0f0") },
+            { QStringLiteral("raised"), QStringLiteral("#ffffff") },
+        } },
+    };
+}
+
 QJsonObject fullManifest(const QString &theme, const QString &variant = QString())
 {
     QJsonObject manifest;
@@ -26,31 +82,7 @@ QJsonObject fullManifest(const QString &theme, const QString &variant = QString(
     if (!variant.isEmpty())
         manifest.insert(QStringLiteral("variant"), variant);
 
-    manifest.insert(QStringLiteral("palette"), objectFromPairs({
-        { QStringLiteral("textPrimary"), QStringLiteral("#111111") },
-        { QStringLiteral("textSecondary"), QStringLiteral("#222222") },
-        { QStringLiteral("textTertiary"), QStringLiteral("#333333") },
-        { QStringLiteral("textInverse"), QStringLiteral("#ffffff") },
-        { QStringLiteral("link"), QStringLiteral("#0000ff") },
-        { QStringLiteral("backgroundBase"), QStringLiteral("#fafafa") },
-        { QStringLiteral("backgroundSurface"), QStringLiteral("#ffffff") },
-        { QStringLiteral("backgroundElevated"), QStringLiteral("#ffffff") },
-        { QStringLiteral("backgroundHover"), QStringLiteral("#eeeeee") },
-        { QStringLiteral("backgroundPressed"), QStringLiteral("#dddddd") },
-        { QStringLiteral("actionPrimary"), QStringLiteral("#444444") },
-        { QStringLiteral("actionPrimaryLight"), QStringLiteral("#555555") },
-        { QStringLiteral("actionPrimaryDark"), QStringLiteral("#222222") },
-        { QStringLiteral("actionSecondary"), QStringLiteral("#666666") },
-        { QStringLiteral("borderBase"), QStringLiteral("#cccccc") },
-        { QStringLiteral("borderStrong"), QStringLiteral("#999999") },
-        { QStringLiteral("borderFocus"), QStringLiteral("#777777") },
-        { QStringLiteral("statusError"), QStringLiteral("#ff0000") },
-        { QStringLiteral("statusSuccess"), QStringLiteral("#00ff00") },
-        { QStringLiteral("statusWarning"), QStringLiteral("#ffff00") },
-        { QStringLiteral("statusInfo"), QStringLiteral("#0000ff") },
-        { QStringLiteral("surfaceBase"), QStringLiteral("#ffffff") },
-        { QStringLiteral("surfaceTinted"), QStringLiteral("#f0f0f0") },
-    }));
+    manifest.insert(QStringLiteral("colors"), colorsSection());
 
     manifest.insert(QStringLiteral("spacing"), objectFromPairs({
         { QStringLiteral("base"), 8 },
@@ -192,7 +224,8 @@ private slots:
     void schemaVersionMismatchIsRejected();
     void missingTopLevelRequiredSectionsAreRejected_data();
     void missingTopLevelRequiredSectionsAreRejected();
-    void topLevelColorsCompatibilitySectionIsRejected();
+    void topLevelPaletteSectionIsRejected();
+    void rawRuntimeColorsSectionIsRejected();
     void invalidRuntimeFieldValuesAreRejected();
     void activePaletteCannotBorrowMissingFieldsFromBase();
     void basePlusActiveSectionOverlaySucceeds();
@@ -207,7 +240,8 @@ void tst_merce_theme_manifest_loader::generatedResourceIndexLoads()
     QVERIFY2(result.ok, qPrintable(result.errors.join(QLatin1Char('\n'))));
     QCOMPARE(result.theme, QStringLiteral("merce"));
     QCOMPARE(result.variant, QStringLiteral("light"));
-    QVERIFY(result.finalManifest.contains(QStringLiteral("palette")));
+    QVERIFY(result.finalManifest.contains(QStringLiteral("colors")));
+    QVERIFY(!result.finalManifest.contains(QStringLiteral("palette")));
 }
 
 void tst_merce_theme_manifest_loader::unknownThemeIsRejected()
@@ -306,16 +340,14 @@ void tst_merce_theme_manifest_loader::missingTopLevelRequiredSectionsAreRejected
     QVERIFY(containsError(result.errors, QStringLiteral("missing required field: %1").arg(section)));
 }
 
-void tst_merce_theme_manifest_loader::topLevelColorsCompatibilitySectionIsRejected()
+void tst_merce_theme_manifest_loader::topLevelPaletteSectionIsRejected()
 {
     QTemporaryDir dir;
     QVERIFY(dir.isValid());
 
     QJsonObject manifest = fullManifest(QStringLiteral("merce"), QStringLiteral("light"));
-    manifest.insert(QStringLiteral("colors"), QJsonObject{
-        { QStringLiteral("background"), QJsonObject{
-            { QStringLiteral("base"), QStringLiteral("#ffffff") },
-        } },
+    manifest.insert(QStringLiteral("palette"), QJsonObject{
+        { QStringLiteral("textPrimary"), QStringLiteral("#111111") },
     });
     QVERIFY(writeJson(pathIn(dir, QStringLiteral("merce.light.json")), manifest));
     QVERIFY(writeJson(pathIn(dir, QStringLiteral("index.json")), indexForDefaultMerce(QStringLiteral("merce.light.json"))));
@@ -323,8 +355,27 @@ void tst_merce_theme_manifest_loader::topLevelColorsCompatibilitySectionIsReject
     const MerceThemeLoadResult result = MerceThemeManifestLoader(pathIn(dir, QStringLiteral("index.json"))).loadDefault();
 
     QVERIFY(!result.ok);
-    QVERIFY(containsError(result.errors,
-                          QStringLiteral("manifest must not contain a top-level colors compatibility section")));
+    QVERIFY(containsError(result.errors, QStringLiteral("manifest must not contain a top-level palette section")));
+}
+
+void tst_merce_theme_manifest_loader::rawRuntimeColorsSectionIsRejected()
+{
+    QTemporaryDir dir;
+    QVERIFY(dir.isValid());
+
+    QJsonObject manifest = fullManifest(QStringLiteral("merce"), QStringLiteral("light"));
+    QJsonObject colors = manifest.value(QStringLiteral("colors")).toObject();
+    colors.insert(QStringLiteral("raw"), QJsonObject{
+        { QStringLiteral("gray50"), QStringLiteral("#fafafa") },
+    });
+    manifest.insert(QStringLiteral("colors"), colors);
+    QVERIFY(writeJson(pathIn(dir, QStringLiteral("merce.light.json")), manifest));
+    QVERIFY(writeJson(pathIn(dir, QStringLiteral("index.json")), indexForDefaultMerce(QStringLiteral("merce.light.json"))));
+
+    const MerceThemeLoadResult result = MerceThemeManifestLoader(pathIn(dir, QStringLiteral("index.json"))).loadDefault();
+
+    QVERIFY(!result.ok);
+    QVERIFY(containsError(result.errors, QStringLiteral("runtime colors must not expose raw color scales")));
 }
 
 void tst_merce_theme_manifest_loader::invalidRuntimeFieldValuesAreRejected()

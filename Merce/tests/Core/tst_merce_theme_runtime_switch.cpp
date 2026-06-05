@@ -72,7 +72,8 @@ void tst_merce_theme_runtime_switch::defaultStateIsMerceLight()
 
     QCOMPARE(theme.activeBrand(), QStringLiteral("merce"));
     QCOMPARE(theme.activeMode(), QStringLiteral("light"));
-    QCOMPARE(theme.palette()->backgroundBase(), QColor(QStringLiteral("#FAF8F6")));
+    QCOMPARE(theme.colors()->background()->base(), QColor(QStringLiteral("#FAF8F6")));
+    QCOMPARE(theme.metaObject()->indexOfProperty("palette"), -1);
 }
 
 void tst_merce_theme_runtime_switch::successfulSwitchesUpdateStateAndKeepObjectPointers()
