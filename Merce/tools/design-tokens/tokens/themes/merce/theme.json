@@ -2,11 +2,11 @@
   "typography": {
     "bodyFont": {
       "$type": "fontFamily",
-      "$value": "DM Sans"
+      "$value": "Inter"
     },
     "displayFont": {
       "$type": "fontFamily",
-      "$value": "Playfair Display"
+      "$value": "Inter"
     }
   },
   "color": {

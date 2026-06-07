@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 1,
+  "theme": "linear",
+  "variant": "dark",
+  "fonts": [
+    {
+      "family": "IoskeleyMono Nerd Font",
+      "source": "fonts/linear/IoskeleyMonoNerdFont-Regular.ttf",
+      "weight": 400,
+      "style": "normal",
+      "required": true
+    },
+    {
+      "family": "IoskeleyMono Nerd Font",
+      "source": "fonts/linear/IoskeleyMonoNerdFont-Medium.ttf",
+      "weight": 510,
+      "style": "normal",
+      "required": true
+    },
+    {
+      "family": "IoskeleyMono Nerd Font",
+      "source": "fonts/linear/IoskeleyMonoNerdFont-Bold.ttf",
+      "weight": 700,
+      "style": "normal",
+      "required": true
+    }
+  ],
+  "colors": {
+    "text": {
+      "primary": "#F7F8F8",
+      "secondary": "#D0D6E0",
+      "tertiary": "#8A8F98",
+      "inverse": "#08090A",
+      "disabled": "#62666D",
+      "link": "#828FFF",
+      "linkHover": "#A8B1FF"
+    },
+    "background": {
+      "base": "#08090A",
+      "surface": "#0F1011",
+      "elevated": "#191A1B",
+      "hover": "#1F2023",
+      "pressed": "#2A2D33",
+      "tinted": "#1F2023",
+      "overlay": "#000000"
+    },
+    "border": {
+      "base": "#17181A",
+      "strong": "#202124",
+      "focus": "#5E6AD2",
+      "error": "#E53935",
+      "success": "#27A644"
+    },
+    "action": {
+      "primary": "#5E6AD2",
+      "primaryHover": "#828FFF",
+      "primaryPressed": "#4B57C8",
+      "primarySubtle": "#202450",
+      "secondary": "#1F2023",
+      "secondaryHover": "#191A1B",
+      "secondaryPressed": "#2A2D33",
+      "disabled": "#62666D"
+    },
+    "status": {
+      "success": "#27A644",
+      "successSubtle": "#16351F",
+      "warning": "#F59E0B",
+      "warningSubtle": "#3A2A0A",
+      "error": "#E53935",
+      "errorSubtle": "#3B1716",
+      "info": "#5E6AD2",
+      "infoSubtle": "#202450"
+    },
+    "surface": {
+      "base": "#0F1011",
+      "tinted": "#1F2023",
+      "raised": "#191A1B"
+    }
+  },
+  "spacing": {
+    "base": 4,
+    "none": 0,
+    "xxs": 2,
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24,
+    "xl2": 32,
+    "xl3": 48,
+    "xl4": 64,
+    "xl5": 96,
+    "xl6": 128,
+    "componentGap": 12,
+    "sectionGap": 48,
+    "pagePadding": 24,
+    "touchTarget": 40,
+    "touchTargetCompact": 32,
+    "gridGap": 16,
+    "stackGap": 8,
+    "inlineGap": 6
+  },
+  "radius": {
+    "none": 0,
+    "small": 4,
+    "medium": 6,
+    "large": 8,
+    "xlarge": 12,
+    "xxlarge": 16,
+    "full": 9999,
+    "button": 6,
+    "input": 6,
+    "card": 8,
+    "badge": 9999,
+    "dialog": 12,
+    "tooltip": 4
+  },
+  "typography": {
+    "displayFont": "Inter",
+    "bodyFont": "Inter",
+    "monoFont": "IoskeleyMono Nerd Font",
+    "displayFontFallback": "Inter",
+    "bodyFontFallback": "Inter",
+    "sizeXSmall": 12,
+    "sizeSmall": 14,
+    "sizeMedium": 16,
+    "sizeLarge": 18,
+    "sizeXLarge": 20,
+    "size2XLarge": 24,
+    "size3XLarge": 32,
+    "size4XLarge": 48,
+    "size5XLarge": 72,
+    "size6XLarge": 72,
+    "size7XLarge": 72,
+    "weightRegular": 400,
+    "weightMedium": 510,
+    "weightSemibold": 590,
+    "weightBold": 700,
+    "leadingTight": 1,
+    "leadingSnug": 1.2,
+    "leadingNormal": 1.5,
+    "leadingRelaxed": 1.6,
+    "trackingTight": -0.022,
+    "trackingNormal": 0,
+    "trackingWide": 0.01,
+    "trackingWider": 0.02,
+    "trackingWidest": 0.04
+  }
+}

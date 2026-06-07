@@ -2,23 +2,23 @@
   "typography": {
     "displayFont": {
       "$type": "fontFamily",
-      "$value": "Playfair Display"
+      "$value": "Inter"
     },
     "bodyFont": {
       "$type": "fontFamily",
-      "$value": "DM Sans"
+      "$value": "Inter"
     },
     "monoFont": {
       "$type": "fontFamily",
-      "$value": "SF Mono"
+      "$value": "Roboto Mono"
     },
     "displayFontFallback": {
       "$type": "fontFamily",
-      "$value": "Georgia, serif"
+      "$value": "Inter"
     },
     "bodyFontFallback": {
       "$type": "fontFamily",
-      "$value": "-apple-system, BlinkMacSystemFont, sans-serif"
+      "$value": "Inter"
     },
     "sizeXSmall": {
       "$type": "dimension",

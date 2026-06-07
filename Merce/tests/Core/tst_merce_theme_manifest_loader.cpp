@@ -3,6 +3,8 @@
 
 #include <QDir>
 #include <QFile>
+#include <QFontDatabase>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QTemporaryDir>
@@ -128,8 +130,8 @@ QJsonObject fullManifest(const QString &theme, const QString &variant = QString(
         { QStringLiteral("displayFont"), QStringLiteral("Display") },
         { QStringLiteral("bodyFont"), QStringLiteral("Body") },
         { QStringLiteral("monoFont"), QStringLiteral("Mono") },
-        { QStringLiteral("displayFontFallback"), QStringLiteral("serif") },
-        { QStringLiteral("bodyFontFallback"), QStringLiteral("sans-serif") },
+        { QStringLiteral("displayFontFallback"), QStringLiteral("Inter") },
+        { QStringLiteral("bodyFontFallback"), QStringLiteral("Inter") },
         { QStringLiteral("sizeXSmall"), 12 },
         { QStringLiteral("sizeSmall"), 14 },
         { QStringLiteral("sizeMedium"), 16 },
@@ -216,6 +218,7 @@ class tst_merce_theme_manifest_loader : public QObject
 
 private slots:
     void generatedResourceIndexLoads();
+    void generatedLinearFontAssetsLoad();
     void unknownThemeIsRejected();
     void unknownVariantIsRejected();
     void unsafeManifestPathsAreRejected_data();
@@ -242,6 +245,19 @@ void tst_merce_theme_manifest_loader::generatedResourceIndexLoads()
     QCOMPARE(result.variant, QStringLiteral("light"));
     QVERIFY(result.finalManifest.contains(QStringLiteral("colors")));
     QVERIFY(!result.finalManifest.contains(QStringLiteral("palette")));
+}
+
+void tst_merce_theme_manifest_loader::generatedLinearFontAssetsLoad()
+{
+    const MerceThemeLoadResult result = MerceThemeManifestLoader().load(QStringLiteral("linear"));
+
+    QVERIFY2(result.ok, qPrintable(result.errors.join(QLatin1Char('\n'))));
+    QCOMPARE(result.theme, QStringLiteral("linear"));
+    QCOMPARE(result.variant, QStringLiteral("dark"));
+
+    const QJsonArray fonts = result.finalManifest.value(QStringLiteral("fonts")).toArray();
+    QCOMPARE(fonts.size(), 3);
+    QVERIFY(QFontDatabase::families().contains(QStringLiteral("IoskeleyMono Nerd Font")));
 }
 
 void tst_merce_theme_manifest_loader::unknownThemeIsRejected()
@@ -393,6 +409,7 @@ void tst_merce_theme_manifest_loader::invalidRuntimeFieldValuesAreRejected()
     spacing.insert(QStringLiteral("md"), QStringLiteral("large"));
     manifest.insert(QStringLiteral("spacing"), spacing);
     QJsonObject typography = manifest.value(QStringLiteral("typography")).toObject();
+    typography.insert(QStringLiteral("displayFont"), QStringLiteral("Inter, sans-serif"));
     typography.insert(QStringLiteral("bodyFont"), QString());
     manifest.insert(QStringLiteral("typography"), typography);
 
@@ -404,8 +421,10 @@ void tst_merce_theme_manifest_loader::invalidRuntimeFieldValuesAreRejected()
     QVERIFY(!result.ok);
     QVERIFY(containsError(result.errors, QStringLiteral("runtime field colors.text.primary must be a valid color string")));
     QVERIFY(containsError(result.errors, QStringLiteral("runtime field spacing.md must be numeric")));
+    QVERIFY(containsError(result.errors, QStringLiteral("runtime field typography.displayFont must be a single Qt font family name")));
     QVERIFY(containsError(result.errors, QStringLiteral("runtime field typography.bodyFont must be a resolved non-empty string")));
 
+    typography.insert(QStringLiteral("displayFont"), QStringLiteral("Display"));
     typography.insert(QStringLiteral("bodyFont"), QStringLiteral("{typography.bodyFont}"));
     manifest.insert(QStringLiteral("typography"), typography);
     QVERIFY(writeJson(pathIn(dir, QStringLiteral("merce.light.json")), manifest));

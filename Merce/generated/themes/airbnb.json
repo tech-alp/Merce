@@ -92,11 +92,11 @@
     "tooltip": 4
   },
   "typography": {
-    "displayFont": "'Airbnb Cereal VF', Circular, -apple-system, system-ui, Roboto, 'Helvetica Neue', sans-serif",
-    "bodyFont": "'Airbnb Cereal VF', Circular, -apple-system, system-ui, Roboto, 'Helvetica Neue', sans-serif",
-    "monoFont": "ui-monospace, SFMono-Regular, Menlo, monospace",
-    "displayFontFallback": "Circular, -apple-system, system-ui, Roboto, sans-serif",
-    "bodyFontFallback": "Circular, -apple-system, system-ui, Roboto, sans-serif",
+    "displayFont": "Inter",
+    "bodyFont": "Inter",
+    "monoFont": "Roboto Mono",
+    "displayFontFallback": "Inter",
+    "bodyFontFallback": "Inter",
     "sizeXSmall": 11,
     "sizeSmall": 13,
     "sizeMedium": 14,

@@ -92,11 +92,11 @@
     "tooltip": 5
   },
   "typography": {
-    "displayFont": "SF Pro Display, system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
-    "bodyFont": "SF Pro Text, system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
-    "monoFont": "SF Mono, ui-monospace, Menlo, monospace",
-    "displayFontFallback": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
-    "bodyFontFallback": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+    "displayFont": "Inter",
+    "bodyFont": "Inter",
+    "monoFont": "Roboto Mono",
+    "displayFontFallback": "Inter",
+    "bodyFontFallback": "Inter",
     "sizeXSmall": 12,
     "sizeSmall": 14,
     "sizeMedium": 17,

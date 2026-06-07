@@ -135,8 +135,11 @@ MerceThemeRegistryResult MerceThemeRegistry::fromJson(const QJsonObject &index, 
             const QJsonValue defaultVariantValue = theme.value(QStringLiteral("defaultVariant"));
             if (!defaultVariantValue.isString() || defaultVariantValue.toString().isEmpty()) {
                 result.errors.append(QStringLiteral("theme '%1' must declare a non-empty defaultVariant").arg(themeName));
-            } else if (themeName == result.registry.m_defaultTheme) {
-                result.registry.m_defaultVariant = defaultVariantValue.toString();
+            } else {
+                const QString defaultVariant = defaultVariantValue.toString();
+                result.registry.m_defaultVariantsByTheme.insert(themeName, defaultVariant);
+                if (themeName == result.registry.m_defaultTheme)
+                    result.registry.m_defaultVariant = defaultVariant;
             }
 
             const QJsonObject variants = variantsValue.toObject();
@@ -196,8 +199,8 @@ MerceThemeRegistryLookupResult MerceThemeRegistry::lookup(const QString &theme, 
 
     bool foundTheme = false;
     QString effectiveVariant = variant;
-    if (theme == m_defaultTheme && effectiveVariant.isEmpty())
-        effectiveVariant = m_defaultVariant;
+    if (effectiveVariant.isEmpty())
+        effectiveVariant = defaultVariantForTheme(theme);
 
     for (const auto &entry : m_entries) {
         if (entry.theme != theme)
@@ -225,4 +228,42 @@ MerceThemeRegistryLookupResult MerceThemeRegistry::lookup(const QString &theme, 
 MerceThemeRegistryLookupResult MerceThemeRegistry::defaultEntry() const
 {
     return lookup(m_defaultTheme, m_defaultVariant);
+}
+
+bool MerceThemeRegistry::containsTheme(const QString &theme) const
+{
+    return hasThemeEntry(m_entries, theme);
+}
+
+bool MerceThemeRegistry::appendRegistry(const MerceThemeRegistry &registry, QStringList *errors)
+{
+    QStringList sourceThemes;
+    for (const auto &entry : registry.m_entries) {
+        if (!sourceThemes.contains(entry.theme))
+            sourceThemes.append(entry.theme);
+    }
+
+    bool ok = true;
+    for (const QString &theme : sourceThemes) {
+        if (containsTheme(theme)) {
+            if (errors) {
+                errors->append(QStringLiteral("theme '%1' is already registered").arg(theme));
+            }
+            ok = false;
+        }
+    }
+
+    if (!ok)
+        return false;
+
+    for (const auto &entry : registry.m_entries)
+        m_entries.append(entry);
+
+    for (auto it = registry.m_defaultVariantsByTheme.cbegin();
+         it != registry.m_defaultVariantsByTheme.cend();
+         ++it) {
+        m_defaultVariantsByTheme.insert(it.key(), it.value());
+    }
+
+    return true;
 }

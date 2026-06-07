@@ -142,6 +142,16 @@ export function formatMerceManifest(dictionary, options) {
     manifest.variant = options.variant;
   }
 
+  if (Array.isArray(options.fonts) && options.fonts.length > 0) {
+    manifest.fonts = options.fonts.map((font) => ({
+      family: font.family,
+      source: font.destination,
+      weight: font.weight,
+      style: font.style ?? 'normal',
+      required: font.required !== false,
+    }));
+  }
+
   manifest.colors = Object.fromEntries(
     Object.entries(COLOR_FIELD_MAP).map(([groupName, fields]) => [
       groupName,

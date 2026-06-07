@@ -148,11 +148,11 @@ private:
         return map;
     }
 
-    QString m_fontDisplay = QStringLiteral("Playfair Display");
-    QString m_fontBody = QStringLiteral("DM Sans");
-    QString m_fontMono = QStringLiteral("SF Mono");
-    QString m_fontDisplayFallback = QStringLiteral("Georgia, serif");
-    QString m_fontBodyFallback = QStringLiteral("-apple-system, BlinkMacSystemFont, sans-serif");
+    QString m_fontDisplay = QStringLiteral("Inter");
+    QString m_fontBody = QStringLiteral("Inter");
+    QString m_fontMono = QStringLiteral("Roboto Mono");
+    QString m_fontDisplayFallback = QStringLiteral("Inter");
+    QString m_fontBodyFallback = QStringLiteral("Inter");
     int m_sizeXSmall = 12;
     int m_sizeSmall = 14;
     int m_sizeMedium = 16;

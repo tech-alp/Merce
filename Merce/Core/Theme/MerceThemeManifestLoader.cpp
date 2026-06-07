@@ -2,8 +2,14 @@
 
 #include "MerceThemeRegistry.h"
 
+#include <algorithm>
+
 #include <QColor>
+#include <QDir>
 #include <QFile>
+#include <QFileInfo>
+#include <QFontDatabase>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonParseError>
 #include <QJsonValue>
@@ -21,13 +27,6 @@ struct JsonObjectResult
     QStringList errors;
 };
 
-struct RegistryLoadResult
-{
-    bool ok = false;
-    MerceThemeRegistry registry;
-    QStringList errors;
-};
-
 const QStringList supportedSections()
 {
     return {
@@ -36,6 +35,22 @@ const QStringList supportedSections()
         QStringLiteral("radius"),
         QStringLiteral("typography"),
     };
+}
+
+bool isSafeRelativeFontPath(const QString &source)
+{
+    const QString lower = source.toLower();
+    const QStringList parts = source.split(QLatin1Char('/'));
+    return !source.isEmpty()
+        && !QDir::isAbsolutePath(source)
+        && !source.startsWith(QLatin1Char(':'))
+        && !source.contains(QLatin1Char('\\'))
+        && (lower.endsWith(QStringLiteral(".ttf")) || lower.endsWith(QStringLiteral(".otf")))
+        && std::all_of(parts.cbegin(),
+                       parts.cend(),
+                       [](const QString &part) {
+                           return !part.isEmpty() && part != QStringLiteral("..");
+                       });
 }
 
 const QStringList colorFields()
@@ -185,6 +200,20 @@ const QStringList typographyStringFields()
     };
 }
 
+const QStringList genericFontFamilies()
+{
+    return {
+        QStringLiteral("-apple-system"),
+        QStringLiteral("blinkmacsystemfont"),
+        QStringLiteral("serif"),
+        QStringLiteral("sans-serif"),
+        QStringLiteral("sans serif"),
+        QStringLiteral("monospace"),
+        QStringLiteral("ui-monospace"),
+        QStringLiteral("system-ui"),
+    };
+}
+
 QJsonValue valueAtPath(const QJsonObject &object, const QString &path)
 {
     QJsonValue value = object;
@@ -231,6 +260,18 @@ void requireString(const QJsonObject &object, const QString &section, const QStr
     const QString text = value.toString().trimmed();
     if (!value.isString() || text.isEmpty() || isUnresolvedTokenReference(text)) {
         errors->append(QStringLiteral("runtime field %1.%2 must be a resolved non-empty string").arg(section, field));
+        return;
+    }
+
+    if (section == QStringLiteral("typography")
+        && typographyStringFields().contains(field)
+        && (text.contains(QLatin1Char(','))
+            || text.startsWith(QLatin1Char('\''))
+            || text.startsWith(QLatin1Char('"'))
+            || text.endsWith(QLatin1Char('\''))
+            || text.endsWith(QLatin1Char('"'))
+            || genericFontFamilies().contains(text.toLower()))) {
+        errors->append(QStringLiteral("runtime field %1.%2 must be a single Qt font family name").arg(section, field));
     }
 }
 
@@ -265,32 +306,13 @@ JsonObjectResult readJsonObject(const QString &path, const QString &label)
     return result;
 }
 
-RegistryLoadResult loadRegistry(const QString &indexPath)
-{
-    RegistryLoadResult result;
-    const JsonObjectResult index = readJsonObject(indexPath, QStringLiteral("theme index"));
-    if (!index.ok) {
-        result.errors = index.errors;
-        return result;
-    }
-
-    const MerceThemeRegistryResult registryResult = MerceThemeRegistry::fromJson(index.object, indexPath);
-    if (!registryResult.ok) {
-        result.errors = registryResult.errors;
-        return result;
-    }
-
-    result.ok = true;
-    result.registry = registryResult.registry;
-    return result;
-}
-
 QJsonObject overlayManifest(const QJsonObject &base, const QJsonObject &active)
 {
     QJsonObject merged = base;
     for (const QString &key : active.keys()) {
         if (supportedSections().contains(key) || key == QStringLiteral("schemaVersion")
-            || key == QStringLiteral("theme") || key == QStringLiteral("variant")) {
+            || key == QStringLiteral("theme") || key == QStringLiteral("variant")
+            || key == QStringLiteral("fonts")) {
             merged.insert(key, active.value(key));
         }
     }
@@ -358,6 +380,47 @@ QStringList validateSection(const QJsonObject &manifest, const QString &section)
     return errors;
 }
 
+QStringList validateFontsSection(const QJsonObject &manifest)
+{
+    QStringList errors;
+    if (!manifest.contains(QStringLiteral("fonts")))
+        return errors;
+
+    const QJsonValue fontsValue = manifest.value(QStringLiteral("fonts"));
+    if (!fontsValue.isArray()) {
+        errors.append(QStringLiteral("runtime field fonts must be an array"));
+        return errors;
+    }
+
+    const QJsonArray fonts = fontsValue.toArray();
+    for (qsizetype i = 0; i < fonts.size(); ++i) {
+        const QString prefix = QStringLiteral("runtime field fonts[%1]").arg(i);
+        if (!fonts.at(i).isObject()) {
+            errors.append(QStringLiteral("%1 must be an object").arg(prefix));
+            continue;
+        }
+
+        const QJsonObject font = fonts.at(i).toObject();
+        const QString family = font.value(QStringLiteral("family")).toString().trimmed();
+        const QString source = font.value(QStringLiteral("source")).toString();
+        if (family.isEmpty())
+            errors.append(QStringLiteral("%1.family must be a non-empty string").arg(prefix));
+        if (!font.value(QStringLiteral("source")).isString() || !isSafeRelativeFontPath(source))
+            errors.append(QStringLiteral("%1.source must be a safe relative .ttf or .otf path").arg(prefix));
+        if (!font.value(QStringLiteral("weight")).isDouble())
+            errors.append(QStringLiteral("%1.weight must be numeric").arg(prefix));
+        if (font.contains(QStringLiteral("style"))
+            && (!font.value(QStringLiteral("style")).isString()
+                || font.value(QStringLiteral("style")).toString().trimmed().isEmpty())) {
+            errors.append(QStringLiteral("%1.style must be a non-empty string").arg(prefix));
+        }
+        if (font.contains(QStringLiteral("required")) && !font.value(QStringLiteral("required")).isBool())
+            errors.append(QStringLiteral("%1.required must be boolean").arg(prefix));
+    }
+
+    return errors;
+}
+
 QStringList validateManifest(const QJsonObject &manifest, const MerceThemeRegistryEntry &entry)
 {
     QStringList errors;
@@ -382,6 +445,55 @@ QStringList validateManifest(const QJsonObject &manifest, const MerceThemeRegist
 
     for (const QString &section : supportedSections())
         errors.append(validateSection(manifest, section));
+    errors.append(validateFontsSection(manifest));
+
+    return errors;
+}
+
+QString resolvedFontAssetPath(const MerceThemeRegistryEntry &entry, const QString &source)
+{
+    const QString manifestDirectory = QFileInfo(entry.manifestPath).path();
+    if (manifestDirectory.isEmpty() || manifestDirectory == QStringLiteral("."))
+        return source;
+
+    return manifestDirectory + QLatin1Char('/') + source;
+}
+
+QStringList loadManifestFonts(const QJsonObject &manifest, const MerceThemeRegistryEntry &entry)
+{
+    QStringList errors;
+    const QJsonValue fontsValue = manifest.value(QStringLiteral("fonts"));
+    if (!fontsValue.isArray())
+        return errors;
+
+    const QJsonArray fonts = fontsValue.toArray();
+    for (qsizetype i = 0; i < fonts.size(); ++i) {
+        const QJsonObject font = fonts.at(i).toObject();
+        const bool required = font.value(QStringLiteral("required")).toBool(true);
+        const QString family = font.value(QStringLiteral("family")).toString().trimmed();
+        const QString source = font.value(QStringLiteral("source")).toString();
+        const QString resolvedPath = resolvedFontAssetPath(entry, source);
+        const QString prefix = QStringLiteral("runtime field fonts[%1]").arg(i);
+
+        if (!QFile::exists(resolvedPath)) {
+            if (required)
+                errors.append(QStringLiteral("%1.source file does not exist: %2").arg(prefix, source));
+            continue;
+        }
+
+        const int fontId = QFontDatabase::addApplicationFont(resolvedPath);
+        if (fontId < 0) {
+            if (required)
+                errors.append(QStringLiteral("%1.source could not be loaded: %2").arg(prefix, source));
+            continue;
+        }
+
+        const QStringList loadedFamilies = QFontDatabase::applicationFontFamilies(fontId);
+        if (!loadedFamilies.contains(family) && required) {
+            errors.append(QStringLiteral("%1.family '%2' was not provided by %3")
+                              .arg(prefix, family, source));
+        }
+    }
 
     return errors;
 }
@@ -412,9 +524,35 @@ MerceThemeLoadResult loadEntry(const MerceThemeRegistryEntry &entry)
 
     mergedManifest = overlayManifest(mergedManifest, active.object);
     result.errors.append(validateManifest(mergedManifest, entry));
+    if (result.errors.isEmpty())
+        result.errors.append(loadManifestFonts(mergedManifest, entry));
     result.ok = result.errors.isEmpty();
     result.finalManifest = mergedManifest;
     return result;
+}
+
+QString variantSuffix(const MerceThemeRegistryEntry &entry)
+{
+    if (entry.variant.isEmpty())
+        return QString();
+
+    return QStringLiteral(" variant '%1'").arg(entry.variant);
+}
+
+QStringList validateRegistryEntries(const MerceThemeRegistry &registry)
+{
+    QStringList errors;
+    for (const auto &entry : registry.entries()) {
+        const MerceThemeLoadResult loaded = loadEntry(entry);
+        if (loaded.ok)
+            continue;
+
+        for (const QString &error : loaded.errors) {
+            errors.append(QStringLiteral("theme '%1'%2: %3")
+                              .arg(entry.theme, variantSuffix(entry), error));
+        }
+    }
+    return errors;
 }
 
 void logErrors(const QString &prefix, const QStringList &errors)
@@ -437,7 +575,7 @@ QString modeDisplayName(QString variant)
     return variant;
 }
 
-MerceThemeLoadResult loadDefaultFromRegistry(const MerceThemeRegistry &registry)
+MerceThemeLoadResult loadDefaultEntryFromRegistry(const MerceThemeRegistry &registry)
 {
     const MerceThemeRegistryLookupResult lookup = registry.defaultEntry();
     if (!lookup.ok) {
@@ -462,7 +600,7 @@ MerceThemeManifestLoader::MerceThemeManifestLoader(QString indexPath)
 
 MerceThemeLoadResult MerceThemeManifestLoader::loadDefault() const
 {
-    const RegistryLoadResult registry = loadRegistry(m_indexPath);
+    const MerceThemeRegistryLoadResult registry = loadRegistry(m_indexPath);
     if (!registry.ok) {
         MerceThemeLoadResult result;
         result.errors = registry.errors;
@@ -475,7 +613,7 @@ MerceThemeLoadResult MerceThemeManifestLoader::loadDefault() const
 
 MerceThemeLoadResult MerceThemeManifestLoader::load(const QString &theme, const QString &variant) const
 {
-    const RegistryLoadResult registry = loadRegistry(m_indexPath);
+    const MerceThemeRegistryLoadResult registry = loadRegistry(m_indexPath);
     if (!registry.ok) {
         MerceThemeLoadResult result;
         result.theme = theme;
@@ -485,7 +623,90 @@ MerceThemeLoadResult MerceThemeManifestLoader::load(const QString &theme, const 
         return result;
     }
 
-    const MerceThemeRegistryLookupResult lookup = registry.registry.lookup(theme, variant);
+    return loadFromRegistry(registry.registry, theme, variant);
+}
+
+QVariantList MerceThemeManifestLoader::availableThemes() const
+{
+    const MerceThemeRegistryLoadResult registry = loadRegistry(m_indexPath);
+    if (!registry.ok) {
+        logErrors(QStringLiteral("theme registry discovery failed:"), registry.errors);
+        return {};
+    }
+
+    return availableThemesForRegistry(registry.registry);
+}
+
+MerceThemeRegistryLoadResult MerceThemeManifestLoader::loadRegistry(const QString &indexPath)
+{
+    MerceThemeRegistryLoadResult result;
+    const JsonObjectResult index = readJsonObject(indexPath, QStringLiteral("theme index"));
+    if (!index.ok) {
+        result.errors = index.errors;
+        return result;
+    }
+
+    const MerceThemeRegistryResult registryResult = MerceThemeRegistry::fromJson(index.object, indexPath);
+    if (!registryResult.ok) {
+        result.errors = registryResult.errors;
+        return result;
+    }
+
+    result.ok = true;
+    result.registry = registryResult.registry;
+    return result;
+}
+
+MerceThemeRegistryLoadResult MerceThemeManifestLoader::loadMergedRegistry(const QStringList &indexPaths)
+{
+    MerceThemeRegistryLoadResult result;
+    if (indexPaths.isEmpty()) {
+        result.errors.append(QStringLiteral("at least one theme index path is required"));
+        return result;
+    }
+
+    MerceThemeRegistry merged;
+    for (int i = 0; i < indexPaths.size(); ++i) {
+        const QString &indexPath = indexPaths.at(i);
+        const MerceThemeRegistryLoadResult source = loadRegistry(indexPath);
+        if (!source.ok) {
+            for (const QString &error : source.errors)
+                result.errors.append(QStringLiteral("%1: %2").arg(indexPath, error));
+            return result;
+        }
+
+        if (i == 0) {
+            merged = source.registry;
+            continue;
+        }
+
+        QStringList mergeErrors;
+        if (!merged.appendRegistry(source.registry, &mergeErrors)) {
+            for (const QString &error : mergeErrors)
+                result.errors.append(QStringLiteral("%1: %2").arg(indexPath, error));
+            return result;
+        }
+    }
+
+    result.errors = validateRegistryEntries(merged);
+    if (!result.errors.isEmpty())
+        return result;
+
+    result.ok = true;
+    result.registry = merged;
+    return result;
+}
+
+MerceThemeLoadResult MerceThemeManifestLoader::loadDefaultFromRegistry(const MerceThemeRegistry &registry)
+{
+    return loadDefaultEntryFromRegistry(registry);
+}
+
+MerceThemeLoadResult MerceThemeManifestLoader::loadFromRegistry(const MerceThemeRegistry &registry,
+                                                                const QString &theme,
+                                                                const QString &variant)
+{
+    const MerceThemeRegistryLookupResult lookup = registry.lookup(theme, variant);
     if (!lookup.ok) {
         MerceThemeLoadResult result;
         result.theme = theme;
@@ -496,14 +717,14 @@ MerceThemeLoadResult MerceThemeManifestLoader::load(const QString &theme, const 
     }
 
     MerceThemeLoadResult requested = loadEntry(lookup.entry);
-    if (requested.ok || isDefaultEntry(registry.registry, lookup.entry)) {
+    if (requested.ok || isDefaultEntry(registry, lookup.entry)) {
         if (!requested.ok)
             logErrors(QStringLiteral("requested theme load failed:"), requested.errors);
         return requested;
     }
 
     logErrors(QStringLiteral("requested theme load failed, falling back to default:"), requested.errors);
-    MerceThemeLoadResult fallback = loadDefaultFromRegistry(registry.registry);
+    MerceThemeLoadResult fallback = loadDefaultEntryFromRegistry(registry);
     if (fallback.ok) {
         fallback.usedFallback = true;
         fallback.errors = requested.errors;
@@ -515,14 +736,8 @@ MerceThemeLoadResult MerceThemeManifestLoader::load(const QString &theme, const 
     return fallback;
 }
 
-QVariantList MerceThemeManifestLoader::availableThemes() const
+QVariantList MerceThemeManifestLoader::availableThemesForRegistry(const MerceThemeRegistry &registry)
 {
-    const RegistryLoadResult registry = loadRegistry(m_indexPath);
-    if (!registry.ok) {
-        logErrors(QStringLiteral("theme registry discovery failed:"), registry.errors);
-        return {};
-    }
-
     struct ThemeOption
     {
         QString value;
@@ -532,7 +747,7 @@ QVariantList MerceThemeManifestLoader::availableThemes() const
     };
 
     QList<ThemeOption> options;
-    for (const auto &entry : registry.registry.entries()) {
+    for (const auto &entry : registry.entries()) {
         int optionIndex = -1;
         for (int i = 0; i < options.size(); ++i) {
             if (options.at(i).value == entry.theme) {
@@ -545,7 +760,7 @@ QVariantList MerceThemeManifestLoader::availableThemes() const
             options.append({
                 entry.theme,
                 entry.displayName.isEmpty() ? entry.theme : entry.displayName,
-                entry.theme == registry.registry.defaultTheme() ? registry.registry.defaultVariant() : QString(),
+                registry.defaultVariantForTheme(entry.theme),
                 {},
             });
             optionIndex = options.size() - 1;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QJsonObject>
+#include <QHash>
 #include <QList>
 #include <QString>
 #include <QStringList>
@@ -33,11 +34,15 @@ public:
 
     QString defaultTheme() const { return m_defaultTheme; }
     QString defaultVariant() const { return m_defaultVariant; }
+    QString defaultVariantForTheme(const QString &theme) const { return m_defaultVariantsByTheme.value(theme); }
     QList<MerceThemeRegistryEntry> entries() const { return m_entries; }
+    bool containsTheme(const QString &theme) const;
+    bool appendRegistry(const MerceThemeRegistry &registry, QStringList *errors);
 
 private:
     QString m_defaultTheme;
     QString m_defaultVariant;
+    QHash<QString, QString> m_defaultVariantsByTheme;
     QList<MerceThemeRegistryEntry> m_entries;
 };
 

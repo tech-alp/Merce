@@ -87,6 +87,11 @@ foreach(MERCE_THEME_MANIFEST_RELATIVE_FILE IN LISTS MERCE_THEME_MANIFEST_RELATIV
     list(APPEND MERCE_THEME_MANIFEST_FILES "${MERCE_THEME_MANIFEST_DIR}/${MERCE_THEME_MANIFEST_RELATIVE_FILE}")
 endforeach()
 
+file(GLOB_RECURSE MERCE_THEME_ASSET_FILES
+    CONFIGURE_DEPENDS
+    "${MERCE_THEME_MANIFEST_DIR}/fonts/*"
+)
+
 qt_add_qml_module(MerceCore
     URI "Merce.Core"
     VERSION 1.0
@@ -99,6 +104,7 @@ qt_add_resources(MerceCore "merce_theme_manifests"
     BASE "${MERCE_THEME_MANIFEST_DIR}"
     FILES
         ${MERCE_THEME_MANIFEST_FILES}
+        ${MERCE_THEME_ASSET_FILES}
 )
 
 target_link_libraries(MerceCore

@@ -44,6 +44,7 @@ export function themeEntries(registry) {
           displayName: theme.displayName ?? themeName,
           path: validateManifestPath(theme.basePath, `Theme '${themeName}' basePath`),
           source: [...coreSources, ...themeSources],
+          fonts: normalizeFontAssets(theme.fontAssets ?? [], themeName),
         });
       }
 
@@ -58,6 +59,7 @@ export function themeEntries(registry) {
           variant: variantName,
           path: validateManifestPath(destination, `Theme '${themeName}' variant '${variantName}' path`),
           source: [...coreSources, ...themeSources, ...variantSources],
+          fonts: normalizeFontAssets(theme.fontAssets ?? [], themeName),
         };
       }));
 
@@ -73,6 +75,7 @@ export function themeEntries(registry) {
       displayName: theme.displayName ?? themeName,
       path: validateManifestPath(theme.path, `Theme '${themeName}' path`),
       source: [...coreSources, ...themeSources],
+      fonts: normalizeFontAssets(theme.fontAssets ?? [], themeName),
     }];
   });
 }
@@ -136,4 +139,47 @@ export function validateManifestPath(value, label) {
   }
 
   return value;
+}
+
+export function validateRelativeAssetPath(value, label) {
+  if (typeof value !== 'string'
+      || value.length === 0
+      || path.isAbsolute(value)
+      || value.startsWith(':')
+      || value.includes('\\')
+      || value.split('/').some((part) => part === '' || part === '..')) {
+    throw new Error(`${label} must be a safe relative asset path`);
+  }
+
+  return value;
+}
+
+function normalizeFontAssets(fontAssets, themeName) {
+  if (!Array.isArray(fontAssets)) {
+    throw new Error(`Theme '${themeName}' fontAssets must be an array`);
+  }
+
+  return fontAssets.map((font, index) => {
+    const label = `Theme '${themeName}' fontAssets[${index}]`;
+    if (!font || typeof font !== 'object' || Array.isArray(font)) {
+      throw new Error(`${label} must be an object`);
+    }
+
+    if (typeof font.family !== 'string' || font.family.trim().length === 0) {
+      throw new Error(`${label}.family must be a non-empty string`);
+    }
+
+    if (!Number.isFinite(font.weight)) {
+      throw new Error(`${label}.weight must be numeric`);
+    }
+
+    return {
+      family: font.family,
+      source: validateRelativeAssetPath(font.source, `${label}.source`),
+      destination: validateRelativeAssetPath(font.destination, `${label}.destination`),
+      weight: font.weight,
+      style: typeof font.style === 'string' && font.style.length > 0 ? font.style : 'normal',
+      required: font.required !== false,
+    };
+  });
 }

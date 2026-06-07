@@ -130,23 +130,23 @@
   "typography": {
     "displayFont": {
       "$type": "fontFamily",
-      "$value": "SF Pro Display, system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
+      "$value": "Inter"
     },
     "bodyFont": {
       "$type": "fontFamily",
-      "$value": "SF Pro Text, system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
+      "$value": "Inter"
     },
     "monoFont": {
       "$type": "fontFamily",
-      "$value": "SF Mono, ui-monospace, Menlo, monospace"
+      "$value": "Roboto Mono"
     },
     "displayFontFallback": {
       "$type": "fontFamily",
-      "$value": "Inter, -apple-system, BlinkMacSystemFont, sans-serif"
+      "$value": "Inter"
     },
     "bodyFontFallback": {
       "$type": "fontFamily",
-      "$value": "Inter, -apple-system, BlinkMacSystemFont, sans-serif"
+      "$value": "Inter"
     },
     "sizeXSmall": {
       "$type": "dimension",

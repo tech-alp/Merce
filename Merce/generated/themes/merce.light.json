@@ -93,11 +93,11 @@
     "tooltip": 4
   },
   "typography": {
-    "displayFont": "Playfair Display",
-    "bodyFont": "DM Sans",
-    "monoFont": "SF Mono",
-    "displayFontFallback": "Georgia, serif",
-    "bodyFontFallback": "-apple-system, BlinkMacSystemFont, sans-serif",
+    "displayFont": "Inter",
+    "bodyFont": "Inter",
+    "monoFont": "Roboto Mono",
+    "displayFontFallback": "Inter",
+    "bodyFontFallback": "Inter",
     "sizeXSmall": 12,
     "sizeSmall": 14,
     "sizeMedium": 16,

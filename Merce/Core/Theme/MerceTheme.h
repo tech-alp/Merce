@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QStringList>
 #include <QVariantList>
 #include <QtQml/qqmlregistration.h>
 
@@ -12,6 +13,7 @@
 #include "MerceRadius.h"
 #include "MerceShadows.h"
 #include "MerceSpacing.h"
+#include "MerceThemeRegistry.h"
 #include "MerceTypography.h"
 #include "MerceZIndex.h"
 
@@ -33,7 +35,7 @@ class MerceTheme : public QObject
     Q_PROPERTY(MerceShadows *shadows READ shadows NOTIFY shadowsChanged FINAL)
     Q_PROPERTY(QString activeBrand READ activeBrand NOTIFY activeThemeChanged FINAL)
     Q_PROPERTY(QString activeMode READ activeMode NOTIFY activeThemeChanged FINAL)
-    Q_PROPERTY(QVariantList availableThemes READ availableThemes CONSTANT FINAL)
+    Q_PROPERTY(QVariantList availableThemes READ availableThemes NOTIFY availableThemesChanged FINAL)
     QML_NAMED_ELEMENT(Theme)
     QML_SINGLETON
 
@@ -56,6 +58,9 @@ public:
     QVariantList availableThemes() const { return m_availableThemes; }
 
     Q_INVOKABLE bool setTheme(const QString &brand, const QString &mode = QString());
+    Q_INVOKABLE bool addThemeSource(const QString &indexPath);
+    Q_INVOKABLE void clearThemeSources();
+    Q_INVOKABLE bool reloadThemes();
 
 signals:
     void colorsChanged();
@@ -68,16 +73,20 @@ signals:
     void breakpointsChanged();
     void shadowsChanged();
     void activeThemeChanged();
+    void availableThemesChanged();
 
 private:
     explicit MerceTheme(const QString &manifestIndexPath, QObject *parent = nullptr);
 
+    bool reloadThemesInternal(bool emitAvailableThemesChanged);
     bool applyLoadedTheme(const MerceThemeLoadResult &result);
     void setActiveThemeState(const QString &brand, const QString &mode);
 
     friend class tst_merce_theme_runtime_switch;
 
-    QString m_manifestIndexPath;
+    QString m_builtinManifestIndexPath;
+    QStringList m_externalThemeSourcePaths;
+    MerceThemeRegistry m_registry;
     QString m_activeBrand;
     QString m_activeMode;
     QVariantList m_availableThemes;

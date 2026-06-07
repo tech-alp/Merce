@@ -130,23 +130,23 @@
   "typography": {
     "displayFont": {
       "$type": "fontFamily",
-      "$value": "Copernicus, Tiempos Headline, Georgia, serif"
+      "$value": "Inter"
     },
     "bodyFont": {
       "$type": "fontFamily",
-      "$value": "StyreneB, Inter, -apple-system, BlinkMacSystemFont, sans-serif"
+      "$value": "Inter"
     },
     "monoFont": {
       "$type": "fontFamily",
-      "$value": "JetBrains Mono, ui-monospace, Menlo, monospace"
+      "$value": "Roboto Mono"
     },
     "displayFontFallback": {
       "$type": "fontFamily",
-      "$value": "Georgia, Times New Roman, serif"
+      "$value": "Inter"
     },
     "bodyFontFallback": {
       "$type": "fontFamily",
-      "$value": "Inter, -apple-system, BlinkMacSystemFont, sans-serif"
+      "$value": "Inter"
     },
     "sizeXSmall": {
       "$type": "dimension",

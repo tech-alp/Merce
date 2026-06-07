@@ -12,11 +12,11 @@
   "typography": {
     "bodyFont": {
       "$type": "fontFamily",
-      "$value": "-apple-system, BlinkMacSystemFont, sans-serif"
+      "$value": "Inter"
     },
     "displayFont": {
       "$type": "fontFamily",
-      "$value": "-apple-system, BlinkMacSystemFont, sans-serif"
+      "$value": "Inter"
     }
   },
   "color": {

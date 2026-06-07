@@ -92,11 +92,11 @@
     "tooltip": 4
   },
   "typography": {
-    "displayFont": "Copernicus, Tiempos Headline, Georgia, serif",
-    "bodyFont": "StyreneB, Inter, -apple-system, BlinkMacSystemFont, sans-serif",
-    "monoFont": "JetBrains Mono, ui-monospace, Menlo, monospace",
-    "displayFontFallback": "Georgia, Times New Roman, serif",
-    "bodyFontFallback": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+    "displayFont": "Inter",
+    "bodyFont": "Inter",
+    "monoFont": "Roboto Mono",
+    "displayFontFallback": "Inter",
+    "bodyFontFallback": "Inter",
     "sizeXSmall": 12,
     "sizeSmall": 13,
     "sizeMedium": 14,
