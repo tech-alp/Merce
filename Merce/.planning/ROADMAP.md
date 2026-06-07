@@ -13,7 +13,7 @@ This roadmap phases Merce's theme work from current QML token facade toward a ty
 | 1 | Theme Runtime Contract | 1/1 | Complete    | 2026-06-03 |
 | 2 | Token Build Pipeline | 1/1 | Complete    | 2026-06-03 |
 | 3 | Manifest Registry And Loader | 5/5 | Complete    | 2026-06-03 |
-| 4 | Runtime Brand/Mode Switching | Implement `Theme.setTheme(brand, mode)` and binding-safe value updates | RUNTIME-01..RUNTIME-04 | yes |
+| 4 | Runtime Brand/Mode Switching | 2/2 | Complete    | 2026-06-04 |
 | 5 | Verification And Gallery | Prove the runtime through tests, probes, smoke checks, and playground theme gallery | VERIFY-01..VERIFY-04 | yes |
 
 ## Phase Details
@@ -102,11 +102,20 @@ This roadmap phases Merce's theme work from current QML token facade toward a ty
 3. Palette/spacing/radius/typography bindings update through `NOTIFY` signals.
 4. Switching does not attempt to change Qt Quick Controls style families at runtime.
 
+**Plans:**
+
+2/2 plans complete
+
+- Wave 1: `04-01-PLAN.md` - Runtime brand/mode API, active state, stable object metadata, and transactional apply semantics.
+- Wave 2 *(blocked on Wave 1 completion)*: `04-02-PLAN.md` - QtTest runtime switch coverage and focused QML binding probe route.
+
 ### Phase 5: Verification And Gallery
 
 **Goal:** Make the theme runtime observable, testable, and easy to validate through playground and automated checks.
 
 **Requirements:** VERIFY-01, VERIFY-02, VERIFY-03, VERIFY-04
+
+**Plans:** 3 plans
 
 **Success criteria:**
 
@@ -114,6 +123,12 @@ This roadmap phases Merce's theme work from current QML token facade toward a ty
 2. Smoke test verifies representative controls consume the runtime.
 3. Manifest validation test covers bad schema, missing fields, unknown brand/mode, and fallback.
 4. Playground includes a visual theme gallery for key token groups and component states.
+
+**Plan list:**
+
+- [ ] `05-01-PLAN.md` - Canonical ThemeProbe assertions and manifest loader validation coverage.
+- [ ] `05-02-PLAN.md` - Separate ThemeGallery UI, Main.qml integration, and offscreen gallery probe route.
+- [ ] `05-03-PLAN.md` - Deterministic gallery export, README-ready evidence docs, and optional qmlagent selectors.
 
 ## Roadmap Rules
 

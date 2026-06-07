@@ -31,10 +31,10 @@
 
 ### Runtime Switching
 
-- [ ] **RUNTIME-01**: QML can request `Theme.setTheme(brand, mode)` for registered themes.
-- [ ] **RUNTIME-02**: Switching from light to dark updates Merce component bindings without recreating the whole UI.
-- [ ] **RUNTIME-03**: Runtime switching affects Merce semantic values only and does not attempt to change Qt Quick Controls style family on the fly.
-- [ ] **RUNTIME-04**: The active brand and mode are queryable from QML.
+- [x] **RUNTIME-01**: QML can request `Theme.setTheme(brand, mode)` for registered themes.
+- [x] **RUNTIME-02**: Switching from light to dark updates Merce component bindings without recreating the whole UI.
+- [x] **RUNTIME-03**: Runtime switching affects Merce semantic values only and does not attempt to change Qt Quick Controls style family on the fly.
+- [x] **RUNTIME-04**: The active brand and mode are queryable from QML.
 
 ### Verification And Tooling
 
@@ -86,10 +86,10 @@
 | MANIFEST-03 | Phase 3 | Complete |
 | MANIFEST-04 | Phase 3 | Complete |
 | MANIFEST-05 | Phase 3 | Complete |
-| RUNTIME-01 | Phase 4 | Pending |
-| RUNTIME-02 | Phase 4 | Pending |
-| RUNTIME-03 | Phase 4 | Pending |
-| RUNTIME-04 | Phase 4 | Pending |
+| RUNTIME-01 | Phase 4 | Complete |
+| RUNTIME-02 | Phase 4 | Complete |
+| RUNTIME-03 | Phase 4 | Complete |
+| RUNTIME-04 | Phase 4 | Complete |
 | VERIFY-01 | Phase 5 | Pending |
 | VERIFY-02 | Phase 5 | Pending |
 | VERIFY-03 | Phase 5 | Pending |
