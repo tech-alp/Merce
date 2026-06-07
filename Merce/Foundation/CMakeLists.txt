@@ -13,7 +13,7 @@ qt_add_qml_module(MerceFoundation
         IconRegistry.qml
         MaterialIcon.qml
         Surface.qml
-        ThemedText.qml
+        AppLabel.qml
     RESOURCES
         fonts/Inter/Inter-Black.otf
         fonts/Inter/Inter-Bold.otf
@@ -35,4 +35,4 @@ qt_add_qml_module(MerceFoundation
         fonts/RobotoMono/RobotoMono-Thin.ttf
 )
 
-target_link_libraries(MerceFoundation PRIVATE MerceCore)
+target_link_libraries(MerceFoundation PRIVATE MerceTheme)

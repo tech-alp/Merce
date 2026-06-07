@@ -1,5 +1,5 @@
 import QtQuick
-import Merce.Core
+import Merce.Theme
 import Merce.Icons.FontAwesome
 
 Main {
@@ -236,18 +236,27 @@ Main {
                 if (!root.verifyPlaceholderPage("motion", "Motion", "merce.playground.motionShowcase"))
                     return
 
-                root.selectedPage = "forms"
+                root.selectedPage = "theme-builder"
                 step = 8
-                interval = 120
+                interval = 160
                 restart()
                 return
             }
 
             if (step === 8) {
-                if (!root.verifyPlaceholderPage("forms", "Forms", "merce.playground.formsShowcase"))
+                const themeBuilder = root.findNamed("merce.playground.themeBuilderShowcase")
+                if (root.selectedPage !== "theme-builder"
+                        || root.pageTitle(root.selectedPage) !== "Theme Builder"
+                        || !themeBuilder) {
+                    root.fail("theme builder page switch", [
+                                  root.selectedPage,
+                                  root.pageTitle(root.selectedPage),
+                                  themeBuilder !== null
+                              ])
                     return
+                }
 
-                root.selectedPage = "states"
+                root.selectedPage = "forms"
                 step = 9
                 interval = 120
                 restart()
@@ -255,17 +264,28 @@ Main {
             }
 
             if (step === 9) {
-                if (!root.verifyPlaceholderPage("states", "States", "merce.playground.statesShowcase"))
+                if (!root.verifyPlaceholderPage("forms", "Forms", "merce.playground.formsShowcase"))
                     return
 
-                root.selectedPage = "icons"
+                root.selectedPage = "states"
                 step = 10
-                interval = 160
+                interval = 120
                 restart()
                 return
             }
 
             if (step === 10) {
+                if (!root.verifyPlaceholderPage("states", "States", "merce.playground.statesShowcase"))
+                    return
+
+                root.selectedPage = "icons"
+                step = 11
+                interval = 160
+                restart()
+                return
+            }
+
+            if (step === 11) {
                 const iconsShowcase = root.findNamed("merce.playground.iconsShowcase")
                 const iconsGrid = root.findNamed("merce.playground.icons.grid")
                 const iconsSearch = root.findNamed("merce.playground.icons.search")
@@ -328,7 +348,7 @@ Main {
                 iconsShowcase.selectedIconFont = "material"
 
                 root.selectedPage = "controls"
-                step = 11
+                step = 12
                 interval = 80
                 restart()
                 return

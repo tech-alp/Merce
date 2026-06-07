@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
-import Merce.Core
-import Merce.Core.Effects
+import Merce.Theme
+import Merce.Effects
 import Merce.Controls
 import Merce.Foundation
 

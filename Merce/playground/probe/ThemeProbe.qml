@@ -1,5 +1,5 @@
 import QtQml
-import Merce.Core
+import Merce.Theme
 
 QtObject {
     function fail(message, values) {
@@ -18,7 +18,7 @@ QtObject {
                 || actionPrimary !== "#c4785a"
                 || Theme.spacing.md !== 16
                 || Theme.radius.button !== 12
-                || bodyFont !== "DM Sans"
+                || bodyFont !== "Inter"
                 || Theme.iconography.small !== 20
                 || Theme.breakpoints.large !== 1024
                 || Theme.activeBrand !== "merce"

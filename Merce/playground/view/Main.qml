@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls.Basic as Basic
 import QtQml.Models
-import Merce.Core
+import Merce.Theme
 
 Basic.ApplicationWindow {
     id: root
@@ -57,6 +57,12 @@ Basic.ApplicationWindow {
             icon: "material:dark_mode"
         }
         ListElement {
+            key: "theme-builder"
+            label: "Theme Builder"
+            category: "Tools"
+            icon: "material:design_services"
+        }
+        ListElement {
             key: "controls"
             label: "Controls"
             category: "Components"
@@ -108,6 +114,8 @@ Basic.ApplicationWindow {
             return shadowsPage
         if (key === "motion")
             return motionPage
+        if (key === "theme-builder")
+            return themeBuilderPage
         if (key === "controls")
             return controlsPage
         if (key === "icons")
@@ -300,6 +308,14 @@ Basic.ApplicationWindow {
     }
 
     Component {
+        id: themeBuilderPage
+        PlaygroundPage {
+            objectName: "merce.playground.stack.themeBuilder"
+            sourceComponent: themeBuilderShowcase
+        }
+    }
+
+    Component {
         id: controlsPage
         PlaygroundPage {
             objectName: "merce.playground.stack.controls"
@@ -380,6 +396,13 @@ Basic.ApplicationWindow {
         PlaceholderShowcase {
             objectName: "merce.playground.motionShowcase"
             title: "Motion"
+        }
+    }
+
+    Component {
+        id: themeBuilderShowcase
+        ThemeBuilderShowcase {
+            objectName: "merce.playground.themeBuilderShowcase"
         }
     }
 

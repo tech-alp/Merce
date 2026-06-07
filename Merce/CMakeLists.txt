@@ -48,7 +48,10 @@ FetchContent_MakeAvailable(QtToastify)
 # ========================================================================
 
 add_subdirectory(Core)
+add_subdirectory(Platform)
+add_subdirectory(Theme)
 add_subdirectory(Foundation)
+add_subdirectory(Effects)
 if(MERCE_ENABLE_FONTAWESOME)
     add_subdirectory(Icons/FontAwesome)
 endif()
@@ -83,10 +86,10 @@ include(GNUInstallDirs)
 
 set(MERCE_QML_MODULE_TARGETS
     MerceCore
-    MerceCoreEffects
-    MerceCoreBase
-    MerceCoreUtils
+    MercePlatform
+    MerceTheme
     MerceFoundation
+    MerceEffects
     MerceControls
     MerceNotifications
 )
@@ -210,8 +213,10 @@ message(STATUS "Module Dependency Tree:")
 message(STATUS "  Application")
 message(STATUS "    ├── Merce.Controls")
 message(STATUS "    │       └── Merce.Foundation")
-message(STATUS "    │               └── Merce.Core")
+message(STATUS "    │               └── Merce.Theme")
+message(STATUS "    │                       └── Merce.Core")
 message(STATUS "    └── Merce.Notifications")
 message(STATUS "            └── Merce.Foundation")
-message(STATUS "                    └── Merce.Core")
+message(STATUS "                    └── Merce.Theme")
+message(STATUS "                            └── Merce.Core")
 message(STATUS "")

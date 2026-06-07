@@ -13,4 +13,4 @@ qt_add_qml_module(MerceControls
         LoadingIndicator.qml
 )
 
-target_link_libraries(MerceControls PRIVATE MerceFoundation MerceCore)
+target_link_libraries(MerceControls PRIVATE MerceFoundation MerceTheme)

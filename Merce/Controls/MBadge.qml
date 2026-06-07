@@ -1,5 +1,5 @@
 import QtQuick
-import Merce.Core
+import Merce.Theme
 import Merce.Foundation
 
 Item {
@@ -15,14 +15,14 @@ Item {
             "height": 24,
             "paddingH": Theme.spacing.xs,
             "gap": Theme.spacing.xxs,
-            "textType": "caption",
+            "textType": AppLabel.Caption,
             "iconSize": Theme.icons.small
         },
         "medium": {
             "height": 28,
             "paddingH": Theme.spacing.sm,
             "gap": Theme.spacing.xs,
-            "textType": "bodySmall",
+            "textType": AppLabel.BodySmall,
             "iconSize": Theme.icons.small
         }
     }
@@ -102,13 +102,13 @@ Item {
             visible: root.icon !== ""
         }
 
-        ThemedText {
+        AppLabel {
             anchors.verticalCenter: parent.verticalCenter
-            type: root.currentSize.textType
+            textType: root.currentSize.textType
             text: root.text
-            textColor: root.badgeForegroundColor
-            wrap: "nowrap"
-            maxLines: 1
+            color: root.badgeForegroundColor
+            wrapMode: Text.NoWrap
+            maximumLineCount: 1
         }
     }
 }

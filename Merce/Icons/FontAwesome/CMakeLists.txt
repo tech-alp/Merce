@@ -13,4 +13,4 @@ qt_add_qml_module(MerceIconsFontAwesome
         LICENSE.txt
 )
 
-target_link_libraries(MerceIconsFontAwesome PRIVATE MerceCore)
+target_link_libraries(MerceIconsFontAwesome PRIVATE MerceTheme)

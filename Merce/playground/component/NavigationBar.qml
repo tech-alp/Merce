@@ -1,5 +1,5 @@
 import QtQuick
-import Merce.Core
+import Merce.Theme
 import Merce.Foundation
 
 Rectangle {
@@ -74,20 +74,20 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: Theme.spacing.xxs
 
-                ThemedText {
+                AppLabel {
                     width: parent.width
-                    type: "bodyLarge"
+                    textType: AppLabel.BodyLarge
                     text: "Merce"
-                    textColor: Theme.colors.text.primary
-                    wrap: "word"
+                    color: Theme.colors.text.primary
+                    wrapMode: Text.WordWrap
                 }
 
-                ThemedText {
+                AppLabel {
                     width: parent.width
-                    type: "caption"
+                    textType: AppLabel.Caption
                     text: root.activeTheme
-                    textColor: Theme.colors.text.secondary
-                    wrap: "word"
+                    color: Theme.colors.text.secondary
+                    wrapMode: Text.WordWrap
                 }
             }
         }
@@ -138,14 +138,14 @@ Rectangle {
                     width: parent.width
                     spacing: Theme.spacing.xs
 
-                    ThemedText {
+                    AppLabel {
                         width: parent.width
                         text: category
-                        type: "caption"
-                        textColor: Theme.colors.text.tertiary
+                        textType: AppLabel.Caption
+                        color: Theme.colors.text.tertiary
                         visible: showCategory
                         height: visible ? implicitHeight : 0
-                        wrap: "word"
+                        wrapMode: Text.WordWrap
                     }
 
                     NavigationButton {

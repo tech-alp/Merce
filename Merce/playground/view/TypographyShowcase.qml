@@ -1,5 +1,5 @@
 import QtQuick
-import Merce.Core
+import Merce.Theme
 import Merce.Foundation
 import Merce.Controls
 
@@ -215,7 +215,7 @@ Item {
     component Card: Surface {
         default property alias contentData: cardContent.data
 
-        surfaceType: types["default"]
+        surfaceType: Surface.Default
         backgroundColor: root.cardColor
         borderColor: root.dividerColor
         radiusValue: Theme.radius.large

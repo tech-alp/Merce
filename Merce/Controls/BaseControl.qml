@@ -1,5 +1,5 @@
 import QtQuick
-import Merce.Core
+import Merce.Theme
 
 /**
  * BaseControl - Base primitive for interactive controls

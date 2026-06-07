@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Controls.Basic as Basic
-import Merce.Core
+import Merce.Theme
 import Merce.Foundation
 import Merce.Icons.FontAwesome
 import Merce.Controls
@@ -137,10 +137,10 @@ Item {
         refreshFilteredIcons()
     }
 
-    component SectionTitle: ThemedText {
-        type: "h4"
-        textColor: Theme.colors.text.primary
-        wrap: "word"
+    component SectionTitle: AppLabel {
+        textType: AppLabel.H4
+        color: Theme.colors.text.primary
+        wrapMode: Text.WordWrap
     }
 
     Column {
@@ -151,7 +151,7 @@ Item {
         Surface {
             width: parent.width
             height: iconsColumn.implicitHeight + Theme.spacing.xl2
-            surfaceType: types["default"]
+            surfaceType: Surface.Default
             radiusValue: Theme.radius.large
 
             Column {
@@ -264,12 +264,12 @@ Item {
                     }
                 }
 
-                ThemedText {
+                AppLabel {
                     width: parent.width
-                    type: "caption"
+                    textType: AppLabel.Caption
                     text: root.activeIconFontLabel + " / " + filteredIcons.count + " icons"
-                    textColor: Theme.colors.text.tertiary
-                    wrap: "word"
+                    color: Theme.colors.text.tertiary
+                    wrapMode: Text.WordWrap
                 }
             }
         }

@@ -1,5 +1,5 @@
 import QtQuick
-import Merce.Core
+import Merce.Theme
 
 /**
  * Surface - Theme-aware surface primitive
@@ -8,15 +8,20 @@ import Merce.Core
 Rectangle {
     id: root
 
+    enum SurfaceType {
+        Default,
+        Tinted,
+        Raised
+    }
+
+    enum VisualState {
+        Normal,
+        Hovered,
+        Pressed
+    }
+
     // Required properties
     required property int surfaceType
-
-    // Surface types
-    readonly property var types: {
-        "default": 0,
-        "tinted": 1,
-        "raised": 2
-    }
 
     // Customizable properties
     virtual property color backgroundColor: Theme.colors.background.surface
@@ -30,22 +35,47 @@ Rectangle {
     // Internal state
     property bool isHovered: false
     property bool isPressed: false
+    readonly property int visualState: root.isPressed ? Surface.Pressed :
+                                       root.isHovered ? Surface.Hovered :
+                                       Surface.Normal
 
     // Apply properties
-    color: {
-        if (surfaceType === types.tinted) return Theme.colors.background.tinted
-        if (surfaceType === types.raised) return Theme.colors.background.elevated
-        return backgroundColor
-    }
-
+    color: visualStyle.backgroundColor
     radius: radiusValue
     border.width: borderWidth
-    border.color: isPressed ? Theme.colors.border.strong :
-                isHovered ? Theme.colors.border.focus :
-                borderColor
+    border.color: visualStyle.borderColor
 
     // Shadow for raised surfaces
-    property var shadow: surfaceType === types.raised ? Theme.shadows.card : Theme.shadows.none
+    property var shadow: visualStyle.shadow
+
+    QtObject {
+        id: visualStyle
+
+        property color backgroundColor: {
+            if (root.surfaceType === Surface.Tinted) return Theme.colors.background.tinted
+            if (root.surfaceType === Surface.Raised) return Theme.colors.background.elevated
+            return root.backgroundColor
+        }
+        property color borderColor: root.borderColor
+        property var shadow: root.surfaceType === Surface.Raised ? Theme.shadows.card : Theme.shadows.none
+    }
+
+    StateGroup {
+        states: [
+            State {
+                when: root.visualState === Surface.Hovered
+                PropertyChanges {
+                    visualStyle.borderColor: Theme.colors.border.focus
+                }
+            },
+            State {
+                when: root.visualState === Surface.Pressed
+                PropertyChanges {
+                    visualStyle.borderColor: Theme.colors.border.strong
+                }
+            }
+        ]
+    }
 
     // Animation
     Behavior on color { ColorAnimation { duration: Theme.motion.durationFast; easing: Theme.motion.easingOut } }

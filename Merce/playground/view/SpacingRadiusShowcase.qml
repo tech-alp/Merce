@@ -1,5 +1,5 @@
 import QtQuick
-import Merce.Core
+import Merce.Theme
 import Merce.Foundation
 import Merce.Controls
 
@@ -17,22 +17,22 @@ Item {
     readonly property real patternCardWidth: Math.floor((page.width - Theme.spacing.md * (patternColumns - 1)) / patternColumns)
     readonly property bool bottomWide: width >= 1080
 
-    component SectionTitle: ThemedText {
-        type: "h4"
-        textColor: Theme.colors.text.primary
-        wrap: "word"
+    component SectionTitle: AppLabel {
+        textType: AppLabel.H4
+        color: Theme.colors.text.primary
+        wrapMode: Text.WordWrap
     }
 
-    component BodyCopy: ThemedText {
-        type: "bodySmall"
-        textColor: Theme.colors.text.secondary
-        wrap: "word"
+    component BodyCopy: AppLabel {
+        textType: AppLabel.BodySmall
+        color: Theme.colors.text.secondary
+        wrapMode: Text.WordWrap
     }
 
-    component CaptionText: ThemedText {
-        type: "caption"
-        textColor: Theme.colors.text.tertiary
-        wrap: "word"
+    component CaptionText: AppLabel {
+        textType: AppLabel.Caption
+        color: Theme.colors.text.tertiary
+        wrapMode: Text.WordWrap
     }
 
     component TokenChip: Rectangle {
@@ -45,13 +45,13 @@ Item {
         border.width: 1
         border.color: Theme.colors.action.primary
 
-        ThemedText {
+        AppLabel {
             id: chipText
             anchors.centerIn: parent
-            type: "caption"
+            textType: AppLabel.Caption
             text: label
-            textColor: Theme.colors.action.primary
-            wrap: "nowrap"
+            color: Theme.colors.action.primary
+            wrapMode: Text.NoWrap
         }
     }
 
@@ -63,12 +63,12 @@ Item {
         radius: Theme.radius.full
         color: Theme.colors.action.primary
 
-        ThemedText {
+        AppLabel {
             anchors.centerIn: parent
-            type: "caption"
+            textType: AppLabel.Caption
             text: String(value)
-            textColor: Theme.colors.text.inverse
-            wrap: "nowrap"
+            color: Theme.colors.text.inverse
+            wrapMode: Text.NoWrap
         }
     }
 
@@ -105,16 +105,16 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: Theme.spacing.xxs
 
-                ThemedText {
-                    type: "caption"
+                AppLabel {
+                    textType: AppLabel.Caption
                     text: title
-                    textColor: Theme.colors.text.primary
-                    wrap: "nowrap"
+                    color: Theme.colors.text.primary
+                    wrapMode: Text.NoWrap
                 }
 
                 CaptionText {
                     text: value
-                    wrap: "nowrap"
+                    wrapMode: Text.NoWrap
                 }
             }
         }
@@ -131,7 +131,7 @@ Item {
 
         width: root.patternCardWidth
         height: cardColumn.implicitHeight + Theme.spacing.lg * 2
-        surfaceType: types["default"]
+        surfaceType: Surface.Default
         radiusValue: Theme.radius.large
 
         Column {
@@ -157,7 +157,7 @@ Item {
                     width: parent.width - 24 - parent.spacing
                     anchors.verticalCenter: parent.verticalCenter
                     text: title
-                    type: "bodyLarge"
+                    textType: AppLabel.BodyLarge
                 }
             }
 
@@ -185,7 +185,7 @@ Item {
                 CaptionText {
                     width: Math.max(0, (parent.width - parent.spacing * 2) / 3)
                     text: metaRight
-                    align: "right"
+                    horizontalAlignment: Text.AlignRight
                 }
             }
         }
@@ -219,20 +219,20 @@ Item {
             }
             spacing: Theme.spacing.xxs
 
-            ThemedText {
+            AppLabel {
                 width: parent.parent.width
-                type: "caption"
+                textType: AppLabel.Caption
                 text: label
-                textColor: Theme.colors.text.primary
-                align: "center"
-                wrap: "nowrap"
+                color: Theme.colors.text.primary
+                horizontalAlignment: Text.AlignHCenter
+                wrapMode: Text.NoWrap
             }
 
             CaptionText {
                 width: parent.parent.width
                 text: value + "px"
-                align: "center"
-                wrap: "nowrap"
+                horizontalAlignment: Text.AlignHCenter
+                wrapMode: Text.NoWrap
             }
         }
     }
@@ -264,20 +264,20 @@ Item {
             }
             spacing: Theme.spacing.xxs
 
-            ThemedText {
+            AppLabel {
                 width: parent.parent.width
-                type: "caption"
+                textType: AppLabel.Caption
                 text: label
-                textColor: Theme.colors.text.primary
-                align: "center"
-                wrap: "nowrap"
+                color: Theme.colors.text.primary
+                horizontalAlignment: Text.AlignHCenter
+                wrapMode: Text.NoWrap
             }
 
             CaptionText {
                 width: parent.parent.width
                 text: value + "px"
-                align: "center"
-                wrap: "nowrap"
+                horizontalAlignment: Text.AlignHCenter
+                wrapMode: Text.NoWrap
             }
         }
     }
@@ -316,23 +316,23 @@ Item {
             }
             spacing: Theme.spacing.xxs
 
-            ThemedText {
+            AppLabel {
                 width: parent.width
-                type: "caption"
+                textType: AppLabel.Caption
                 text: title
-                textColor: Theme.colors.text.primary
-                wrap: "nowrap"
-                maxLines: 1
+                color: Theme.colors.text.primary
+                wrapMode: Text.NoWrap
+                maximumLineCount: 1
             }
 
             CaptionText {
                 width: parent.width
                 text: detail
-                maxLines: 1
+                maximumLineCount: 1
             }
         }
 
-        ThemedText {
+        AppLabel {
             id: valueText
             anchors {
                 right: statusIcon.left
@@ -340,11 +340,11 @@ Item {
                 verticalCenter: parent.verticalCenter
             }
             width: 72
-            type: "caption"
+            textType: AppLabel.Caption
             text: value
-            textColor: Theme.colors.text.secondary
-            align: "right"
-            wrap: "nowrap"
+            color: Theme.colors.text.secondary
+            horizontalAlignment: Text.AlignRight
+            wrapMode: Text.NoWrap
         }
 
         AppIcon {
@@ -367,7 +367,7 @@ Item {
         Surface {
             width: page.width
             height: introColumn.implicitHeight + Theme.spacing.xl2
-            surfaceType: types["default"]
+            surfaceType: Surface.Default
             radiusValue: Theme.radius.large
 
             Column {
@@ -470,13 +470,13 @@ Item {
                             color: Theme.colors.text.secondary
                         }
 
-                        ThemedText {
+                        AppLabel {
                             width: Math.max(86, parent.width * 0.25)
                             anchors.verticalCenter: parent.verticalCenter
-                            type: "body"
+                            textType: AppLabel.Body
                             text: "Page Title"
-                            textColor: Theme.colors.text.primary
-                            wrap: "nowrap"
+                            color: Theme.colors.text.primary
+                            wrapMode: Text.NoWrap
                         }
 
                         MInput {
@@ -519,13 +519,13 @@ Item {
                     width: Math.min(parent.width, 360)
                     spacing: Theme.spacing.md
 
-                    ThemedText {
+                    AppLabel {
                         width: 72
                         anchors.verticalCenter: parent.verticalCenter
-                        type: "body"
+                        textType: AppLabel.Body
                         text: "Label"
-                        textColor: Theme.colors.text.primary
-                        wrap: "nowrap"
+                        color: Theme.colors.text.primary
+                        wrapMode: Text.NoWrap
                     }
 
                     Column {
@@ -568,7 +568,7 @@ Item {
                     width: Math.min(parent.width - Theme.spacing.xl2, 300)
                     height: 126
                     anchors.centerIn: parent
-                    surfaceType: types["default"]
+                    surfaceType: Surface.Default
                     radiusValue: Theme.radius.dialog
 
                     Column {
@@ -581,12 +581,12 @@ Item {
                         Row {
                             width: parent.width
 
-                            ThemedText {
+                            AppLabel {
                                 width: parent.width - closeIcon.width
-                                type: "bodyLarge"
+                                textType: AppLabel.BodyLarge
                                 text: "Dialog Title"
-                                textColor: Theme.colors.text.primary
-                                wrap: "nowrap"
+                                color: Theme.colors.text.primary
+                                wrapMode: Text.NoWrap
                             }
 
                             AppIcon {
@@ -600,7 +600,7 @@ Item {
                         BodyCopy {
                             width: parent.width
                             text: "Use spacing tokens for comfortable reading and predictable actions."
-                            maxLines: 2
+                            maximumLineCount: 2
                         }
 
                         Row {
@@ -656,12 +656,12 @@ Item {
                             anchors.verticalCenter: parent.verticalCenter
                             color: Theme.colors.action.primaryHover
 
-                            ThemedText {
+                            AppLabel {
                                 anchors.centerIn: parent
-                                type: "bodyLarge"
+                                textType: AppLabel.BodyLarge
                                 text: "M"
-                                textColor: Theme.colors.text.primary
-                                wrap: "nowrap"
+                                color: Theme.colors.text.primary
+                                wrapMode: Text.NoWrap
                             }
                         }
 
@@ -670,18 +670,18 @@ Item {
                             anchors.verticalCenter: parent.verticalCenter
                             spacing: Theme.spacing.xxs
 
-                            ThemedText {
+                            AppLabel {
                                 width: parent.width
-                                type: "body"
+                                textType: AppLabel.Body
                                 text: "Primary text"
-                                textColor: Theme.colors.text.primary
-                                wrap: "nowrap"
+                                color: Theme.colors.text.primary
+                                wrapMode: Text.NoWrap
                             }
 
                             CaptionText {
                                 width: parent.width
                                 text: "Secondary text"
-                                maxLines: 1
+                                maximumLineCount: 1
                             }
                         }
 
@@ -717,7 +717,7 @@ Item {
                     width: Math.min(parent.width - Theme.spacing.xl2, 320)
                     height: 102
                     anchors.centerIn: parent
-                    surfaceType: types["default"]
+                    surfaceType: Surface.Default
                     radiusValue: Theme.radius.card
 
                     Row {
@@ -747,18 +747,18 @@ Item {
                             anchors.verticalCenter: parent.verticalCenter
                             spacing: Theme.spacing.xs
 
-                            ThemedText {
+                            AppLabel {
                                 width: parent.width
-                                type: "body"
+                                textType: AppLabel.Body
                                 text: "Card Title"
-                                textColor: Theme.colors.text.primary
-                                wrap: "nowrap"
+                                color: Theme.colors.text.primary
+                                wrapMode: Text.NoWrap
                             }
 
                             BodyCopy {
                                 width: parent.width
                                 text: "Supporting copy that spans one or two lines."
-                                maxLines: 2
+                                maximumLineCount: 2
                             }
                         }
                     }
@@ -824,7 +824,7 @@ Item {
                 objectName: "merce.playground.spacingRadius.tokenReference"
                 width: root.bottomWide ? Math.floor((page.width - Theme.spacing.md) * 0.62) : page.width
                 height: tokenColumn.implicitHeight + Theme.spacing.xl2
-                surfaceType: types["default"]
+                surfaceType: Surface.Default
                 radiusValue: Theme.radius.large
 
                 Column {
@@ -850,12 +850,12 @@ Item {
                             width: Math.max(240, (parent.width - parent.spacing) * 0.52)
                             spacing: Theme.spacing.md
 
-                            ThemedText {
+                            AppLabel {
                                 width: parent.width
-                                type: "caption"
+                                textType: AppLabel.Caption
                                 text: "Spacing scale (" + Theme.spacing.base + "px base)"
-                                textColor: Theme.colors.text.primary
-                                wrap: "nowrap"
+                                color: Theme.colors.text.primary
+                                wrapMode: Text.NoWrap
                             }
 
                             Flow {
@@ -878,12 +878,12 @@ Item {
                             width: Math.max(220, parent.width - x)
                             spacing: Theme.spacing.md
 
-                            ThemedText {
+                            AppLabel {
                                 width: parent.width
-                                type: "caption"
+                                textType: AppLabel.Caption
                                 text: "Radius scale"
-                                textColor: Theme.colors.text.primary
-                                wrap: "nowrap"
+                                color: Theme.colors.text.primary
+                                wrapMode: Text.NoWrap
                             }
 
                             Flow {
@@ -931,7 +931,7 @@ Item {
                 objectName: "merce.playground.spacingRadius.touchChecklist"
                 width: root.bottomWide ? Math.floor((page.width - Theme.spacing.md) * 0.38) : page.width
                 height: checklistShell.implicitHeight + Theme.spacing.xl2
-                surfaceType: types["default"]
+                surfaceType: Surface.Default
                 radiusValue: Theme.radius.large
 
                 Column {

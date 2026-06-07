@@ -1,6 +1,6 @@
 import QtQml
 import QtQuick
-import Merce.Core
+import Merce.Theme
 
 QtObject {
     property color observedBackground: Theme.colors.background.base

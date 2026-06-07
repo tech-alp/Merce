@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Templates as T
-import Merce.Core
+import Merce.Theme
 import Merce.Foundation
 
 T.Button {
@@ -11,18 +11,26 @@ T.Button {
 
     readonly property color contentColor: root.current ? Theme.colors.action.primary
                                                        : Theme.colors.text.secondary
+    readonly property color transparentHoverBackground: Qt.rgba(Theme.colors.background.hover.r,
+                                                                Theme.colors.background.hover.g,
+                                                                Theme.colors.background.hover.b,
+                                                                0)
+    readonly property color transparentFocusBorder: Qt.rgba(Theme.colors.border.focus.r,
+                                                            Theme.colors.border.focus.g,
+                                                            Theme.colors.border.focus.b,
+                                                            0)
     readonly property color containerColor: {
         if (!root.enabled)
-            return "transparent"
+            return root.transparentHoverBackground
         if (root.current)
-            return Theme.colors.action.primarySubtle
+            return Theme.colors.background.hover
         if (root.pressed)
             return Theme.colors.background.pressed
         if (root.hovered || root.visualFocus)
             return Theme.colors.background.hover
-        return "transparent"
+        return root.transparentHoverBackground
     }
-    readonly property color outlineColor: root.visualFocus ? Theme.colors.border.focus : "transparent"
+    readonly property color outlineColor: root.visualFocus ? Theme.colors.border.focus : root.transparentFocusBorder
     readonly property int outlineWidth: root.visualFocus ? 2 : 0
     readonly property real iconSize: Theme.icons.small
 
@@ -50,12 +58,12 @@ T.Button {
             Layout.alignment: Qt.AlignVCenter
         }
 
-        ThemedText {
+        AppLabel {
             text: root.text
-            type: "button"
-            textColor: root.enabled ? root.contentColor : Theme.colors.text.disabled
-            wrap: "nowrap"
-            maxLines: 1
+            textType: AppLabel.Button
+            color: root.enabled ? root.contentColor : Theme.colors.text.disabled
+            wrapMode: Text.NoWrap
+            maximumLineCount: 1
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignVCenter
         }

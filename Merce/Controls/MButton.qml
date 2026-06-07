@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Effects
 import QtQuick.Layouts
 import QtQuick.Templates as T
-import Merce.Core
+import Merce.Theme
 import Merce.Foundation
 
 /**
@@ -67,6 +67,10 @@ T.Button {
     readonly property color foregroundColor: visualStyle.foregroundColor
     readonly property color borderColor: visualStyle.borderColor
     readonly property int borderWidth: visualStyle.borderWidth
+    readonly property color transparentHoverBackground: Qt.rgba(Theme.colors.background.hover.r,
+                                                                Theme.colors.background.hover.g,
+                                                                Theme.colors.background.hover.b,
+                                                                0)
 
     enabled: !root.isLoading
     hoverEnabled: root.enabled && !root.isLoading
@@ -214,15 +218,15 @@ T.Button {
         readonly property bool unavailable: !root.enabled && !root.isLoading
         readonly property bool pressed: root.pressed && !controlState.unavailable
         readonly property bool checked: root.checked && !controlState.unavailable && !controlState.pressed
-        readonly property bool focused: root.visualFocus
-                                        && !controlState.unavailable
-                                        && !controlState.pressed
-                                        && !controlState.checked
         readonly property bool hovered: root.hovered
                                         && !controlState.unavailable
                                         && !controlState.pressed
                                         && !controlState.checked
-                                        && !controlState.focused
+        readonly property bool focused: root.visualFocus
+                                        && !controlState.unavailable
+                                        && !controlState.pressed
+                                        && !controlState.checked
+                                        && !controlState.hovered
         readonly property bool normal: !controlState.unavailable
                                        && !controlState.pressed
                                        && !controlState.checked
@@ -419,7 +423,7 @@ T.Button {
                 name: "outlineNormal"
                 when: root.variant === MButton.Outline && controlState.normal
                 PropertyChanges {
-                    visualStyle.backgroundColor: "transparent"
+                    visualStyle.backgroundColor: root.transparentHoverBackground
                     visualStyle.foregroundColor: Theme.colors.action.primary
                 }
                 PropertyChanges {
@@ -491,7 +495,7 @@ T.Button {
                 name: "ghostNormal"
                 when: root.variant === MButton.Ghost && controlState.normal
                 PropertyChanges {
-                    visualStyle.backgroundColor: "transparent"
+                    visualStyle.backgroundColor: root.transparentHoverBackground
                     visualStyle.foregroundColor: Theme.colors.action.primary
                 }
                 PropertyChanges {

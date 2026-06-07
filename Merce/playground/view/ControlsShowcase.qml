@@ -1,5 +1,5 @@
 import QtQuick
-import Merce.Core
+import Merce.Theme
 import Merce.Foundation
 import Merce.Controls
 
@@ -14,10 +14,10 @@ Item {
     property bool radioValue: true
     property bool switchValue: true
 
-    component SectionTitle: ThemedText {
-        type: "h4"
-        textColor: Theme.colors.text.primary
-        wrap: "word"
+    component SectionTitle: AppLabel {
+        textType: AppLabel.H4
+        color: Theme.colors.text.primary
+        wrapMode: Text.WordWrap
     }
 
     component DemoSection: Surface {
@@ -26,7 +26,7 @@ Item {
 
         width: page.width
         height: sectionColumn.implicitHeight + Theme.spacing.xl2
-        surfaceType: types["default"]
+        surfaceType: Surface.Default
         radiusValue: Theme.radius.large
 
         Column {

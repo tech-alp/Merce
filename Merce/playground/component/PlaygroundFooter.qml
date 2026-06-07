@@ -1,5 +1,6 @@
 import QtQuick
-import Merce.Core
+import QtQuick.Layouts
+import Merce.Theme
 import Merce.Foundation
 
 Rectangle {
@@ -29,27 +30,27 @@ Rectangle {
         }
         spacing: Theme.spacing.lg
 
-        ThemedText {
-            type: "caption"
+        AppLabel {
+            textType: AppLabel.Caption
             text: root.activePage
-            textColor: Theme.colors.text.primary
+            color: Theme.colors.text.primary
         }
 
-        ThemedText {
-            type: "caption"
+        AppLabel {
+            textType: AppLabel.Caption
             text: root.activeTheme
-            textColor: Theme.colors.text.secondary
+            color: Theme.colors.text.secondary
         }
     }
 
-    ThemedText {
+    AppLabel {
         anchors {
             right: parent.right
             rightMargin: Theme.spacing.xl
             verticalCenter: parent.verticalCenter
         }
-        type: "caption"
+        textType: AppLabel.Caption
         text: "Stack " + root.stackDepth
-        textColor: Theme.colors.text.tertiary
+        color: Theme.colors.text.tertiary
     }
 }

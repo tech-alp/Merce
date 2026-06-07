@@ -5,7 +5,7 @@ description: Convert public or local DESIGN.md design-system references into rev
 
 # Merce DESIGN.md to DTCG
 
-Use this skill to add a DESIGN.md-inspired reference theme to Merce without bypassing the existing token pipeline or public `Merce.Core.Theme` contract.
+Use this skill to add a DESIGN.md-inspired reference theme to Merce without bypassing the existing token pipeline or public `Merce.Theme` contract.
 
 ## Workflow
 
@@ -51,8 +51,8 @@ npm run check
 7. Verify Qt resource packaging and runtime load:
 
 ```bash
-cmake --build build --target MerceCore
-QT_QPA_PLATFORM=offscreen build/tests/Core/tst_merce_theme_runtime_switch
+cmake --build build --target MerceTheme
+QT_QPA_PLATFORM=offscreen build/tests/Theme/tst_merce_theme_runtime_switch
 ```
 
 If the active build dir is different, run the same targets there too.

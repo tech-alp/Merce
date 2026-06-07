@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Shapes
-import Merce.Core
+import Merce.Theme
 
 Item {
     id: root

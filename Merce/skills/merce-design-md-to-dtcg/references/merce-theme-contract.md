@@ -6,7 +6,7 @@
 - `tools/design-tokens/src/validate-manifest.mjs`: validator behavior and rejected shapes.
 - `tools/design-tokens/tokens/core/*.json`: default values inherited by every theme.
 - `Core/CMakeLists.txt`: Qt resource packaging for `generated/themes`.
-- `tests/Core/tst_merce_theme_runtime_switch.cpp`: runtime switch coverage.
+- `tests/Theme/tst_merce_theme_runtime_switch.cpp`: runtime switch coverage.
 
 ## Source Token Shape
 
@@ -114,6 +114,11 @@ Map from DESIGN.md frontmatter or prose into Merce fields:
 - Font weights -> `weightRegular`, `weightMedium`, `weightSemibold`, `weightBold`
 - Line-height/tracking -> `leading*` and `tracking*`
 
+## Action and Navigation Surfaces
+
+- Use `color.action.primarySubtle` for compact brand-selected action surfaces such as checked chips, toggles, badges, or small selected controls.
+- Use `color.background.hover` or `color.background.tinted` for broad navigation and list-row backgrounds; carry brand emphasis through `color.action.primary` content or a small indicator.
+
 For proprietary fonts, do not add font files without an explicit licensing
 decision. Runtime typography fields must still use a single Qt-loadable family
 name, not a comma-separated CSS fallback stack.
@@ -189,8 +194,8 @@ npm run check
 Then run at least:
 
 ```bash
-cmake --build build --target MerceCore
-QT_QPA_PLATFORM=offscreen build/tests/Core/tst_merce_theme_runtime_switch
+cmake --build build --target MerceTheme
+QT_QPA_PLATFORM=offscreen build/tests/Theme/tst_merce_theme_runtime_switch
 ```
 
 If the developer uses a nested Qt Creator build directory, also build and run that equivalent target.
@@ -209,9 +214,9 @@ For new runtime-visible themes, add/adjust tests so `Theme.setTheme("<theme>")` 
 `theme manifest ':/merce/themes/<theme>.json' could not be opened`
 
 - The generated index lists the theme, but the current Qt resource binary does not contain the manifest.
-- Rebuild/reconfigure `MerceCore`.
-- Check `Core/.qt/rcc/merce_theme_manifests.qrc` in the active build dir.
-- `Core/CMakeLists.txt` should depend on `generated/themes/index.json` and listed manifest files via `CMAKE_CONFIGURE_DEPENDS`.
+- Rebuild/reconfigure `MerceTheme`.
+- Check `Theme/.qt/rcc/merce_theme_manifests.qrc` in the active build dir.
+- `Theme/CMakeLists.txt` should depend on `generated/themes/index.json` and listed manifest files via `CMAKE_CONFIGURE_DEPENDS`.
 
 Generated manifest sections are empty or wrong:
 

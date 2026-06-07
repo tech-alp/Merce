@@ -1,6 +1,6 @@
 ---
 name: merce-playground-verification
-description: Run Merce-specific playground, theme runtime, CTest, offscreen QML probe, gallery export, and visual evidence verification. Use this skill in the Merce repo before commits or reviews that touch Core/Theme, generated themes, Foundation icons/fonts, Controls, Notifications, playground QML, probe routes, or docs/assets/theme-gallery.
+description: Run Merce-specific playground, theme runtime, CTest, offscreen QML probe, gallery export, and visual evidence verification. Use this skill in the Merce repo before commits or reviews that touch Theme, generated themes, Foundation icons/fonts, Controls, Notifications, playground QML, probe routes, or docs/assets/theme-gallery.
 ---
 
 # Merce Playground Verification
@@ -54,7 +54,7 @@ skills/merce-playground-verification/scripts/run-gates.sh
 - Do not add Spix, pixel-perfect visual diff, `QQuickStyle::setStyle`, or
   `qtquickcontrols2.conf` requirements unless explicitly requested.
 - Keep token build tooling optional; `merce_tokens` must not become a default
-  dependency of `MerceCore`, `MercePlayground`, or `all`.
+  dependency of `MerceTheme`, `MercePlayground`, or `all`.
 
 ## Resources
 

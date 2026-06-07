@@ -10,7 +10,7 @@ explicitly selected with `MERCE_BUILD_DIR`.
 | Build playground | `cmake --build build --target MercePlayground` | QML modules, resources, playground executable | exit 0 |
 | Build manifest tests | `cmake --build build --target tst_merce_theme_manifest_loader` | manifest loader test target still builds | exit 0 |
 | Build runtime tests | `cmake --build build --target tst_merce_theme_runtime_switch` | runtime switch test target still builds | exit 0 |
-| Run CTest | `ctest --test-dir build --output-on-failure` | Core test harness, manifest loader, runtime switch tests | all tests pass |
+| Run CTest | `ctest --test-dir build --output-on-failure` | Core runtime harness, manifest loader, runtime switch tests | all tests pass |
 | Theme probe | `QT_QPA_PLATFORM=offscreen ./build/playground/MercePlayground --theme-probe` | public `Theme.palette`, spacing, radius, typography, iconography, breakpoints, active state | `theme-probe ok` |
 | Runtime switch probe | `QT_QPA_PLATFORM=offscreen ./build/playground/MercePlayground --theme-switch-probe` | light to dark to reference theme switching and invalid request preservation | `theme-switch-probe ok` |
 | Smoke route | `QT_QPA_PLATFORM=offscreen ./build/playground/MercePlayground --smoke-test` | basic app load in headless mode | exit 0 |
@@ -30,7 +30,9 @@ test -s docs/assets/theme-gallery/stripe-reference.png
 
 Run the full gate set when changes touch:
 
-- `Core/Theme/`
+- `Theme/`
+- `Core/`
+- `Platform/`
 - `generated/themes/`
 - `tools/design-tokens/themes.json`
 - `Foundation/` icon or font support

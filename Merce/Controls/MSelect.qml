@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls.Basic as Basic
 import QtQuick.Window
-import Merce.Core
+import Merce.Theme
 import Merce.Foundation
 import QtQuick.Effects
 
@@ -34,6 +34,10 @@ Basic.ComboBox {
     readonly property real dropdownVerticalOffset: 4
     readonly property int optionHeight: Theme.spacing.touchTargetCompact
     readonly property int optionCount: root.options ? root.options.length : 0
+    readonly property color transparentOptionBackground: Qt.rgba(Theme.colors.background.hover.r,
+                                                                 Theme.colors.background.hover.g,
+                                                                 Theme.colors.background.hover.b,
+                                                                 0)
     readonly property real dropdownContentHeight: {
         const spacingHeight = Math.max(0, root.optionCount - 1) * Theme.spacing.xxs
         return root.optionCount * root.optionHeight + spacingHeight
@@ -169,6 +173,7 @@ Basic.ComboBox {
         readonly property var optionValue: root.optionValue(modelData)
         readonly property string optionLabel: root.optionLabel(modelData)
         readonly property bool selectedOption: root.selectedValue === optionValue
+        readonly property color optionContentColor: optionDelegate.selectedOption ? Theme.colors.text.inverse : Theme.colors.text.primary
 
         objectName: root.objectName !== "" ? root.objectName + ".popup.option." + String(optionValue) : ""
         width: root.width
@@ -188,7 +193,7 @@ Basic.ComboBox {
                 text: optionDelegate.optionLabel
                 font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
                 font.pixelSize: root.currentSizeConfig.fontSize
-                color: optionDelegate.selectedOption ? Theme.colors.action.primary : Theme.colors.text.primary
+                color: optionDelegate.optionContentColor
                 font.weight: optionDelegate.selectedOption ?
                              Theme.typography.weightSemibold : Theme.typography.weightRegular
                 elide: Text.ElideRight
@@ -203,7 +208,7 @@ Basic.ComboBox {
                 }
                 name: "material:check"
                 size: Theme.icons.small
-                color: Theme.colors.action.primary
+                color: optionDelegate.optionContentColor
                 visible: optionDelegate.selectedOption
             }
         }
@@ -211,11 +216,18 @@ Basic.ComboBox {
         background: Rectangle {
             radius: Theme.radius.small
             color: {
-                if (optionDelegate.selectedOption)
-                    return Theme.colors.action.hover("primary")
+                if (optionDelegate.selectedOption) {
+                    if (optionDelegate.pressed)
+                        return Theme.colors.action.primaryPressed
+                    if (optionDelegate.highlighted || optionDelegate.hovered)
+                        return Theme.colors.action.primaryHover
+                    return Theme.colors.action.primary
+                }
+                if (optionDelegate.pressed)
+                    return Theme.colors.background.pressed
                 if (optionDelegate.highlighted || optionDelegate.hovered)
                     return Theme.colors.background.hover
-                return "transparent"
+                return root.transparentOptionBackground
             }
 
             Behavior on color {

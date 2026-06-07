@@ -1,5 +1,6 @@
 import QtQuick
-import Merce.Core
+import QtQuick.Effects
+import Merce.Theme
 
 Item {
     id: root
@@ -42,5 +43,12 @@ Item {
         sourceSize.width: root.roundedSize
         sourceSize.height: root.roundedSize
         fillMode: Image.PreserveAspectFit
+        layer {
+            enabled: root.color != ""
+            effect: MultiEffect {
+                colorizationColor: root.color
+                colorization: 1.0
+            }
+        }
     }
 }

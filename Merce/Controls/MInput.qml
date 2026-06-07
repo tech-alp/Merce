@@ -1,5 +1,5 @@
 import QtQuick
-import Merce.Core
+import Merce.Theme
 import Merce.Foundation
 
 /**
@@ -12,7 +12,7 @@ Surface {
     // ====================================================================
     // REQUIRED PROPERTIES
     // ====================================================================
-    surfaceType: types["default"]
+    surfaceType: Surface.Default
 
     // ====================================================================
     // INPUT PROPERTIES

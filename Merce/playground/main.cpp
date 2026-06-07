@@ -1,3 +1,5 @@
+#include "PlaygroundThemeBuilder.h"
+
 #include <QDebug>
 #include <QCoreApplication>
 #include <QCommandLineOption>
@@ -62,6 +64,8 @@ int main(int argc, char *argv[])
                                                         QStringLiteral("Run the Font Awesome grid probe."));
     const QCommandLineOption themeGalleryProbeOption(QStringLiteral("theme-gallery-probe"),
                                                      QStringLiteral("Run the theme gallery probe."));
+    const QCommandLineOption themeBuilderProbeOption(QStringLiteral("theme-builder-probe"),
+                                                     QStringLiteral("Run the theme builder save/apply probe."));
     const QCommandLineOption smokeTestOption(QStringLiteral("smoke-test"),
                                              QStringLiteral("Load the default shell and exit shortly."));
     const QCommandLineOption exportThemeGalleryOption(QStringLiteral("export-theme-gallery"),
@@ -78,6 +82,7 @@ int main(int argc, char *argv[])
         fontAwesomeIconProbeOption,
         fontAwesomeGridProbeOption,
         themeGalleryProbeOption,
+        themeBuilderProbeOption,
         smokeTestOption,
         exportThemeGalleryOption,
         themeSourceOption,
@@ -85,6 +90,7 @@ int main(int argc, char *argv[])
     parser.process(app);
 
     QQmlApplicationEngine engine;
+    PlaygroundThemeBuilder themeBuilder;
     QObject::connect(
         &engine,
         &QQmlApplicationEngine::objectCreationFailed,
@@ -98,6 +104,7 @@ int main(int argc, char *argv[])
     const bool fontAwesomeIconProbe = parser.isSet(fontAwesomeIconProbeOption);
     const bool fontAwesomeGridProbe = parser.isSet(fontAwesomeGridProbeOption);
     const bool themeGalleryProbe = parser.isSet(themeGalleryProbeOption);
+    const bool themeBuilderProbe = parser.isSet(themeBuilderProbeOption);
     const bool exportThemeGallery = parser.isSet(exportThemeGalleryOption);
     const bool smokeTest = parser.isSet(smokeTestOption);
 
@@ -107,6 +114,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty(
         QStringLiteral("playgroundThemeSourcePaths"),
         parser.values(themeSourceOption));
+    engine.rootContext()->setContextProperty(QStringLiteral("playgroundThemeBuilder"), &themeBuilder);
 
     if (exportThemeGallery) {
         if (parser.value(exportThemeGalleryOption).trimmed().isEmpty()) {
@@ -124,12 +132,13 @@ int main(int argc, char *argv[])
     }
 
     const char *component = exportThemeGallery ? "ThemeGalleryExport"
-                                               : (themeGalleryProbe ? "ThemeGalleryProbe"
-                                                                    : (fontAwesomeGridProbe ? "FontAwesomeGridProbe"
-                                                                                            : (fontAwesomeIconProbe ? "FontAwesomeIconProbe"
-                                                                                                                    : (playgroundProbe ? "PlaygroundProbe"
-                                                                                                                                       : (themeSwitchProbe ? "ThemeSwitchProbe"
-                                                                                                                                                           : (themeProbe ? "ThemeProbe" : "Main"))))));
+                                               : (themeBuilderProbe ? "ThemeBuilderProbe"
+                                                                    : (themeGalleryProbe ? "ThemeGalleryProbe"
+                                                                                         : (fontAwesomeGridProbe ? "FontAwesomeGridProbe"
+                                                                                                                 : (fontAwesomeIconProbe ? "FontAwesomeIconProbe"
+                                                                                                                                         : (playgroundProbe ? "PlaygroundProbe"
+                                                                                                                                                            : (themeSwitchProbe ? "ThemeSwitchProbe"
+                                                                                                                                                                                : (themeProbe ? "ThemeProbe" : "Main")))))));
     engine.loadFromModule("Merce.Playground", component);
 
     if (exportThemeGallery) {
@@ -140,6 +149,11 @@ int main(int argc, char *argv[])
     } else if (themeGalleryProbe) {
         QTimer::singleShot(3000, &app, []() {
             qCritical().noquote() << "Theme gallery probe timed out";
+            QCoreApplication::exit(3);
+        });
+    } else if (themeBuilderProbe) {
+        QTimer::singleShot(3000, &app, []() {
+            qCritical().noquote() << "Theme builder probe timed out";
             QCoreApplication::exit(3);
         });
     } else if (playgroundProbe) {

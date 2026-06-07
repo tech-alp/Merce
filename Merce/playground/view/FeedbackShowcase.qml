@@ -1,5 +1,5 @@
 import QtQuick
-import Merce.Core
+import Merce.Theme
 import Merce.Foundation
 import Merce.Controls
 import Merce.Notifications
@@ -12,10 +12,10 @@ Item {
     implicitHeight: page.implicitHeight
     height: implicitHeight
 
-    component SectionTitle: ThemedText {
-        type: "h4"
-        textColor: Theme.colors.text.primary
-        wrap: "word"
+    component SectionTitle: AppLabel {
+        textType: AppLabel.H4
+        color: Theme.colors.text.primary
+        wrapMode: Text.WordWrap
     }
 
     MerceToastifyStyleProvider {
@@ -58,7 +58,7 @@ Item {
         Surface {
             width: parent.width
             height: toastColumn.implicitHeight + Theme.spacing.xl2
-            surfaceType: types["default"]
+            surfaceType: Surface.Default
             radiusValue: Theme.radius.large
 
             Column {
@@ -110,7 +110,7 @@ Item {
         Surface {
             width: parent.width
             height: dialogColumn.implicitHeight + Theme.spacing.xl2
-            surfaceType: types["default"]
+            surfaceType: Surface.Default
             radiusValue: Theme.radius.large
 
             Column {

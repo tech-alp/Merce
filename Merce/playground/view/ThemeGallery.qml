@@ -1,5 +1,5 @@
 import QtQuick
-import Merce.Core
+import Merce.Theme
 import Merce.Foundation
 import Merce.Controls
 import Merce.Notifications
@@ -16,7 +16,7 @@ Item {
     readonly property var themeOptions: Theme.availableThemes
     readonly property var modeOptions: root.modeOptionsFor(Theme.activeBrand)
     readonly property color observedButtonColor: primaryButton.backgroundColor
-    readonly property color observedTextColor: bodySample.textColor
+    readonly property color observedTextColor: bodySample.color
     readonly property color observedInputBorderColor: emailInput.borderColor
     readonly property color observedToggleColor: switchSample.trackColor
     readonly property color observedSelectColor: selectSample.observedPaletteColor
@@ -86,16 +86,16 @@ Item {
         return String(value).toUpperCase()
     }
 
-    component SectionTitle: ThemedText {
-        type: "h4"
-        textColor: Theme.colors.text.primary
-        wrap: "word"
+    component SectionTitle: AppLabel {
+        textType: AppLabel.H4
+        color: Theme.colors.text.primary
+        wrapMode: Text.WordWrap
     }
 
-    component FieldLabel: ThemedText {
-        type: "caption"
-        textColor: Theme.colors.text.secondary
-        wrap: "word"
+    component FieldLabel: AppLabel {
+        textType: AppLabel.Caption
+        color: Theme.colors.text.secondary
+        wrapMode: Text.WordWrap
     }
 
     component TokenSwatch: Item {
@@ -125,20 +125,20 @@ Item {
             }
             spacing: Theme.spacing.xxs
 
-            ThemedText {
+            AppLabel {
                 width: parent.width
-                type: "caption"
+                textType: AppLabel.Caption
                 text: label
-                textColor: Theme.colors.text.primary
-                wrap: "word"
+                color: Theme.colors.text.primary
+                wrapMode: Text.WordWrap
             }
 
-            ThemedText {
+            AppLabel {
                 width: parent.width
-                type: "caption"
+                textType: AppLabel.Caption
                 text: root.colorLabel(swatchColor)
-                textColor: Theme.colors.text.secondary
-                wrap: "word"
+                color: Theme.colors.text.secondary
+                wrapMode: Text.WordWrap
             }
         }
     }
@@ -182,7 +182,7 @@ Item {
             objectName: "merce.playground.gallery.activeTheme"
             width: parent.width
             height: activeThemeColumn.implicitHeight + Theme.spacing.xl2
-            surfaceType: types["default"]
+            surfaceType: Surface.Default
             radiusValue: Theme.radius.large
 
             Column {
@@ -208,12 +208,12 @@ Item {
                             text: "Tema doğrulama galerisi"
                         }
 
-                        ThemedText {
+                        AppLabel {
                             width: parent.width
-                            type: "body"
+                            textType: AppLabel.Body
                             text: Theme.activeBrand + " / " + root.displayMode
-                            textColor: Theme.colors.text.secondary
-                            wrap: "word"
+                            color: Theme.colors.text.secondary
+                            wrapMode: Text.WordWrap
                         }
                     }
 
@@ -276,7 +276,7 @@ Item {
             objectName: "merce.playground.gallery.palette"
             width: parent.width
             height: paletteColumn.implicitHeight + Theme.spacing.xl2
-            surfaceType: types["default"]
+            surfaceType: Surface.Default
             radiusValue: Theme.radius.large
 
             Column {
@@ -318,7 +318,7 @@ Item {
             objectName: "merce.playground.gallery.typography"
             width: parent.width
             height: typographyColumn.implicitHeight + Theme.spacing.xl2
-            surfaceType: types["default"]
+            surfaceType: Surface.Default
             radiusValue: Theme.radius.large
 
             Column {
@@ -336,31 +336,31 @@ Item {
                     text: "Typography"
                 }
 
-                ThemedText {
+                AppLabel {
                     objectName: "merce.playground.gallery.typography.titleSample"
                     width: parent.width
-                    type: "h2"
+                    textType: AppLabel.H2
                     text: "Başlık örneği"
-                    textColor: Theme.colors.text.primary
-                    wrap: "word"
+                    color: Theme.colors.text.primary
+                    wrapMode: Text.WordWrap
                 }
 
-                ThemedText {
+                AppLabel {
                     id: bodySample
                     objectName: "merce.playground.gallery.typography.bodySample"
                     width: parent.width
-                    type: "body"
+                    textType: AppLabel.Body
                     text: "Body metni " + Theme.typography.fontBody + " / " + Theme.typography.sizeMedium + " px"
-                    textColor: Theme.colors.text.primary
-                    wrap: "word"
+                    color: Theme.colors.text.primary
+                    wrapMode: Text.WordWrap
                 }
 
-                ThemedText {
+                AppLabel {
                     width: parent.width
-                    type: "caption"
+                    textType: AppLabel.Caption
                     text: "Label " + Theme.typography.sizeSmall + " px / " + Theme.typography.weightSemibold
-                    textColor: Theme.colors.text.secondary
-                    wrap: "word"
+                    color: Theme.colors.text.secondary
+                    wrapMode: Text.WordWrap
                 }
             }
         }
@@ -370,7 +370,7 @@ Item {
             objectName: "merce.playground.gallery.spacingRadius"
             width: parent.width
             height: spacingRadiusColumn.implicitHeight + Theme.spacing.xl2
-            surfaceType: types["default"]
+            surfaceType: Surface.Default
             radiusValue: Theme.radius.large
 
             Column {
@@ -430,7 +430,7 @@ Item {
             objectName: "merce.playground.gallery.components"
             width: parent.width
             height: componentsColumn.implicitHeight + Theme.spacing.xl2
-            surfaceType: types["default"]
+            surfaceType: Surface.Default
             radiusValue: Theme.radius.large
 
             Column {
@@ -538,7 +538,7 @@ Item {
             objectName: "merce.playground.gallery.exportStatus"
             width: parent.width
             height: exportStatusColumn.implicitHeight + Theme.spacing.xl2
-            surfaceType: types["default"]
+            surfaceType: Surface.Default
             radiusValue: Theme.radius.large
 
             Column {
@@ -574,14 +574,14 @@ Item {
                     }
                 }
 
-                ThemedText {
+                AppLabel {
                     id: exportState
                     objectName: "merce.playground.gallery.exportStateText"
                     width: parent.width
-                    type: "body"
+                    textType: AppLabel.Body
                     text: "Galeri görselleri hazır"
-                    textColor: Theme.colors.text.secondary
-                    wrap: "word"
+                    color: Theme.colors.text.secondary
+                    wrapMode: Text.WordWrap
                 }
             }
         }

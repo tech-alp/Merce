@@ -1,5 +1,5 @@
 import QtQuick
-import Merce.Core
+import Merce.Theme
 import Merce.Foundation
 
 Item {
@@ -14,7 +14,7 @@ Item {
         id: page
         width: root.width
         height: contentColumn.implicitHeight + Theme.spacing.xl2
-        surfaceType: types["default"]
+        surfaceType: Surface.Default
         radiusValue: Theme.radius.large
 
         Column {
@@ -27,20 +27,20 @@ Item {
             }
             spacing: Theme.spacing.sm
 
-            ThemedText {
+            AppLabel {
                 width: parent.width
-                type: "h4"
+                textType: AppLabel.H4
                 text: root.title
-                textColor: Theme.colors.text.primary
-                wrap: "word"
+                color: Theme.colors.text.primary
+                wrapMode: Text.WordWrap
             }
 
-            ThemedText {
+            AppLabel {
                 width: parent.width
-                type: "body"
+                textType: AppLabel.Body
                 text: "Content pending."
-                textColor: Theme.colors.text.secondary
-                wrap: "word"
+                color: Theme.colors.text.secondary
+                wrapMode: Text.WordWrap
             }
         }
     }
