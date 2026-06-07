@@ -8,6 +8,8 @@ set(MERCE_PLAYGROUND_VIEW_QML
     view/FeedbackShowcase.qml
     view/IconsShowcase.qml
     view/PaletteShowcase.qml
+    view/PlaceholderShowcase.qml
+    view/SpacingRadiusShowcase.qml
     view/ThemeGalleryExport.qml
     view/ThemeGallery.qml
     view/TypographyShowcase.qml

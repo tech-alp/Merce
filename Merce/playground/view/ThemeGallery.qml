@@ -456,7 +456,7 @@ Item {
                         id: primaryButton
                         objectName: "merce.playground.gallery.primaryButton"
                         text: "Primary"
-                        variant: "primary"
+                        variant: MButton.Primary
                         onClicked: galleryToast.success("Galeri örneği yüklendi.", {
                             position: Toastify.BottomRightCorner,
                             autoClose: 4000,
@@ -468,19 +468,19 @@ Item {
                     MButton {
                         objectName: "merce.playground.gallery.secondaryButton"
                         text: "Secondary"
-                        variant: "secondary"
+                        variant: MButton.Secondary
                     }
 
                     MButton {
                         objectName: "merce.playground.gallery.outlineButton"
                         text: "Outline"
-                        variant: "outline"
+                        variant: MButton.Outline
                     }
 
                     MButton {
                         objectName: "merce.playground.gallery.destructiveButton"
                         text: "Destructive"
-                        variant: "destructive"
+                        variant: MButton.Destructive
                         onClicked: galleryDialog.isOpen = true
                     }
                 }
@@ -562,14 +562,14 @@ Item {
                     MButton {
                         objectName: "merce.playground.gallery.exportButton"
                         text: "Tema galerisini dışa aktar"
-                        variant: "primary"
+                        variant: MButton.Primary
                         onClicked: exportState.text = "Galeri görselleri hazır"
                     }
 
                     MButton {
                         objectName: "merce.playground.gallery.changeThemeButton"
                         text: "Temayı değiştir"
-                        variant: "outline"
+                        variant: MButton.Outline
                         onClicked: root.setMerceDark()
                     }
                 }

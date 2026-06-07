@@ -82,25 +82,25 @@ Item {
 
                     MButton {
                         text: "Info"
-                        variant: "outline"
+                        variant: MButton.Outline
                         onClicked: root.showToast(Toastify.Info, "Informational toast")
                     }
 
                     MButton {
                         text: "Success"
-                        variant: "primary"
+                        variant: MButton.Primary
                         onClicked: root.showToast(Toastify.Success, "Success toast")
                     }
 
                     MButton {
                         text: "Warning"
-                        variant: "secondary"
+                        variant: MButton.Secondary
                         onClicked: root.showToast(Toastify.Warning, "Warning toast")
                     }
 
                     MButton {
                         text: "Error"
-                        variant: "destructive"
+                        variant: MButton.Destructive
                         onClicked: root.showToast(Toastify.Error, "Error toast")
                     }
                 }
@@ -134,7 +134,7 @@ Item {
 
                     MButton {
                         text: "Default dialog"
-                        variant: "primary"
+                        variant: MButton.Primary
                         onClicked: {
                             dialog.variant = "default"
                             dialog.title = "Dialog sample"
@@ -145,7 +145,7 @@ Item {
 
                     MButton {
                         text: "Warning dialog"
-                        variant: "secondary"
+                        variant: MButton.Secondary
                         onClicked: {
                             dialog.variant = "warning"
                             dialog.title = "Warning"
@@ -156,7 +156,7 @@ Item {
 
                     MButton {
                         text: "Destructive dialog"
-                        variant: "destructive"
+                        variant: MButton.Destructive
                         onClicked: {
                             dialog.variant = "destructive"
                             dialog.title = "Destructive action"

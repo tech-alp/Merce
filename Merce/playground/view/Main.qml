@@ -15,27 +15,46 @@ Basic.ApplicationWindow {
 
     property string selectedPage: "theme"
     readonly property var materialIcons: playgroundMaterialIcons
+    readonly property var themeSourcePaths: playgroundThemeSourcePaths
 
     ListModel {
         id: pageModel
 
         ListElement {
             key: "theme"
-            label: "Theme Gallery"
-            category: "Core"
-            icon: "material:palette"
+            label: "Overview"
+            category: "Overview"
+            icon: "material:home"
         }
         ListElement {
             key: "palette"
-            label: "Palette"
-            category: "Core"
+            label: "Colors"
+            category: "Foundations"
             icon: "material:format_color_fill"
         }
         ListElement {
             key: "typography"
             label: "Typography"
-            category: "Core"
+            category: "Foundations"
             icon: "material:text_fields"
+        }
+        ListElement {
+            key: "spacing"
+            label: "Spacing & Radius"
+            category: "Foundations"
+            icon: "material:tune"
+        }
+        ListElement {
+            key: "shadows"
+            label: "Shadows"
+            category: "Foundations"
+            icon: "material:palette"
+        }
+        ListElement {
+            key: "motion"
+            label: "Motion"
+            category: "Foundations"
+            icon: "material:dark_mode"
         }
         ListElement {
             key: "controls"
@@ -55,6 +74,18 @@ Basic.ApplicationWindow {
             category: "Components"
             icon: "material:notifications"
         }
+        ListElement {
+            key: "forms"
+            label: "Forms"
+            category: "Patterns"
+            icon: "material:check_circle"
+        }
+        ListElement {
+            key: "states"
+            label: "States"
+            category: "Patterns"
+            icon: "material:error"
+        }
     }
 
     function pageTitle(key) {
@@ -71,12 +102,22 @@ Basic.ApplicationWindow {
             return palettePage
         if (key === "typography")
             return typographyPage
+        if (key === "spacing")
+            return spacingPage
+        if (key === "shadows")
+            return shadowsPage
+        if (key === "motion")
+            return motionPage
         if (key === "controls")
             return controlsPage
         if (key === "icons")
             return iconsPage
         if (key === "feedback")
             return feedbackPage
+        if (key === "forms")
+            return formsPage
+        if (key === "states")
+            return statesPage
         return themePage
     }
 
@@ -115,6 +156,23 @@ Basic.ApplicationWindow {
         return Theme.setTheme(brand)
     }
 
+    function loadThemeSources() {
+        if (!themeSourcePaths || themeSourcePaths.length === 0)
+            return
+
+        let added = false
+        for (let i = 0; i < themeSourcePaths.length; ++i) {
+            const sourcePath = String(themeSourcePaths[i])
+            if (Theme.addThemeSource(sourcePath))
+                added = true
+            else
+                console.warn("theme source rejected", sourcePath)
+        }
+
+        if (added && !Theme.reloadThemes())
+            console.warn("theme source reload failed", themeSourcePaths)
+    }
+
     function navigateTo(key) {
         if (selectedPage === key && pageStack.depth > 0)
             return
@@ -131,6 +189,8 @@ Basic.ApplicationWindow {
     }
 
     onSelectedPageChanged: replaceCurrentPage(selectedPage)
+
+    Component.onCompleted: loadThemeSources()
 
     header: PlaygroundHeader {
         objectName: "merce.playground.header"
@@ -216,6 +276,30 @@ Basic.ApplicationWindow {
     }
 
     Component {
+        id: spacingPage
+        PlaygroundPage {
+            objectName: "merce.playground.stack.spacing"
+            sourceComponent: spacingShowcase
+        }
+    }
+
+    Component {
+        id: shadowsPage
+        PlaygroundPage {
+            objectName: "merce.playground.stack.shadows"
+            sourceComponent: shadowsShowcase
+        }
+    }
+
+    Component {
+        id: motionPage
+        PlaygroundPage {
+            objectName: "merce.playground.stack.motion"
+            sourceComponent: motionShowcase
+        }
+    }
+
+    Component {
         id: controlsPage
         PlaygroundPage {
             objectName: "merce.playground.stack.controls"
@@ -236,6 +320,22 @@ Basic.ApplicationWindow {
         PlaygroundPage {
             objectName: "merce.playground.stack.feedback"
             sourceComponent: feedbackShowcase
+        }
+    }
+
+    Component {
+        id: formsPage
+        PlaygroundPage {
+            objectName: "merce.playground.stack.forms"
+            sourceComponent: formsShowcase
+        }
+    }
+
+    Component {
+        id: statesPage
+        PlaygroundPage {
+            objectName: "merce.playground.stack.states"
+            sourceComponent: statesShowcase
         }
     }
 
@@ -261,6 +361,29 @@ Basic.ApplicationWindow {
     }
 
     Component {
+        id: spacingShowcase
+        SpacingRadiusShowcase {
+            objectName: "merce.playground.spacingRadiusShowcase"
+        }
+    }
+
+    Component {
+        id: shadowsShowcase
+        PlaceholderShowcase {
+            objectName: "merce.playground.shadowsShowcase"
+            title: "Shadows"
+        }
+    }
+
+    Component {
+        id: motionShowcase
+        PlaceholderShowcase {
+            objectName: "merce.playground.motionShowcase"
+            title: "Motion"
+        }
+    }
+
+    Component {
         id: controlsShowcase
         ControlsShowcase {
             objectName: "merce.playground.controlsShowcase"
@@ -279,6 +402,22 @@ Basic.ApplicationWindow {
         id: feedbackShowcase
         FeedbackShowcase {
             objectName: "merce.playground.feedbackShowcase"
+        }
+    }
+
+    Component {
+        id: formsShowcase
+        PlaceholderShowcase {
+            objectName: "merce.playground.formsShowcase"
+            title: "Forms"
+        }
+    }
+
+    Component {
+        id: statesShowcase
+        PlaceholderShowcase {
+            objectName: "merce.playground.statesShowcase"
+            title: "States"
         }
     }
 }

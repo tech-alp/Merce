@@ -1,5 +1,7 @@
 #include <QDebug>
 #include <QCoreApplication>
+#include <QCommandLineOption>
+#include <QCommandLineParser>
 #include <QDir>
 #include <QFile>
 #include <QGuiApplication>
@@ -44,6 +46,44 @@ int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
+    QCommandLineParser parser;
+    parser.setApplicationDescription(QStringLiteral("Merce Playground"));
+    parser.addHelpOption();
+
+    const QCommandLineOption themeProbeOption(QStringLiteral("theme-probe"),
+                                              QStringLiteral("Run the theme smoke probe."));
+    const QCommandLineOption themeSwitchProbeOption(QStringLiteral("theme-switch-probe"),
+                                                    QStringLiteral("Run the runtime theme switch probe."));
+    const QCommandLineOption playgroundProbeOption(QStringLiteral("playground-probe"),
+                                                   QStringLiteral("Run the full playground probe."));
+    const QCommandLineOption fontAwesomeIconProbeOption(QStringLiteral("fontawesome-icon-probe"),
+                                                        QStringLiteral("Run the Font Awesome icon probe."));
+    const QCommandLineOption fontAwesomeGridProbeOption(QStringLiteral("fontawesome-grid-probe"),
+                                                        QStringLiteral("Run the Font Awesome grid probe."));
+    const QCommandLineOption themeGalleryProbeOption(QStringLiteral("theme-gallery-probe"),
+                                                     QStringLiteral("Run the theme gallery probe."));
+    const QCommandLineOption smokeTestOption(QStringLiteral("smoke-test"),
+                                             QStringLiteral("Load the default shell and exit shortly."));
+    const QCommandLineOption exportThemeGalleryOption(QStringLiteral("export-theme-gallery"),
+                                                      QStringLiteral("Export the theme gallery to a directory."),
+                                                      QStringLiteral("output-dir"));
+    const QCommandLineOption themeSourceOption(QStringLiteral("theme-source"),
+                                               QStringLiteral("Load an external theme index.json source."),
+                                               QStringLiteral("index.json"));
+
+    parser.addOptions({
+        themeProbeOption,
+        themeSwitchProbeOption,
+        playgroundProbeOption,
+        fontAwesomeIconProbeOption,
+        fontAwesomeGridProbeOption,
+        themeGalleryProbeOption,
+        smokeTestOption,
+        exportThemeGalleryOption,
+        themeSourceOption,
+    });
+    parser.process(app);
+
     QQmlApplicationEngine engine;
     QObject::connect(
         &engine,
@@ -52,29 +92,29 @@ int main(int argc, char *argv[])
         []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
 
-    const QStringList arguments = app.arguments();
-    const bool themeProbe = arguments.contains(QStringLiteral("--theme-probe"));
-    const bool themeSwitchProbe = arguments.contains(QStringLiteral("--theme-switch-probe"));
-    const bool playgroundProbe = arguments.contains(QStringLiteral("--playground-probe"));
-    const bool fontAwesomeIconProbe = arguments.contains(QStringLiteral("--fontawesome-icon-probe"));
-    const bool fontAwesomeGridProbe = arguments.contains(QStringLiteral("--fontawesome-grid-probe"));
-    const bool themeGalleryProbe = arguments.contains(QStringLiteral("--theme-gallery-probe"));
-    const int exportThemeGalleryIndex = arguments.indexOf(QStringLiteral("--export-theme-gallery"));
-    const bool exportThemeGallery = exportThemeGalleryIndex >= 0;
+    const bool themeProbe = parser.isSet(themeProbeOption);
+    const bool themeSwitchProbe = parser.isSet(themeSwitchProbeOption);
+    const bool playgroundProbe = parser.isSet(playgroundProbeOption);
+    const bool fontAwesomeIconProbe = parser.isSet(fontAwesomeIconProbeOption);
+    const bool fontAwesomeGridProbe = parser.isSet(fontAwesomeGridProbeOption);
+    const bool themeGalleryProbe = parser.isSet(themeGalleryProbeOption);
+    const bool exportThemeGallery = parser.isSet(exportThemeGalleryOption);
+    const bool smokeTest = parser.isSet(smokeTestOption);
 
     engine.rootContext()->setContextProperty(
         QStringLiteral("playgroundMaterialIcons"),
         loadIconCodepoints(QStringLiteral(":/qt/qml/Merce/Foundation/fonts/MaterialSymbolsRounded/MaterialSymbolsRounded.codepoints")));
+    engine.rootContext()->setContextProperty(
+        QStringLiteral("playgroundThemeSourcePaths"),
+        parser.values(themeSourceOption));
 
     if (exportThemeGallery) {
-        if (exportThemeGalleryIndex + 1 >= arguments.size()
-            || arguments.at(exportThemeGalleryIndex + 1).trimmed().isEmpty()
-            || arguments.at(exportThemeGalleryIndex + 1).startsWith(QLatin1String("--"))) {
+        if (parser.value(exportThemeGalleryOption).trimmed().isEmpty()) {
             qCritical().noquote() << "--export-theme-gallery requires an output directory";
             return 2;
         }
 
-        QDir outputDir(QDir::current().absoluteFilePath(arguments.at(exportThemeGalleryIndex + 1)));
+        QDir outputDir(QDir::current().absoluteFilePath(parser.value(exportThemeGalleryOption)));
         if (!outputDir.exists() && !outputDir.mkpath(QStringLiteral("."))) {
             qCritical().noquote() << "Could not create theme gallery output directory:" << outputDir.absolutePath();
             return 2;
@@ -103,7 +143,7 @@ int main(int argc, char *argv[])
             QCoreApplication::exit(3);
         });
     } else if (playgroundProbe) {
-        QTimer::singleShot(3000, &app, []() {
+        QTimer::singleShot(6000, &app, []() {
             qCritical().noquote() << "Playground probe timed out";
             QCoreApplication::exit(3);
         });
@@ -117,7 +157,7 @@ int main(int argc, char *argv[])
             qCritical().noquote() << "Font Awesome grid probe timed out";
             QCoreApplication::exit(3);
         });
-    } else if (themeProbe || themeSwitchProbe || arguments.contains(QStringLiteral("--smoke-test"))) {
+    } else if (themeProbe || themeSwitchProbe || smokeTest) {
         QTimer::singleShot(250, &app, &QCoreApplication::quit);
     }
 
