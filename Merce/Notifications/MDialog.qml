@@ -270,7 +270,7 @@ Item {
             // Cancel button
             MButton {
                 text: root.cancelText
-                variant: "outline"
+                variant: MButton.Outline
                 visible: root.showCancel
                 onClicked: {
                     root.cancelled()
@@ -281,7 +281,7 @@ Item {
             // Confirm button
             MButton {
                 text: root.confirmText
-                variant: root.variant === "destructive" ? "destructive" : "primary"
+                variant: root.variant === "destructive" ? MButton.Destructive : MButton.Primary
                 onClicked: {
                     root.confirmed()
                     dismiss()

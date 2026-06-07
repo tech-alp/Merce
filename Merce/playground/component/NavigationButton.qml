@@ -1,33 +1,71 @@
 import QtQuick
+import QtQuick.Layouts
+import QtQuick.Templates as T
 import Merce.Core
 import Merce.Foundation
 
-Item {
+T.Button {
     id: root
 
-    property string text: ""
-    property string icon: "material:circle"
-    property bool checked: false
-    property color hoverColor: Theme.colors.background.hover
+    property bool current: false
 
-    signal clicked()
+    readonly property color contentColor: root.current ? Theme.colors.action.primary
+                                                       : Theme.colors.text.secondary
+    readonly property color containerColor: {
+        if (!root.enabled)
+            return "transparent"
+        if (root.current)
+            return Theme.colors.action.primarySubtle
+        if (root.pressed)
+            return Theme.colors.background.pressed
+        if (root.hovered || root.visualFocus)
+            return Theme.colors.background.hover
+        return "transparent"
+    }
+    readonly property color outlineColor: root.visualFocus ? Theme.colors.border.focus : "transparent"
+    readonly property int outlineWidth: root.visualFocus ? 2 : 0
+    readonly property real iconSize: Theme.icons.small
 
-    height: Theme.spacing.touchTargetCompact
-    opacity: enabled ? 1.0 : 0.45
+    checkable: false
+    implicitHeight: Theme.spacing.touchTargetCompact
+    implicitWidth: Math.max(Theme.spacing.touchTargetCompact, contentItem.implicitWidth + leftPadding + rightPadding)
+    leftPadding: Theme.spacing.md
+    rightPadding: Theme.spacing.md
+    topPadding: 0
+    bottomPadding: 0
+    hoverEnabled: root.enabled
+    focusPolicy: Qt.StrongFocus
     Accessible.role: Accessible.Button
     Accessible.name: root.text
 
-    Rectangle {
-        id: background
-        anchors.fill: parent
-        radius: Theme.radius.medium
-        color: {
-            if (root.checked)
-                return Theme.colors.action.hover("primary")
-            if (mouseArea.containsMouse)
-                return root.hoverColor
-            return "transparent"
+    contentItem: RowLayout {
+        spacing: Theme.spacing.sm
+
+        AppIcon {
+            name: root.icon.name.length > 0 ? root.icon.name : "material:circle"
+            size: root.iconSize
+            color: root.enabled ? root.contentColor : Theme.colors.text.disabled
+            Layout.preferredWidth: root.iconSize
+            Layout.preferredHeight: root.iconSize
+            Layout.alignment: Qt.AlignVCenter
         }
+
+        ThemedText {
+            text: root.text
+            type: "button"
+            textColor: root.enabled ? root.contentColor : Theme.colors.text.disabled
+            wrap: "nowrap"
+            maxLines: 1
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignVCenter
+        }
+    }
+
+    background: Rectangle {
+        radius: Theme.radius.medium
+        color: root.containerColor
+        border.width: root.outlineWidth
+        border.color: root.outlineColor
 
         Behavior on color {
             ColorAnimation {
@@ -35,39 +73,12 @@ Item {
                 easing: Theme.motion.easingOut
             }
         }
-    }
 
-    Row {
-        anchors {
-            fill: parent
-            leftMargin: Theme.spacing.md
-            rightMargin: Theme.spacing.md
+        Behavior on border.color {
+            ColorAnimation {
+                duration: Theme.motion.durationFast
+                easing: Theme.motion.easingOut
+            }
         }
-        spacing: Theme.spacing.sm
-
-        AppIcon {
-            anchors.verticalCenter: parent.verticalCenter
-            name: root.icon
-            size: Theme.icons.small
-            color: root.checked ? Theme.colors.action.primary : Theme.colors.text.secondary
-        }
-
-        ThemedText {
-            width: parent.width - Theme.icons.small - parent.spacing
-            anchors.verticalCenter: parent.verticalCenter
-            type: "body"
-            text: root.text
-            textColor: root.checked ? Theme.colors.action.primary : Theme.colors.text.primary
-            wrap: "word"
-        }
-    }
-
-    MouseArea {
-        id: mouseArea
-        anchors.fill: parent
-        enabled: root.enabled
-        hoverEnabled: true
-        cursorShape: root.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-        onClicked: root.clicked()
     }
 }

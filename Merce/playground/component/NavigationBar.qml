@@ -152,8 +152,8 @@ Rectangle {
                         objectName: "merce.playground.nav." + pageDelegate.key
                         width: parent.width
                         text: pageDelegate.label
-                        icon: pageDelegate.icon
-                        checked: root.selectedPage === pageDelegate.key
+                        icon.name: pageDelegate.icon
+                        current: root.selectedPage === pageDelegate.key
                         onClicked: root.pageRequested(pageDelegate.key)
                     }
                 }

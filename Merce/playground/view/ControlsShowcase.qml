@@ -60,22 +60,80 @@ Item {
         DemoSection {
             title: "Buttons"
 
-            MButton { text: "Primary"; variant: "primary" }
-            MButton { text: "Secondary"; variant: "secondary" }
-            MButton { text: "Outline"; variant: "outline" }
-            MButton { text: "Ghost"; variant: "ghost" }
-            MButton { text: "Destructive"; variant: "destructive" }
-            MButton { text: "Disabled"; isDisabled: true }
+            MButton { text: "Primary"; variant: MButton.Primary }
+            MButton { text: "Secondary"; variant: MButton.Secondary }
+            MButton { text: "Outline"; variant: MButton.Outline }
+            MButton { text: "Ghost"; variant: MButton.Ghost }
+            MButton { text: "Destructive"; variant: MButton.Destructive }
+            MButton { text: "Disabled"; enabled: false }
             MButton { text: "Loading"; isLoading: true }
-            MButton { text: "With icon"; icon: "material:check" }
+            MButton { text: "With icon"; icon.name: "material:check" }
+            MButton {
+                text: "Top icon"
+                icon.name: "material:dashboard"
+                iconPosition: MButton.IconTop
+            }
+            MButton {
+                text: "Right icon"
+                icon.name: "material:dashboard"
+                iconPosition: MButton.IconRight
+            }
         }
 
         DemoSection {
             title: "Button sizes"
 
-            MButton { text: "Small"; size: "small" }
-            MButton { text: "Medium"; size: "medium" }
-            MButton { text: "Large"; size: "large" }
+            MButton { text: "Small"; size: MButton.Small }
+            MButton { text: "Medium"; size: MButton.Medium }
+            MButton { text: "Large"; size: MButton.Large }
+        }
+
+        DemoSection {
+            title: "Badges"
+
+            MBadge {
+                objectName: "merce.playground.controls.badge.neutral"
+                text: "Neutral"
+            }
+
+            MBadge {
+                objectName: "merce.playground.controls.badge.primary"
+                text: "Primary"
+                variant: "primary"
+                icon: "material:palette"
+            }
+
+            MBadge {
+                objectName: "merce.playground.controls.badge.success"
+                text: "Live"
+                variant: "success"
+                icon: "material:check_circle"
+            }
+
+            MBadge {
+                objectName: "merce.playground.controls.badge.warning"
+                text: "Beta"
+                variant: "warning"
+            }
+
+            MBadge {
+                objectName: "merce.playground.controls.badge.error"
+                text: "Error"
+                variant: "error"
+                icon: "material:error"
+            }
+
+            MBadge {
+                objectName: "merce.playground.controls.badge.info"
+                text: "Info"
+                variant: "info"
+            }
+
+            MBadge {
+                objectName: "merce.playground.controls.badge.small"
+                text: "Small"
+                size: "small"
+            }
         }
 
         DemoSection {
