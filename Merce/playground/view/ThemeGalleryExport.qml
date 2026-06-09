@@ -1,12 +1,12 @@
 import QtQuick
-import Merce.Core
+import Merce.Theme
 
 Window {
     id: root
     width: 1100
     height: Math.ceil(captureFrame.height)
     visible: true
-    color: Theme.palette.backgroundBase
+    color: Theme.colors.background.base
 
     readonly property string outputDirectory: typeof themeGalleryOutputDir === "undefined" ? "" : String(themeGalleryOutputDir)
     property int exportIndex: 0
@@ -20,7 +20,7 @@ Window {
         id: captureFrame
         width: root.width
         height: gallery.implicitHeight + Theme.spacing.xl2 * 2
-        color: Theme.palette.backgroundBase
+        color: Theme.colors.background.base
 
         ThemeGallery {
             id: gallery

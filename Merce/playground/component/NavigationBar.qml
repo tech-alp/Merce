@@ -1,5 +1,5 @@
 import QtQuick
-import Merce.Core
+import Merce.Theme
 import Merce.Foundation
 
 Rectangle {
@@ -11,9 +11,9 @@ Rectangle {
 
     signal pageRequested(string key)
 
-    color: Theme.palette.backgroundSurface
+    color: Theme.colors.background.surface
     border.width: 1
-    border.color: Theme.palette.borderBase
+    border.color: Theme.colors.border.base
     clip: true
 
     function pageAt(index) {
@@ -56,16 +56,16 @@ Rectangle {
                 height: 44
                 radius: Theme.radius.medium
                 anchors.verticalCenter: parent.verticalCenter
-                color: Theme.palette.background.base
+                color: Theme.colors.background.base
                 border.width: 1
-                border.color: Theme.palette.borderBase
+                border.color: Theme.colors.border.base
 
                 MerceLogo {
                     objectName: "merce.playground.logo"
                     anchors.centerIn: parent
                     width: 26
                     height: 24
-                    color: Theme.palette.actionPrimary
+                    color: Theme.colors.action.primary
                 }
             }
 
@@ -74,20 +74,20 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: Theme.spacing.xxs
 
-                ThemedText {
+                AppLabel {
                     width: parent.width
-                    type: "bodyLarge"
+                    textType: AppLabel.BodyLarge
                     text: "Merce"
-                    textColor: Theme.palette.textPrimary
-                    wrap: "word"
+                    color: Theme.colors.text.primary
+                    wrapMode: Text.WordWrap
                 }
 
-                ThemedText {
+                AppLabel {
                     width: parent.width
-                    type: "caption"
+                    textType: AppLabel.Caption
                     text: root.activeTheme
-                    textColor: Theme.palette.text.secondary
-                    wrap: "word"
+                    color: Theme.colors.text.secondary
+                    wrapMode: Text.WordWrap
                 }
             }
         }
@@ -101,7 +101,7 @@ Rectangle {
                 topMargin: Theme.spacing.md
             }
             height: 1
-            color: Theme.palette.borderBase
+            color: Theme.colors.border.base
         }
 
         ListView {
@@ -138,22 +138,22 @@ Rectangle {
                     width: parent.width
                     spacing: Theme.spacing.xs
 
-                    ThemedText {
+                    AppLabel {
                         width: parent.width
                         text: category
-                        type: "caption"
-                        textColor: Theme.palette.text.tertiary
+                        textType: AppLabel.Caption
+                        color: Theme.colors.text.tertiary
                         visible: showCategory
                         height: visible ? implicitHeight : 0
-                        wrap: "word"
+                        wrapMode: Text.WordWrap
                     }
 
                     NavigationButton {
                         objectName: "merce.playground.nav." + pageDelegate.key
                         width: parent.width
                         text: pageDelegate.label
-                        icon: pageDelegate.icon
-                        checked: root.selectedPage === pageDelegate.key
+                        icon.name: pageDelegate.icon
+                        current: root.selectedPage === pageDelegate.key
                         onClicked: root.pageRequested(pageDelegate.key)
                     }
                 }

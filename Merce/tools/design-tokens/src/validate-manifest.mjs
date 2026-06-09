@@ -1,13 +1,13 @@
-import { readFile, readdir } from 'node:fs/promises';
+import { access, readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { FIELD_MAP } from './merce-manifest-format.mjs';
+import { COLOR_FIELD_MAP, FIELD_MAP } from './merce-manifest-format.mjs';
 import { validateManifestPath } from './theme-registry.mjs';
 
 const REQUIRED_TOP_LEVEL = [
   'schemaVersion',
   'theme',
-  'palette',
+  'colors',
   'spacing',
   'radius',
   'typography',
@@ -21,8 +21,23 @@ const TYPOGRAPHY_STRING_FIELDS = new Set([
   'bodyFontFallback',
 ]);
 
+const GENERIC_FONT_FAMILIES = new Set([
+  '-apple-system',
+  'blinkmacsystemfont',
+  'serif',
+  'sans-serif',
+  'sans serif',
+  'monospace',
+  'ui-monospace',
+  'system-ui',
+]);
+
 const REQUIRED_FIELDS = Object.entries(FIELD_MAP).flatMap(([section, fields]) => (
   fields.map(([field]) => `${section}.${field}`)
+));
+
+const REQUIRED_COLOR_FIELDS = Object.entries(COLOR_FIELD_MAP).flatMap(([group, fields]) => (
+  fields.map(([field]) => `colors.${group}.${field}`)
 ));
 
 export function validateManifest(manifest, context = {}) {
@@ -50,8 +65,22 @@ export function validateManifest(manifest, context = {}) {
     errors.push('single-manifest themes must not include variant');
   }
 
-  if ('colors' in manifest) {
-    errors.push('manifest must not contain a top-level colors compatibility section');
+  if ('palette' in manifest) {
+    errors.push('manifest must not contain a top-level palette section');
+  }
+
+  if (manifest.colors && typeof manifest.colors === 'object' && !Array.isArray(manifest.colors)
+      && 'raw' in manifest.colors) {
+    errors.push('runtime colors must not expose raw color scales');
+  }
+
+  for (const field of REQUIRED_COLOR_FIELDS) {
+    if (!hasPath(manifest, field)) {
+      errors.push(`missing required runtime field: ${field}`);
+      continue;
+    }
+
+    validateRuntimeField(manifest, field, errors);
   }
 
   for (const field of REQUIRED_FIELDS) {
@@ -67,6 +96,8 @@ export function validateManifest(manifest, context = {}) {
     errors.push('manifest must not contain raw DTCG keys or unresolved token references');
   }
 
+  validateFonts(manifest, errors);
+
   return {
     ok: errors.length === 0,
     errors,
@@ -75,10 +106,14 @@ export function validateManifest(manifest, context = {}) {
 
 export async function validateManifestFile(filePath, context = {}) {
   const manifest = JSON.parse(await readFile(filePath, 'utf8'));
-  const result = validateManifest(manifest, context);
+  const result = validateManifest(manifest, { ...context, manifestPath: filePath });
 
   if (!result.ok) {
     throw new Error(`${filePath}\n- ${result.errors.join('\n- ')}`);
+  }
+
+  if (Array.isArray(manifest.fonts)) {
+    await validateFontFiles(manifest.fonts, filePath);
   }
 
   return result;
@@ -210,6 +245,66 @@ function validateIndexManifestPath(value, label, errors) {
   }
 }
 
+function validateFonts(manifest, errors) {
+  if (!Object.prototype.hasOwnProperty.call(manifest, 'fonts')) {
+    return;
+  }
+
+  if (!Array.isArray(manifest.fonts)) {
+    errors.push('runtime field fonts must be an array');
+    return;
+  }
+
+  manifest.fonts.forEach((font, index) => {
+    const prefix = `runtime field fonts[${index}]`;
+    if (!font || typeof font !== 'object' || Array.isArray(font)) {
+      errors.push(`${prefix} must be an object`);
+      return;
+    }
+
+    if (typeof font.family !== 'string' || font.family.trim().length === 0) {
+      errors.push(`${prefix}.family must be a non-empty string`);
+    }
+    if (typeof font.source !== 'string' || !isSafeRelativeAssetPath(font.source)) {
+      errors.push(`${prefix}.source must be a safe relative .ttf or .otf path`);
+    }
+    if (typeof font.weight !== 'number' || !Number.isFinite(font.weight)) {
+      errors.push(`${prefix}.weight must be numeric`);
+    }
+    if ('style' in font && (typeof font.style !== 'string' || font.style.trim().length === 0)) {
+      errors.push(`${prefix}.style must be a non-empty string`);
+    }
+    if ('required' in font && typeof font.required !== 'boolean') {
+      errors.push(`${prefix}.required must be boolean`);
+    }
+  });
+}
+
+async function validateFontFiles(fonts, manifestPath) {
+  const manifestDir = path.dirname(manifestPath);
+  await Promise.all(fonts.map(async (font, index) => {
+    if (!font || typeof font.source !== 'string' || !isSafeRelativeAssetPath(font.source)) {
+      return;
+    }
+
+    try {
+      await access(path.join(manifestDir, font.source));
+    } catch {
+      throw new Error(`${manifestPath}\n- runtime field fonts[${index}].source file does not exist: ${font.source}`);
+    }
+  }));
+}
+
+function isSafeRelativeAssetPath(value) {
+  const lower = value.toLowerCase();
+  return value.length > 0
+    && !path.isAbsolute(value)
+    && !value.startsWith(':')
+    && !value.includes('\\')
+    && (lower.endsWith('.ttf') || lower.endsWith('.otf'))
+    && value.split('/').every((part) => part.length > 0 && part !== '..');
+}
+
 function hasPath(object, dottedPath) {
   let current = object;
 
@@ -237,7 +332,7 @@ function validateRuntimeField(manifest, dottedPath, errors) {
   const [section, field] = dottedPath.split('.');
   const value = valueAtPath(manifest, dottedPath);
 
-  if (section === 'palette') {
+  if (section === 'colors') {
     if (typeof value !== 'string' || !/^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(value)) {
       errors.push(`runtime field ${dottedPath} must be a valid color string`);
     }
@@ -249,6 +344,8 @@ function validateRuntimeField(manifest, dottedPath, errors) {
         || value.trim().length === 0
         || isUnresolvedTokenReference(value)) {
       errors.push(`runtime field ${dottedPath} must be a resolved non-empty string`);
+    } else if (!isSingleQtFontFamily(value)) {
+      errors.push(`runtime field ${dottedPath} must be a single Qt font family name`);
     }
     return;
   }
@@ -261,6 +358,15 @@ function validateRuntimeField(manifest, dottedPath, errors) {
 function isUnresolvedTokenReference(value) {
   const trimmed = value.trim();
   return trimmed.startsWith('{') && trimmed.endsWith('}');
+}
+
+function isSingleQtFontFamily(value) {
+  const trimmed = value.trim();
+  if (trimmed.includes(',') || /^['"]|['"]$/.test(trimmed)) {
+    return false;
+  }
+
+  return !GENERIC_FONT_FAMILIES.has(trimmed.toLowerCase());
 }
 
 function containsRawDtcg(value) {

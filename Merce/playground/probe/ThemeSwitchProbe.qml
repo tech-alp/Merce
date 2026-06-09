@@ -1,9 +1,9 @@
 import QtQml
 import QtQuick
-import Merce.Core
+import Merce.Theme
 
 QtObject {
-    property color observedBackground: Theme.palette.backgroundBase
+    property color observedBackground: Theme.colors.background.base
 
     function fail(message, values) {
         console.error("theme-switch-probe failed", message, values)
@@ -11,7 +11,7 @@ QtObject {
     }
 
     Component.onCompleted: {
-        const palette = Theme.palette
+        const palette = Theme.colors
         const spacing = Theme.spacing
         const radius = Theme.radius
         const typography = Theme.typography
@@ -32,7 +32,7 @@ QtObject {
         if (String(observedBackground).toLowerCase() !== "#1f1510"
                 || Theme.activeBrand !== "merce"
                 || Theme.activeMode !== "dark"
-                || Theme.palette !== palette
+                || Theme.colors !== palette
                 || Theme.spacing !== spacing
                 || Theme.radius !== radius
                 || Theme.typography !== typography) {
@@ -62,7 +62,7 @@ QtObject {
         if (String(observedBackground).toLowerCase() !== "#f6f9fc"
                 || Theme.activeBrand !== "stripe"
                 || Theme.activeMode !== ""
-                || Theme.palette !== palette
+                || Theme.colors !== palette
                 || Theme.spacing !== spacing
                 || Theme.radius !== radius
                 || Theme.typography !== typography) {
@@ -71,10 +71,45 @@ QtObject {
             return
         }
 
+        if (!Theme.setTheme("linear")) {
+            fail("linear default switch returned false", [])
+            return
+        }
+
+        if (String(observedBackground).toLowerCase() !== "#08090a"
+                || Theme.activeBrand !== "linear"
+                || Theme.activeMode !== "dark"
+                || Theme.typography.fontBody !== "Inter"
+                || Theme.typography.fontMono !== "IoskeleyMono Nerd Font"
+                || Theme.colors !== palette
+                || Theme.spacing !== spacing
+                || Theme.radius !== radius
+                || Theme.typography !== typography) {
+            fail("linear default switch state",
+                 [Theme.activeBrand, Theme.activeMode, String(observedBackground),
+                  Theme.typography.fontBody, Theme.typography.fontMono])
+            return
+        }
+
+        if (!Theme.setTheme("linear", "light")) {
+            fail("linear light switch returned false", [])
+            return
+        }
+
+        if (String(observedBackground).toLowerCase() !== "#f7f8f8"
+                || Theme.activeBrand !== "linear"
+                || Theme.activeMode !== "light"
+                || Theme.colors.text.primary.toString().toLowerCase() !== "#08090a") {
+            fail("linear light switch state",
+                 [Theme.activeBrand, Theme.activeMode, String(observedBackground),
+                  Theme.colors.text.primary])
+            return
+        }
+
         console.log("theme-switch-probe ok",
                     Theme.activeBrand,
                     Theme.activeMode,
-                    Theme.palette.backgroundBase)
+                    Theme.colors.background.base)
         Qt.quit()
     }
 }

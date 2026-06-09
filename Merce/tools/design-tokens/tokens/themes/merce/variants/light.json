@@ -1,21 +1,23 @@
 {
-  "palette": {
-    "semantic": {
-      "textPrimary": {
+  "color": {
+    "text": {
+      "primary": {
         "$type": "color",
-        "$value": "{palette.raw.gray900}"
+        "$value": "{color.palette.gray900}"
       },
-      "textInverse": {
+      "inverse": {
         "$type": "color",
-        "$value": "{palette.raw.gray50}"
+        "$value": "{color.palette.gray50}"
+      }
+    },
+    "background": {
+      "base": {
+        "$type": "color",
+        "$value": "{color.palette.gray50}"
       },
-      "backgroundBase": {
+      "surface": {
         "$type": "color",
-        "$value": "{palette.raw.gray50}"
-      },
-      "backgroundSurface": {
-        "$type": "color",
-        "$value": "{palette.raw.white}"
+        "$value": "{color.palette.white}"
       }
     }
   }

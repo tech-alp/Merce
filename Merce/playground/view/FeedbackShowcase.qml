@@ -1,5 +1,5 @@
 import QtQuick
-import Merce.Core
+import Merce.Theme
 import Merce.Foundation
 import Merce.Controls
 import Merce.Notifications
@@ -12,10 +12,10 @@ Item {
     implicitHeight: page.implicitHeight
     height: implicitHeight
 
-    component SectionTitle: ThemedText {
-        type: "h4"
-        textColor: Theme.palette.textPrimary
-        wrap: "word"
+    component SectionTitle: AppLabel {
+        textType: AppLabel.H4
+        color: Theme.colors.text.primary
+        wrapMode: Text.WordWrap
     }
 
     MerceToastifyStyleProvider {
@@ -58,7 +58,7 @@ Item {
         Surface {
             width: parent.width
             height: toastColumn.implicitHeight + Theme.spacing.xl2
-            surfaceType: types["default"]
+            surfaceType: Surface.Default
             radiusValue: Theme.radius.large
 
             Column {
@@ -82,25 +82,25 @@ Item {
 
                     MButton {
                         text: "Info"
-                        variant: "outline"
+                        variant: MButton.Outline
                         onClicked: root.showToast(Toastify.Info, "Informational toast")
                     }
 
                     MButton {
                         text: "Success"
-                        variant: "primary"
+                        variant: MButton.Primary
                         onClicked: root.showToast(Toastify.Success, "Success toast")
                     }
 
                     MButton {
                         text: "Warning"
-                        variant: "secondary"
+                        variant: MButton.Secondary
                         onClicked: root.showToast(Toastify.Warning, "Warning toast")
                     }
 
                     MButton {
                         text: "Error"
-                        variant: "destructive"
+                        variant: MButton.Destructive
                         onClicked: root.showToast(Toastify.Error, "Error toast")
                     }
                 }
@@ -110,7 +110,7 @@ Item {
         Surface {
             width: parent.width
             height: dialogColumn.implicitHeight + Theme.spacing.xl2
-            surfaceType: types["default"]
+            surfaceType: Surface.Default
             radiusValue: Theme.radius.large
 
             Column {
@@ -134,7 +134,7 @@ Item {
 
                     MButton {
                         text: "Default dialog"
-                        variant: "primary"
+                        variant: MButton.Primary
                         onClicked: {
                             dialog.variant = "default"
                             dialog.title = "Dialog sample"
@@ -145,7 +145,7 @@ Item {
 
                     MButton {
                         text: "Warning dialog"
-                        variant: "secondary"
+                        variant: MButton.Secondary
                         onClicked: {
                             dialog.variant = "warning"
                             dialog.title = "Warning"
@@ -156,7 +156,7 @@ Item {
 
                     MButton {
                         text: "Destructive dialog"
-                        variant: "destructive"
+                        variant: MButton.Destructive
                         onClicked: {
                             dialog.variant = "destructive"
                             dialog.title = "Destructive action"

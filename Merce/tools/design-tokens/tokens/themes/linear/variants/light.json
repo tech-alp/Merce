@@ -1,0 +1,114 @@
+{
+  "color": {
+    "palette": {
+      "bgMarketing": {
+        "$type": "color",
+        "$value": "#F7F8F8"
+      },
+      "bgPanel": {
+        "$type": "color",
+        "$value": "#FFFFFF"
+      },
+      "bgLevel3": {
+        "$type": "color",
+        "$value": "#F0F1F2"
+      },
+      "bgSecondary": {
+        "$type": "color",
+        "$value": "#E8E9EB"
+      },
+      "bgPressed": {
+        "$type": "color",
+        "$value": "#DADCE0"
+      },
+      "textPrimary": {
+        "$type": "color",
+        "$value": "#08090A"
+      },
+      "textSecondary": {
+        "$type": "color",
+        "$value": "#2C2E33"
+      },
+      "textTertiary": {
+        "$type": "color",
+        "$value": "#5A5F6B"
+      },
+      "textQuaternary": {
+        "$type": "color",
+        "$value": "#8A8F98"
+      },
+      "textInverse": {
+        "$type": "color",
+        "$value": "#F7F8F8"
+      },
+      "accentPrimary": {
+        "$type": "color",
+        "$value": "#5E6AD2"
+      },
+      "accentHover": {
+        "$type": "color",
+        "$value": "#4B57C8"
+      },
+      "accentPressed": {
+        "$type": "color",
+        "$value": "#3F49B6"
+      },
+      "accentSubtle": {
+        "$type": "color",
+        "$value": "#ECEEFF"
+      },
+      "accentLight": {
+        "$type": "color",
+        "$value": "#7B89F0"
+      },
+      "statusSuccess": {
+        "$type": "color",
+        "$value": "#27A644"
+      },
+      "statusComplete": {
+        "$type": "color",
+        "$value": "#10B981"
+      },
+      "statusWarning": {
+        "$type": "color",
+        "$value": "#F59E0B"
+      },
+      "statusError": {
+        "$type": "color",
+        "$value": "#E53935"
+      },
+      "statusSuccessSubtle": {
+        "$type": "color",
+        "$value": "#E6F6EA"
+      },
+      "statusWarningSubtle": {
+        "$type": "color",
+        "$value": "#FEF3C7"
+      },
+      "statusErrorSubtle": {
+        "$type": "color",
+        "$value": "#FCE7E7"
+      },
+      "statusInfoSubtle": {
+        "$type": "color",
+        "$value": "#ECEEFF"
+      },
+      "borderMicro": {
+        "$type": "color",
+        "$value": "#F0F1F2"
+      },
+      "borderSubtle": {
+        "$type": "color",
+        "$value": "#E5E7EB"
+      },
+      "borderStandard": {
+        "$type": "color",
+        "$value": "#D0D3D9"
+      },
+      "overlay": {
+        "$type": "color",
+        "$value": "#000000"
+      }
+    }
+  }
+}

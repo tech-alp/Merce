@@ -1,146 +1,4 @@
 {
-  "palette": {
-    "raw": {
-      "primary": {
-        "$type": "color",
-        "$value": "#0066CC"
-      },
-      "primaryFocus": {
-        "$type": "color",
-        "$value": "#0071E3"
-      },
-      "primaryOnDark": {
-        "$type": "color",
-        "$value": "#2997FF"
-      },
-      "ink": {
-        "$type": "color",
-        "$value": "#1D1D1F"
-      },
-      "inkMuted80": {
-        "$type": "color",
-        "$value": "#333333"
-      },
-      "inkMuted48": {
-        "$type": "color",
-        "$value": "#7A7A7A"
-      },
-      "dividerSoft": {
-        "$type": "color",
-        "$value": "#F0F0F0"
-      },
-      "hairline": {
-        "$type": "color",
-        "$value": "#E0E0E0"
-      },
-      "canvas": {
-        "$type": "color",
-        "$value": "#FFFFFF"
-      },
-      "canvasParchment": {
-        "$type": "color",
-        "$value": "#F5F5F7"
-      },
-      "surfacePearl": {
-        "$type": "color",
-        "$value": "#FAFAFC"
-      },
-      "surfaceTile1": {
-        "$type": "color",
-        "$value": "#272729"
-      },
-      "surfaceBlack": {
-        "$type": "color",
-        "$value": "#000000"
-      },
-      "onPrimary": {
-        "$type": "color",
-        "$value": "#FFFFFF"
-      },
-      "onDark": {
-        "$type": "color",
-        "$value": "#FFFFFF"
-      }
-    },
-    "semantic": {
-      "textPrimary": {
-        "$type": "color",
-        "$value": "{palette.raw.ink}"
-      },
-      "textSecondary": {
-        "$type": "color",
-        "$value": "{palette.raw.inkMuted80}"
-      },
-      "textTertiary": {
-        "$type": "color",
-        "$value": "{palette.raw.inkMuted48}"
-      },
-      "textInverse": {
-        "$type": "color",
-        "$value": "{palette.raw.onDark}"
-      },
-      "link": {
-        "$type": "color",
-        "$value": "{palette.raw.primary}"
-      },
-      "backgroundBase": {
-        "$type": "color",
-        "$value": "{palette.raw.canvasParchment}"
-      },
-      "backgroundSurface": {
-        "$type": "color",
-        "$value": "{palette.raw.canvas}"
-      },
-      "backgroundElevated": {
-        "$type": "color",
-        "$value": "{palette.raw.surfacePearl}"
-      },
-      "backgroundHover": {
-        "$type": "color",
-        "$value": "{palette.raw.dividerSoft}"
-      },
-      "backgroundPressed": {
-        "$type": "color",
-        "$value": "{palette.raw.hairline}"
-      },
-      "actionPrimary": {
-        "$type": "color",
-        "$value": "{palette.raw.primary}"
-      },
-      "actionPrimaryLight": {
-        "$type": "color",
-        "$value": "{palette.raw.primaryOnDark}"
-      },
-      "actionPrimaryDark": {
-        "$type": "color",
-        "$value": "{palette.raw.primaryFocus}"
-      },
-      "actionSecondary": {
-        "$type": "color",
-        "$value": "{palette.raw.ink}"
-      },
-      "borderBase": {
-        "$type": "color",
-        "$value": "{palette.raw.dividerSoft}"
-      },
-      "borderStrong": {
-        "$type": "color",
-        "$value": "{palette.raw.hairline}"
-      },
-      "borderFocus": {
-        "$type": "color",
-        "$value": "{palette.raw.primaryFocus}"
-      },
-      "surfaceBase": {
-        "$type": "color",
-        "$value": "{palette.raw.canvas}"
-      },
-      "surfaceTinted": {
-        "$type": "color",
-        "$value": "{palette.raw.canvasParchment}"
-      }
-    }
-  },
   "spacing": {
     "base": {
       "$type": "dimension",
@@ -272,23 +130,23 @@
   "typography": {
     "displayFont": {
       "$type": "fontFamily",
-      "$value": "SF Pro Display, system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
+      "$value": "Inter"
     },
     "bodyFont": {
       "$type": "fontFamily",
-      "$value": "SF Pro Text, system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
+      "$value": "Inter"
     },
     "monoFont": {
       "$type": "fontFamily",
-      "$value": "SF Mono, ui-monospace, Menlo, monospace"
+      "$value": "Roboto Mono"
     },
     "displayFontFallback": {
       "$type": "fontFamily",
-      "$value": "Inter, -apple-system, BlinkMacSystemFont, sans-serif"
+      "$value": "Inter"
     },
     "bodyFontFallback": {
       "$type": "fontFamily",
-      "$value": "Inter, -apple-system, BlinkMacSystemFont, sans-serif"
+      "$value": "Inter"
     },
     "sizeXSmall": {
       "$type": "dimension",
@@ -361,6 +219,168 @@
     "trackingNormal": {
       "$type": "number",
       "$value": 0
+    }
+  },
+  "color": {
+    "palette": {
+      "primary": {
+        "$type": "color",
+        "$value": "#0066CC"
+      },
+      "primaryFocus": {
+        "$type": "color",
+        "$value": "#0071E3"
+      },
+      "primaryOnDark": {
+        "$type": "color",
+        "$value": "#2997FF"
+      },
+      "ink": {
+        "$type": "color",
+        "$value": "#1D1D1F"
+      },
+      "inkMuted80": {
+        "$type": "color",
+        "$value": "#333333"
+      },
+      "inkMuted48": {
+        "$type": "color",
+        "$value": "#7A7A7A"
+      },
+      "dividerSoft": {
+        "$type": "color",
+        "$value": "#F0F0F0"
+      },
+      "hairline": {
+        "$type": "color",
+        "$value": "#E0E0E0"
+      },
+      "canvas": {
+        "$type": "color",
+        "$value": "#FFFFFF"
+      },
+      "canvasParchment": {
+        "$type": "color",
+        "$value": "#F5F5F7"
+      },
+      "surfacePearl": {
+        "$type": "color",
+        "$value": "#FAFAFC"
+      },
+      "surfaceTile1": {
+        "$type": "color",
+        "$value": "#272729"
+      },
+      "surfaceBlack": {
+        "$type": "color",
+        "$value": "#000000"
+      },
+      "onPrimary": {
+        "$type": "color",
+        "$value": "#FFFFFF"
+      },
+      "onDark": {
+        "$type": "color",
+        "$value": "#FFFFFF"
+      }
+    },
+    "text": {
+      "primary": {
+        "$type": "color",
+        "$value": "{color.palette.ink}"
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "{color.palette.inkMuted80}"
+      },
+      "tertiary": {
+        "$type": "color",
+        "$value": "{color.palette.inkMuted48}"
+      },
+      "inverse": {
+        "$type": "color",
+        "$value": "{color.palette.onDark}"
+      },
+      "link": {
+        "$type": "color",
+        "$value": "{color.palette.primary}"
+      }
+    },
+    "background": {
+      "base": {
+        "$type": "color",
+        "$value": "{color.palette.canvasParchment}"
+      },
+      "surface": {
+        "$type": "color",
+        "$value": "{color.palette.canvas}"
+      },
+      "elevated": {
+        "$type": "color",
+        "$value": "{color.palette.surfacePearl}"
+      },
+      "hover": {
+        "$type": "color",
+        "$value": "{color.palette.dividerSoft}"
+      },
+      "pressed": {
+        "$type": "color",
+        "$value": "{color.palette.hairline}"
+      },
+      "tinted": {
+        "$type": "color",
+        "$value": "{color.palette.canvasParchment}"
+      }
+    },
+    "action": {
+      "primary": {
+        "$type": "color",
+        "$value": "{color.palette.primary}"
+      },
+      "primarySubtle": {
+        "$type": "color",
+        "$value": "{color.palette.primaryOnDark}"
+      },
+      "primaryPressed": {
+        "$type": "color",
+        "$value": "{color.palette.primaryFocus}"
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "{color.palette.ink}"
+      },
+      "primaryHover": {
+        "$type": "color",
+        "$value": "{color.palette.primaryFocus}"
+      }
+    },
+    "border": {
+      "base": {
+        "$type": "color",
+        "$value": "{color.palette.dividerSoft}"
+      },
+      "strong": {
+        "$type": "color",
+        "$value": "{color.palette.hairline}"
+      },
+      "focus": {
+        "$type": "color",
+        "$value": "{color.palette.primaryFocus}"
+      }
+    },
+    "surface": {
+      "base": {
+        "$type": "color",
+        "$value": "{color.palette.canvas}"
+      },
+      "tinted": {
+        "$type": "color",
+        "$value": "{color.palette.canvasParchment}"
+      },
+      "raised": {
+        "$type": "color",
+        "$value": "{color.palette.surfacePearl}"
+      }
     }
   }
 }

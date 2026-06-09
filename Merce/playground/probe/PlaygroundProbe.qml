@@ -1,5 +1,5 @@
 import QtQuick
-import Merce.Core
+import Merce.Theme
 import Merce.Icons.FontAwesome
 
 Main {
@@ -42,6 +42,22 @@ Main {
                 || root.findObject(root.header, name, 0)
                 || root.findObject(root.footer, name, 0)
                 || root.findObject(root.contentItem, name, 0)
+    }
+
+    function verifyPlaceholderPage(key, title, objectName) {
+        const placeholder = root.findNamed(objectName)
+        if (root.selectedPage !== key
+                || root.pageTitle(root.selectedPage) !== title
+                || !placeholder) {
+            root.fail(title + " placeholder page switch", [
+                          root.selectedPage,
+                          root.pageTitle(root.selectedPage),
+                          placeholder !== null
+                      ])
+            return false
+        }
+
+        return true
     }
 
     Timer {
@@ -87,7 +103,7 @@ Main {
             if (step === 2) {
                 if (root.objectName !== "merce.playground.window"
                         || root.selectedPage !== "theme"
-                        || root.pageTitle(root.selectedPage) !== "Theme Gallery"
+                        || root.pageTitle(root.selectedPage) !== "Overview"
                         || Theme.availableThemes.length < 2) {
                     root.fail("default shell state", [
                                   root.objectName,
@@ -106,7 +122,7 @@ Main {
 
             if (step === 3) {
                 if (root.selectedPage !== "palette"
-                        || root.pageTitle(root.selectedPage) !== "Palette") {
+                        || root.pageTitle(root.selectedPage) !== "Colors") {
                     root.fail("palette page switch", [root.selectedPage, root.pageTitle(root.selectedPage)])
                     return
                 }
@@ -124,18 +140,47 @@ Main {
                 if (root.selectedPage !== "typography"
                         || root.pageTitle(root.selectedPage) !== "Typography"
                         || !typographyShowcase
-                        || typographyShowcase.specimenCount !== 14
-                        || !typographyScale) {
+                        || typographyShowcase.specimenCount !== 10
+                        || !typographyScale
+                        || !typographyShowcase.typeTableFits(typographyScale.width)) {
                     root.fail("typography page switch", [
                                   root.selectedPage,
                                   root.pageTitle(root.selectedPage),
                                   typographyShowcase ? typographyShowcase.specimenCount : null,
-                                  typographyScale !== null
+                                  typographyScale !== null,
+                                  typographyShowcase && typographyScale ? typographyShowcase.typeTableFits(typographyScale.width) : null
                               ])
                     return
                 }
 
-                root.selectedPage = "icons"
+                root.width = 760
+                root.height = 620
+                step = 40
+                interval = 160
+                restart()
+                return
+            }
+
+            if (step === 40) {
+                const typographyShowcase = root.findNamed("merce.playground.typographyShowcase")
+                const typographyScale = root.findNamed("merce.playground.typography.scale")
+                if (!typographyShowcase
+                        || !typographyScale
+                        || !typographyShowcase.compactLayout
+                        || !typographyShowcase.typeTableFits(typographyScale.width)
+                        || typographyScale.width > typographyShowcase.width + 1) {
+                    root.fail("typography responsive layout", [
+                                  typographyShowcase ? typographyShowcase.width : null,
+                                  typographyShowcase ? typographyShowcase.compactLayout : null,
+                                  typographyScale ? typographyScale.width : null,
+                                  typographyShowcase && typographyScale ? typographyShowcase.typeTableFits(typographyScale.width) : null
+                              ])
+                    return
+                }
+
+                root.width = 1180
+                root.height = 760
+                root.selectedPage = "spacing"
                 step = 5
                 interval = 260
                 restart()
@@ -143,6 +188,104 @@ Main {
             }
 
             if (step === 5) {
+                const spacingShowcase = root.findNamed("merce.playground.spacingRadiusShowcase")
+                const spacingPatterns = root.findNamed("merce.playground.spacingRadius.patterns")
+                const tokenReference = root.findNamed("merce.playground.spacingRadius.tokenReference")
+                const touchChecklist = root.findNamed("merce.playground.spacingRadius.touchChecklist")
+                if (root.selectedPage !== "spacing"
+                        || root.pageTitle(root.selectedPage) !== "Spacing & Radius"
+                        || !spacingShowcase
+                        || spacingShowcase.patternCount !== 6
+                        || !spacingShowcase.tokenReferenceReady
+                        || !spacingShowcase.touchTargetReady
+                        || !spacingPatterns
+                        || !tokenReference
+                        || !touchChecklist) {
+                    root.fail("spacing showcase page switch", [
+                                  root.selectedPage,
+                                  root.pageTitle(root.selectedPage),
+                                  spacingShowcase ? spacingShowcase.patternCount : null,
+                                  spacingShowcase ? spacingShowcase.tokenReferenceReady : null,
+                                  spacingShowcase ? spacingShowcase.touchTargetReady : null,
+                                  spacingPatterns !== null,
+                                  tokenReference !== null,
+                                  touchChecklist !== null
+                              ])
+                    return
+                }
+
+                root.selectedPage = "shadows"
+                step = 6
+                interval = 120
+                restart()
+                return
+            }
+
+            if (step === 6) {
+                if (!root.verifyPlaceholderPage("shadows", "Shadows", "merce.playground.shadowsShowcase"))
+                    return
+
+                root.selectedPage = "motion"
+                step = 7
+                interval = 120
+                restart()
+                return
+            }
+
+            if (step === 7) {
+                if (!root.verifyPlaceholderPage("motion", "Motion", "merce.playground.motionShowcase"))
+                    return
+
+                root.selectedPage = "theme-builder"
+                step = 8
+                interval = 160
+                restart()
+                return
+            }
+
+            if (step === 8) {
+                const themeBuilder = root.findNamed("merce.playground.themeBuilderShowcase")
+                if (root.selectedPage !== "theme-builder"
+                        || root.pageTitle(root.selectedPage) !== "Theme Builder"
+                        || !themeBuilder) {
+                    root.fail("theme builder page switch", [
+                                  root.selectedPage,
+                                  root.pageTitle(root.selectedPage),
+                                  themeBuilder !== null
+                              ])
+                    return
+                }
+
+                root.selectedPage = "forms"
+                step = 9
+                interval = 120
+                restart()
+                return
+            }
+
+            if (step === 9) {
+                if (!root.verifyPlaceholderPage("forms", "Forms", "merce.playground.formsShowcase"))
+                    return
+
+                root.selectedPage = "states"
+                step = 10
+                interval = 120
+                restart()
+                return
+            }
+
+            if (step === 10) {
+                if (!root.verifyPlaceholderPage("states", "States", "merce.playground.statesShowcase"))
+                    return
+
+                root.selectedPage = "icons"
+                step = 11
+                interval = 160
+                restart()
+                return
+            }
+
+            if (step === 11) {
                 const iconsShowcase = root.findNamed("merce.playground.iconsShowcase")
                 const iconsGrid = root.findNamed("merce.playground.icons.grid")
                 const iconsSearch = root.findNamed("merce.playground.icons.search")
@@ -205,15 +348,35 @@ Main {
                 iconsShowcase.selectedIconFont = "material"
 
                 root.selectedPage = "controls"
-                step = 6
+                step = 12
                 interval = 80
                 restart()
                 return
             }
 
+            const controlsShowcase = root.findNamed("merce.playground.controlsShowcase")
+            const primaryBadge = root.findNamed("merce.playground.controls.badge.primary")
+            const successBadge = root.findNamed("merce.playground.controls.badge.success")
+            const smallBadge = root.findNamed("merce.playground.controls.badge.small")
             if (root.selectedPage !== "controls"
-                    || root.pageTitle(root.selectedPage) !== "Controls") {
-                root.fail("controls page switch", [root.selectedPage, root.pageTitle(root.selectedPage)])
+                    || root.pageTitle(root.selectedPage) !== "Controls"
+                    || !controlsShowcase
+                    || !primaryBadge
+                    || primaryBadge.variant !== "primary"
+                    || primaryBadge.icon !== "material:palette"
+                    || !successBadge
+                    || successBadge.variant !== "success"
+                    || !smallBadge
+                    || smallBadge.size !== "small") {
+                root.fail("controls page switch", [
+                              root.selectedPage,
+                              root.pageTitle(root.selectedPage),
+                              controlsShowcase !== null,
+                              primaryBadge ? primaryBadge.variant : null,
+                              primaryBadge ? primaryBadge.icon : null,
+                              successBadge ? successBadge.variant : null,
+                              smallBadge ? smallBadge.size : null
+                          ])
                 return
             }
 

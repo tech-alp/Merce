@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Controls.Basic as Basic
-import Merce.Core
+import Merce.Theme
 import Merce.Foundation
 import Merce.Icons.FontAwesome
 import Merce.Controls
@@ -137,10 +137,10 @@ Item {
         refreshFilteredIcons()
     }
 
-    component SectionTitle: ThemedText {
-        type: "h4"
-        textColor: Theme.palette.textPrimary
-        wrap: "word"
+    component SectionTitle: AppLabel {
+        textType: AppLabel.H4
+        color: Theme.colors.text.primary
+        wrapMode: Text.WordWrap
     }
 
     Column {
@@ -151,7 +151,7 @@ Item {
         Surface {
             width: parent.width
             height: iconsColumn.implicitHeight + Theme.spacing.xl2
-            surfaceType: types["default"]
+            surfaceType: Surface.Default
             radiusValue: Theme.radius.large
 
             Column {
@@ -236,14 +236,14 @@ Item {
                             width: 52
                             height: 52
                             radius: Theme.radius.medium
-                            color: tileMouse.containsMouse ? Theme.palette.background.hover : "transparent"
+                            color: tileMouse.containsMouse ? Theme.colors.background.hover : "transparent"
 
                             AppIcon {
                                 anchors.centerIn: parent
                                 visible: root.selectedIconFont === "material"
                                 name: iconTile.iconValue
                                 size: Theme.icons.large
-                                color: Theme.palette.textPrimary
+                                color: Theme.colors.text.primary
                             }
 
                             FontAwesomeIcon {
@@ -251,7 +251,7 @@ Item {
                                 visible: root.selectedIconFont !== "material"
                                 name: iconTile.iconValue
                                 size: Theme.icons.large
-                                color: Theme.palette.textPrimary
+                                color: Theme.colors.text.primary
                             }
                         }
 
@@ -264,12 +264,12 @@ Item {
                     }
                 }
 
-                ThemedText {
+                AppLabel {
                     width: parent.width
-                    type: "caption"
+                    textType: AppLabel.Caption
                     text: root.activeIconFontLabel + " / " + filteredIcons.count + " icons"
-                    textColor: Theme.palette.text.tertiary
-                    wrap: "word"
+                    color: Theme.colors.text.tertiary
+                    wrapMode: Text.WordWrap
                 }
             }
         }

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Merce DESIGN.md to DTCG"
+  short_description: "Convert DESIGN.md references into Merce themes"
+  default_prompt: "Use $merce-design-md-to-dtcg to convert a DESIGN.md reference into a Merce DTCG theme and verify it in the app."

@@ -1,5 +1,5 @@
 import QtQuick
-import Merce.Core
+import Merce.Theme
 
 Item {
     id: root

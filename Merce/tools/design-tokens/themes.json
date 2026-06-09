@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "defaultTheme": "merce",
   "core": [
-    "tokens/core/palette.json",
+    "tokens/core/color.json",
     "tokens/core/spacing.json",
     "tokens/core/radius.json",
     "tokens/core/typography.json"
@@ -55,6 +55,51 @@
         "tokens/themes/stripe/theme.json"
       ],
       "path": "stripe.json"
+    },
+    "linear": {
+      "displayName": "Linear Reference",
+      "source": [
+        "tokens/themes/linear/theme.json"
+      ],
+      "fontAssets": [
+        {
+          "family": "IoskeleyMono Nerd Font",
+          "source": "tokens/themes/linear/fonts/IoskeleyMonoNerdFont-Regular.ttf",
+          "destination": "fonts/linear/IoskeleyMonoNerdFont-Regular.ttf",
+          "weight": 400,
+          "style": "normal",
+          "required": true
+        },
+        {
+          "family": "IoskeleyMono Nerd Font",
+          "source": "tokens/themes/linear/fonts/IoskeleyMonoNerdFont-Medium.ttf",
+          "destination": "fonts/linear/IoskeleyMonoNerdFont-Medium.ttf",
+          "weight": 510,
+          "style": "normal",
+          "required": true
+        },
+        {
+          "family": "IoskeleyMono Nerd Font",
+          "source": "tokens/themes/linear/fonts/IoskeleyMonoNerdFont-Bold.ttf",
+          "destination": "fonts/linear/IoskeleyMonoNerdFont-Bold.ttf",
+          "weight": 700,
+          "style": "normal",
+          "required": true
+        }
+      ],
+      "defaultVariant": "dark",
+      "variants": {
+        "dark": "linear.dark.json",
+        "light": "linear.light.json"
+      },
+      "variantSources": {
+        "dark": [
+          "tokens/themes/linear/variants/dark.json"
+        ],
+        "light": [
+          "tokens/themes/linear/variants/light.json"
+        ]
+      }
     }
   }
 }

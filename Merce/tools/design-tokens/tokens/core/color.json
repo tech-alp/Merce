@@ -1,0 +1,270 @@
+{
+  "color": {
+    "palette": {
+      "primary": {
+        "$type": "color",
+        "$value": "#C4785A"
+      },
+      "primaryLight": {
+        "$type": "color",
+        "$value": "#E8B5A3"
+      },
+      "primaryDark": {
+        "$type": "color",
+        "$value": "#9A4F34"
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "#2D4A3E"
+      },
+      "secondaryLight": {
+        "$type": "color",
+        "$value": "#4A6B5D"
+      },
+      "secondaryDark": {
+        "$type": "color",
+        "$value": "#1A2C24"
+      },
+      "success": {
+        "$type": "color",
+        "$value": "#4A7C59"
+      },
+      "successLight": {
+        "$type": "color",
+        "$value": "#A8D4B8"
+      },
+      "warning": {
+        "$type": "color",
+        "$value": "#D4A854"
+      },
+      "warningLight": {
+        "$type": "color",
+        "$value": "#F0D9A8"
+      },
+      "error": {
+        "$type": "color",
+        "$value": "#C45A5A"
+      },
+      "errorLight": {
+        "$type": "color",
+        "$value": "#E8A8A8"
+      },
+      "info": {
+        "$type": "color",
+        "$value": "#5A8FC4"
+      },
+      "infoLight": {
+        "$type": "color",
+        "$value": "#A8CCE8"
+      },
+      "gray50": {
+        "$type": "color",
+        "$value": "#FAF8F6"
+      },
+      "gray100": {
+        "$type": "color",
+        "$value": "#F5F0EB"
+      },
+      "gray200": {
+        "$type": "color",
+        "$value": "#E8DFD5"
+      },
+      "gray300": {
+        "$type": "color",
+        "$value": "#D4C4B5"
+      },
+      "gray400": {
+        "$type": "color",
+        "$value": "#B8A494"
+      },
+      "gray500": {
+        "$type": "color",
+        "$value": "#9A8472"
+      },
+      "gray600": {
+        "$type": "color",
+        "$value": "#7A6556"
+      },
+      "gray700": {
+        "$type": "color",
+        "$value": "#5C4A3D"
+      },
+      "gray800": {
+        "$type": "color",
+        "$value": "#3D2F26"
+      },
+      "gray900": {
+        "$type": "color",
+        "$value": "#1F1510"
+      },
+      "white": {
+        "$type": "color",
+        "$value": "#FFFFFF"
+      }
+    },
+    "text": {
+      "primary": {
+        "$type": "color",
+        "$value": "{color.palette.gray900}"
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "{color.palette.gray700}"
+      },
+      "tertiary": {
+        "$type": "color",
+        "$value": "{color.palette.gray500}"
+      },
+      "inverse": {
+        "$type": "color",
+        "$value": "{color.palette.gray50}"
+      },
+      "link": {
+        "$type": "color",
+        "$value": "{color.palette.primary}"
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "{color.palette.gray400}"
+      },
+      "linkHover": {
+        "$type": "color",
+        "$value": "{color.palette.primaryDark}"
+      }
+    },
+    "background": {
+      "base": {
+        "$type": "color",
+        "$value": "{color.palette.gray50}"
+      },
+      "surface": {
+        "$type": "color",
+        "$value": "{color.palette.white}"
+      },
+      "elevated": {
+        "$type": "color",
+        "$value": "{color.palette.white}"
+      },
+      "hover": {
+        "$type": "color",
+        "$value": "{color.palette.gray100}"
+      },
+      "pressed": {
+        "$type": "color",
+        "$value": "{color.palette.gray200}"
+      },
+      "tinted": {
+        "$type": "color",
+        "$value": "{color.palette.gray100}"
+      },
+      "overlay": {
+        "$type": "color",
+        "$value": "#000000"
+      }
+    },
+    "action": {
+      "primary": {
+        "$type": "color",
+        "$value": "{color.palette.primary}"
+      },
+      "primarySubtle": {
+        "$type": "color",
+        "$value": "{color.palette.primaryLight}"
+      },
+      "primaryPressed": {
+        "$type": "color",
+        "$value": "{color.palette.primaryDark}"
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "{color.palette.secondary}"
+      },
+      "primaryHover": {
+        "$type": "color",
+        "$value": "{color.palette.primaryDark}"
+      },
+      "secondaryHover": {
+        "$type": "color",
+        "$value": "{color.palette.secondaryDark}"
+      },
+      "secondaryPressed": {
+        "$type": "color",
+        "$value": "{color.palette.secondaryDark}"
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "{color.palette.gray400}"
+      }
+    },
+    "border": {
+      "base": {
+        "$type": "color",
+        "$value": "{color.palette.gray200}"
+      },
+      "strong": {
+        "$type": "color",
+        "$value": "{color.palette.gray300}"
+      },
+      "focus": {
+        "$type": "color",
+        "$value": "{color.palette.primary}"
+      },
+      "error": {
+        "$type": "color",
+        "$value": "{color.status.error}"
+      },
+      "success": {
+        "$type": "color",
+        "$value": "{color.status.success}"
+      }
+    },
+    "status": {
+      "error": {
+        "$type": "color",
+        "$value": "{color.palette.error}"
+      },
+      "success": {
+        "$type": "color",
+        "$value": "{color.palette.success}"
+      },
+      "warning": {
+        "$type": "color",
+        "$value": "{color.palette.warning}"
+      },
+      "info": {
+        "$type": "color",
+        "$value": "{color.palette.info}"
+      },
+      "successSubtle": {
+        "$type": "color",
+        "$value": "{color.palette.successLight}"
+      },
+      "warningSubtle": {
+        "$type": "color",
+        "$value": "{color.palette.warningLight}"
+      },
+      "errorSubtle": {
+        "$type": "color",
+        "$value": "{color.palette.errorLight}"
+      },
+      "infoSubtle": {
+        "$type": "color",
+        "$value": "{color.palette.infoLight}"
+      }
+    },
+    "surface": {
+      "base": {
+        "$type": "color",
+        "$value": "{color.palette.white}"
+      },
+      "tinted": {
+        "$type": "color",
+        "$value": "{color.palette.gray100}"
+      },
+      "raised": {
+        "$type": "color",
+        "$value": "{color.background.elevated}"
+      }
+    }
+  }
+}

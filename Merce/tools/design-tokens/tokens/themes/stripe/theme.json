@@ -1,6 +1,26 @@
 {
-  "palette": {
-    "raw": {
+  "radius": {
+    "button": {
+      "$type": "dimension",
+      "$value": "{radius.medium}"
+    },
+    "card": {
+      "$type": "dimension",
+      "$value": "{radius.large}"
+    }
+  },
+  "typography": {
+    "bodyFont": {
+      "$type": "fontFamily",
+      "$value": "Inter"
+    },
+    "displayFont": {
+      "$type": "fontFamily",
+      "$value": "Inter"
+    }
+  },
+  "color": {
+    "palette": {
       "primary": {
         "$type": "color",
         "$value": "#635BFF"
@@ -54,43 +74,27 @@
         "$value": "#1A1F36"
       }
     },
-    "semantic": {
-      "actionPrimary": {
+    "action": {
+      "primary": {
         "$type": "color",
-        "$value": "{palette.raw.primary}"
+        "$value": "{color.palette.primary}"
       },
-      "actionSecondary": {
+      "secondary": {
         "$type": "color",
-        "$value": "{palette.raw.secondary}"
-      },
-      "borderFocus": {
-        "$type": "color",
-        "$value": "{palette.raw.primary}"
-      },
-      "backgroundBase": {
-        "$type": "color",
-        "$value": "{palette.raw.gray50}"
+        "$value": "{color.palette.secondary}"
       }
-    }
-  },
-  "radius": {
-    "button": {
-      "$type": "dimension",
-      "$value": "{radius.medium}"
     },
-    "card": {
-      "$type": "dimension",
-      "$value": "{radius.large}"
-    }
-  },
-  "typography": {
-    "bodyFont": {
-      "$type": "fontFamily",
-      "$value": "-apple-system, BlinkMacSystemFont, sans-serif"
+    "border": {
+      "focus": {
+        "$type": "color",
+        "$value": "{color.palette.primary}"
+      }
     },
-    "displayFont": {
-      "$type": "fontFamily",
-      "$value": "-apple-system, BlinkMacSystemFont, sans-serif"
+    "background": {
+      "base": {
+        "$type": "color",
+        "$value": "{color.palette.gray50}"
+      }
     }
   }
 }

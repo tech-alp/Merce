@@ -1,5 +1,5 @@
 import QtQuick
-import Merce.Core
+import Merce.Theme
 import Merce.Foundation
 import Merce.Controls
 import Merce.Notifications
@@ -16,7 +16,7 @@ Item {
     readonly property var themeOptions: Theme.availableThemes
     readonly property var modeOptions: root.modeOptionsFor(Theme.activeBrand)
     readonly property color observedButtonColor: primaryButton.backgroundColor
-    readonly property color observedTextColor: bodySample.textColor
+    readonly property color observedTextColor: bodySample.color
     readonly property color observedInputBorderColor: emailInput.borderColor
     readonly property color observedToggleColor: switchSample.trackColor
     readonly property color observedSelectColor: selectSample.observedPaletteColor
@@ -86,16 +86,16 @@ Item {
         return String(value).toUpperCase()
     }
 
-    component SectionTitle: ThemedText {
-        type: "h4"
-        textColor: Theme.palette.textPrimary
-        wrap: "word"
+    component SectionTitle: AppLabel {
+        textType: AppLabel.H4
+        color: Theme.colors.text.primary
+        wrapMode: Text.WordWrap
     }
 
-    component FieldLabel: ThemedText {
-        type: "caption"
-        textColor: Theme.palette.text.secondary
-        wrap: "word"
+    component FieldLabel: AppLabel {
+        textType: AppLabel.Caption
+        color: Theme.colors.text.secondary
+        wrapMode: Text.WordWrap
     }
 
     component TokenSwatch: Item {
@@ -113,7 +113,7 @@ Item {
             radius: Theme.radius.medium
             color: swatchColor
             border.width: 1
-            border.color: Theme.palette.borderBase
+            border.color: Theme.colors.border.base
         }
 
         Column {
@@ -125,20 +125,20 @@ Item {
             }
             spacing: Theme.spacing.xxs
 
-            ThemedText {
+            AppLabel {
                 width: parent.width
-                type: "caption"
+                textType: AppLabel.Caption
                 text: label
-                textColor: Theme.palette.textPrimary
-                wrap: "word"
+                color: Theme.colors.text.primary
+                wrapMode: Text.WordWrap
             }
 
-            ThemedText {
+            AppLabel {
                 width: parent.width
-                type: "caption"
+                textType: AppLabel.Caption
                 text: root.colorLabel(swatchColor)
-                textColor: Theme.palette.text.secondary
-                wrap: "word"
+                color: Theme.colors.text.secondary
+                wrapMode: Text.WordWrap
             }
         }
     }
@@ -163,7 +163,7 @@ Item {
             height: Math.max(8, Math.min(28, tokenValue))
             anchors.verticalCenter: parent.verticalCenter
             radius: Theme.radius.small
-            color: Theme.palette.actionPrimary
+            color: Theme.colors.action.primary
         }
 
         FieldLabel {
@@ -182,7 +182,7 @@ Item {
             objectName: "merce.playground.gallery.activeTheme"
             width: parent.width
             height: activeThemeColumn.implicitHeight + Theme.spacing.xl2
-            surfaceType: types["default"]
+            surfaceType: Surface.Default
             radiusValue: Theme.radius.large
 
             Column {
@@ -208,12 +208,12 @@ Item {
                             text: "Tema doğrulama galerisi"
                         }
 
-                        ThemedText {
+                        AppLabel {
                             width: parent.width
-                            type: "body"
+                            textType: AppLabel.Body
                             text: Theme.activeBrand + " / " + root.displayMode
-                            textColor: Theme.palette.text.secondary
-                            wrap: "word"
+                            color: Theme.colors.text.secondary
+                            wrapMode: Text.WordWrap
                         }
                     }
 
@@ -276,7 +276,7 @@ Item {
             objectName: "merce.playground.gallery.palette"
             width: parent.width
             height: paletteColumn.implicitHeight + Theme.spacing.xl2
-            surfaceType: types["default"]
+            surfaceType: Surface.Default
             radiusValue: Theme.radius.large
 
             Column {
@@ -298,17 +298,17 @@ Item {
                     width: parent.width
                     spacing: Theme.spacing.md
 
-                    TokenSwatch { label: "backgroundBase"; swatchColor: Theme.palette.backgroundBase }
-                    TokenSwatch { label: "backgroundSurface"; swatchColor: Theme.palette.backgroundSurface }
-                    TokenSwatch { label: "textPrimary"; swatchColor: Theme.palette.textPrimary }
-                    TokenSwatch { label: "actionPrimary"; swatchColor: Theme.palette.actionPrimary }
-                    TokenSwatch { label: "actionPrimaryDark"; swatchColor: Theme.palette.action.primaryDark }
-                    TokenSwatch { label: "actionSecondary"; swatchColor: Theme.palette.actionSecondary }
-                    TokenSwatch { label: "actionSecondaryDark"; swatchColor: Theme.palette.action.secondaryDark }
-                    TokenSwatch { label: "borderBase"; swatchColor: Theme.palette.borderBase }
-                    TokenSwatch { label: "borderFocus"; swatchColor: Theme.palette.border.focus }
-                    TokenSwatch { label: "statusError"; swatchColor: Theme.palette.statusError }
-                    TokenSwatch { label: "statusSuccess"; swatchColor: Theme.palette.status.success }
+                    TokenSwatch { label: "backgroundBase"; swatchColor: Theme.colors.background.base }
+                    TokenSwatch { label: "backgroundSurface"; swatchColor: Theme.colors.background.surface }
+                    TokenSwatch { label: "textPrimary"; swatchColor: Theme.colors.text.primary }
+                    TokenSwatch { label: "actionPrimary"; swatchColor: Theme.colors.action.primary }
+                    TokenSwatch { label: "actionPrimaryDark"; swatchColor: Theme.colors.action.primaryPressed }
+                    TokenSwatch { label: "actionSecondary"; swatchColor: Theme.colors.action.secondary }
+                    TokenSwatch { label: "actionSecondaryDark"; swatchColor: Theme.colors.action.secondaryPressed }
+                    TokenSwatch { label: "borderBase"; swatchColor: Theme.colors.border.base }
+                    TokenSwatch { label: "borderFocus"; swatchColor: Theme.colors.border.focus }
+                    TokenSwatch { label: "statusError"; swatchColor: Theme.colors.status.error }
+                    TokenSwatch { label: "statusSuccess"; swatchColor: Theme.colors.status.success }
                 }
             }
         }
@@ -318,7 +318,7 @@ Item {
             objectName: "merce.playground.gallery.typography"
             width: parent.width
             height: typographyColumn.implicitHeight + Theme.spacing.xl2
-            surfaceType: types["default"]
+            surfaceType: Surface.Default
             radiusValue: Theme.radius.large
 
             Column {
@@ -336,31 +336,31 @@ Item {
                     text: "Typography"
                 }
 
-                ThemedText {
+                AppLabel {
                     objectName: "merce.playground.gallery.typography.titleSample"
                     width: parent.width
-                    type: "h2"
+                    textType: AppLabel.H2
                     text: "Başlık örneği"
-                    textColor: Theme.palette.textPrimary
-                    wrap: "word"
+                    color: Theme.colors.text.primary
+                    wrapMode: Text.WordWrap
                 }
 
-                ThemedText {
+                AppLabel {
                     id: bodySample
                     objectName: "merce.playground.gallery.typography.bodySample"
                     width: parent.width
-                    type: "body"
+                    textType: AppLabel.Body
                     text: "Body metni " + Theme.typography.fontBody + " / " + Theme.typography.sizeMedium + " px"
-                    textColor: Theme.palette.textPrimary
-                    wrap: "word"
+                    color: Theme.colors.text.primary
+                    wrapMode: Text.WordWrap
                 }
 
-                ThemedText {
+                AppLabel {
                     width: parent.width
-                    type: "caption"
+                    textType: AppLabel.Caption
                     text: "Label " + Theme.typography.sizeSmall + " px / " + Theme.typography.weightSemibold
-                    textColor: Theme.palette.text.secondary
-                    wrap: "word"
+                    color: Theme.colors.text.secondary
+                    wrapMode: Text.WordWrap
                 }
             }
         }
@@ -370,7 +370,7 @@ Item {
             objectName: "merce.playground.gallery.spacingRadius"
             width: parent.width
             height: spacingRadiusColumn.implicitHeight + Theme.spacing.xl2
-            surfaceType: types["default"]
+            surfaceType: Surface.Default
             radiusValue: Theme.radius.large
 
             Column {
@@ -399,27 +399,27 @@ Item {
                         width: 96
                         height: 54
                         radius: Theme.radius.button
-                        color: Theme.palette.backgroundSurface
+                        color: Theme.colors.background.surface
                         border.width: 1
-                        border.color: Theme.palette.borderBase
+                        border.color: Theme.colors.border.base
                     }
 
                     Rectangle {
                         width: 96
                         height: 54
                         radius: Theme.radius.input
-                        color: Theme.palette.backgroundSurface
+                        color: Theme.colors.background.surface
                         border.width: 1
-                        border.color: Theme.palette.border.focus
+                        border.color: Theme.colors.border.focus
                     }
 
                     Rectangle {
                         width: 96
                         height: 54
                         radius: Theme.radius.dialog
-                        color: Theme.palette.background.elevated
+                        color: Theme.colors.background.elevated
                         border.width: 1
-                        border.color: Theme.palette.borderBase
+                        border.color: Theme.colors.border.base
                     }
                 }
             }
@@ -430,7 +430,7 @@ Item {
             objectName: "merce.playground.gallery.components"
             width: parent.width
             height: componentsColumn.implicitHeight + Theme.spacing.xl2
-            surfaceType: types["default"]
+            surfaceType: Surface.Default
             radiusValue: Theme.radius.large
 
             Column {
@@ -456,7 +456,7 @@ Item {
                         id: primaryButton
                         objectName: "merce.playground.gallery.primaryButton"
                         text: "Primary"
-                        variant: "primary"
+                        variant: MButton.Primary
                         onClicked: galleryToast.success("Galeri örneği yüklendi.", {
                             position: Toastify.BottomRightCorner,
                             autoClose: 4000,
@@ -468,19 +468,19 @@ Item {
                     MButton {
                         objectName: "merce.playground.gallery.secondaryButton"
                         text: "Secondary"
-                        variant: "secondary"
+                        variant: MButton.Secondary
                     }
 
                     MButton {
                         objectName: "merce.playground.gallery.outlineButton"
                         text: "Outline"
-                        variant: "outline"
+                        variant: MButton.Outline
                     }
 
                     MButton {
                         objectName: "merce.playground.gallery.destructiveButton"
                         text: "Destructive"
-                        variant: "destructive"
+                        variant: MButton.Destructive
                         onClicked: galleryDialog.isOpen = true
                     }
                 }
@@ -523,7 +523,7 @@ Item {
                     objectName: "merce.playground.gallery.select"
                     width: 360
                     selectedValue: "runtime"
-                    property color observedPaletteColor: Theme.palette.textPrimary
+                    property color observedPaletteColor: Theme.colors.text.primary
                     options: [
                         { "value": "runtime", "label": "Runtime theme" },
                         { "value": "gallery", "label": "Gallery proof" },
@@ -538,7 +538,7 @@ Item {
             objectName: "merce.playground.gallery.exportStatus"
             width: parent.width
             height: exportStatusColumn.implicitHeight + Theme.spacing.xl2
-            surfaceType: types["default"]
+            surfaceType: Surface.Default
             radiusValue: Theme.radius.large
 
             Column {
@@ -562,26 +562,26 @@ Item {
                     MButton {
                         objectName: "merce.playground.gallery.exportButton"
                         text: "Tema galerisini dışa aktar"
-                        variant: "primary"
+                        variant: MButton.Primary
                         onClicked: exportState.text = "Galeri görselleri hazır"
                     }
 
                     MButton {
                         objectName: "merce.playground.gallery.changeThemeButton"
                         text: "Temayı değiştir"
-                        variant: "outline"
+                        variant: MButton.Outline
                         onClicked: root.setMerceDark()
                     }
                 }
 
-                ThemedText {
+                AppLabel {
                     id: exportState
                     objectName: "merce.playground.gallery.exportStateText"
                     width: parent.width
-                    type: "body"
+                    textType: AppLabel.Body
                     text: "Galeri görselleri hazır"
-                    textColor: Theme.palette.text.secondary
-                    wrap: "word"
+                    color: Theme.colors.text.secondary
+                    wrapMode: Text.WordWrap
                 }
             }
         }
@@ -604,7 +604,7 @@ Item {
         message: "Tema değerleri okunuyor."
         confirmText: "OK"
         showCancel: false
-        property color observedSurfaceColor: Theme.palette.backgroundSurface
+        property color observedSurfaceColor: Theme.colors.background.surface
         onConfirmed: isOpen = false
     }
 }

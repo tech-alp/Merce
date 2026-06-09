@@ -1,5 +1,5 @@
 import QtQuick
-import Merce.Core
+import Merce.Theme
 
 /**
  * BaseControl - Base primitive for interactive controls
@@ -17,7 +17,7 @@ Item {
     // VIRTUAL PROPERTIES (Can be overridden by child components)
     // ====================================================================
     virtual property color accentColor: Theme.colors.action.primary
-    virtual property color accentHoverColor: Theme.colors.action.primaryDark
+    virtual property color accentHoverColor: Theme.colors.action.primaryHover
     virtual property color backgroundColor: "transparent"
     virtual property int radiusValue: Theme.radius.button
 

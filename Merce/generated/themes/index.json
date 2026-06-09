@@ -26,6 +26,14 @@
     "stripe": {
       "displayName": "Stripe Reference",
       "path": "stripe.json"
+    },
+    "linear": {
+      "displayName": "Linear Reference",
+      "defaultVariant": "dark",
+      "variants": {
+        "dark": "linear.dark.json",
+        "light": "linear.light.json"
+      }
     }
   }
 }

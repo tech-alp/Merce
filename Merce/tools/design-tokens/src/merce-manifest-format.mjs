@@ -1,31 +1,59 @@
 import { resolveReferences } from 'style-dictionary/utils';
 
-export const FIELD_MAP = {
-  palette: [
-    ['textPrimary', 'palette.semantic.textPrimary'],
-    ['textSecondary', 'palette.semantic.textSecondary'],
-    ['textTertiary', 'palette.semantic.textTertiary'],
-    ['textInverse', 'palette.semantic.textInverse'],
-    ['link', 'palette.semantic.link'],
-    ['backgroundBase', 'palette.semantic.backgroundBase'],
-    ['backgroundSurface', 'palette.semantic.backgroundSurface'],
-    ['backgroundElevated', 'palette.semantic.backgroundElevated'],
-    ['backgroundHover', 'palette.semantic.backgroundHover'],
-    ['backgroundPressed', 'palette.semantic.backgroundPressed'],
-    ['actionPrimary', 'palette.semantic.actionPrimary'],
-    ['actionPrimaryLight', 'palette.semantic.actionPrimaryLight'],
-    ['actionPrimaryDark', 'palette.semantic.actionPrimaryDark'],
-    ['actionSecondary', 'palette.semantic.actionSecondary'],
-    ['borderBase', 'palette.semantic.borderBase'],
-    ['borderStrong', 'palette.semantic.borderStrong'],
-    ['borderFocus', 'palette.semantic.borderFocus'],
-    ['statusError', 'palette.semantic.statusError'],
-    ['statusSuccess', 'palette.semantic.statusSuccess'],
-    ['statusWarning', 'palette.semantic.statusWarning'],
-    ['statusInfo', 'palette.semantic.statusInfo'],
-    ['surfaceBase', 'palette.semantic.surfaceBase'],
-    ['surfaceTinted', 'palette.semantic.surfaceTinted'],
+export const COLOR_FIELD_MAP = {
+  text: [
+    ['primary', 'color.text.primary'],
+    ['secondary', 'color.text.secondary'],
+    ['tertiary', 'color.text.tertiary'],
+    ['inverse', 'color.text.inverse'],
+    ['disabled', 'color.text.disabled'],
+    ['link', 'color.text.link'],
+    ['linkHover', 'color.text.linkHover'],
   ],
+  background: [
+    ['base', 'color.background.base'],
+    ['surface', 'color.background.surface'],
+    ['elevated', 'color.background.elevated'],
+    ['hover', 'color.background.hover'],
+    ['pressed', 'color.background.pressed'],
+    ['tinted', 'color.background.tinted'],
+    ['overlay', 'color.background.overlay'],
+  ],
+  border: [
+    ['base', 'color.border.base'],
+    ['strong', 'color.border.strong'],
+    ['focus', 'color.border.focus'],
+    ['error', 'color.border.error'],
+    ['success', 'color.border.success'],
+  ],
+  action: [
+    ['primary', 'color.action.primary'],
+    ['primaryHover', 'color.action.primaryHover'],
+    ['primaryPressed', 'color.action.primaryPressed'],
+    ['primarySubtle', 'color.action.primarySubtle'],
+    ['secondary', 'color.action.secondary'],
+    ['secondaryHover', 'color.action.secondaryHover'],
+    ['secondaryPressed', 'color.action.secondaryPressed'],
+    ['disabled', 'color.action.disabled'],
+  ],
+  status: [
+    ['success', 'color.status.success'],
+    ['successSubtle', 'color.status.successSubtle'],
+    ['warning', 'color.status.warning'],
+    ['warningSubtle', 'color.status.warningSubtle'],
+    ['error', 'color.status.error'],
+    ['errorSubtle', 'color.status.errorSubtle'],
+    ['info', 'color.status.info'],
+    ['infoSubtle', 'color.status.infoSubtle'],
+  ],
+  surface: [
+    ['base', 'color.surface.base'],
+    ['tinted', 'color.surface.tinted'],
+    ['raised', 'color.surface.raised'],
+  ],
+};
+
+export const FIELD_MAP = {
   spacing: [
     'base',
     'none',
@@ -113,6 +141,25 @@ export function formatMerceManifest(dictionary, options) {
   if (options.variant) {
     manifest.variant = options.variant;
   }
+
+  if (Array.isArray(options.fonts) && options.fonts.length > 0) {
+    manifest.fonts = options.fonts.map((font) => ({
+      family: font.family,
+      source: font.destination,
+      weight: font.weight,
+      style: font.style ?? 'normal',
+      required: font.required !== false,
+    }));
+  }
+
+  manifest.colors = Object.fromEntries(
+    Object.entries(COLOR_FIELD_MAP).map(([groupName, fields]) => [
+      groupName,
+      Object.fromEntries(
+        fields.map(([name, tokenPath]) => [name, requiredValue(tokenValues, tokenPath)]),
+      ),
+    ]),
+  );
 
   for (const [section, fields] of Object.entries(FIELD_MAP)) {
     manifest[section] = Object.fromEntries(

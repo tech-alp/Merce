@@ -2,6 +2,13 @@
 
 This workspace converts reviewed DTCG token sources into Merce runtime manifest JSON files. Merce runtime does not require Node or Style Dictionary.
 
+The current source files use DTCG-style `$value` / `$type` metadata and are
+processed by Style Dictionary. They are not yet strict DTCG 2025.10 source:
+colors are authored as hex strings, dimensions are authored as bare numbers,
+and generated font fields use one Qt-loadable family name instead of CSS font
+stacks. The generated runtime manifests are intentionally Qt-friendly Merce
+manifests, not public DTCG interchange files.
+
 ## Scope
 
 - Source tokens live under `tools/design-tokens/tokens/`.
@@ -17,9 +24,9 @@ This workspace converts reviewed DTCG token sources into Merce runtime manifest 
 
 ## Reference Themes
 
-`apple`, `claude`, and `airbnb` are reference themes converted from public VoltAgent `awesome-design-md` `DESIGN.md` files into reviewed DTCG source tokens. They intentionally map only into Merce runtime sections (`palette`, `spacing`, `radius`, and `typography`). Component-level guidance, imagery rules, shadows, and motion notes from the source `DESIGN.md` files are not emitted into runtime manifests.
+`apple`, `claude`, `airbnb`, and `linear` are reference themes converted from public `DESIGN.md` files into reviewed DTCG source tokens. They intentionally map only into Merce runtime sections (`colors`, `spacing`, `radius`, and `typography`). Component-level guidance, imagery rules, shadows, and motion notes from the source `DESIGN.md` files are not emitted into runtime manifests.
 
-Proprietary font family names are preserved as font stack preferences, but no third-party font files are vendored by this workspace.
+Typography manifests must use one Qt-loadable family name per field. Proprietary font family names are not proof that files are licensed or packaged. Licensed runtime font files should be handled through Merce font asset metadata rather than generic typography tokens.
 
 ## Manifest Shape
 
@@ -28,7 +35,7 @@ Generated manifests use shallow semantic sections aligned with the C++ runtime:
 - `schemaVersion`
 - `theme`
 - optional `variant`
-- `palette`
+- `colors`
 - `spacing`
 - `radius`
 - `typography`
@@ -39,7 +46,7 @@ Generated manifests do not expose raw DTCG paths or compatibility sections from 
 
 Phase 3 runtime apply validates and applies these manifest-backed sections:
 
-- `palette`
+- `colors`
 - `spacing`
 - `radius`
 - `typography`

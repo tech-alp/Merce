@@ -1,5 +1,5 @@
 import QtQuick
-import Merce.Core
+import Merce.Theme
 import Merce.Foundation
 import Merce.Controls
 
@@ -13,9 +13,9 @@ Rectangle {
     signal themeSelected(var value)
     signal modeSelected(var value)
 
-    color: Theme.palette.backgroundBase
+    color: Theme.colors.background.base
 
-    ThemedText {
+    AppLabel {
         id: titleText
         anchors {
             left: parent.left
@@ -23,10 +23,10 @@ Rectangle {
             verticalCenter: parent.verticalCenter
         }
         width: Math.max(160, parent.width - selectorRow.width - Theme.spacing.xl * 3)
-        type: "h3"
+        textType: AppLabel.H3
         text: root.pageTitle
-        textColor: Theme.palette.textPrimary
-        wrap: "word"
+        color: Theme.colors.text.primary
+        wrapMode: Text.WordWrap
     }
 
     Row {
@@ -67,6 +67,6 @@ Rectangle {
             bottom: parent.bottom
         }
         height: 1
-        color: Theme.palette.borderBase
+        color: Theme.colors.border.base
     }
 }

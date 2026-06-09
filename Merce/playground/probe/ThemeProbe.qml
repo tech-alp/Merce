@@ -1,5 +1,5 @@
 import QtQml
-import Merce.Core
+import Merce.Theme
 
 QtObject {
     function fail(message, values) {
@@ -8,9 +8,9 @@ QtObject {
     }
 
     Component.onCompleted: {
-        const backgroundBase = String(Theme.palette.backgroundBase).toLowerCase()
-        const textPrimary = String(Theme.palette.textPrimary).toLowerCase()
-        const actionPrimary = String(Theme.palette.actionPrimary).toLowerCase()
+        const backgroundBase = String(Theme.colors.background.base).toLowerCase()
+        const textPrimary = String(Theme.colors.text.primary).toLowerCase()
+        const actionPrimary = String(Theme.colors.action.primary).toLowerCase()
         const bodyFont = String(Theme.typography.fontBody)
 
         if (backgroundBase !== "#faf8f6"
@@ -18,7 +18,7 @@ QtObject {
                 || actionPrimary !== "#c4785a"
                 || Theme.spacing.md !== 16
                 || Theme.radius.button !== 12
-                || bodyFont !== "DM Sans"
+                || bodyFont !== "Inter"
                 || Theme.iconography.small !== 20
                 || Theme.breakpoints.large !== 1024
                 || Theme.activeBrand !== "merce"
@@ -38,9 +38,9 @@ QtObject {
         }
 
         console.log("theme-probe ok",
-                    Theme.palette.backgroundBase,
-                    Theme.palette.textPrimary,
-                    Theme.palette.actionPrimary,
+                    Theme.colors.background.base,
+                    Theme.colors.text.primary,
+                    Theme.colors.action.primary,
                     Theme.spacing.md,
                     Theme.radius.button,
                     bodyFont,

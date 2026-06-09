@@ -21,10 +21,10 @@ QML application and component authors can use a stable, typed `Theme` API while 
 - [x] Generate versioned Merce runtime manifests without exposing public QML token files. Validated in Phase 2 with committed manifests under `generated/themes/`.
 - [x] Package generated theme manifests through Qt resources using `:/merce/themes/index.json` as the authoritative path registry. Validated in Phase 3 with MerceCore-owned resources and configure-time index validation.
 - [x] Keep component consumers unaware of raw DTCG paths, generated manifests, and internal token storage. Validated in Phase 3 by applying validated manifest data behind the existing typed `Theme` API.
+- [x] Provide runtime theme switching for Merce components without changing Qt Quick Controls style families at runtime. Validated in Phase 4 with `Theme.setTheme(brand, mode)`, active brand/mode state, QtTest coverage, and an offscreen QML binding probe.
 
 ### Active
 
-- [ ] Provide runtime theme switching for Merce components without changing Qt Quick Controls style families at runtime.
 - [ ] Keep the system usable as an internal project while avoiding closed, app-specific assumptions that would block open-source use.
 
 ### Out of Scope
@@ -46,6 +46,7 @@ QML application and component authors can use a stable, typed `Theme` API while 
 - New architectural direction: keep DTCG as source, use Style Dictionary v5 to produce a resolved Merce runtime manifest, and implement typed theme objects in C++.
 - Phase 2 added `generated/themes/index.json` as the authoritative manifest path registry; future loaders should not derive file paths from theme and variant names.
 - Phase 3 packages generated manifests into `MerceCore` resources under `:/merce/themes/`, validates registry entries, and applies the default manifest to palette, spacing, radius, and typography.
+- Phase 4 adds runtime brand/mode switching through `Theme.setTheme(brand, mode)`, keeps top-level Theme object pointers stable, updates values through sub-object notify signals, and verifies QML binding updates with `MercePlayground --theme-switch-probe`.
 - QML intellisense can struggle with deep chained objects such as `Theme.colors.text.primary`; a shallower C++ API such as `Theme.palette.textPrimary` is preferred for the runtime layer.
 
 ## Constraints
@@ -68,6 +69,7 @@ QML application and component authors can use a stable, typed `Theme` API while 
 | Emit resolved Merce theme manifests, not public QML token files | Runtime manifest is simpler for C++ and keeps generated artifacts out of the component contract | Validated in Phase 2 |
 | Use `index.json` as the authoritative manifest path registry | Supports sparse single-manifest and variant-backed themes without fabricated modes | Validated in Phase 3 |
 | Apply manifests behind the existing typed `Theme` API | Keeps components independent from generated manifest shape and preserves Phase 1 QML contract | Validated in Phase 3 |
+| Expose runtime switching as public brand/mode API | Keeps QML vocabulary stable while the C++ loader continues using internal theme/variant registry terminology | Validated in Phase 4 |
 | Prefer shallower QML API names | Improves intellisense and reduces brittle deep chaining | Validated in Phase 1 through `Theme.palette.*` aliases |
 
 ## Evolution
@@ -88,4 +90,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-03 after Phase 3 completion*
+*Last updated: 2026-06-04 after Phase 4 completion*

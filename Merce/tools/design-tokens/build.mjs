@@ -1,4 +1,4 @@
-import { mkdir, rm, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import StyleDictionary from 'style-dictionary';
 import { formatMerceManifest } from './src/merce-manifest-format.mjs';
@@ -25,7 +25,10 @@ const registry = await loadThemeRegistry();
 const index = generatedIndex(registry);
 await writeFile(path.join(GENERATED_DIR, 'index.json'), `${JSON.stringify(index, null, 2)}\n`);
 
-for (const entry of themeEntries(registry)) {
+const entries = themeEntries(registry);
+await copyFontAssets(entries);
+
+for (const entry of entries) {
   const sd = new StyleDictionary({
     source: entry.source.map((sourcePath) => resolveRegistryPath(sourcePath, TOOL_ROOT)),
     platforms: {
@@ -37,6 +40,7 @@ for (const entry of themeEntries(registry)) {
           options: {
             theme: entry.theme,
             variant: entry.variant,
+            fonts: entry.fonts,
           },
         }],
       },
@@ -55,4 +59,20 @@ for (const entry of themeEntries(registry)) {
     theme: entry.theme,
     variant: entry.variant,
   });
+}
+
+async function copyFontAssets(entries) {
+  const copied = new Set();
+  for (const entry of entries) {
+    for (const font of entry.fonts ?? []) {
+      if (copied.has(font.destination))
+        continue;
+
+      const sourcePath = resolveRegistryPath(font.source, TOOL_ROOT);
+      const destinationPath = path.join(GENERATED_DIR, font.destination);
+      await mkdir(path.dirname(destinationPath), { recursive: true });
+      await copyFile(sourcePath, destinationPath);
+      copied.add(font.destination);
+    }
+  }
 }

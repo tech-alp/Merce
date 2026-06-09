@@ -1,25 +1,20 @@
-function(merce_add_qtest target source)
-    qt_add_executable(${target}
-        ${source}
-    )
+qt_add_executable(tst_merce_core_runtime
+    tst_merce_test_harness.cpp
+)
 
-    target_link_libraries(${target}
-        PRIVATE
-            MerceCore
-            Qt6::Core
-            Qt6::Test
-    )
+target_link_libraries(tst_merce_core_runtime
+    PRIVATE
+        MerceCore
+        Qt6::Core
+        Qt6::Test
+)
 
-    target_include_directories(${target}
-        PRIVATE
-            "${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Theme"
-    )
+target_include_directories(tst_merce_core_runtime
+    PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../Core/BuildInfo"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Resources"
+)
 
-    add_test(NAME ${target}
-        COMMAND ${target}
-    )
-endfunction()
-
-merce_add_qtest(tst_merce_test_harness tst_merce_test_harness.cpp)
-merce_add_qtest(tst_merce_theme_manifest_loader tst_merce_theme_manifest_loader.cpp)
-merce_add_qtest(tst_merce_theme_runtime_switch tst_merce_theme_runtime_switch.cpp)
+add_test(NAME tst_merce_core_runtime
+    COMMAND tst_merce_core_runtime
+)

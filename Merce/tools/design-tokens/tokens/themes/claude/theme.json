@@ -1,202 +1,4 @@
 {
-  "palette": {
-    "raw": {
-      "primary": {
-        "$type": "color",
-        "$value": "#CC785C"
-      },
-      "primaryActive": {
-        "$type": "color",
-        "$value": "#A9583E"
-      },
-      "primaryDisabled": {
-        "$type": "color",
-        "$value": "#E6DFD8"
-      },
-      "ink": {
-        "$type": "color",
-        "$value": "#141413"
-      },
-      "body": {
-        "$type": "color",
-        "$value": "#3D3D3A"
-      },
-      "bodyStrong": {
-        "$type": "color",
-        "$value": "#252523"
-      },
-      "muted": {
-        "$type": "color",
-        "$value": "#6C6A64"
-      },
-      "mutedSoft": {
-        "$type": "color",
-        "$value": "#8E8B82"
-      },
-      "hairline": {
-        "$type": "color",
-        "$value": "#E6DFD8"
-      },
-      "hairlineSoft": {
-        "$type": "color",
-        "$value": "#EBE6DF"
-      },
-      "canvas": {
-        "$type": "color",
-        "$value": "#FAF9F5"
-      },
-      "surfaceSoft": {
-        "$type": "color",
-        "$value": "#F5F0E8"
-      },
-      "surfaceCard": {
-        "$type": "color",
-        "$value": "#EFE9DE"
-      },
-      "surfaceCreamStrong": {
-        "$type": "color",
-        "$value": "#E8E0D2"
-      },
-      "surfaceDark": {
-        "$type": "color",
-        "$value": "#181715"
-      },
-      "surfaceDarkElevated": {
-        "$type": "color",
-        "$value": "#252320"
-      },
-      "surfaceDarkSoft": {
-        "$type": "color",
-        "$value": "#1F1E1B"
-      },
-      "onPrimary": {
-        "$type": "color",
-        "$value": "#FFFFFF"
-      },
-      "onDark": {
-        "$type": "color",
-        "$value": "#FAF9F5"
-      },
-      "onDarkSoft": {
-        "$type": "color",
-        "$value": "#A09D96"
-      },
-      "accentTeal": {
-        "$type": "color",
-        "$value": "#5DB8A6"
-      },
-      "accentAmber": {
-        "$type": "color",
-        "$value": "#E8A55A"
-      },
-      "success": {
-        "$type": "color",
-        "$value": "#5DB872"
-      },
-      "warning": {
-        "$type": "color",
-        "$value": "#D4A017"
-      },
-      "error": {
-        "$type": "color",
-        "$value": "#C64545"
-      }
-    },
-    "semantic": {
-      "textPrimary": {
-        "$type": "color",
-        "$value": "{palette.raw.ink}"
-      },
-      "textSecondary": {
-        "$type": "color",
-        "$value": "{palette.raw.body}"
-      },
-      "textTertiary": {
-        "$type": "color",
-        "$value": "{palette.raw.muted}"
-      },
-      "textInverse": {
-        "$type": "color",
-        "$value": "{palette.raw.onDark}"
-      },
-      "link": {
-        "$type": "color",
-        "$value": "{palette.raw.primary}"
-      },
-      "backgroundBase": {
-        "$type": "color",
-        "$value": "{palette.raw.canvas}"
-      },
-      "backgroundSurface": {
-        "$type": "color",
-        "$value": "{palette.raw.canvas}"
-      },
-      "backgroundElevated": {
-        "$type": "color",
-        "$value": "{palette.raw.surfaceCard}"
-      },
-      "backgroundHover": {
-        "$type": "color",
-        "$value": "{palette.raw.surfaceSoft}"
-      },
-      "backgroundPressed": {
-        "$type": "color",
-        "$value": "{palette.raw.surfaceCard}"
-      },
-      "actionPrimary": {
-        "$type": "color",
-        "$value": "{palette.raw.primary}"
-      },
-      "actionPrimaryLight": {
-        "$type": "color",
-        "$value": "{palette.raw.primaryDisabled}"
-      },
-      "actionPrimaryDark": {
-        "$type": "color",
-        "$value": "{palette.raw.primaryActive}"
-      },
-      "actionSecondary": {
-        "$type": "color",
-        "$value": "{palette.raw.accentTeal}"
-      },
-      "borderBase": {
-        "$type": "color",
-        "$value": "{palette.raw.hairline}"
-      },
-      "borderStrong": {
-        "$type": "color",
-        "$value": "{palette.raw.surfaceCreamStrong}"
-      },
-      "borderFocus": {
-        "$type": "color",
-        "$value": "{palette.raw.primary}"
-      },
-      "statusError": {
-        "$type": "color",
-        "$value": "{palette.raw.error}"
-      },
-      "statusSuccess": {
-        "$type": "color",
-        "$value": "{palette.raw.success}"
-      },
-      "statusWarning": {
-        "$type": "color",
-        "$value": "{palette.raw.warning}"
-      },
-      "statusInfo": {
-        "$type": "color",
-        "$value": "{palette.raw.accentTeal}"
-      },
-      "surfaceBase": {
-        "$type": "color",
-        "$value": "{palette.raw.canvas}"
-      },
-      "surfaceTinted": {
-        "$type": "color",
-        "$value": "{palette.raw.surfaceSoft}"
-      }
-    }
-  },
   "spacing": {
     "base": {
       "$type": "dimension",
@@ -328,23 +130,23 @@
   "typography": {
     "displayFont": {
       "$type": "fontFamily",
-      "$value": "Copernicus, Tiempos Headline, Georgia, serif"
+      "$value": "Inter"
     },
     "bodyFont": {
       "$type": "fontFamily",
-      "$value": "StyreneB, Inter, -apple-system, BlinkMacSystemFont, sans-serif"
+      "$value": "Inter"
     },
     "monoFont": {
       "$type": "fontFamily",
-      "$value": "JetBrains Mono, ui-monospace, Menlo, monospace"
+      "$value": "Roboto Mono"
     },
     "displayFontFallback": {
       "$type": "fontFamily",
-      "$value": "Georgia, Times New Roman, serif"
+      "$value": "Inter"
     },
     "bodyFontFallback": {
       "$type": "fontFamily",
-      "$value": "Inter, -apple-system, BlinkMacSystemFont, sans-serif"
+      "$value": "Inter"
     },
     "sizeXSmall": {
       "$type": "dimension",
@@ -433,6 +235,226 @@
     "trackingWidest": {
       "$type": "number",
       "$value": 0.1
+    }
+  },
+  "color": {
+    "palette": {
+      "primary": {
+        "$type": "color",
+        "$value": "#CC785C"
+      },
+      "primaryActive": {
+        "$type": "color",
+        "$value": "#A9583E"
+      },
+      "primaryDisabled": {
+        "$type": "color",
+        "$value": "#E6DFD8"
+      },
+      "ink": {
+        "$type": "color",
+        "$value": "#141413"
+      },
+      "body": {
+        "$type": "color",
+        "$value": "#3D3D3A"
+      },
+      "bodyStrong": {
+        "$type": "color",
+        "$value": "#252523"
+      },
+      "muted": {
+        "$type": "color",
+        "$value": "#6C6A64"
+      },
+      "mutedSoft": {
+        "$type": "color",
+        "$value": "#8E8B82"
+      },
+      "hairline": {
+        "$type": "color",
+        "$value": "#E6DFD8"
+      },
+      "hairlineSoft": {
+        "$type": "color",
+        "$value": "#EBE6DF"
+      },
+      "canvas": {
+        "$type": "color",
+        "$value": "#FAF9F5"
+      },
+      "surfaceSoft": {
+        "$type": "color",
+        "$value": "#F5F0E8"
+      },
+      "surfaceCard": {
+        "$type": "color",
+        "$value": "#EFE9DE"
+      },
+      "surfaceCreamStrong": {
+        "$type": "color",
+        "$value": "#E8E0D2"
+      },
+      "surfaceDark": {
+        "$type": "color",
+        "$value": "#181715"
+      },
+      "surfaceDarkElevated": {
+        "$type": "color",
+        "$value": "#252320"
+      },
+      "surfaceDarkSoft": {
+        "$type": "color",
+        "$value": "#1F1E1B"
+      },
+      "onPrimary": {
+        "$type": "color",
+        "$value": "#FFFFFF"
+      },
+      "onDark": {
+        "$type": "color",
+        "$value": "#FAF9F5"
+      },
+      "onDarkSoft": {
+        "$type": "color",
+        "$value": "#A09D96"
+      },
+      "accentTeal": {
+        "$type": "color",
+        "$value": "#5DB8A6"
+      },
+      "accentAmber": {
+        "$type": "color",
+        "$value": "#E8A55A"
+      },
+      "success": {
+        "$type": "color",
+        "$value": "#5DB872"
+      },
+      "warning": {
+        "$type": "color",
+        "$value": "#D4A017"
+      },
+      "error": {
+        "$type": "color",
+        "$value": "#C64545"
+      }
+    },
+    "text": {
+      "primary": {
+        "$type": "color",
+        "$value": "{color.palette.ink}"
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "{color.palette.body}"
+      },
+      "tertiary": {
+        "$type": "color",
+        "$value": "{color.palette.muted}"
+      },
+      "inverse": {
+        "$type": "color",
+        "$value": "{color.palette.onDark}"
+      },
+      "link": {
+        "$type": "color",
+        "$value": "{color.palette.primary}"
+      }
+    },
+    "background": {
+      "base": {
+        "$type": "color",
+        "$value": "{color.palette.canvas}"
+      },
+      "surface": {
+        "$type": "color",
+        "$value": "{color.palette.canvas}"
+      },
+      "elevated": {
+        "$type": "color",
+        "$value": "{color.palette.surfaceCard}"
+      },
+      "hover": {
+        "$type": "color",
+        "$value": "{color.palette.surfaceSoft}"
+      },
+      "pressed": {
+        "$type": "color",
+        "$value": "{color.palette.surfaceCard}"
+      },
+      "tinted": {
+        "$type": "color",
+        "$value": "{color.palette.surfaceSoft}"
+      }
+    },
+    "action": {
+      "primary": {
+        "$type": "color",
+        "$value": "{color.palette.primary}"
+      },
+      "primarySubtle": {
+        "$type": "color",
+        "$value": "{color.palette.primaryDisabled}"
+      },
+      "primaryPressed": {
+        "$type": "color",
+        "$value": "{color.palette.primaryActive}"
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "{color.palette.accentTeal}"
+      },
+      "primaryHover": {
+        "$type": "color",
+        "$value": "{color.palette.primaryActive}"
+      }
+    },
+    "border": {
+      "base": {
+        "$type": "color",
+        "$value": "{color.palette.hairline}"
+      },
+      "strong": {
+        "$type": "color",
+        "$value": "{color.palette.surfaceCreamStrong}"
+      },
+      "focus": {
+        "$type": "color",
+        "$value": "{color.palette.primary}"
+      }
+    },
+    "status": {
+      "error": {
+        "$type": "color",
+        "$value": "{color.palette.error}"
+      },
+      "success": {
+        "$type": "color",
+        "$value": "{color.palette.success}"
+      },
+      "warning": {
+        "$type": "color",
+        "$value": "{color.palette.warning}"
+      },
+      "info": {
+        "$type": "color",
+        "$value": "{color.palette.accentTeal}"
+      }
+    },
+    "surface": {
+      "base": {
+        "$type": "color",
+        "$value": "{color.palette.canvas}"
+      },
+      "tinted": {
+        "$type": "color",
+        "$value": "{color.palette.surfaceSoft}"
+      },
+      "raised": {
+        "$type": "color",
+        "$value": "{color.palette.surfaceCard}"
+      }
     }
   }
 }

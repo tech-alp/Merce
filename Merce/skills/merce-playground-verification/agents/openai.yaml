@@ -1,0 +1,4 @@
+interface:
+  display_name: "Merce Playground Verification"
+  short_description: "Run Merce playground gates"
+  default_prompt: "Use $merce-playground-verification to run the Merce playground verification gates and summarize failures."

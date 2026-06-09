@@ -1,5 +1,7 @@
 qt_add_executable(MercePlayground
     main.cpp
+    PlaygroundThemeBuilder.cpp
+    PlaygroundThemeBuilder.h
 )
 
 set(MERCE_PLAYGROUND_VIEW_QML
@@ -8,12 +10,17 @@ set(MERCE_PLAYGROUND_VIEW_QML
     view/FeedbackShowcase.qml
     view/IconsShowcase.qml
     view/PaletteShowcase.qml
+    view/PlaceholderShowcase.qml
+    view/SpacingRadiusShowcase.qml
     view/ThemeGalleryExport.qml
     view/ThemeGallery.qml
+    view/ThemeBuilderShowcase.qml
     view/TypographyShowcase.qml
 )
 
 set(MERCE_PLAYGROUND_COMPONENT_QML
+    component/ColorPicker.qml
+    component/ColorTokenCard.qml
     component/MerceToastifyStyleProvider.qml
     component/MerceLogo.qml
     component/NavigationBar.qml
@@ -27,6 +34,7 @@ set(MERCE_PLAYGROUND_PROBE_QML
     probe/FontAwesomeGridProbe.qml
     probe/FontAwesomeIconProbe.qml
     probe/PlaygroundProbe.qml
+    probe/ThemeBuilderProbe.qml
     probe/ThemeGalleryProbe.qml
     probe/ThemeProbe.qml
     probe/ThemeSwitchProbe.qml
@@ -58,7 +66,9 @@ target_link_libraries(MercePlayground
         Qt6::Quick
         Qt6::Qml
         MerceCore
-        MerceCoreEffects
+        MercePlatform
+        MerceTheme
+        MerceEffects
         MerceFoundation
         MerceIconsFontAwesome
         MerceControls
