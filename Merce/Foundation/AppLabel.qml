@@ -27,7 +27,7 @@ T.Label {
     required property int textType
     property bool selectable: false
 
-    final property int minTouchArea: Theme.spacing.touchTarget
+    property int minTouchArea: Theme.spacing.touchTarget
 
     font.family: FoundationFonts.resolveFamily(typographyStyle.family || Theme.typography.fontBody)
     font.pixelSize: typographyStyle.size || Theme.typography.sizeMedium

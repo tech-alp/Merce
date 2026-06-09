@@ -16,20 +16,20 @@ Item {
     // ====================================================================
     // VIRTUAL PROPERTIES (Can be overridden by child components)
     // ====================================================================
-    virtual property color accentColor: Theme.colors.action.primary
-    virtual property color accentHoverColor: Theme.colors.action.primaryHover
-    virtual property color backgroundColor: "transparent"
-    virtual property int radiusValue: Theme.radius.button
+    property color accentColor: Theme.colors.action.primary
+    property color accentHoverColor: Theme.colors.action.primaryHover
+    property color backgroundColor: "transparent"
+    property int radiusValue: Theme.radius.button
 
     // State colors
-    virtual property color disabledColor: Theme.colors.text.disabled
-    virtual property color disabledBackground: Theme.colors.background.hover
+    property color disabledColor: Theme.colors.text.disabled
+    property color disabledBackground: Theme.colors.background.hover
 
     // ====================================================================
     // FINAL PROPERTIES (System standards - cannot be overridden)
     // ====================================================================
-    final property int touchTarget: Theme.spacing.touchTarget
-    final property int touchTargetCompact: Theme.spacing.touchTargetCompact
+    property int touchTarget: Theme.spacing.touchTarget
+    property int touchTargetCompact: Theme.spacing.touchTargetCompact
 
     // ====================================================================
     // STATE PROPERTIES
@@ -56,8 +56,8 @@ Item {
     implicitWidth: Math.max(contentWidth, touchTarget)
     implicitHeight: Math.max(contentHeight, touchTarget)
 
-    virtual property int contentWidth: 120
-    virtual property int contentHeight: Theme.spacing.xl
+    property int contentWidth: 120
+    property int contentHeight: Theme.spacing.xl
 
     // ====================================================================
     // VISUAL FEEDBACK

@@ -31,8 +31,8 @@ BaseControl {
     // ====================================================================
     // OVERRIDDEN PROPERTIES
     // ====================================================================
-    override property color accentColor: Theme.colors.action.primary
-    override property color backgroundColor: "transparent"
+    property color accentColor: Theme.colors.action.primary
+    property color backgroundColor: "transparent"
 
     // ====================================================================
     // SIZE CONFIG
@@ -55,8 +55,8 @@ BaseControl {
     // ====================================================================
     // DIMENSIONS
     // ====================================================================
-    override property int contentWidth: switchTrack.width + (label !== "" ? textMetrics.width + Theme.spacing.sm : 0)
-    override property int contentHeight: Math.max(switchTrack.height, textMetrics.height)
+    property int contentWidth: switchTrack.width + (label !== "" ? textMetrics.width + Theme.spacing.sm : 0)
+    property int contentHeight: Math.max(switchTrack.height, textMetrics.height)
 
     // ====================================================================
     // VISUAL STATES

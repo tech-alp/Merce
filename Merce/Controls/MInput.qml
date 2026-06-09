@@ -41,12 +41,12 @@ Surface {
     // ====================================================================
     // OVERRIDEN PROPERTIES
     // ====================================================================
-    override property color backgroundColor: {
+    property color backgroundColor: {
         if (root.isDisabled) return Theme.colors.background.hover
         return Theme.colors.background.surface
     }
 
-    override property color borderColor: {
+    property color borderColor: {
         if (root.isDisabled) return Theme.colors.border.base
         if (root.validationState === MInput.Error) return Theme.colors.border.error
         if (root.validationState === MInput.Success) return Theme.colors.border.success
@@ -55,8 +55,8 @@ Surface {
         return Theme.colors.border.base
     }
 
-    override property int borderWidth: root.isFocused ? 2 : 1
-    override property int radiusValue: Theme.radius.input
+    property int borderWidth: root.isFocused ? 2 : 1
+    property int radiusValue: Theme.radius.input
 
     // ====================================================================
     // DIMENSIONS

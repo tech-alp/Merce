@@ -24,13 +24,13 @@ Rectangle {
     required property int surfaceType
 
     // Customizable properties
-    virtual property color backgroundColor: Theme.colors.background.surface
-    virtual property color borderColor: Theme.colors.border.base
-    virtual property int borderWidth: 1
-    virtual property int radiusValue: Theme.radius.medium
+    property color backgroundColor: Theme.colors.background.surface
+    property color borderColor: Theme.colors.border.base
+    property int borderWidth: 1
+    property int radiusValue: Theme.radius.medium
 
     // Final properties (system standards - cannot be overridden)
-    final property int minTouchArea: Theme.spacing.touchTarget
+    property int minTouchArea: Theme.spacing.touchTarget
 
     // Internal state
     property bool isHovered: false

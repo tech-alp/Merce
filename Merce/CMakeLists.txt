@@ -24,10 +24,10 @@ if(MERCE_ENABLE_TOKEN_BUILD)
     )
 endif()
 
-# Qt 6.11+ required
-find_package(Qt6 6.11 REQUIRED COMPONENTS Core Gui Quick Qml)
+# Qt 6.8+ required
+find_package(Qt6 6.8 REQUIRED COMPONENTS Core Gui Quick Qml)
 
-qt_standard_project_setup(REQUIRES 6.11)
+qt_standard_project_setup(REQUIRES 6.8)
 include(CTest)
 include(FetchContent)
 set(QT_QML_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/qml")
@@ -59,7 +59,7 @@ add_subdirectory(Controls)
 add_subdirectory(Notifications)
 
 if(BUILD_TESTING)
-    find_package(Qt6 6.11 REQUIRED COMPONENTS Test)
+    find_package(Qt6 6.8 REQUIRED COMPONENTS Test)
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests/CMakeLists.txt")
         add_subdirectory(tests)
     endif()
