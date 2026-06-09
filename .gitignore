@@ -34,6 +34,9 @@ ui_*.h
 MerceConfigVersion.cmake
 MerceTargets.cmake
 
+# Node dependencies
+tools/design-tokens/node_modules/
+
 # Logs
 *.log
 
