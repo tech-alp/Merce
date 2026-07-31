@@ -3,8 +3,6 @@
 
 #include <QDir>
 #include <QFile>
-#include <QFontDatabase>
-#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QTemporaryDir>
@@ -12,206 +10,48 @@
 
 namespace {
 
-QJsonObject objectFromPairs(const QList<QPair<QString, QJsonValue>> &pairs)
-{
-    QJsonObject object;
-    for (const auto &pair : pairs)
-        object.insert(pair.first, pair.second);
-    return object;
-}
-
-QJsonObject colorsSection()
-{
-    return {
-        { QStringLiteral("text"), QJsonObject{
-            { QStringLiteral("primary"), QStringLiteral("#111111") },
-            { QStringLiteral("secondary"), QStringLiteral("#222222") },
-            { QStringLiteral("tertiary"), QStringLiteral("#333333") },
-            { QStringLiteral("inverse"), QStringLiteral("#ffffff") },
-            { QStringLiteral("disabled"), QStringLiteral("#aaaaaa") },
-            { QStringLiteral("link"), QStringLiteral("#0000ff") },
-            { QStringLiteral("linkHover"), QStringLiteral("#000099") },
-        } },
-        { QStringLiteral("background"), QJsonObject{
-            { QStringLiteral("base"), QStringLiteral("#fafafa") },
-            { QStringLiteral("subtle"), QStringLiteral("#f0f0f0") },
-            { QStringLiteral("overlay"), QStringLiteral("#000000") },
-        } },
-        { QStringLiteral("border"), QJsonObject{
-            { QStringLiteral("base"), QStringLiteral("#cccccc") },
-            { QStringLiteral("strong"), QStringLiteral("#999999") },
-            { QStringLiteral("focus"), QStringLiteral("#777777") },
-            { QStringLiteral("disabled"), QStringLiteral("#dddddd") },
-        } },
-        { QStringLiteral("action"), QJsonObject{
-            { QStringLiteral("primary"), QStringLiteral("#444444") },
-            { QStringLiteral("primaryHover"), QStringLiteral("#333333") },
-            { QStringLiteral("primaryPressed"), QStringLiteral("#222222") },
-            { QStringLiteral("primarySubtle"), QStringLiteral("#555555") },
-            { QStringLiteral("secondary"), QStringLiteral("#666666") },
-            { QStringLiteral("secondaryHover"), QStringLiteral("#555555") },
-            { QStringLiteral("secondaryPressed"), QStringLiteral("#444444") },
-            { QStringLiteral("disabled"), QStringLiteral("#aaaaaa") },
-        } },
-        { QStringLiteral("status"), QJsonObject{
-            { QStringLiteral("success"), QJsonObject{
-                { QStringLiteral("foreground"), QStringLiteral("#00ff00") },
-                { QStringLiteral("background"), QStringLiteral("#ccffcc") },
-                { QStringLiteral("border"), QStringLiteral("#00ff00") },
-                { QStringLiteral("strong"), QStringLiteral("#00ff00") },
-                { QStringLiteral("onStrong"), QStringLiteral("#ffffff") },
-            } },
-            { QStringLiteral("warning"), QJsonObject{
-                { QStringLiteral("foreground"), QStringLiteral("#111111") },
-                { QStringLiteral("background"), QStringLiteral("#ffffcc") },
-                { QStringLiteral("border"), QStringLiteral("#ffff00") },
-                { QStringLiteral("strong"), QStringLiteral("#ffff00") },
-                { QStringLiteral("onStrong"), QStringLiteral("#111111") },
-            } },
-            { QStringLiteral("error"), QJsonObject{
-                { QStringLiteral("foreground"), QStringLiteral("#ff0000") },
-                { QStringLiteral("background"), QStringLiteral("#ffcccc") },
-                { QStringLiteral("border"), QStringLiteral("#ff0000") },
-                { QStringLiteral("strong"), QStringLiteral("#ff0000") },
-                { QStringLiteral("onStrong"), QStringLiteral("#ffffff") },
-            } },
-            { QStringLiteral("info"), QJsonObject{
-                { QStringLiteral("foreground"), QStringLiteral("#0000ff") },
-                { QStringLiteral("background"), QStringLiteral("#ccccff") },
-                { QStringLiteral("border"), QStringLiteral("#0000ff") },
-                { QStringLiteral("strong"), QStringLiteral("#0000ff") },
-                { QStringLiteral("onStrong"), QStringLiteral("#ffffff") },
-            } },
-        } },
-        { QStringLiteral("surface"), QJsonObject{
-            { QStringLiteral("base"), QStringLiteral("#ffffff") },
-            { QStringLiteral("tinted"), QStringLiteral("#f0f0f0") },
-            { QStringLiteral("raised"), QStringLiteral("#ffffff") },
-            { QStringLiteral("hover"), QStringLiteral("#eeeeee") },
-            { QStringLiteral("pressed"), QStringLiteral("#dddddd") },
-            { QStringLiteral("disabled"), QStringLiteral("#f0f0f0") },
-        } },
-    };
-}
-
-QJsonObject fullManifest(const QString &theme, const QString &variant = QString())
-{
-    QJsonObject manifest;
-    manifest.insert(QStringLiteral("schemaVersion"), 1);
-    manifest.insert(QStringLiteral("theme"), theme);
-    if (!variant.isEmpty())
-        manifest.insert(QStringLiteral("variant"), variant);
-
-    manifest.insert(QStringLiteral("colors"), colorsSection());
-
-    manifest.insert(QStringLiteral("spacing"), objectFromPairs({
-        { QStringLiteral("base"), 8 },
-        { QStringLiteral("none"), 0 },
-        { QStringLiteral("xxs"), 4 },
-        { QStringLiteral("xs"), 8 },
-        { QStringLiteral("sm"), 12 },
-        { QStringLiteral("md"), 16 },
-        { QStringLiteral("lg"), 20 },
-        { QStringLiteral("xl"), 24 },
-        { QStringLiteral("xl2"), 32 },
-        { QStringLiteral("xl3"), 40 },
-        { QStringLiteral("xl4"), 48 },
-        { QStringLiteral("xl5"), 64 },
-        { QStringLiteral("xl6"), 80 },
-        { QStringLiteral("componentGap"), 16 },
-        { QStringLiteral("sectionGap"), 48 },
-        { QStringLiteral("pagePadding"), 24 },
-        { QStringLiteral("touchTarget"), 44 },
-        { QStringLiteral("touchTargetCompact"), 36 },
-        { QStringLiteral("gridGap"), 16 },
-        { QStringLiteral("stackGap"), 12 },
-        { QStringLiteral("inlineGap"), 8 },
-    }));
-
-    manifest.insert(QStringLiteral("radius"), objectFromPairs({
-        { QStringLiteral("none"), 0 },
-        { QStringLiteral("small"), 4 },
-        { QStringLiteral("medium"), 8 },
-        { QStringLiteral("large"), 12 },
-        { QStringLiteral("xlarge"), 16 },
-        { QStringLiteral("xxlarge"), 24 },
-        { QStringLiteral("full"), 9999 },
-        { QStringLiteral("button"), 12 },
-        { QStringLiteral("input"), 8 },
-        { QStringLiteral("card"), 16 },
-        { QStringLiteral("badge"), 9999 },
-        { QStringLiteral("dialog"), 24 },
-        { QStringLiteral("tooltip"), 4 },
-    }));
-
-    manifest.insert(QStringLiteral("typography"), objectFromPairs({
-        { QStringLiteral("displayFont"), QStringLiteral("Display") },
-        { QStringLiteral("bodyFont"), QStringLiteral("Body") },
-        { QStringLiteral("monoFont"), QStringLiteral("Mono") },
-        { QStringLiteral("displayFontFallback"), QStringLiteral("Inter") },
-        { QStringLiteral("bodyFontFallback"), QStringLiteral("Inter") },
-        { QStringLiteral("sizeXSmall"), 12 },
-        { QStringLiteral("sizeSmall"), 14 },
-        { QStringLiteral("sizeMedium"), 16 },
-        { QStringLiteral("sizeLarge"), 18 },
-        { QStringLiteral("sizeXLarge"), 20 },
-        { QStringLiteral("size2XLarge"), 24 },
-        { QStringLiteral("size3XLarge"), 30 },
-        { QStringLiteral("size4XLarge"), 36 },
-        { QStringLiteral("size5XLarge"), 48 },
-        { QStringLiteral("size6XLarge"), 60 },
-        { QStringLiteral("size7XLarge"), 72 },
-        { QStringLiteral("weightRegular"), 400 },
-        { QStringLiteral("weightMedium"), 500 },
-        { QStringLiteral("weightSemibold"), 600 },
-        { QStringLiteral("weightBold"), 700 },
-        { QStringLiteral("leadingTight"), 1.2 },
-        { QStringLiteral("leadingSnug"), 1.35 },
-        { QStringLiteral("leadingNormal"), 1.5 },
-        { QStringLiteral("leadingRelaxed"), 1.7 },
-        { QStringLiteral("trackingTight"), -0.02 },
-        { QStringLiteral("trackingNormal"), 0 },
-        { QStringLiteral("trackingWide"), 0.02 },
-        { QStringLiteral("trackingWider"), 0.05 },
-        { QStringLiteral("trackingWidest"), 0.1 },
-    }));
-
-    return manifest;
-}
-
-QJsonObject indexForDefaultMerce(const QString &defaultPath)
-{
-    return {
-        { QStringLiteral("schemaVersion"), 1 },
-        { QStringLiteral("defaultTheme"), QStringLiteral("merce") },
-        { QStringLiteral("themes"), QJsonObject{
-            { QStringLiteral("merce"), QJsonObject{
-                { QStringLiteral("displayName"), QStringLiteral("Merce") },
-                { QStringLiteral("defaultVariant"), QStringLiteral("light") },
-                { QStringLiteral("variants"), QJsonObject{
-                    { QStringLiteral("light"), defaultPath },
-                } },
-            } },
-        } },
-    };
-}
-
 bool writeJson(const QString &path, const QJsonObject &object)
 {
     QFile file(path);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
         return false;
-    file.write(QJsonDocument(object).toJson(QJsonDocument::Compact));
-    return true;
+    return file.write(QJsonDocument(object).toJson(QJsonDocument::Compact)) > 0;
 }
 
-bool writeRaw(const QString &path, const QByteArray &raw)
+bool writeRaw(const QString &path, const QByteArray &data)
 {
     QFile file(path);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
         return false;
-    file.write(raw);
-    return true;
+    return file.write(data) == data.size();
+}
+
+QJsonObject readJson(const QString &path)
+{
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly))
+        return {};
+    QJsonParseError error;
+    const QJsonDocument document = QJsonDocument::fromJson(file.readAll(), &error);
+    return error.error == QJsonParseError::NoError && document.isObject()
+        ? document.object() : QJsonObject{};
+}
+
+QString pathIn(const QTemporaryDir &dir, const QString &fileName)
+{
+    return QDir(dir.path()).filePath(fileName);
+}
+
+QJsonObject tenantBrand(const QString &brandId,
+                        const QString &seed,
+                        int schemaVersion = 1)
+{
+    return {
+        {QStringLiteral("kind"), QStringLiteral("tenant-brand")},
+        {QStringLiteral("tenantBrandSchemaVersion"), schemaVersion},
+        {QStringLiteral("brandId"), brandId},
+        {QStringLiteral("seed"), seed},
+    };
 }
 
 bool containsError(const QStringList &errors, const QString &needle)
@@ -223,11 +63,6 @@ bool containsError(const QStringList &errors, const QString &needle)
     return false;
 }
 
-QString pathIn(QTemporaryDir &dir, const QString &fileName)
-{
-    return QDir(dir.path()).filePath(fileName);
-}
-
 } // namespace
 
 class tst_merce_theme_manifest_loader : public QObject
@@ -235,362 +70,292 @@ class tst_merce_theme_manifest_loader : public QObject
     Q_OBJECT
 
 private slots:
-    void generatedResourceIndexLoads();
-    void generatedLinearFontAssetsLoad();
-    void unknownThemeIsRejected();
-    void unknownVariantIsRejected();
-    void unsafeManifestPathsAreRejected_data();
-    void unsafeManifestPathsAreRejected();
-    void malformedJsonReportsParseError();
-    void schemaVersionMismatchIsRejected();
-    void missingTopLevelRequiredSectionsAreRejected_data();
-    void missingTopLevelRequiredSectionsAreRejected();
-    void topLevelPaletteSectionIsRejected();
-    void rawRuntimeColorsSectionIsRejected();
-    void invalidRuntimeFieldValuesAreRejected();
-    void activeColorsCannotBorrowMissingFieldsFromBase();
-    void basePlusActiveSectionOverlaySucceeds();
-    void requestedBadManifestFallsBackToRegistryDefault();
-    void brokenDefaultReturnsFailure();
+    void generatedResourceComposesColorAndProfileRegistries();
+    void bareTenantBrandSourceIsDiscoverable();
+    void tenantSchemaVersionRejectsOlderAndNewer_data();
+    void tenantSchemaVersionRejectsOlderAndNewer();
+    void indexSchemaVersionRejectsOlderAndNewer_data();
+    void indexSchemaVersionRejectsOlderAndNewer();
+    void duplicateBrandModeIsRejectedWithoutProfileCoupling();
+    void invalidProfileMetricsAreRejected();
+    void invalidUnselectedResolvedThemeIsRejected();
+    void oversizedDocumentIsRejected();
+    void malformedJsonReportsMachineReadableError();
 };
 
-void tst_merce_theme_manifest_loader::generatedResourceIndexLoads()
+void tst_merce_theme_manifest_loader::
+    generatedResourceComposesColorAndProfileRegistries()
 {
     const MerceThemeLoadResult result = MerceThemeManifestLoader().loadDefault();
 
     QVERIFY2(result.ok, qPrintable(result.errors.join(QLatin1Char('\n'))));
-    QCOMPARE(result.theme, QStringLiteral("merce"));
-    QCOMPARE(result.variant, QStringLiteral("light"));
-    QVERIFY(result.finalManifest.contains(QStringLiteral("colors")));
-    QVERIFY(!result.finalManifest.contains(QStringLiteral("palette")));
+    QCOMPARE(result.brandId, QStringLiteral("algit"));
+    QCOMPARE(result.mode, QStringLiteral("light"));
+    QCOMPARE(result.profile, QStringLiteral("cart"));
+    QCOMPARE(result.finalManifest.value(QStringLiteral("kind")).toString(),
+             QStringLiteral("resolved-theme"));
+    QVERIFY(result.finalManifest.value(QStringLiteral("colors")).isObject());
+    QVERIFY(result.finalManifest.value(QStringLiteral("spacing")).isObject());
+    QVERIFY(result.finalManifest.value(QStringLiteral("radius")).isObject());
+    QVERIFY(result.finalManifest.value(QStringLiteral("typography")).isObject());
+    QVERIFY(result.finalManifest.value(QStringLiteral("size")).isObject());
+
+    const MerceThemeLoadResult ops =
+        MerceThemeManifestLoader().load(QStringLiteral("algit"),
+                                        QStringLiteral("dark"),
+                                        QStringLiteral("ops"));
+    QVERIFY2(ops.ok, qPrintable(ops.errors.join(QLatin1Char('\n'))));
+    QCOMPARE(ops.profile, QStringLiteral("ops"));
+    QVERIFY(ops.finalManifest.value(QStringLiteral("colors")).toObject()
+                != QJsonObject{});
 }
 
-void tst_merce_theme_manifest_loader::generatedLinearFontAssetsLoad()
-{
-    const MerceThemeLoadResult result = MerceThemeManifestLoader().load(QStringLiteral("linear"));
-
-    QVERIFY2(result.ok, qPrintable(result.errors.join(QLatin1Char('\n'))));
-    QCOMPARE(result.theme, QStringLiteral("linear"));
-    QCOMPARE(result.variant, QStringLiteral("dark"));
-
-    const QJsonArray fonts = result.finalManifest.value(QStringLiteral("fonts")).toArray();
-    QCOMPARE(fonts.size(), 3);
-    QVERIFY(QFontDatabase::families().contains(QStringLiteral("IoskeleyMono Nerd Font")));
-}
-
-void tst_merce_theme_manifest_loader::unknownThemeIsRejected()
-{
-    const MerceThemeLoadResult result = MerceThemeManifestLoader().load(QStringLiteral("unknown"));
-
-    QVERIFY(!result.ok);
-    QVERIFY(!result.usedFallback);
-    QVERIFY(containsError(result.errors, QStringLiteral("theme 'unknown' is not registered")));
-}
-
-void tst_merce_theme_manifest_loader::unknownVariantIsRejected()
-{
-    const MerceThemeLoadResult result = MerceThemeManifestLoader().load(QStringLiteral("merce"), QStringLiteral("unknown"));
-
-    QVERIFY(!result.ok);
-    QVERIFY(!result.usedFallback);
-    QVERIFY(containsError(result.errors, QStringLiteral("variant 'unknown' is not registered")));
-}
-
-void tst_merce_theme_manifest_loader::unsafeManifestPathsAreRejected_data()
-{
-    QTest::addColumn<QString>("manifestPath");
-
-    QTest::newRow("absolute") << QStringLiteral("/tmp/merce.json");
-    QTest::newRow("parent-directory") << QStringLiteral("../merce.json");
-    QTest::newRow("slash-separated") << QStringLiteral("merce/light.json");
-    QTest::newRow("resource-indirection") << QStringLiteral(":/outside.json");
-}
-
-void tst_merce_theme_manifest_loader::unsafeManifestPathsAreRejected()
-{
-    QFETCH(QString, manifestPath);
-
-    const QJsonObject index = indexForDefaultMerce(manifestPath);
-    const MerceThemeRegistryResult result = MerceThemeRegistry::fromJson(index, QStringLiteral(":/merce/themes/index.json"));
-
-    QVERIFY(!result.ok);
-    QVERIFY(containsError(result.errors, manifestPath));
-}
-
-void tst_merce_theme_manifest_loader::malformedJsonReportsParseError()
+void tst_merce_theme_manifest_loader::bareTenantBrandSourceIsDiscoverable()
 {
     QTemporaryDir dir;
     QVERIFY(dir.isValid());
-    QVERIFY(writeRaw(pathIn(dir, QStringLiteral("index.json")), QByteArray("{ bad json")));
+    const QString tenantPath = pathIn(dir, QStringLiteral("customer.json"));
+    QVERIFY(writeJson(tenantPath,
+                      tenantBrand(QStringLiteral("customer"),
+                                  QStringLiteral("#006B63"))));
 
-    const MerceThemeLoadResult result = MerceThemeManifestLoader(pathIn(dir, QStringLiteral("index.json"))).loadDefault();
-
-    QVERIFY(!result.ok);
-    QVERIFY(containsError(result.errors, QStringLiteral("parse error at byte")));
+    const MerceThemeRegistryLoadResult source =
+        MerceThemeManifestLoader::loadRegistry(tenantPath);
+    QVERIFY2(source.ok, qPrintable(source.errors.join(QLatin1Char('\n'))));
+    QVERIFY(source.profileRegistry.isEmpty());
+    QVERIFY(source.colorRegistry.lookup(QStringLiteral("customer"),
+                                        QStringLiteral("light")).ok);
+    QVERIFY(source.colorRegistry.lookup(QStringLiteral("customer"),
+                                        QStringLiteral("dark")).ok);
 }
 
-void tst_merce_theme_manifest_loader::schemaVersionMismatchIsRejected()
+void tst_merce_theme_manifest_loader::
+    tenantSchemaVersionRejectsOlderAndNewer_data()
+{
+    QTest::addColumn<int>("version");
+    QTest::newRow("older") << 0;
+    QTest::newRow("newer") << 2;
+}
+
+void tst_merce_theme_manifest_loader::
+    tenantSchemaVersionRejectsOlderAndNewer()
+{
+    QFETCH(int, version);
+    QTemporaryDir dir;
+    QVERIFY(dir.isValid());
+    const QString tenantPath = pathIn(dir, QStringLiteral("customer.json"));
+    QVERIFY(writeJson(tenantPath,
+                      tenantBrand(QStringLiteral("customer"),
+                                  QStringLiteral("#006B63"),
+                                  version)));
+
+    const MerceThemeRegistryLoadResult result =
+        MerceThemeManifestLoader::loadRegistry(tenantPath);
+    QVERIFY(!result.ok);
+    QVERIFY(containsError(result.errors, QStringLiteral("version")));
+}
+
+void tst_merce_theme_manifest_loader::
+    indexSchemaVersionRejectsOlderAndNewer_data()
+{
+    QTest::addColumn<int>("version");
+    QTest::newRow("older") << 0;
+    QTest::newRow("newer") << 2;
+}
+
+void tst_merce_theme_manifest_loader::
+    indexSchemaVersionRejectsOlderAndNewer()
+{
+    QFETCH(int, version);
+    QTemporaryDir dir;
+    QVERIFY(dir.isValid());
+    const QString indexPath = pathIn(dir, QStringLiteral("index.json"));
+    QVERIFY(writeJson(indexPath, QJsonObject{
+        {QStringLiteral("schemaVersion"), version},
+        {QStringLiteral("brands"), QJsonObject{}},
+    }));
+
+    const MerceThemeRegistryLoadResult result =
+        MerceThemeManifestLoader::loadRegistry(indexPath);
+    QVERIFY(!result.ok);
+    QVERIFY(containsError(result.errors,
+                          QStringLiteral("index.unsupported_version")));
+}
+
+void tst_merce_theme_manifest_loader::
+    duplicateBrandModeIsRejectedWithoutProfileCoupling()
+{
+    QTemporaryDir first;
+    QTemporaryDir second;
+    QVERIFY(first.isValid());
+    QVERIFY(second.isValid());
+    const QString firstPath = pathIn(first, QStringLiteral("customer.json"));
+    const QString secondPath = pathIn(second, QStringLiteral("customer.json"));
+    QVERIFY(writeJson(firstPath,
+                      tenantBrand(QStringLiteral("customer"),
+                                  QStringLiteral("#006B63"))));
+    QVERIFY(writeJson(secondPath,
+                      tenantBrand(QStringLiteral("customer"),
+                                  QStringLiteral("#0057B8"))));
+
+    const MerceThemeRegistryLoadResult firstRegistry =
+        MerceThemeManifestLoader::loadRegistry(firstPath);
+    const MerceThemeRegistryLoadResult secondRegistry =
+        MerceThemeManifestLoader::loadRegistry(secondPath);
+    QVERIFY(firstRegistry.ok);
+    QVERIFY(secondRegistry.ok);
+
+    MerceThemeRegistry colors = firstRegistry.colorRegistry;
+    QStringList errors;
+    QVERIFY(!colors.appendRegistry(secondRegistry.colorRegistry, &errors));
+    QVERIFY(containsError(errors, QStringLiteral("duplicate brand/mode")));
+
+    MerceProfileRegistry profiles;
+    QVERIFY(profiles.appendRegistry(firstRegistry.profileRegistry, &errors));
+    QVERIFY(profiles.appendRegistry(secondRegistry.profileRegistry, &errors));
+}
+
+void tst_merce_theme_manifest_loader::malformedJsonReportsMachineReadableError()
 {
     QTemporaryDir dir;
     QVERIFY(dir.isValid());
+    const QString sourcePath = pathIn(dir, QStringLiteral("bad.json"));
+    QVERIFY(writeRaw(sourcePath, QByteArrayLiteral("{ bad json")));
 
-    QJsonObject manifest = fullManifest(QStringLiteral("merce"), QStringLiteral("light"));
-    manifest.insert(QStringLiteral("schemaVersion"), 2);
-    QVERIFY(writeJson(pathIn(dir, QStringLiteral("merce.light.json")), manifest));
-    QVERIFY(writeJson(pathIn(dir, QStringLiteral("index.json")), indexForDefaultMerce(QStringLiteral("merce.light.json"))));
-
-    const MerceThemeLoadResult result = MerceThemeManifestLoader(pathIn(dir, QStringLiteral("index.json"))).loadDefault();
-
+    const MerceThemeRegistryLoadResult result =
+        MerceThemeManifestLoader::loadRegistry(sourcePath);
     QVERIFY(!result.ok);
-    QVERIFY(containsError(result.errors, QStringLiteral("schemaVersion must be 1")));
+    QVERIFY(containsError(result.errors, QStringLiteral("parse_error")));
 }
 
-void tst_merce_theme_manifest_loader::missingTopLevelRequiredSectionsAreRejected_data()
-{
-    QTest::addColumn<QString>("section");
-
-    QTest::newRow("colors") << QStringLiteral("colors");
-    QTest::newRow("spacing") << QStringLiteral("spacing");
-    QTest::newRow("radius") << QStringLiteral("radius");
-    QTest::newRow("typography") << QStringLiteral("typography");
-}
-
-void tst_merce_theme_manifest_loader::missingTopLevelRequiredSectionsAreRejected()
-{
-    QFETCH(QString, section);
-
-    QTemporaryDir dir;
-    QVERIFY(dir.isValid());
-
-    QJsonObject manifest = fullManifest(QStringLiteral("merce"), QStringLiteral("light"));
-    manifest.remove(section);
-    QVERIFY(writeJson(pathIn(dir, QStringLiteral("merce.light.json")), manifest));
-    QVERIFY(writeJson(pathIn(dir, QStringLiteral("index.json")), indexForDefaultMerce(QStringLiteral("merce.light.json"))));
-
-    const MerceThemeLoadResult result = MerceThemeManifestLoader(pathIn(dir, QStringLiteral("index.json"))).loadDefault();
-
-    QVERIFY(!result.ok);
-    QVERIFY(!result.usedFallback);
-    QVERIFY(containsError(result.errors, QStringLiteral("missing required field: %1").arg(section)));
-}
-
-void tst_merce_theme_manifest_loader::topLevelPaletteSectionIsRejected()
+void tst_merce_theme_manifest_loader::invalidProfileMetricsAreRejected()
 {
     QTemporaryDir dir;
     QVERIFY(dir.isValid());
+    QVERIFY(QDir(dir.path()).mkpath(QStringLiteral("themes")));
+    QVERIFY(QDir(dir.path()).mkpath(QStringLiteral("profiles")));
 
-    QJsonObject manifest = fullManifest(QStringLiteral("merce"), QStringLiteral("light"));
-    manifest.insert(QStringLiteral("palette"), QJsonObject{
-        { QStringLiteral("textPrimary"), QStringLiteral("#111111") },
-    });
-    QVERIFY(writeJson(pathIn(dir, QStringLiteral("merce.light.json")), manifest));
-    QVERIFY(writeJson(pathIn(dir, QStringLiteral("index.json")), indexForDefaultMerce(QStringLiteral("merce.light.json"))));
+    const QString themePath =
+        pathIn(dir, QStringLiteral("themes/algit.light.json"));
+    const QString profilePath =
+        pathIn(dir, QStringLiteral("profiles/cart.json"));
+    const QString indexPath =
+        pathIn(dir, QStringLiteral("themes/index.json"));
+    QVERIFY(writeJson(themePath, readJson(QStringLiteral(":/merce/themes/algit.light.json"))));
 
-    const MerceThemeLoadResult result = MerceThemeManifestLoader(pathIn(dir, QStringLiteral("index.json"))).loadDefault();
-
-    QVERIFY(!result.ok);
-    QVERIFY(containsError(result.errors, QStringLiteral("manifest must not contain a top-level palette section")));
-}
-
-void tst_merce_theme_manifest_loader::rawRuntimeColorsSectionIsRejected()
-{
-    QTemporaryDir dir;
-    QVERIFY(dir.isValid());
-
-    QJsonObject manifest = fullManifest(QStringLiteral("merce"), QStringLiteral("light"));
-    QJsonObject colors = manifest.value(QStringLiteral("colors")).toObject();
-    colors.insert(QStringLiteral("raw"), QJsonObject{
-        { QStringLiteral("gray50"), QStringLiteral("#fafafa") },
-    });
-    manifest.insert(QStringLiteral("colors"), colors);
-    QVERIFY(writeJson(pathIn(dir, QStringLiteral("merce.light.json")), manifest));
-    QVERIFY(writeJson(pathIn(dir, QStringLiteral("index.json")), indexForDefaultMerce(QStringLiteral("merce.light.json"))));
-
-    const MerceThemeLoadResult result = MerceThemeManifestLoader(pathIn(dir, QStringLiteral("index.json"))).loadDefault();
-
-    QVERIFY(!result.ok);
-    QVERIFY(containsError(result.errors, QStringLiteral("runtime colors must not expose raw color scales")));
-}
-
-void tst_merce_theme_manifest_loader::invalidRuntimeFieldValuesAreRejected()
-{
-    QTemporaryDir dir;
-    QVERIFY(dir.isValid());
-
-    QJsonObject manifest = fullManifest(QStringLiteral("merce"), QStringLiteral("light"));
-    QJsonObject colors = manifest.value(QStringLiteral("colors")).toObject();
-    QJsonObject text = colors.value(QStringLiteral("text")).toObject();
-    text.insert(QStringLiteral("primary"), QStringLiteral("not-a-color"));
-    colors.insert(QStringLiteral("text"), text);
-    manifest.insert(QStringLiteral("colors"), colors);
-    QJsonObject spacing = manifest.value(QStringLiteral("spacing")).toObject();
-    spacing.insert(QStringLiteral("md"), QStringLiteral("large"));
-    manifest.insert(QStringLiteral("spacing"), spacing);
-    QJsonObject typography = manifest.value(QStringLiteral("typography")).toObject();
-    typography.insert(QStringLiteral("displayFont"), QStringLiteral("Inter, sans-serif"));
-    typography.insert(QStringLiteral("bodyFont"), QString());
-    manifest.insert(QStringLiteral("typography"), typography);
-
-    QVERIFY(writeJson(pathIn(dir, QStringLiteral("merce.light.json")), manifest));
-    QVERIFY(writeJson(pathIn(dir, QStringLiteral("index.json")), indexForDefaultMerce(QStringLiteral("merce.light.json"))));
-
-    const MerceThemeLoadResult result = MerceThemeManifestLoader(pathIn(dir, QStringLiteral("index.json"))).loadDefault();
-
-    QVERIFY(!result.ok);
-    QVERIFY(containsError(result.errors, QStringLiteral("runtime field colors.text.primary must be a valid color string")));
-    QVERIFY(containsError(result.errors, QStringLiteral("runtime field spacing.md must be numeric")));
-    QVERIFY(containsError(result.errors, QStringLiteral("runtime field typography.displayFont must be a single Qt font family name")));
-    QVERIFY(containsError(result.errors, QStringLiteral("runtime field typography.bodyFont must be a resolved non-empty string")));
-
-    typography.insert(QStringLiteral("displayFont"), QStringLiteral("Display"));
-    typography.insert(QStringLiteral("bodyFont"), QStringLiteral("{typography.bodyFont}"));
-    manifest.insert(QStringLiteral("typography"), typography);
-    QVERIFY(writeJson(pathIn(dir, QStringLiteral("merce.light.json")), manifest));
-
-    const MerceThemeLoadResult unresolvedResult =
-        MerceThemeManifestLoader(pathIn(dir, QStringLiteral("index.json"))).loadDefault();
-
-    QVERIFY(!unresolvedResult.ok);
-    QVERIFY(containsError(unresolvedResult.errors,
-                          QStringLiteral("runtime field typography.bodyFont must be a resolved non-empty string")));
-}
-
-void tst_merce_theme_manifest_loader::activeColorsCannotBorrowMissingFieldsFromBase()
-{
-    QTemporaryDir dir;
-    QVERIFY(dir.isValid());
-
-    QVERIFY(writeJson(pathIn(dir, QStringLiteral("base.json")), fullManifest(QStringLiteral("merce"))));
-
-    QJsonObject active;
-    active.insert(QStringLiteral("schemaVersion"), 1);
-    active.insert(QStringLiteral("theme"), QStringLiteral("merce"));
-    active.insert(QStringLiteral("variant"), QStringLiteral("light"));
-    active.insert(QStringLiteral("colors"), QJsonObject{
-        { QStringLiteral("text"), QJsonObject{
-            { QStringLiteral("primary"), QStringLiteral("#000000") },
-        } },
-    });
-    QVERIFY(writeJson(pathIn(dir, QStringLiteral("active.json")), active));
-
-    const QJsonObject index = {
-        { QStringLiteral("schemaVersion"), 1 },
-        { QStringLiteral("defaultTheme"), QStringLiteral("merce") },
-        { QStringLiteral("themes"), QJsonObject{
-            { QStringLiteral("merce"), QJsonObject{
-                { QStringLiteral("displayName"), QStringLiteral("Merce") },
-                { QStringLiteral("basePath"), QStringLiteral("base.json") },
-                { QStringLiteral("defaultVariant"), QStringLiteral("light") },
-                { QStringLiteral("variants"), QJsonObject{
-                    { QStringLiteral("light"), QStringLiteral("active.json") },
-                } },
-            } },
-        } },
+    const QJsonObject index{
+        {QStringLiteral("schemaVersion"), 1},
+        {QStringLiteral("defaultBrand"), QStringLiteral("algit")},
+        {QStringLiteral("brands"),
+         QJsonObject{{QStringLiteral("algit"),
+                      QJsonObject{{QStringLiteral("defaultMode"), QStringLiteral("light")},
+                                  {QStringLiteral("modes"),
+                                   QJsonObject{{QStringLiteral("light"),
+                                                QStringLiteral("algit.light.json")}}}}}}},
+        {QStringLiteral("defaultProfile"), QStringLiteral("cart")},
+        {QStringLiteral("profiles"),
+         QJsonObject{{QStringLiteral("cart"),
+                      QJsonObject{{QStringLiteral("path"), QStringLiteral("cart.json")}}}}},
     };
-    QVERIFY(writeJson(pathIn(dir, QStringLiteral("index.json")), index));
+    QVERIFY(writeJson(indexPath, index));
 
-    const MerceThemeLoadResult result = MerceThemeManifestLoader(pathIn(dir, QStringLiteral("index.json"))).loadDefault();
-
+    QJsonObject profile = readJson(QStringLiteral(":/merce/profiles/cart.json"));
+    QJsonObject spacing = profile.value(QStringLiteral("spacing")).toObject();
+    spacing.insert(QStringLiteral("md"), -1);
+    profile.insert(QStringLiteral("spacing"), spacing);
+    QVERIFY(writeJson(profilePath, profile));
+    MerceThemeRegistryLoadResult result =
+        MerceThemeManifestLoader::loadMergedRegistry({indexPath});
     QVERIFY(!result.ok);
-    QVERIFY(containsError(result.errors, QStringLiteral("missing required runtime field: colors.text.secondary")));
-    QVERIFY(!containsError(result.errors, QStringLiteral("missing required runtime field: spacing.md")));
-}
+    QVERIFY(containsError(result.errors, QStringLiteral("profile.invalid_number")));
 
-void tst_merce_theme_manifest_loader::basePlusActiveSectionOverlaySucceeds()
-{
-    QTemporaryDir dir;
-    QVERIFY(dir.isValid());
-
-    QJsonObject base = fullManifest(QStringLiteral("merce"));
-    QJsonObject baseSpacing = base.value(QStringLiteral("spacing")).toObject();
-    baseSpacing.insert(QStringLiteral("md"), 24);
-    base.insert(QStringLiteral("spacing"), baseSpacing);
-    QVERIFY(writeJson(pathIn(dir, QStringLiteral("base.json")), base));
-
-    QJsonObject active;
-    active.insert(QStringLiteral("schemaVersion"), 1);
-    active.insert(QStringLiteral("theme"), QStringLiteral("merce"));
-    active.insert(QStringLiteral("variant"), QStringLiteral("light"));
-    active.insert(QStringLiteral("colors"), fullManifest(QStringLiteral("merce"), QStringLiteral("light")).value(QStringLiteral("colors")));
-    QVERIFY(writeJson(pathIn(dir, QStringLiteral("active.json")), active));
-
-    const QJsonObject index = {
-        { QStringLiteral("schemaVersion"), 1 },
-        { QStringLiteral("defaultTheme"), QStringLiteral("merce") },
-        { QStringLiteral("themes"), QJsonObject{
-            { QStringLiteral("merce"), QJsonObject{
-                { QStringLiteral("displayName"), QStringLiteral("Merce") },
-                { QStringLiteral("basePath"), QStringLiteral("base.json") },
-                { QStringLiteral("defaultVariant"), QStringLiteral("light") },
-                { QStringLiteral("variants"), QJsonObject{
-                    { QStringLiteral("light"), QStringLiteral("active.json") },
-                } },
-            } },
-        } },
-    };
-    QVERIFY(writeJson(pathIn(dir, QStringLiteral("index.json")), index));
-
-    const MerceThemeLoadResult result = MerceThemeManifestLoader(pathIn(dir, QStringLiteral("index.json"))).loadDefault();
-
-    QVERIFY2(result.ok, qPrintable(result.errors.join(QLatin1Char('\n'))));
-    QCOMPARE(result.finalManifest.value(QStringLiteral("spacing")).toObject().value(QStringLiteral("md")).toInt(), 24);
-    QCOMPARE(result.finalManifest.value(QStringLiteral("variant")).toString(), QStringLiteral("light"));
-}
-
-void tst_merce_theme_manifest_loader::requestedBadManifestFallsBackToRegistryDefault()
-{
-    QTemporaryDir dir;
-    QVERIFY(dir.isValid());
-
-    QVERIFY(writeJson(pathIn(dir, QStringLiteral("merce.light.json")), fullManifest(QStringLiteral("merce"), QStringLiteral("light"))));
-
-    QJsonObject broken = fullManifest(QStringLiteral("broken"));
-    broken.insert(QStringLiteral("schemaVersion"), 2);
-    QVERIFY(writeJson(pathIn(dir, QStringLiteral("broken.json")), broken));
-
-    const QJsonObject index = {
-        { QStringLiteral("schemaVersion"), 1 },
-        { QStringLiteral("defaultTheme"), QStringLiteral("merce") },
-        { QStringLiteral("themes"), QJsonObject{
-            { QStringLiteral("merce"), QJsonObject{
-                { QStringLiteral("displayName"), QStringLiteral("Merce") },
-                { QStringLiteral("defaultVariant"), QStringLiteral("light") },
-                { QStringLiteral("variants"), QJsonObject{
-                    { QStringLiteral("light"), QStringLiteral("merce.light.json") },
-                } },
-            } },
-            { QStringLiteral("broken"), QJsonObject{
-                { QStringLiteral("displayName"), QStringLiteral("Broken") },
-                { QStringLiteral("path"), QStringLiteral("broken.json") },
-            } },
-        } },
-    };
-    QVERIFY(writeJson(pathIn(dir, QStringLiteral("index.json")), index));
-
-    const MerceThemeLoadResult result = MerceThemeManifestLoader(pathIn(dir, QStringLiteral("index.json"))).load(QStringLiteral("broken"));
-
-    QVERIFY2(result.ok, qPrintable(result.errors.join(QLatin1Char('\n'))));
-    QVERIFY(result.usedFallback);
-    QCOMPARE(result.theme, QStringLiteral("merce"));
-    QCOMPARE(result.variant, QStringLiteral("light"));
-    QVERIFY(containsError(result.errors, QStringLiteral("schemaVersion must be 1")));
-}
-
-void tst_merce_theme_manifest_loader::brokenDefaultReturnsFailure()
-{
-    QTemporaryDir dir;
-    QVERIFY(dir.isValid());
-
-    QJsonObject manifest = fullManifest(QStringLiteral("merce"), QStringLiteral("light"));
-    manifest.remove(QStringLiteral("colors"));
-    QVERIFY(writeJson(pathIn(dir, QStringLiteral("merce.light.json")), manifest));
-    QVERIFY(writeJson(pathIn(dir, QStringLiteral("index.json")), indexForDefaultMerce(QStringLiteral("merce.light.json"))));
-
-    const MerceThemeLoadResult result = MerceThemeManifestLoader(pathIn(dir, QStringLiteral("index.json"))).loadDefault();
-
+    profile = readJson(QStringLiteral(":/merce/profiles/cart.json"));
+    QJsonObject size = profile.value(QStringLiteral("size")).toObject();
+    size.insert(QStringLiteral("control"), QJsonObject{});
+    profile.insert(QStringLiteral("size"), size);
+    QVERIFY(writeJson(profilePath, profile));
+    result = MerceThemeManifestLoader::loadMergedRegistry({indexPath});
     QVERIFY(!result.ok);
-    QVERIFY(!result.usedFallback);
-    QVERIFY(containsError(result.errors, QStringLiteral("missing required field: colors")));
+    QVERIFY(containsError(result.errors, QStringLiteral("profile.invalid_number")));
+
+    profile = readJson(QStringLiteral(":/merce/profiles/cart.json"));
+    QJsonObject radius = profile.value(QStringLiteral("radius")).toObject();
+    radius.insert(QStringLiteral("medium"), 6.5);
+    profile.insert(QStringLiteral("radius"), radius);
+    QVERIFY(writeJson(profilePath, profile));
+    result = MerceThemeManifestLoader::loadMergedRegistry({indexPath});
+    QVERIFY(!result.ok);
+    QVERIFY(containsError(result.errors, QStringLiteral("profile.invalid_number")));
+
+    profile = readJson(QStringLiteral(":/merce/profiles/cart.json"));
+    size = profile.value(QStringLiteral("size")).toObject();
+    QJsonObject outline = size.value(QStringLiteral("outline")).toObject();
+    outline.insert(QStringLiteral("focus"), 0);
+    size.insert(QStringLiteral("outline"), outline);
+    profile.insert(QStringLiteral("size"), size);
+    QVERIFY(writeJson(profilePath, profile));
+    result = MerceThemeManifestLoader::loadMergedRegistry({indexPath});
+    QVERIFY(!result.ok);
+    QVERIFY(containsError(result.errors, QStringLiteral("profile.invalid_number")));
+}
+
+void tst_merce_theme_manifest_loader::oversizedDocumentIsRejected()
+{
+    QTemporaryDir dir;
+    QVERIFY(dir.isValid());
+    const QString sourcePath = pathIn(dir, QStringLiteral("large.json"));
+    QVERIFY(writeRaw(sourcePath, QByteArray(1024 * 1024 + 1, ' ')));
+
+    const MerceThemeRegistryLoadResult result =
+        MerceThemeManifestLoader::loadRegistry(sourcePath);
+    QVERIFY(!result.ok);
+    QVERIFY(containsError(result.errors, QStringLiteral("too_large")));
+}
+
+void tst_merce_theme_manifest_loader::invalidUnselectedResolvedThemeIsRejected()
+{
+    QTemporaryDir dir;
+    QVERIFY(dir.isValid());
+    QVERIFY(QDir(dir.path()).mkpath(QStringLiteral("themes")));
+    QVERIFY(QDir(dir.path()).mkpath(QStringLiteral("profiles")));
+
+    const QJsonObject validTheme =
+        readJson(QStringLiteral(":/merce/themes/algit.light.json"));
+    QJsonObject invalidTheme = validTheme;
+    invalidTheme.insert(QStringLiteral("brandId"), QStringLiteral("broken"));
+    invalidTheme.insert(QStringLiteral("resolvedThemeSchemaVersion"), 2);
+    QVERIFY(writeJson(pathIn(dir, QStringLiteral("themes/algit.light.json")), validTheme));
+    QVERIFY(writeJson(pathIn(dir, QStringLiteral("themes/broken.light.json")), invalidTheme));
+    QVERIFY(writeJson(pathIn(dir, QStringLiteral("profiles/cart.json")),
+                      readJson(QStringLiteral(":/merce/profiles/cart.json"))));
+
+    const QJsonObject brandEntry{
+        {QStringLiteral("defaultMode"), QStringLiteral("light")},
+        {QStringLiteral("modes"),
+         QJsonObject{{QStringLiteral("light"), QStringLiteral("algit.light.json")}}},
+    };
+    QJsonObject brokenEntry = brandEntry;
+    brokenEntry.insert(
+        QStringLiteral("modes"),
+        QJsonObject{{QStringLiteral("light"), QStringLiteral("broken.light.json")}});
+    const QJsonObject index{
+        {QStringLiteral("schemaVersion"), 1},
+        {QStringLiteral("defaultBrand"), QStringLiteral("algit")},
+        {QStringLiteral("brands"),
+         QJsonObject{{QStringLiteral("algit"), brandEntry},
+                     {QStringLiteral("broken"), brokenEntry}}},
+        {QStringLiteral("defaultProfile"), QStringLiteral("cart")},
+        {QStringLiteral("profiles"),
+         QJsonObject{{QStringLiteral("cart"),
+                      QJsonObject{{QStringLiteral("path"), QStringLiteral("cart.json")}}}}},
+    };
+    const QString indexPath = pathIn(dir, QStringLiteral("themes/index.json"));
+    QVERIFY(writeJson(indexPath, index));
+
+    const MerceThemeRegistryLoadResult result =
+        MerceThemeManifestLoader::loadMergedRegistry({indexPath});
+    QVERIFY(!result.ok);
+    QVERIFY(containsError(result.errors, QStringLiteral("unsupported_version")));
 }
 
 QTEST_MAIN(tst_merce_theme_manifest_loader)

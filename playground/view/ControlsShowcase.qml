@@ -170,7 +170,7 @@ Item {
             AppIcon {
                 name: "material:palette"
                 size: Theme.icons.large
-                color: Theme.colors.action.primary
+                color: Theme.colors.action.primary.container
             }
 
             AppIcon {

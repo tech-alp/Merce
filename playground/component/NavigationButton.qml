@@ -9,7 +9,7 @@ T.Button {
 
     property bool current: false
 
-    readonly property color contentColor: root.current ? Theme.colors.action.primary
+    readonly property color contentColor: root.current ? Theme.colors.action.primary.container
                                                        : Theme.colors.text.secondary
     readonly property color transparentHoverBackground: Qt.rgba(Theme.colors.surface.hover.r,
                                                                 Theme.colors.surface.hover.g,

@@ -435,7 +435,7 @@ Item {
                     AppIcon {
                         name: "material:palette"
                         size: Theme.icons.large
-                        color: Theme.colors.action.primary
+                        color: Theme.colors.action.primary.container
                         anchors.verticalCenter: parent.verticalCenter
                     }
 
@@ -486,7 +486,7 @@ Item {
 
                 TokenRow {
                     label: "colors.action.primary"
-                    swatchColor: Theme.colors.action.primary
+                    swatchColor: Theme.colors.action.primary.container
                     usage: "Primary button background"
                     showContrast: true
                     contrastForeground: Theme.colors.text.inverse
@@ -496,7 +496,7 @@ Item {
                 TokenRow { label: "colors.action.primarySubtle"; swatchColor: Theme.colors.action.primarySubtle; usage: "Subtle brand surface" }
                 TokenRow {
                     label: "colors.action.secondary"
-                    swatchColor: Theme.colors.action.secondary
+                    swatchColor: Theme.colors.action.secondary.container
                     usage: "Secondary button background"
                     showContrast: true
                     contrastForeground: Theme.colors.text.inverse
@@ -553,7 +553,7 @@ Item {
                     usage: "Text on dark or brand fills"
                     showContrast: true
                     contrastForeground: Theme.colors.text.inverse
-                    contrastBackground: Theme.colors.action.primary
+                    contrastBackground: Theme.colors.action.primary.container
                 }
                 TokenRow { label: "colors.text.disabled"; swatchColor: Theme.colors.text.disabled; usage: "Disabled content" }
                 TokenRow { label: "colors.text.link"; swatchColor: Theme.colors.text.link; usage: "Links" }
@@ -805,13 +805,13 @@ Item {
                     MetricCard {
                         label: "Inverse text on primary"
                         foregroundColor: Theme.colors.text.inverse
-                        sampleBackgroundColor: Theme.colors.action.primary
+                        sampleBackgroundColor: Theme.colors.action.primary.container
                     }
 
                     MetricCard {
                         label: "Inverse text on secondary"
                         foregroundColor: Theme.colors.text.inverse
-                        sampleBackgroundColor: Theme.colors.action.secondary
+                        sampleBackgroundColor: Theme.colors.action.secondary.container
                     }
 
                     MetricCard {

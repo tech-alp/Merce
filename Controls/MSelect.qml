@@ -173,7 +173,9 @@ Basic.ComboBox {
         readonly property var optionValue: root.optionValue(modelData)
         readonly property string optionLabel: root.optionLabel(modelData)
         readonly property bool selectedOption: root.selectedValue === optionValue
-        readonly property color optionContentColor: optionDelegate.selectedOption ? Theme.colors.text.inverse : Theme.colors.text.primary
+        readonly property color optionContentColor: optionDelegate.selectedOption
+                                                     ? Theme.colors.action.primary.content
+                                                     : Theme.colors.text.primary
 
         objectName: root.objectName !== "" ? root.objectName + ".popup.option." + String(optionValue) : ""
         width: root.width
@@ -221,7 +223,7 @@ Basic.ComboBox {
                         return Theme.colors.action.primaryPressed
                     if (optionDelegate.highlighted || optionDelegate.hovered)
                         return Theme.colors.action.primaryHover
-                    return Theme.colors.action.primary
+                    return Theme.colors.action.primary.container
                 }
                 if (optionDelegate.pressed)
                     return Theme.colors.surface.pressed

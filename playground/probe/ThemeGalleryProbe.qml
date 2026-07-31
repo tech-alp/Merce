@@ -15,7 +15,6 @@ Window {
     }
 
     property string lightText: ""
-    property string darkButton: ""
 
     function colorKey(value) {
         return String(value).toLowerCase()
@@ -27,10 +26,10 @@ Window {
     }
 
     function assertSamples(label) {
-        if (colorKey(gallery.observedButtonColor) !== colorKey(Theme.colors.action.primary)
+        if (colorKey(gallery.observedButtonColor) !== colorKey(Theme.colors.action.primary.container)
                 || colorKey(gallery.observedTextColor) !== colorKey(Theme.colors.text.primary)
                 || colorKey(gallery.observedInputBorderColor) !== colorKey(Theme.colors.border.base)
-                || colorKey(gallery.observedToggleColor) !== colorKey(Theme.colors.action.primary)
+                || colorKey(gallery.observedToggleColor) !== colorKey(Theme.colors.action.primary.container)
                 || colorKey(gallery.observedSelectColor) !== colorKey(Theme.colors.text.primary)
                 || colorKey(gallery.observedToastColor) !== colorKey(Theme.colors.status.success.foreground)
                 || colorKey(gallery.observedDialogColor) !== colorKey(Theme.colors.surface.base)) {
@@ -42,7 +41,7 @@ Window {
                   gallery.observedSelectColor,
                   gallery.observedToastColor,
                   gallery.observedDialogColor,
-                  Theme.colors.action.primary,
+                  Theme.colors.action.primary.container,
                   Theme.colors.text.primary,
                   Theme.colors.border.base,
                   Theme.colors.status.success.foreground,
@@ -66,7 +65,7 @@ Window {
                     return
                 }
 
-                if (Theme.activeBrand !== "merce" || Theme.activeMode !== "light") {
+                if (Theme.activeBrand !== "algit" || Theme.activeMode !== "light") {
                     root.fail("default theme state", [Theme.activeBrand, Theme.activeMode])
                     return
                 }
@@ -75,7 +74,7 @@ Window {
                     return
 
                 root.lightText = root.colorKey(gallery.observedTextColor)
-                if (!Theme.setTheme("merce", "dark")) {
+                if (!Theme.setTheme("algit", "dark")) {
                     root.fail("dark switch returned false", [])
                     return
                 }
@@ -87,7 +86,7 @@ Window {
             }
 
             if (step === 1) {
-                if (Theme.activeBrand !== "merce" || Theme.activeMode !== "dark") {
+                if (Theme.activeBrand !== "algit" || Theme.activeMode !== "dark") {
                     root.fail("dark theme state", [Theme.activeBrand, Theme.activeMode])
                     return
                 }
@@ -100,33 +99,12 @@ Window {
                     return
                 }
 
-                root.darkButton = root.colorKey(gallery.observedButtonColor)
-                if (!Theme.setTheme("stripe")) {
-                    root.fail("stripe switch returned false", [])
-                    return
-                }
-
-                step = 2
-                interval = 260
-                restart()
-                return
+                console.log("theme-gallery-probe ok",
+                            Theme.activeBrand,
+                            Theme.activeMode,
+                            Theme.colors.background.base)
+                Qt.quit()
             }
-
-            if (Theme.activeBrand !== "stripe" || Theme.activeMode !== "") {
-                root.fail("stripe theme state", [Theme.activeBrand, Theme.activeMode])
-                return
-            }
-
-            if (!root.assertSamples("stripe"))
-                return
-
-            if (root.colorKey(gallery.observedButtonColor) === root.darkButton) {
-                root.fail("stripe sample changes", [root.darkButton, gallery.observedButtonColor])
-                return
-            }
-
-            console.log("theme-gallery-probe ok", Theme.activeBrand, Theme.activeMode, Theme.colors.background.base)
-            Qt.quit()
         }
 
         property int step: 0

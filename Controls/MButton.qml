@@ -196,10 +196,10 @@ T.Button {
     QtObject {
         id: visualStyle
 
-        property color backgroundColor: Theme.colors.action.primary
-        property color foregroundColor: Theme.colors.text.inverse
-        property color borderColor: "transparent"
-        property int borderWidth: 0
+        property color backgroundColor: Theme.colors.action.primary.container
+        property color foregroundColor: Theme.colors.action.primary.content
+        property color borderColor: Theme.colors.action.primary.outline
+        property int borderWidth: 1
     }
 
     QtObject {
@@ -244,7 +244,7 @@ T.Button {
                 when: root.variant === MButton.Primary && controlState.unavailable
                 PropertyChanges {
                     visualStyle.backgroundColor: Theme.colors.action.disabled
-                    visualStyle.foregroundColor: Theme.colors.text.inverse
+                    visualStyle.foregroundColor: Theme.colors.action.primary.content
                 }
                 PropertyChanges {
                     visualStyle.borderColor: "transparent"
@@ -256,11 +256,11 @@ T.Button {
                 when: root.variant === MButton.Primary && (controlState.pressed || controlState.checked)
                 PropertyChanges {
                     visualStyle.backgroundColor: Theme.colors.action.primaryPressed
-                    visualStyle.foregroundColor: Theme.colors.text.inverse
+                    visualStyle.foregroundColor: Theme.colors.action.primary.content
                 }
                 PropertyChanges {
-                    visualStyle.borderColor: "transparent"
-                    visualStyle.borderWidth: 0
+                    visualStyle.borderColor: Theme.colors.action.primary.outline
+                    visualStyle.borderWidth: 1
                 }
             },
             State {
@@ -268,7 +268,7 @@ T.Button {
                 when: root.variant === MButton.Primary && controlState.focused
                 PropertyChanges {
                     visualStyle.backgroundColor: Theme.colors.action.primaryHover
-                    visualStyle.foregroundColor: Theme.colors.text.inverse
+                    visualStyle.foregroundColor: Theme.colors.action.primary.content
                 }
                 PropertyChanges {
                     visualStyle.borderColor: Theme.colors.border.focus
@@ -280,23 +280,23 @@ T.Button {
                 when: root.variant === MButton.Primary && controlState.hovered
                 PropertyChanges {
                     visualStyle.backgroundColor: Theme.colors.action.primaryHover
-                    visualStyle.foregroundColor: Theme.colors.text.inverse
+                    visualStyle.foregroundColor: Theme.colors.action.primary.content
                 }
                 PropertyChanges {
-                    visualStyle.borderColor: "transparent"
-                    visualStyle.borderWidth: 0
+                    visualStyle.borderColor: Theme.colors.action.primary.outline
+                    visualStyle.borderWidth: 1
                 }
             },
             State {
                 name: "primaryNormal"
                 when: root.variant === MButton.Primary && controlState.normal
                 PropertyChanges {
-                    visualStyle.backgroundColor: Theme.colors.action.primary
-                    visualStyle.foregroundColor: Theme.colors.text.inverse
+                    visualStyle.backgroundColor: Theme.colors.action.primary.container
+                    visualStyle.foregroundColor: Theme.colors.action.primary.content
                 }
                 PropertyChanges {
-                    visualStyle.borderColor: "transparent"
-                    visualStyle.borderWidth: 0
+                    visualStyle.borderColor: Theme.colors.action.primary.outline
+                    visualStyle.borderWidth: 1
                 }
             },
             State {
@@ -304,7 +304,7 @@ T.Button {
                 when: root.variant === MButton.Secondary && controlState.unavailable
                 PropertyChanges {
                     visualStyle.backgroundColor: Theme.colors.action.disabled
-                    visualStyle.foregroundColor: Theme.colors.text.inverse
+                    visualStyle.foregroundColor: Theme.colors.action.secondary.content
                 }
                 PropertyChanges {
                     visualStyle.borderColor: "transparent"
@@ -316,11 +316,11 @@ T.Button {
                 when: root.variant === MButton.Secondary && (controlState.pressed || controlState.checked)
                 PropertyChanges {
                     visualStyle.backgroundColor: Theme.colors.action.secondaryPressed
-                    visualStyle.foregroundColor: Theme.colors.text.inverse
+                    visualStyle.foregroundColor: Theme.colors.action.secondary.content
                 }
                 PropertyChanges {
-                    visualStyle.borderColor: "transparent"
-                    visualStyle.borderWidth: 0
+                    visualStyle.borderColor: Theme.colors.action.secondary.outline
+                    visualStyle.borderWidth: 1
                 }
             },
             State {
@@ -328,7 +328,7 @@ T.Button {
                 when: root.variant === MButton.Secondary && controlState.focused
                 PropertyChanges {
                     visualStyle.backgroundColor: Theme.colors.action.secondaryHover
-                    visualStyle.foregroundColor: Theme.colors.text.inverse
+                    visualStyle.foregroundColor: Theme.colors.action.secondary.content
                 }
                 PropertyChanges {
                     visualStyle.borderColor: Theme.colors.border.focus
@@ -340,23 +340,23 @@ T.Button {
                 when: root.variant === MButton.Secondary && controlState.hovered
                 PropertyChanges {
                     visualStyle.backgroundColor: Theme.colors.action.secondaryHover
-                    visualStyle.foregroundColor: Theme.colors.text.inverse
+                    visualStyle.foregroundColor: Theme.colors.action.secondary.content
                 }
                 PropertyChanges {
-                    visualStyle.borderColor: "transparent"
-                    visualStyle.borderWidth: 0
+                    visualStyle.borderColor: Theme.colors.action.secondary.outline
+                    visualStyle.borderWidth: 1
                 }
             },
             State {
                 name: "secondaryNormal"
                 when: root.variant === MButton.Secondary && controlState.normal
                 PropertyChanges {
-                    visualStyle.backgroundColor: Theme.colors.action.secondary
-                    visualStyle.foregroundColor: Theme.colors.text.inverse
+                    visualStyle.backgroundColor: Theme.colors.action.secondary.container
+                    visualStyle.foregroundColor: Theme.colors.action.secondary.content
                 }
                 PropertyChanges {
-                    visualStyle.borderColor: "transparent"
-                    visualStyle.borderWidth: 0
+                    visualStyle.borderColor: Theme.colors.action.secondary.outline
+                    visualStyle.borderWidth: 1
                 }
             },
             State {
@@ -376,10 +376,10 @@ T.Button {
                 when: root.variant === MButton.Outline && controlState.pressed
                 PropertyChanges {
                     visualStyle.backgroundColor: Theme.colors.surface.pressed
-                    visualStyle.foregroundColor: Theme.colors.action.primary
+                    visualStyle.foregroundColor: Theme.colors.action.primary.container
                 }
                 PropertyChanges {
-                    visualStyle.borderColor: Theme.colors.action.primary
+                    visualStyle.borderColor: Theme.colors.action.primary.container
                     visualStyle.borderWidth: 1
                 }
             },
@@ -388,10 +388,10 @@ T.Button {
                 when: root.variant === MButton.Outline && controlState.checked
                 PropertyChanges {
                     visualStyle.backgroundColor: Theme.colors.action.primarySubtle
-                    visualStyle.foregroundColor: Theme.colors.action.primary
+                    visualStyle.foregroundColor: Theme.colors.action.primary.container
                 }
                 PropertyChanges {
-                    visualStyle.borderColor: Theme.colors.action.primary
+                    visualStyle.borderColor: Theme.colors.action.primary.container
                     visualStyle.borderWidth: 1
                 }
             },
@@ -400,7 +400,7 @@ T.Button {
                 when: root.variant === MButton.Outline && controlState.focused
                 PropertyChanges {
                     visualStyle.backgroundColor: Theme.colors.surface.hover
-                    visualStyle.foregroundColor: Theme.colors.action.primary
+                    visualStyle.foregroundColor: Theme.colors.action.primary.container
                 }
                 PropertyChanges {
                     visualStyle.borderColor: Theme.colors.border.focus
@@ -412,10 +412,10 @@ T.Button {
                 when: root.variant === MButton.Outline && controlState.hovered
                 PropertyChanges {
                     visualStyle.backgroundColor: Theme.colors.surface.hover
-                    visualStyle.foregroundColor: Theme.colors.action.primary
+                    visualStyle.foregroundColor: Theme.colors.action.primary.container
                 }
                 PropertyChanges {
-                    visualStyle.borderColor: Theme.colors.action.primary
+                    visualStyle.borderColor: Theme.colors.action.primary.container
                     visualStyle.borderWidth: 1
                 }
             },
@@ -424,10 +424,10 @@ T.Button {
                 when: root.variant === MButton.Outline && controlState.normal
                 PropertyChanges {
                     visualStyle.backgroundColor: root.transparentHoverBackground
-                    visualStyle.foregroundColor: Theme.colors.action.primary
+                    visualStyle.foregroundColor: Theme.colors.action.primary.container
                 }
                 PropertyChanges {
-                    visualStyle.borderColor: Theme.colors.action.primary
+                    visualStyle.borderColor: Theme.colors.action.primary.container
                     visualStyle.borderWidth: 1
                 }
             },
@@ -448,7 +448,7 @@ T.Button {
                 when: root.variant === MButton.Ghost && controlState.pressed
                 PropertyChanges {
                     visualStyle.backgroundColor: Theme.colors.surface.pressed
-                    visualStyle.foregroundColor: Theme.colors.action.primary
+                    visualStyle.foregroundColor: Theme.colors.action.primary.container
                 }
                 PropertyChanges {
                     visualStyle.borderColor: "transparent"
@@ -460,7 +460,7 @@ T.Button {
                 when: root.variant === MButton.Ghost && controlState.checked
                 PropertyChanges {
                     visualStyle.backgroundColor: Theme.colors.action.primarySubtle
-                    visualStyle.foregroundColor: Theme.colors.action.primary
+                    visualStyle.foregroundColor: Theme.colors.action.primary.container
                 }
                 PropertyChanges {
                     visualStyle.borderColor: "transparent"
@@ -472,7 +472,7 @@ T.Button {
                 when: root.variant === MButton.Ghost && controlState.focused
                 PropertyChanges {
                     visualStyle.backgroundColor: Theme.colors.surface.hover
-                    visualStyle.foregroundColor: Theme.colors.action.primary
+                    visualStyle.foregroundColor: Theme.colors.action.primary.container
                 }
                 PropertyChanges {
                     visualStyle.borderColor: Theme.colors.border.focus
@@ -484,7 +484,7 @@ T.Button {
                 when: root.variant === MButton.Ghost && controlState.hovered
                 PropertyChanges {
                     visualStyle.backgroundColor: Theme.colors.surface.hover
-                    visualStyle.foregroundColor: Theme.colors.action.primary
+                    visualStyle.foregroundColor: Theme.colors.action.primary.container
                 }
                 PropertyChanges {
                     visualStyle.borderColor: "transparent"
@@ -496,7 +496,7 @@ T.Button {
                 when: root.variant === MButton.Ghost && controlState.normal
                 PropertyChanges {
                     visualStyle.backgroundColor: root.transparentHoverBackground
-                    visualStyle.foregroundColor: Theme.colors.action.primary
+                    visualStyle.foregroundColor: Theme.colors.action.primary.container
                 }
                 PropertyChanges {
                     visualStyle.borderColor: "transparent"
@@ -508,7 +508,7 @@ T.Button {
                 when: root.variant === MButton.Destructive && controlState.unavailable
                 PropertyChanges {
                     visualStyle.backgroundColor: Theme.colors.action.disabled
-                    visualStyle.foregroundColor: Theme.colors.text.inverse
+                    visualStyle.foregroundColor: Theme.colors.action.destructive.content
                 }
                 PropertyChanges {
                     visualStyle.borderColor: "transparent"
@@ -519,20 +519,20 @@ T.Button {
                 name: "destructivePressed"
                 when: root.variant === MButton.Destructive && (controlState.pressed || controlState.checked)
                 PropertyChanges {
-                    visualStyle.backgroundColor: Theme.colors.status.error.strong
-                    visualStyle.foregroundColor: Theme.colors.status.error.onStrong
+                    visualStyle.backgroundColor: Theme.colors.action.destructivePressed
+                    visualStyle.foregroundColor: Theme.colors.action.destructive.content
                 }
                 PropertyChanges {
-                    visualStyle.borderColor: "transparent"
-                    visualStyle.borderWidth: 0
+                    visualStyle.borderColor: Theme.colors.action.destructive.outline
+                    visualStyle.borderWidth: 1
                 }
             },
             State {
                 name: "destructiveFocused"
                 when: root.variant === MButton.Destructive && controlState.focused
                 PropertyChanges {
-                    visualStyle.backgroundColor: Theme.colors.status.error.strong
-                    visualStyle.foregroundColor: Theme.colors.status.error.onStrong
+                    visualStyle.backgroundColor: Theme.colors.action.destructiveHover
+                    visualStyle.foregroundColor: Theme.colors.action.destructive.content
                 }
                 PropertyChanges {
                     visualStyle.borderColor: Theme.colors.border.focus
@@ -543,24 +543,24 @@ T.Button {
                 name: "destructiveHovered"
                 when: root.variant === MButton.Destructive && controlState.hovered
                 PropertyChanges {
-                    visualStyle.backgroundColor: Theme.colors.status.error.strong
-                    visualStyle.foregroundColor: Theme.colors.status.error.onStrong
+                    visualStyle.backgroundColor: Theme.colors.action.destructiveHover
+                    visualStyle.foregroundColor: Theme.colors.action.destructive.content
                 }
                 PropertyChanges {
-                    visualStyle.borderColor: "transparent"
-                    visualStyle.borderWidth: 0
+                    visualStyle.borderColor: Theme.colors.action.destructive.outline
+                    visualStyle.borderWidth: 1
                 }
             },
             State {
                 name: "destructiveNormal"
                 when: root.variant === MButton.Destructive && controlState.normal
                 PropertyChanges {
-                    visualStyle.backgroundColor: Theme.colors.status.error.strong
-                    visualStyle.foregroundColor: Theme.colors.status.error.onStrong
+                    visualStyle.backgroundColor: Theme.colors.action.destructive.container
+                    visualStyle.foregroundColor: Theme.colors.action.destructive.content
                 }
                 PropertyChanges {
-                    visualStyle.borderColor: "transparent"
-                    visualStyle.borderWidth: 0
+                    visualStyle.borderColor: Theme.colors.action.destructive.outline
+                    visualStyle.borderWidth: 1
                 }
             }
         ]

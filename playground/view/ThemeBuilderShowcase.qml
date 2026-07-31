@@ -17,6 +17,7 @@ Item {
     property string monoFont: Theme.typography.fontMono
     property string statusMessage: ""
     property bool statusOk: true
+    readonly property bool authoringEnabled: false
 
     readonly property var fontOptions: [
         { "value": "Inter", "label": "Inter" },
@@ -67,11 +68,11 @@ Item {
             "title": qsTr("Action"),
             "description": qsTr("Interactive colors for primary, secondary, and disabled controls."),
             "tokens": [
-                { "key": "primary", "usage": qsTr("Primary actions and strong brand affordances") },
+                { "key": "primary.container", "usage": qsTr("Primary actions and strong brand affordances") },
                 { "key": "primaryHover", "usage": qsTr("Primary action hover") },
                 { "key": "primaryPressed", "usage": qsTr("Primary action pressed") },
                 { "key": "primarySubtle", "usage": qsTr("Subtle primary backgrounds") },
-                { "key": "secondary", "usage": qsTr("Secondary action backgrounds") },
+                { "key": "secondary.container", "usage": qsTr("Secondary action backgrounds") },
                 { "key": "secondaryHover", "usage": qsTr("Secondary action hover") },
                 { "key": "secondaryPressed", "usage": qsTr("Secondary action pressed") },
                 { "key": "disabled", "usage": qsTr("Disabled action background") }
@@ -263,6 +264,11 @@ Item {
     }
 
     function saveAndApply() {
+        if (!authoringEnabled) {
+            statusOk = false
+            statusMessage = qsTr("Read-only: tenant-brand v1 accepts one seed; resolved themes cannot be authored here.")
+            return
+        }
         if (!playgroundThemeBuilder) {
             statusOk = false
             statusMessage = qsTr("Theme builder service is unavailable.")
@@ -370,14 +376,14 @@ Item {
                 AppLabel {
                     width: parent.width
                     textType: AppLabel.H2
-                    text: qsTr("Theme Builder")
+                    text: qsTr("Theme Inspector")
                     color: Theme.colors.text.primary
                     wrapMode: Text.WordWrap
                 }
 
                 SectionCaption {
                     width: parent.width
-                    text: qsTr("Create a custom Merce theme pack from semantic colors and bundled font families.")
+                    text: qsTr("Read-only legacy inspector. tenant-brand v1 accepts one seed; direct semantic-role authoring is disabled.")
                 }
             }
 
@@ -398,6 +404,7 @@ Item {
                     id: applyButton
                     text: qsTr("Save & Apply")
                     icon.name: "material:save"
+                    enabled: root.authoringEnabled
                     onClicked: root.saveAndApply()
                 }
             }
@@ -472,6 +479,7 @@ Item {
                                     readonly property string resolvedTokenPath: root.colorPath(colorGroupDelegate.modelData.key, modelData.key)
 
                                     width: Math.min(280, parent.width)
+                                    enabled: root.authoringEnabled
                                     tokenPath: resolvedTokenPath
                                     usage: modelData.usage
                                     selectedColor: root.colorValue(resolvedTokenPath, root.currentColor(colorGroupDelegate.modelData.key, modelData.key))
@@ -595,7 +603,7 @@ Item {
                             width: parent.width
                             height: Theme.spacing.touchTargetCompact
                             radius: Theme.radius.button
-                            color: root.colorValue("action.primary", Theme.colors.action.primary)
+                            color: root.colorValue("action.primary.container", Theme.colors.action.primary.container)
 
                             Text {
                                 anchors.centerIn: parent

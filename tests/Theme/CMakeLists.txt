@@ -7,6 +7,8 @@ function(merce_add_theme_qtest target source)
         PRIVATE
             MerceTheme
             Qt6::Core
+            Qt6::Gui
+            Qt6::Qml
             Qt6::Test
     )
 
@@ -22,3 +24,5 @@ endfunction()
 
 merce_add_theme_qtest(tst_merce_theme_manifest_loader tst_merce_theme_manifest_loader.cpp)
 merce_add_theme_qtest(tst_merce_theme_runtime_switch tst_merce_theme_runtime_switch.cpp)
+merce_add_theme_qtest(tst_merce_brand_derivation tst_merce_brand_derivation.cpp)
+target_link_libraries(tst_merce_brand_derivation PRIVATE MerceMcuSubset)

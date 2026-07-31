@@ -31,7 +31,7 @@ BaseControl {
     // ====================================================================
     // OVERRIDDEN PROPERTIES
     // ====================================================================
-    override property color accentColor: Theme.colors.action.primary
+    override property color accentColor: Theme.colors.action.primary.container
     override property color backgroundColor: "transparent"
 
     // ====================================================================

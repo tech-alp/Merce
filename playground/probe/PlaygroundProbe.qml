@@ -104,12 +104,14 @@ Main {
                 if (root.objectName !== "merce.playground.window"
                         || root.selectedPage !== "theme"
                         || root.pageTitle(root.selectedPage) !== "Overview"
-                        || Theme.availableThemes.length < 2) {
+                        || Theme.availableThemes.length !== 1
+                        || Theme.availableProfiles.length !== 3) {
                     root.fail("default shell state", [
                                   root.objectName,
                                   root.selectedPage,
                                   root.pageTitle(root.selectedPage),
-                                  Theme.availableThemes.length
+                                  Theme.availableThemes.length,
+                                  Theme.availableProfiles.length
                               ])
                     return
                 }

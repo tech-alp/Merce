@@ -69,7 +69,7 @@ Item {
 
     function borderFor(value) {
         if (value === "primary")
-            return Theme.colors.action.primary
+            return Theme.colors.action.primary.container
         if (value === "success")
             return Theme.colors.status.success.border
         if (value === "warning")

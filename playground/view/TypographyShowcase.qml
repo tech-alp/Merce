@@ -24,7 +24,7 @@ Item {
     readonly property color cardColor: Theme.colors.surface.base
     readonly property color mutedTextColor: Theme.colors.text.secondary
     readonly property color faintTextColor: Theme.colors.text.tertiary
-    readonly property color accentColor: Theme.colors.action.primary
+    readonly property color accentColor: Theme.colors.action.primary.container
     readonly property color darkPreviewTextColor: Theme.colors.text.inverse
     readonly property color darkPreviewMutedColor: Qt.rgba(darkPreviewTextColor.r, darkPreviewTextColor.g, darkPreviewTextColor.b, 0.72)
 
@@ -1035,7 +1035,7 @@ Item {
                             anchors.centerIn: parent
                             name: "material:shopping_bag"
                             size: parent.width < 50 ? 30 : 38
-                            color: Theme.colors.action.primary
+                            color: Theme.colors.action.primary.container
                         }
                     }
 

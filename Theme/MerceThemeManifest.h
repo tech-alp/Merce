@@ -7,9 +7,9 @@
 struct MerceThemeLoadResult
 {
     bool ok = false;
-    QString theme;
-    QString variant;
-    bool usedFallback = false;
+    QString brandId;
+    QString mode;
+    QString profile;
     QStringList errors;
     QJsonObject finalManifest;
 };

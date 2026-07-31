@@ -6,6 +6,9 @@
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QLoggingCategory>
+#include <QScopedValueRollback>
+
+#include <stdexcept>
 
 Q_LOGGING_CATEGORY(merceThemeLog, "merce.theme")
 
@@ -46,6 +49,8 @@ MerceTheme::MerceTheme(const QString &manifestIndexPath, QObject *parent)
       m_colors(new MerceColors(this)),
       m_spacing(new MerceSpacing(this)),
       m_radius(new MerceRadius(this)),
+      m_size(new MerceSize(this)),
+      m_state(new MerceState(this)),
       m_typography(new MerceTypography(this)),
       m_motion(new MerceMotion(this)),
       m_icons(new MerceIconography(this)),
@@ -54,12 +59,14 @@ MerceTheme::MerceTheme(const QString &manifestIndexPath, QObject *parent)
       m_shadows(new MerceShadows(this))
 {
     if (!reloadThemesInternal(false))
-        return;
+        throw std::runtime_error("No valid bundled AlGit theme registry");
 
-    const MerceThemeLoadResult theme = MerceThemeManifestLoader::loadDefaultFromRegistry(m_registry);
+    const MerceThemeLoadResult theme =
+        MerceThemeManifestLoader::loadDefaultFromRegistries(m_colorRegistry,
+                                                            m_profileRegistry);
     if (!theme.ok) {
         logThemeErrors(QStringLiteral("default manifest load failed:"), theme.errors);
-        return;
+        throw std::runtime_error("No valid bundled AlGit theme");
     }
 
     applyLoadedTheme(theme);
@@ -75,19 +82,47 @@ QString MerceTheme::activeMode() const
     return m_activeMode;
 }
 
-bool MerceTheme::setTheme(const QString &brand, const QString &mode)
+QString MerceTheme::activeProfile() const
 {
-    const MerceThemeLoadResult theme = MerceThemeManifestLoader::loadFromRegistry(m_registry, brand, mode);
+    return m_activeProfile;
+}
+
+bool MerceTheme::setContext(const QString &brand,
+                            const QString &mode,
+                            const QString &profile)
+{
+    if (m_contextMutationInProgress) {
+        qCWarning(merceThemeLog) << "reentrant theme context mutation rejected";
+        return false;
+    }
+    QScopedValueRollback mutationGuard(m_contextMutationInProgress, true);
+
+    const MerceThemeLoadResult theme =
+        MerceThemeManifestLoader::loadFromRegistries(m_colorRegistry,
+                                                     m_profileRegistry,
+                                                     brand,
+                                                     mode,
+                                                     profile);
     if (!theme.ok) {
         logThemeErrors(QStringLiteral("runtime theme switch failed:"), theme.errors);
         return false;
     }
-
     return applyLoadedTheme(theme);
+}
+
+bool MerceTheme::setTheme(const QString &brand, const QString &mode)
+{
+    const QString profile = m_activeProfile.isEmpty()
+        ? m_profileRegistry.defaultProfile() : m_activeProfile;
+    return setContext(brand, mode, profile);
 }
 
 bool MerceTheme::addThemeSource(const QString &indexPath)
 {
+    if (m_contextMutationInProgress) {
+        qCWarning(merceThemeLog) << "reentrant theme source mutation rejected";
+        return false;
+    }
     if (!isLocalThemeSourcePath(indexPath)) {
         qCWarning(merceThemeLog) << "external theme source path must be a local filesystem path:" << indexPath;
         return false;
@@ -103,10 +138,17 @@ void MerceTheme::clearThemeSources()
 {
     if (m_externalThemeSourcePaths.isEmpty())
         return;
+    if (m_contextMutationInProgress) {
+        qCWarning(merceThemeLog) << "reentrant theme source mutation rejected";
+        return;
+    }
 
+    const QStringList previousPaths = m_externalThemeSourcePaths;
     m_externalThemeSourcePaths.clear();
-    if (!reloadThemesInternal(true))
+    if (!reloadThemesInternal(true)) {
+        m_externalThemeSourcePaths = previousPaths;
         qCWarning(merceThemeLog) << "failed to reload built-in theme registry after clearing external sources";
+    }
 }
 
 bool MerceTheme::reloadThemes()
@@ -116,13 +158,18 @@ bool MerceTheme::reloadThemes()
 
 bool MerceTheme::reloadThemesInternal(bool emitAvailableThemesChanged)
 {
+    if (m_contextMutationInProgress) {
+        qCWarning(merceThemeLog) << "reentrant theme registry reload rejected";
+        return false;
+    }
+    QScopedValueRollback mutationGuard(m_contextMutationInProgress, true);
+
     QStringList indexPaths;
     indexPaths.append(m_builtinManifestIndexPath);
     indexPaths.append(m_externalThemeSourcePaths);
 
-    const MerceThemeRegistryLoadResult registry = m_externalThemeSourcePaths.isEmpty()
-        ? MerceThemeManifestLoader::loadRegistry(m_builtinManifestIndexPath)
-        : MerceThemeManifestLoader::loadMergedRegistry(indexPaths);
+    const MerceThemeRegistryLoadResult registry =
+        MerceThemeManifestLoader::loadMergedRegistry(indexPaths);
     if (!registry.ok) {
         logThemeErrors(QStringLiteral("theme source reload failed:"), registry.errors);
         return false;
@@ -131,14 +178,12 @@ bool MerceTheme::reloadThemesInternal(bool emitAvailableThemesChanged)
     MerceThemeLoadResult nextActiveTheme;
     const bool hasActiveTheme = !m_activeBrand.isEmpty();
     if (hasActiveTheme) {
-        if (registry.registry.lookup(m_activeBrand, m_activeMode).ok) {
-            nextActiveTheme = MerceThemeManifestLoader::loadFromRegistry(registry.registry,
-                                                                         m_activeBrand,
-                                                                         m_activeMode);
-        } else {
-            nextActiveTheme = MerceThemeManifestLoader::loadDefaultFromRegistry(registry.registry);
-        }
-
+        nextActiveTheme =
+            MerceThemeManifestLoader::loadFromRegistries(registry.colorRegistry,
+                                                         registry.profileRegistry,
+                                                         m_activeBrand,
+                                                         m_activeMode,
+                                                         m_activeProfile);
         if (!nextActiveTheme.ok) {
             logThemeErrors(QStringLiteral("active theme reload failed:"), nextActiveTheme.errors);
             return false;
@@ -146,14 +191,21 @@ bool MerceTheme::reloadThemesInternal(bool emitAvailableThemesChanged)
     }
 
     const QVariantList nextAvailableThemes =
-        MerceThemeManifestLoader::availableThemesForRegistry(registry.registry);
+        MerceThemeManifestLoader::availableThemesForRegistry(registry.colorRegistry);
+    const QVariantList nextAvailableProfiles =
+        MerceThemeManifestLoader::availableProfilesForRegistry(registry.profileRegistry);
     const bool availableThemesDidChange = m_availableThemes != nextAvailableThemes;
+    const bool availableProfilesDidChange = m_availableProfiles != nextAvailableProfiles;
 
-    m_registry = registry.registry;
+    m_colorRegistry = registry.colorRegistry;
+    m_profileRegistry = registry.profileRegistry;
     m_availableThemes = nextAvailableThemes;
+    m_availableProfiles = nextAvailableProfiles;
 
     if (availableThemesDidChange && emitAvailableThemesChanged)
         emit availableThemesChanged();
+    if (availableProfilesDidChange && emitAvailableThemesChanged)
+        emit availableProfilesChanged();
 
     if (hasActiveTheme)
         applyLoadedTheme(nextActiveTheme);
@@ -167,20 +219,69 @@ bool MerceTheme::applyLoadedTheme(const MerceThemeLoadResult &result)
         return false;
 
     const QJsonObject manifest = result.finalManifest;
-    m_colors->applyManifestSection(manifest.value(QStringLiteral("colors")).toObject());
-    m_spacing->applyManifestSection(manifest.value(QStringLiteral("spacing")).toObject());
-    m_radius->applyManifestSection(manifest.value(QStringLiteral("radius")).toObject());
-    m_typography->applyManifestSection(manifest.value(QStringLiteral("typography")).toObject());
-    setActiveThemeState(result.theme, result.variant);
+    auto *nextColors = new MerceColors(this);
+    auto *nextSpacing = new MerceSpacing(this);
+    auto *nextRadius = new MerceRadius(this);
+    auto *nextSize = new MerceSize(this);
+    auto *nextState = new MerceState(this);
+    auto *nextTypography = new MerceTypography(this);
+
+    nextColors->applyManifestSection(manifest.value(QStringLiteral("colors")).toObject(),
+                                     result.mode);
+    nextSpacing->applyManifestSection(manifest.value(QStringLiteral("spacing")).toObject());
+    nextRadius->applyManifestSection(manifest.value(QStringLiteral("radius")).toObject());
+    nextSize->applyManifestSection(manifest.value(QStringLiteral("size")).toObject());
+    nextState->applyManifestSection(manifest.value(QStringLiteral("state")).toObject());
+    nextTypography->applyManifestSection(manifest.value(QStringLiteral("typography")).toObject());
+
+    MerceColors *oldColors = m_colors;
+    MerceSpacing *oldSpacing = m_spacing;
+    MerceRadius *oldRadius = m_radius;
+    MerceSize *oldSize = m_size;
+    MerceState *oldState = m_state;
+    MerceTypography *oldTypography = m_typography;
+
+    m_colors = nextColors;
+    m_spacing = nextSpacing;
+    m_radius = nextRadius;
+    m_size = nextSize;
+    m_state = nextState;
+    m_typography = nextTypography;
+
+    const bool activeThemeDidChange =
+        updateActiveThemeState(result.brandId, result.mode, result.profile);
+    emit colorsChanged();
+    emit spacingChanged();
+    emit radiusChanged();
+    emit typographyChanged();
+    emit stateChanged();
+    emit sizeChanged();
+    if (activeThemeDidChange)
+        emit activeThemeChanged();
+
+    ++m_generation;
+    emit generationChanged();
+
+    oldColors->deleteLater();
+    oldSpacing->deleteLater();
+    oldRadius->deleteLater();
+    oldSize->deleteLater();
+    oldState->deleteLater();
+    oldTypography->deleteLater();
     return true;
 }
 
-void MerceTheme::setActiveThemeState(const QString &brand, const QString &mode)
+bool MerceTheme::updateActiveThemeState(const QString &brand,
+                                        const QString &mode,
+                                        const QString &profile)
 {
-    if (m_activeBrand == brand && m_activeMode == mode)
-        return;
+    if (m_activeBrand == brand && m_activeMode == mode
+        && m_activeProfile == profile) {
+        return false;
+    }
 
     m_activeBrand = brand;
     m_activeMode = mode;
-    emit activeThemeChanged();
+    m_activeProfile = profile;
+    return true;
 }

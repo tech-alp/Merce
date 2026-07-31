@@ -153,7 +153,7 @@ Item {
                     text: root.hexValue
                     color: Theme.colors.text.primary
                     selectedTextColor: Theme.colors.text.inverse
-                    selectionColor: Theme.colors.action.primary
+                    selectionColor: Theme.colors.action.primary.container
                     font.family: FoundationFonts.resolveFamily(Theme.typography.fontMono)
                     font.pixelSize: Theme.typography.sizeSmall
                     horizontalAlignment: Text.AlignHCenter

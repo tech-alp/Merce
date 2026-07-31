@@ -31,7 +31,7 @@ BaseControl {
     // ====================================================================
     // OVERRIDDEN PROPERTIES
     // ====================================================================
-    override property color accentColor: Theme.colors.action.primary
+    override property color accentColor: Theme.colors.action.primary.container
     override property color backgroundColor: "transparent"
 
     // ====================================================================
@@ -69,7 +69,7 @@ BaseControl {
 
     readonly property color thumbColor: {
         if (root.isDisabled) return Theme.colors.text.disabled
-        return Theme.colors.surface.base
+        return root.checked ? Theme.colors.action.primary.content : Theme.colors.surface.base
     }
 
     // Thumb position (animated)

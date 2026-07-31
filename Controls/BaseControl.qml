@@ -16,7 +16,7 @@ Item {
     // ====================================================================
     // VIRTUAL PROPERTIES (Can be overridden by child components)
     // ====================================================================
-    virtual property color accentColor: Theme.colors.action.primary
+    virtual property color accentColor: Theme.colors.action.primary.container
     virtual property color accentHoverColor: Theme.colors.action.primaryHover
     virtual property color backgroundColor: "transparent"
     virtual property int radiusValue: Theme.radius.button

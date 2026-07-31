@@ -10,18 +10,18 @@ QtObject {
     Component.onCompleted: {
         const backgroundBase = String(Theme.colors.background.base).toLowerCase()
         const textPrimary = String(Theme.colors.text.primary).toLowerCase()
-        const actionPrimary = String(Theme.colors.action.primary).toLowerCase()
+        const actionPrimary = String(Theme.colors.action.primary.container).toLowerCase()
         const bodyFont = String(Theme.typography.fontBody)
 
-        if (backgroundBase !== "#faf8f6"
-                || textPrimary !== "#1f1510"
-                || actionPrimary !== "#c4785a"
+        if (backgroundBase !== "#f6f4ee"
+                || textPrimary !== "#151a19"
+                || actionPrimary !== "#006b63"
                 || Theme.spacing.md !== 16
-                || Theme.radius.button !== 12
-                || bodyFont !== "Inter"
+                || Theme.radius.button !== 6
+                || bodyFont !== "Lexend"
                 || Theme.iconography.small !== 20
                 || Theme.breakpoints.large !== 1024
-                || Theme.activeBrand !== "merce"
+                || Theme.activeBrand !== "algit"
                 || Theme.activeMode !== "light") {
             fail("default canonical state",
                  [backgroundBase,
@@ -40,7 +40,7 @@ QtObject {
         console.log("theme-probe ok",
                     Theme.colors.background.base,
                     Theme.colors.text.primary,
-                    Theme.colors.action.primary,
+                    Theme.colors.action.primary.container,
                     Theme.spacing.md,
                     Theme.radius.button,
                     bodyFont,

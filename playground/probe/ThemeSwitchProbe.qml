@@ -11,31 +11,35 @@ QtObject {
     }
 
     Component.onCompleted: {
-        const palette = Theme.colors
-        const spacing = Theme.spacing
-        const radius = Theme.radius
-        const typography = Theme.typography
+        const lightColors = Theme.colors
+        const lightSpacing = Theme.spacing
+        const lightRadius = Theme.radius
+        const lightTypography = Theme.typography
+        const lightSize = Theme.size
 
-        if (Theme.activeBrand !== "merce"
+        if (Theme.activeBrand !== "algit"
                 || Theme.activeMode !== "light"
-                || String(observedBackground).toLowerCase() !== "#faf8f6") {
+                || Theme.activeProfile !== "cart"
+                || String(observedBackground).toLowerCase() !== "#f6f4ee") {
             fail("default state",
-                 [Theme.activeBrand, Theme.activeMode, String(observedBackground)])
+                 [Theme.activeBrand, Theme.activeMode, Theme.activeProfile,
+                  String(observedBackground)])
             return
         }
 
-        if (!Theme.setTheme("merce", "dark")) {
+        if (!Theme.setTheme("algit", "dark")) {
             fail("dark switch returned false", [])
             return
         }
 
-        if (String(observedBackground).toLowerCase() !== "#1f1510"
-                || Theme.activeBrand !== "merce"
+        if (String(observedBackground).toLowerCase() !== "#0e1514"
+                || Theme.activeBrand !== "algit"
                 || Theme.activeMode !== "dark"
-                || Theme.colors !== palette
-                || Theme.spacing !== spacing
-                || Theme.radius !== radius
-                || Theme.typography !== typography) {
+                || Theme.colors === lightColors
+                || Theme.spacing === lightSpacing
+                || Theme.radius === lightRadius
+                || Theme.typography === lightTypography
+                || Theme.size === lightSize) {
             fail("dark switch state",
                  [Theme.activeBrand, Theme.activeMode, String(observedBackground)])
             return
@@ -46,69 +50,36 @@ QtObject {
             return
         }
 
-        if (String(observedBackground).toLowerCase() !== "#1f1510"
-                || Theme.activeBrand !== "merce"
+        if (String(observedBackground).toLowerCase() !== "#0e1514"
+                || Theme.activeBrand !== "algit"
                 || Theme.activeMode !== "dark") {
             fail("invalid switch preservation",
                  [Theme.activeBrand, Theme.activeMode, String(observedBackground)])
             return
         }
 
-        if (!Theme.setTheme("stripe")) {
-            fail("stripe switch returned false", [])
+        const darkColors = Theme.colors
+        if (!Theme.setContext("algit", "light", "ops")) {
+            fail("profile switch returned false", [])
             return
         }
 
-        if (String(observedBackground).toLowerCase() !== "#f6f9fc"
-                || Theme.activeBrand !== "stripe"
-                || Theme.activeMode !== ""
-                || Theme.colors !== palette
-                || Theme.spacing !== spacing
-                || Theme.radius !== radius
-                || Theme.typography !== typography) {
-            fail("stripe switch state",
-                 [Theme.activeBrand, Theme.activeMode, String(observedBackground)])
-            return
-        }
-
-        if (!Theme.setTheme("linear")) {
-            fail("linear default switch returned false", [])
-            return
-        }
-
-        if (String(observedBackground).toLowerCase() !== "#08090a"
-                || Theme.activeBrand !== "linear"
-                || Theme.activeMode !== "dark"
-                || Theme.typography.fontBody !== "Inter"
-                || Theme.typography.fontMono !== "IoskeleyMono Nerd Font"
-                || Theme.colors !== palette
-                || Theme.spacing !== spacing
-                || Theme.radius !== radius
-                || Theme.typography !== typography) {
-            fail("linear default switch state",
-                 [Theme.activeBrand, Theme.activeMode, String(observedBackground),
-                  Theme.typography.fontBody, Theme.typography.fontMono])
-            return
-        }
-
-        if (!Theme.setTheme("linear", "light")) {
-            fail("linear light switch returned false", [])
-            return
-        }
-
-        if (String(observedBackground).toLowerCase() !== "#f7f8f8"
-                || Theme.activeBrand !== "linear"
+        if (String(observedBackground).toLowerCase() !== "#f6f4ee"
+                || Theme.activeBrand !== "algit"
                 || Theme.activeMode !== "light"
-                || Theme.colors.text.primary.toString().toLowerCase() !== "#08090a") {
-            fail("linear light switch state",
-                 [Theme.activeBrand, Theme.activeMode, String(observedBackground),
-                  Theme.colors.text.primary])
+                || Theme.activeProfile !== "ops"
+                || Theme.size.control.minimum !== 40
+                || Theme.colors === darkColors) {
+            fail("profile switch state",
+                 [Theme.activeBrand, Theme.activeMode, Theme.activeProfile,
+                  String(observedBackground), Theme.size.control.minimum])
             return
         }
 
         console.log("theme-switch-probe ok",
                     Theme.activeBrand,
                     Theme.activeMode,
+                    Theme.activeProfile,
                     Theme.colors.background.base)
         Qt.quit()
     }

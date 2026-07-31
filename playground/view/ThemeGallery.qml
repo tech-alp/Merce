@@ -163,7 +163,7 @@ Item {
             height: Math.max(8, Math.min(28, tokenValue))
             anchors.verticalCenter: parent.verticalCenter
             radius: Theme.radius.small
-            color: Theme.colors.action.primary
+            color: Theme.colors.action.primary.container
         }
 
         FieldLabel {
@@ -301,9 +301,9 @@ Item {
                     TokenSwatch { label: "backgroundBase"; swatchColor: Theme.colors.background.base }
                     TokenSwatch { label: "surfaceBase"; swatchColor: Theme.colors.surface.base }
                     TokenSwatch { label: "textPrimary"; swatchColor: Theme.colors.text.primary }
-                    TokenSwatch { label: "actionPrimary"; swatchColor: Theme.colors.action.primary }
+                    TokenSwatch { label: "actionPrimary"; swatchColor: Theme.colors.action.primary.container }
                     TokenSwatch { label: "actionPrimaryDark"; swatchColor: Theme.colors.action.primaryPressed }
-                    TokenSwatch { label: "actionSecondary"; swatchColor: Theme.colors.action.secondary }
+                    TokenSwatch { label: "actionSecondary"; swatchColor: Theme.colors.action.secondary.container }
                     TokenSwatch { label: "actionSecondaryDark"; swatchColor: Theme.colors.action.secondaryPressed }
                     TokenSwatch { label: "borderBase"; swatchColor: Theme.colors.border.base }
                     TokenSwatch { label: "borderFocus"; swatchColor: Theme.colors.border.focus }

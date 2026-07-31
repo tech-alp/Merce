@@ -65,7 +65,7 @@ Rectangle {
                     anchors.centerIn: parent
                     width: 26
                     height: 24
-                    color: Theme.colors.action.primary
+                    color: Theme.colors.action.primary.container
                 }
             }
 

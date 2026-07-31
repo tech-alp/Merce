@@ -31,7 +31,7 @@ BaseControl {
     // ====================================================================
     // OVERRIDDEN PROPERTIES
     // ====================================================================
-    override property color accentColor: Theme.colors.action.primary
+    override property color accentColor: Theme.colors.action.primary.container
     override property color backgroundColor: "transparent"
 
     // ====================================================================
@@ -76,7 +76,7 @@ BaseControl {
 
     readonly property color checkmarkColor: {
         if (root.isDisabled) return Theme.colors.text.disabled
-        return Theme.colors.text.inverse
+        return Theme.colors.action.primary.content
     }
 
     // ====================================================================

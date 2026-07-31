@@ -6,65 +6,45 @@
 
 namespace {
 
-QString indexDirectory(const QString &indexPath)
+constexpr qsizetype kMaxRegistryEntries = 256;
+
+bool isSafeFileName(const QString &fileName)
 {
-    const QString path = QFileInfo(indexPath).path();
-    if (path.isEmpty() || path == QStringLiteral("."))
-        return QString();
-    return path;
+    return !fileName.isEmpty()
+        && !QDir::isAbsolutePath(fileName)
+        && !fileName.startsWith(QLatin1Char(':'))
+        && !fileName.contains(QLatin1Char('/'))
+        && !fileName.contains(QLatin1Char('\\'))
+        && !fileName.contains(QStringLiteral(".."));
 }
 
-QString resolvedManifestPath(const QString &indexPath, const QString &fileName)
+QString resolvedThemePath(const QString &indexPath, const QString &fileName)
 {
-    const QString directory = indexDirectory(indexPath);
-    if (directory.isEmpty())
-        return fileName;
-    return directory + QLatin1Char('/') + fileName;
+    return QDir::cleanPath(QFileInfo(indexPath).path() + QLatin1Char('/') + fileName);
 }
 
-bool isUnsafeManifestFileName(const QString &fileName)
+QString resolvedProfilePath(const QString &indexPath, const QString &fileName)
 {
-    return fileName.isEmpty()
-        || QDir::isAbsolutePath(fileName)
-        || fileName.startsWith(QLatin1Char(':'))
-        || fileName.contains(QStringLiteral("../"))
-        || fileName.contains(QStringLiteral("..\\"))
-        || fileName.contains(QLatin1Char('/'))
-        || fileName.contains(QLatin1Char('\\'));
+    return QDir::cleanPath(QFileInfo(indexPath).path()
+                           + QStringLiteral("/../profiles/") + fileName);
 }
 
-QString validatedPath(const QString &indexPath,
-                      const QString &themeName,
-                      const QString &variantName,
-                      const QString &fieldName,
-                      const QJsonValue &value,
-                      QStringList *errors)
-{
-    if (!value.isString()) {
-        errors->append(QStringLiteral("theme '%1'%2 field '%3' must be a string")
-                           .arg(themeName,
-                                variantName.isEmpty() ? QString() : QStringLiteral(" variant '%1'").arg(variantName),
-                                fieldName));
-        return {};
-    }
-
-    const QString fileName = value.toString();
-    if (isUnsafeManifestFileName(fileName)) {
-        errors->append(QStringLiteral("theme '%1'%2 field '%3' has unsafe manifest path '%4'")
-                           .arg(themeName,
-                                variantName.isEmpty() ? QString() : QStringLiteral(" variant '%1'").arg(variantName),
-                                fieldName,
-                                fileName));
-        return {};
-    }
-
-    return resolvedManifestPath(indexPath, fileName);
-}
-
-bool hasThemeEntry(const QList<MerceThemeRegistryEntry> &entries, const QString &theme)
+bool hasThemeEntry(const QList<MerceThemeRegistryEntry> &entries,
+                   const QString &brandId,
+                   const QString &mode)
 {
     for (const auto &entry : entries) {
-        if (entry.theme == theme)
+        if (entry.brandId == brandId && entry.mode == mode)
+            return true;
+    }
+    return false;
+}
+
+bool hasProfileEntry(const QList<MerceProfileRegistryEntry> &entries,
+                     const QString &profileId)
+{
+    for (const auto &entry : entries) {
+        if (entry.profileId == profileId)
             return true;
     }
     return false;
@@ -72,198 +52,267 @@ bool hasThemeEntry(const QList<MerceThemeRegistryEntry> &entries, const QString 
 
 } // namespace
 
-MerceThemeRegistryResult MerceThemeRegistry::fromJson(const QJsonObject &index, const QString &indexPath)
+MerceThemeRegistryResult MerceThemeRegistry::fromJson(const QJsonObject &index,
+                                                      const QString &indexPath)
 {
     MerceThemeRegistryResult result;
 
-    if (index.value(QStringLiteral("schemaVersion")).toInt(-1) != 1) {
-        result.errors.append(QStringLiteral("theme index schemaVersion must be 1"));
-    }
+    const QJsonValue defaultBrandValue = index.value(QStringLiteral("defaultBrand"));
+    if (defaultBrandValue.isString())
+        result.registry.m_defaultBrand = defaultBrandValue.toString();
 
-    const QJsonValue defaultThemeValue = index.value(QStringLiteral("defaultTheme"));
-    if (!defaultThemeValue.isString() || defaultThemeValue.toString().isEmpty()) {
-        result.errors.append(QStringLiteral("theme index must declare a non-empty defaultTheme"));
-    } else {
-        result.registry.m_defaultTheme = defaultThemeValue.toString();
+    const QJsonValue brandsValue = index.value(QStringLiteral("brands"));
+    if (brandsValue.isUndefined()) {
+        result.ok = true;
+        return result;
     }
-
-    const QJsonValue themesValue = index.value(QStringLiteral("themes"));
-    if (!themesValue.isObject() || themesValue.toObject().isEmpty()) {
-        result.errors.append(QStringLiteral("theme index must declare a non-empty themes object"));
-        result.ok = false;
+    if (!brandsValue.isObject() || brandsValue.toObject().isEmpty()) {
+        result.errors.append(QStringLiteral("theme index brands must be a non-empty object"));
         return result;
     }
 
-    const QJsonObject themes = themesValue.toObject();
-    for (const QString &themeName : themes.keys()) {
-        if (themeName.isEmpty()) {
-            result.errors.append(QStringLiteral("theme index contains an empty theme name"));
+    const QJsonObject brands = brandsValue.toObject();
+    for (const QString &brandId : brands.keys()) {
+        const QJsonValue brandValue = brands.value(brandId);
+        if (brandId.isEmpty() || !brandValue.isObject()) {
+            result.errors.append(QStringLiteral("brand entries require a non-empty id and object value"));
             continue;
         }
 
-        const QJsonValue themeValue = themes.value(themeName);
-        if (!themeValue.isObject()) {
-            result.errors.append(QStringLiteral("theme '%1' must be an object").arg(themeName));
+        const QJsonObject brand = brandValue.toObject();
+        const QString displayName = brand.value(QStringLiteral("displayName")).toString(brandId);
+        const QString defaultMode = brand.value(QStringLiteral("defaultMode")).toString();
+        const QJsonValue modesValue = brand.value(QStringLiteral("modes"));
+        if (defaultMode.isEmpty() || !modesValue.isObject() || modesValue.toObject().isEmpty()) {
+            result.errors.append(QStringLiteral("brand '%1' requires defaultMode and modes").arg(brandId));
             continue;
         }
 
-        const QJsonObject theme = themeValue.toObject();
-        const QJsonValue displayNameValue = theme.value(QStringLiteral("displayName"));
-        if (!displayNameValue.isString() || displayNameValue.toString().isEmpty()) {
-            result.errors.append(QStringLiteral("theme '%1' must declare a non-empty displayName").arg(themeName));
+        const QJsonObject modes = modesValue.toObject();
+        if (!modes.contains(defaultMode)) {
+            result.errors.append(QStringLiteral("brand '%1' defaultMode '%2' is not registered")
+                                     .arg(brandId, defaultMode));
         }
+        result.registry.m_defaultModesByBrand.insert(brandId, defaultMode);
+        if (brandId == result.registry.m_defaultBrand)
+            result.registry.m_defaultMode = defaultMode;
 
-        QString basePath;
-        if (theme.contains(QStringLiteral("basePath"))) {
-            basePath = validatedPath(indexPath, themeName, QString(), QStringLiteral("basePath"),
-                                     theme.value(QStringLiteral("basePath")), &result.errors);
-        }
-
-        const bool hasPath = theme.contains(QStringLiteral("path"));
-        const bool hasVariants = theme.contains(QStringLiteral("variants"));
-        if (hasPath && hasVariants) {
-            result.errors.append(QStringLiteral("theme '%1' must not declare both path and variants").arg(themeName));
-        }
-
-        if (hasVariants) {
-            const QJsonValue variantsValue = theme.value(QStringLiteral("variants"));
-            if (!variantsValue.isObject() || variantsValue.toObject().isEmpty()) {
-                result.errors.append(QStringLiteral("theme '%1' variants must be a non-empty object").arg(themeName));
+        for (const QString &mode : modes.keys()) {
+            if (result.registry.m_entries.size() >= kMaxRegistryEntries) {
+                result.errors.append(QStringLiteral("theme index exceeds 256 brand/mode entries"));
+                break;
+            }
+            const QJsonValue pathValue = modes.value(mode);
+            if (mode.isEmpty() || !pathValue.isString()
+                || !isSafeFileName(pathValue.toString())) {
+                result.errors.append(QStringLiteral("brand '%1' mode '%2' has an unsafe manifest path")
+                                         .arg(brandId, mode));
                 continue;
             }
-
-            const QJsonValue defaultVariantValue = theme.value(QStringLiteral("defaultVariant"));
-            if (!defaultVariantValue.isString() || defaultVariantValue.toString().isEmpty()) {
-                result.errors.append(QStringLiteral("theme '%1' must declare a non-empty defaultVariant").arg(themeName));
-            } else {
-                const QString defaultVariant = defaultVariantValue.toString();
-                result.registry.m_defaultVariantsByTheme.insert(themeName, defaultVariant);
-                if (themeName == result.registry.m_defaultTheme)
-                    result.registry.m_defaultVariant = defaultVariant;
-            }
-
-            const QJsonObject variants = variantsValue.toObject();
-            if (defaultVariantValue.isString()
-                && !variants.contains(defaultVariantValue.toString())) {
-                result.errors.append(QStringLiteral("theme '%1' defaultVariant '%2' is not registered")
-                                         .arg(themeName, defaultVariantValue.toString()));
-            }
-
-            for (const QString &variantName : variants.keys()) {
-                if (variantName.isEmpty()) {
-                    result.errors.append(QStringLiteral("theme '%1' contains an empty variant name").arg(themeName));
-                    continue;
-                }
-
-                const QString manifestPath = validatedPath(indexPath, themeName, variantName, QStringLiteral("variants"),
-                                                           variants.value(variantName), &result.errors);
-                result.registry.m_entries.append({
-                    themeName,
-                    displayNameValue.toString(themeName),
-                    variantName,
-                    manifestPath,
-                    basePath,
-                });
-            }
-            continue;
+            result.registry.m_entries.push_back({
+                brandId,
+                displayName,
+                mode,
+                resolvedThemePath(indexPath, pathValue.toString()),
+                MerceThemeSourceKind::ResolvedTheme,
+            });
         }
-
-        if (!hasPath) {
-            result.errors.append(QStringLiteral("theme '%1' must declare path or variants").arg(themeName));
-            continue;
-        }
-
-        const QString manifestPath = validatedPath(indexPath, themeName, QString(), QStringLiteral("path"),
-                                                   theme.value(QStringLiteral("path")), &result.errors);
-        result.registry.m_entries.append({
-            themeName,
-            displayNameValue.toString(themeName),
-            QString(),
-            manifestPath,
-            basePath,
-        });
     }
 
-    if (!result.registry.m_defaultTheme.isEmpty()
-        && !hasThemeEntry(result.registry.m_entries, result.registry.m_defaultTheme)) {
-        result.errors.append(QStringLiteral("defaultTheme '%1' is not registered").arg(result.registry.m_defaultTheme));
+    if (!result.registry.m_defaultBrand.isEmpty()
+        && !result.registry.lookup(result.registry.m_defaultBrand).ok) {
+        result.errors.append(QStringLiteral("defaultBrand '%1' is not registered")
+                                 .arg(result.registry.m_defaultBrand));
     }
 
     result.ok = result.errors.isEmpty();
     return result;
 }
 
-MerceThemeRegistryLookupResult MerceThemeRegistry::lookup(const QString &theme, const QString &variant) const
+MerceThemeRegistryResult MerceThemeRegistry::fromTenantBrand(const QJsonObject &document,
+                                                             const QString &documentPath)
+{
+    MerceThemeRegistryResult result;
+    const QString brandId = document.value(QStringLiteral("brandId")).toString();
+    if (brandId.isEmpty()) {
+        result.errors.append(QStringLiteral("tenant brand requires a non-empty brandId"));
+        return result;
+    }
+
+    result.registry.m_defaultBrand = brandId;
+    result.registry.m_defaultMode = QStringLiteral("light");
+    result.registry.m_defaultModesByBrand.insert(brandId, QStringLiteral("light"));
+    result.registry.m_entries = {
+        {brandId,
+         brandId,
+         QStringLiteral("light"),
+         documentPath,
+         MerceThemeSourceKind::TenantBrand},
+        {brandId,
+         brandId,
+         QStringLiteral("dark"),
+         documentPath,
+         MerceThemeSourceKind::TenantBrand},
+    };
+    result.ok = true;
+    return result;
+}
+
+MerceThemeRegistryLookupResult MerceThemeRegistry::lookup(const QString &brandId,
+                                                          const QString &mode) const
 {
     MerceThemeRegistryLookupResult result;
-
-    bool foundTheme = false;
-    QString effectiveVariant = variant;
-    if (effectiveVariant.isEmpty())
-        effectiveVariant = defaultVariantForTheme(theme);
+    const QString effectiveMode = mode.isEmpty() ? defaultModeForBrand(brandId) : mode;
 
     for (const auto &entry : m_entries) {
-        if (entry.theme != theme)
-            continue;
-
-        foundTheme = true;
-        if (entry.variant == effectiveVariant) {
+        if (entry.brandId == brandId && entry.mode == effectiveMode) {
             result.ok = true;
             result.entry = entry;
             return result;
         }
     }
 
-    if (!foundTheme) {
-        result.errors.append(QStringLiteral("theme '%1' is not registered").arg(theme));
-    } else if (effectiveVariant.isEmpty()) {
-        result.errors.append(QStringLiteral("theme '%1' requires a registered variant").arg(theme));
-    } else {
-        result.errors.append(QStringLiteral("variant '%1' is not registered for theme '%2'").arg(effectiveVariant, theme));
-    }
+    bool foundBrand = false;
+    for (const auto &entry : m_entries)
+        foundBrand = foundBrand || entry.brandId == brandId;
 
+    if (!foundBrand) {
+        result.errors.append(QStringLiteral("brand '%1' is not registered").arg(brandId));
+    } else {
+        result.errors.append(QStringLiteral("mode '%1' is not registered for brand '%2'")
+                                 .arg(effectiveMode, brandId));
+    }
     return result;
 }
 
 MerceThemeRegistryLookupResult MerceThemeRegistry::defaultEntry() const
 {
-    return lookup(m_defaultTheme, m_defaultVariant);
+    return lookup(m_defaultBrand, m_defaultMode);
 }
 
-bool MerceThemeRegistry::containsTheme(const QString &theme) const
+bool MerceThemeRegistry::appendRegistry(const MerceThemeRegistry &registry,
+                                        QStringList *errors)
 {
-    return hasThemeEntry(m_entries, theme);
-}
-
-bool MerceThemeRegistry::appendRegistry(const MerceThemeRegistry &registry, QStringList *errors)
-{
-    QStringList sourceThemes;
-    for (const auto &entry : registry.m_entries) {
-        if (!sourceThemes.contains(entry.theme))
-            sourceThemes.append(entry.theme);
-    }
-
     bool ok = true;
-    for (const QString &theme : sourceThemes) {
-        if (containsTheme(theme)) {
-            if (errors) {
-                errors->append(QStringLiteral("theme '%1' is already registered").arg(theme));
-            }
-            ok = false;
+    for (const auto &entry : registry.m_entries) {
+        if (!hasThemeEntry(m_entries, entry.brandId, entry.mode))
+            continue;
+        if (errors) {
+            errors->append(QStringLiteral("duplicate brand/mode '%1/%2'")
+                               .arg(entry.brandId, entry.mode));
         }
+        ok = false;
     }
-
     if (!ok)
         return false;
 
-    for (const auto &entry : registry.m_entries)
-        m_entries.append(entry);
-
-    for (auto it = registry.m_defaultVariantsByTheme.cbegin();
-         it != registry.m_defaultVariantsByTheme.cend();
+    if (m_entries.size() + registry.m_entries.size() > kMaxRegistryEntries) {
+        if (errors)
+            errors->append(QStringLiteral("theme registry exceeds 256 brand/mode entries"));
+        return false;
+    }
+    m_entries += registry.m_entries;
+    for (auto it = registry.m_defaultModesByBrand.cbegin();
+         it != registry.m_defaultModesByBrand.cend();
          ++it) {
-        m_defaultVariantsByTheme.insert(it.key(), it.value());
+        if (!m_defaultModesByBrand.contains(it.key()))
+            m_defaultModesByBrand.insert(it.key(), it.value());
+    }
+    return true;
+}
+
+MerceProfileRegistryResult MerceProfileRegistry::fromJson(const QJsonObject &index,
+                                                          const QString &indexPath)
+{
+    MerceProfileRegistryResult result;
+    const QJsonValue defaultProfileValue = index.value(QStringLiteral("defaultProfile"));
+    if (defaultProfileValue.isString())
+        result.registry.m_defaultProfile = defaultProfileValue.toString();
+
+    const QJsonValue profilesValue = index.value(QStringLiteral("profiles"));
+    if (profilesValue.isUndefined()) {
+        result.ok = true;
+        return result;
+    }
+    if (!profilesValue.isObject() || profilesValue.toObject().isEmpty()) {
+        result.errors.append(QStringLiteral("theme index profiles must be a non-empty object"));
+        return result;
     }
 
+    const QJsonObject profiles = profilesValue.toObject();
+    for (const QString &profileId : profiles.keys()) {
+        if (result.registry.m_entries.size() >= kMaxRegistryEntries) {
+            result.errors.append(QStringLiteral("theme index exceeds 256 profile entries"));
+            break;
+        }
+        const QJsonValue profileValue = profiles.value(profileId);
+        if (profileId.isEmpty() || !profileValue.isObject()) {
+            result.errors.append(QStringLiteral("profile entries require a non-empty id and object value"));
+            continue;
+        }
+
+        const QJsonObject profile = profileValue.toObject();
+        const QJsonValue pathValue = profile.value(QStringLiteral("path"));
+        if (!pathValue.isString() || !isSafeFileName(pathValue.toString())) {
+            result.errors.append(QStringLiteral("profile '%1' has an unsafe manifest path")
+                                     .arg(profileId));
+            continue;
+        }
+        result.registry.m_entries.push_back({
+            profileId,
+            profile.value(QStringLiteral("displayName")).toString(profileId),
+            resolvedProfilePath(indexPath, pathValue.toString()),
+        });
+    }
+
+    if (!result.registry.m_defaultProfile.isEmpty()
+        && !hasProfileEntry(result.registry.m_entries, result.registry.m_defaultProfile)) {
+        result.errors.append(QStringLiteral("defaultProfile '%1' is not registered")
+                                 .arg(result.registry.m_defaultProfile));
+    }
+
+    result.ok = result.errors.isEmpty();
+    return result;
+}
+
+MerceProfileRegistryLookupResult MerceProfileRegistry::lookup(const QString &profileId) const
+{
+    MerceProfileRegistryLookupResult result;
+    for (const auto &entry : m_entries) {
+        if (entry.profileId == profileId) {
+            result.ok = true;
+            result.entry = entry;
+            return result;
+        }
+    }
+    result.errors.append(QStringLiteral("profile '%1' is not registered").arg(profileId));
+    return result;
+}
+
+MerceProfileRegistryLookupResult MerceProfileRegistry::defaultEntry() const
+{
+    return lookup(m_defaultProfile);
+}
+
+bool MerceProfileRegistry::appendRegistry(const MerceProfileRegistry &registry,
+                                          QStringList *errors)
+{
+    bool ok = true;
+    for (const auto &entry : registry.m_entries) {
+        if (!hasProfileEntry(m_entries, entry.profileId))
+            continue;
+        if (errors)
+            errors->append(QStringLiteral("duplicate profile '%1'").arg(entry.profileId));
+        ok = false;
+    }
+    if (!ok)
+        return false;
+
+    if (m_entries.size() + registry.m_entries.size() > kMaxRegistryEntries) {
+        if (errors)
+            errors->append(QStringLiteral("profile registry exceeds 256 entries"));
+        return false;
+    }
+    m_entries += registry.m_entries;
     return true;
 }

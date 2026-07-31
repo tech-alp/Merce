@@ -43,14 +43,14 @@ Item {
         radius: Theme.radius.badge
         color: Theme.colors.action.primarySubtle
         border.width: 1
-        border.color: Theme.colors.action.primary
+        border.color: Theme.colors.action.primary.container
 
         AppLabel {
             id: chipText
             anchors.centerIn: parent
             textType: AppLabel.Caption
             text: label
-            color: Theme.colors.action.primary
+            color: Theme.colors.action.primary.container
             wrapMode: Text.NoWrap
         }
     }
@@ -61,7 +61,7 @@ Item {
         width: 24
         height: 24
         radius: Theme.radius.full
-        color: Theme.colors.action.primary
+        color: Theme.colors.action.primary.container
 
         AppLabel {
             anchors.centerIn: parent
@@ -97,7 +97,7 @@ Item {
                     anchors.centerIn: parent
                     name: icon
                     size: Theme.icons.small
-                    color: Theme.colors.action.primary
+                    color: Theme.colors.action.primary.container
                 }
             }
 
@@ -296,7 +296,7 @@ Item {
             height: 32
             radius: Theme.radius.medium
             anchors.verticalCenter: parent.verticalCenter
-            color: Theme.colors.action.primary
+            color: Theme.colors.action.primary.container
 
             AppIcon {
                 anchors.centerIn: parent
@@ -388,7 +388,7 @@ Item {
                         width: 56
                         height: 56
                         radius: Theme.radius.full
-                        color: Theme.colors.action.primary
+                        color: Theme.colors.action.primary.container
                         anchors.verticalCenter: parent.verticalCenter
 
                         AppIcon {

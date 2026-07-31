@@ -1,24 +1,24 @@
 #include "MerceThemeManifestLoader.h"
 
-#include "MerceThemeRegistry.h"
-
-#include <algorithm>
+#include "BrandDerivation.h"
+#include "ThemeValidator.h"
 
 #include <QColor>
-#include <QDir>
 #include <QFile>
 #include <QFileInfo>
-#include <QFontDatabase>
-#include <QJsonArray>
+#include <QHash>
 #include <QJsonDocument>
+#include <QJsonObject>
 #include <QJsonParseError>
-#include <QJsonValue>
-#include <QLoggingCategory>
+#include <QSet>
 #include <QVariantMap>
 
-Q_LOGGING_CATEGORY(merceThemeLoaderLog, "merce.theme.loader")
+#include <cmath>
+#include <limits>
 
 namespace {
+
+constexpr qint64 kMaxThemeDocumentBytes = 1024 * 1024;
 
 struct JsonObjectResult
 {
@@ -27,109 +27,17 @@ struct JsonObjectResult
     QStringList errors;
 };
 
-const QStringList supportedSections()
-{
-    return {
-        QStringLiteral("colors"),
-        QStringLiteral("spacing"),
-        QStringLiteral("radius"),
-        QStringLiteral("typography"),
-    };
-}
-
-bool isSafeRelativeFontPath(const QString &source)
-{
-    const QString lower = source.toLower();
-    const QStringList parts = source.split(QLatin1Char('/'));
-    return !source.isEmpty()
-        && !QDir::isAbsolutePath(source)
-        && !source.startsWith(QLatin1Char(':'))
-        && !source.contains(QLatin1Char('\\'))
-        && (lower.endsWith(QStringLiteral(".ttf")) || lower.endsWith(QStringLiteral(".otf")))
-        && std::all_of(parts.cbegin(),
-                       parts.cend(),
-                       [](const QString &part) {
-                           return !part.isEmpty() && part != QStringLiteral("..");
-                       });
-}
-
-const QStringList colorFields()
-{
-    return {
-        QStringLiteral("text.primary"),
-        QStringLiteral("text.secondary"),
-        QStringLiteral("text.tertiary"),
-        QStringLiteral("text.inverse"),
-        QStringLiteral("text.disabled"),
-        QStringLiteral("text.link"),
-        QStringLiteral("text.linkHover"),
-        QStringLiteral("background.base"),
-        QStringLiteral("background.subtle"),
-        QStringLiteral("background.overlay"),
-        QStringLiteral("border.base"),
-        QStringLiteral("border.strong"),
-        QStringLiteral("border.focus"),
-        QStringLiteral("border.disabled"),
-        QStringLiteral("action.primary"),
-        QStringLiteral("action.primaryHover"),
-        QStringLiteral("action.primaryPressed"),
-        QStringLiteral("action.primarySubtle"),
-        QStringLiteral("action.secondary"),
-        QStringLiteral("action.secondaryHover"),
-        QStringLiteral("action.secondaryPressed"),
-        QStringLiteral("action.disabled"),
-        QStringLiteral("status.success.foreground"),
-        QStringLiteral("status.success.background"),
-        QStringLiteral("status.success.border"),
-        QStringLiteral("status.success.strong"),
-        QStringLiteral("status.success.onStrong"),
-        QStringLiteral("status.warning.foreground"),
-        QStringLiteral("status.warning.background"),
-        QStringLiteral("status.warning.border"),
-        QStringLiteral("status.warning.strong"),
-        QStringLiteral("status.warning.onStrong"),
-        QStringLiteral("status.error.foreground"),
-        QStringLiteral("status.error.background"),
-        QStringLiteral("status.error.border"),
-        QStringLiteral("status.error.strong"),
-        QStringLiteral("status.error.onStrong"),
-        QStringLiteral("status.info.foreground"),
-        QStringLiteral("status.info.background"),
-        QStringLiteral("status.info.border"),
-        QStringLiteral("status.info.strong"),
-        QStringLiteral("status.info.onStrong"),
-        QStringLiteral("surface.base"),
-        QStringLiteral("surface.tinted"),
-        QStringLiteral("surface.raised"),
-        QStringLiteral("surface.hover"),
-        QStringLiteral("surface.pressed"),
-        QStringLiteral("surface.disabled"),
-    };
-}
-
 const QStringList spacingFields()
 {
     return {
-        QStringLiteral("base"),
-        QStringLiteral("none"),
-        QStringLiteral("xxs"),
-        QStringLiteral("xs"),
-        QStringLiteral("sm"),
-        QStringLiteral("md"),
-        QStringLiteral("lg"),
-        QStringLiteral("xl"),
-        QStringLiteral("xl2"),
-        QStringLiteral("xl3"),
-        QStringLiteral("xl4"),
-        QStringLiteral("xl5"),
-        QStringLiteral("xl6"),
-        QStringLiteral("componentGap"),
-        QStringLiteral("sectionGap"),
-        QStringLiteral("pagePadding"),
-        QStringLiteral("touchTarget"),
-        QStringLiteral("touchTargetCompact"),
-        QStringLiteral("gridGap"),
-        QStringLiteral("stackGap"),
+        QStringLiteral("base"), QStringLiteral("none"), QStringLiteral("xxs"),
+        QStringLiteral("xs"), QStringLiteral("sm"), QStringLiteral("md"),
+        QStringLiteral("lg"), QStringLiteral("xl"), QStringLiteral("xl2"),
+        QStringLiteral("xl3"), QStringLiteral("xl4"), QStringLiteral("xl5"),
+        QStringLiteral("xl6"), QStringLiteral("componentGap"),
+        QStringLiteral("sectionGap"), QStringLiteral("pagePadding"),
+        QStringLiteral("touchTarget"), QStringLiteral("touchTargetCompact"),
+        QStringLiteral("gridGap"), QStringLiteral("stackGap"),
         QStringLiteral("inlineGap"),
     };
 }
@@ -137,233 +45,68 @@ const QStringList spacingFields()
 const QStringList radiusFields()
 {
     return {
-        QStringLiteral("none"),
-        QStringLiteral("small"),
-        QStringLiteral("medium"),
-        QStringLiteral("large"),
-        QStringLiteral("xlarge"),
-        QStringLiteral("xxlarge"),
-        QStringLiteral("full"),
-        QStringLiteral("button"),
-        QStringLiteral("input"),
-        QStringLiteral("card"),
-        QStringLiteral("badge"),
-        QStringLiteral("dialog"),
+        QStringLiteral("none"), QStringLiteral("small"), QStringLiteral("medium"),
+        QStringLiteral("large"), QStringLiteral("xlarge"), QStringLiteral("xxlarge"),
+        QStringLiteral("full"), QStringLiteral("button"), QStringLiteral("input"),
+        QStringLiteral("card"), QStringLiteral("badge"), QStringLiteral("dialog"),
         QStringLiteral("tooltip"),
     };
-}
-
-const QStringList typographyFields()
-{
-    return {
-        QStringLiteral("displayFont"),
-        QStringLiteral("bodyFont"),
-        QStringLiteral("monoFont"),
-        QStringLiteral("displayFontFallback"),
-        QStringLiteral("bodyFontFallback"),
-        QStringLiteral("sizeXSmall"),
-        QStringLiteral("sizeSmall"),
-        QStringLiteral("sizeMedium"),
-        QStringLiteral("sizeLarge"),
-        QStringLiteral("sizeXLarge"),
-        QStringLiteral("size2XLarge"),
-        QStringLiteral("size3XLarge"),
-        QStringLiteral("size4XLarge"),
-        QStringLiteral("size5XLarge"),
-        QStringLiteral("size6XLarge"),
-        QStringLiteral("size7XLarge"),
-        QStringLiteral("weightRegular"),
-        QStringLiteral("weightMedium"),
-        QStringLiteral("weightSemibold"),
-        QStringLiteral("weightBold"),
-        QStringLiteral("leadingTight"),
-        QStringLiteral("leadingSnug"),
-        QStringLiteral("leadingNormal"),
-        QStringLiteral("leadingRelaxed"),
-        QStringLiteral("trackingTight"),
-        QStringLiteral("trackingNormal"),
-        QStringLiteral("trackingWide"),
-        QStringLiteral("trackingWider"),
-        QStringLiteral("trackingWidest"),
-    };
-}
-
-const QStringList requiredFieldsForSection(const QString &section)
-{
-    if (section == QStringLiteral("spacing"))
-        return spacingFields();
-    if (section == QStringLiteral("radius"))
-        return radiusFields();
-    if (section == QStringLiteral("typography"))
-        return typographyFields();
-    return {};
 }
 
 const QStringList typographyStringFields()
 {
     return {
-        QStringLiteral("displayFont"),
-        QStringLiteral("bodyFont"),
-        QStringLiteral("monoFont"),
-        QStringLiteral("displayFontFallback"),
+        QStringLiteral("displayFont"), QStringLiteral("bodyFont"),
+        QStringLiteral("monoFont"), QStringLiteral("displayFontFallback"),
         QStringLiteral("bodyFontFallback"),
     };
 }
 
-const QStringList genericFontFamilies()
+const QStringList typographyIntegerFields()
 {
     return {
-        QStringLiteral("-apple-system"),
-        QStringLiteral("blinkmacsystemfont"),
-        QStringLiteral("serif"),
-        QStringLiteral("sans-serif"),
-        QStringLiteral("sans serif"),
-        QStringLiteral("monospace"),
-        QStringLiteral("ui-monospace"),
-        QStringLiteral("system-ui"),
+        QStringLiteral("sizeXSmall"), QStringLiteral("sizeSmall"),
+        QStringLiteral("sizeMedium"), QStringLiteral("sizeLarge"),
+        QStringLiteral("sizeXLarge"), QStringLiteral("size2XLarge"),
+        QStringLiteral("size3XLarge"), QStringLiteral("size4XLarge"),
+        QStringLiteral("size5XLarge"), QStringLiteral("size6XLarge"),
+        QStringLiteral("size7XLarge"), QStringLiteral("weightRegular"),
+        QStringLiteral("weightMedium"), QStringLiteral("weightSemibold"),
+        QStringLiteral("weightBold"),
     };
 }
 
-QJsonValue valueAtPath(const QJsonObject &object, const QString &path)
+const QStringList typographyLeadingFields()
 {
-    QJsonValue value = object;
-    const QStringList segments = path.split(QLatin1Char('.'));
-    for (const QString &segment : segments) {
-        if (!value.isObject())
-            return {};
-        value = value.toObject().value(segment);
-    }
-    return value;
+    return {
+        QStringLiteral("leadingTight"),
+        QStringLiteral("leadingSnug"), QStringLiteral("leadingNormal"),
+        QStringLiteral("leadingRelaxed"),
+    };
 }
 
-QJsonValue colorJsonValue(const QJsonValue &value)
+const QStringList typographyTrackingFields()
 {
-    if (!value.isObject())
-        return value;
-
-    const QJsonObject object = value.toObject();
-    const QJsonValue dtcgValue = object.value(QStringLiteral("$value"));
-    return dtcgValue.isUndefined() ? object.value(QStringLiteral("value")) : dtcgValue;
+    return {
+        QStringLiteral("trackingTight"),
+        QStringLiteral("trackingNormal"), QStringLiteral("trackingWide"),
+        QStringLiteral("trackingWider"), QStringLiteral("trackingWidest"),
+    };
 }
 
-bool isValidColorValue(const QJsonValue &value)
-{
-    const QJsonValue resolvedValue = colorJsonValue(value);
-    return resolvedValue.isString() && QColor(resolvedValue.toString()).isValid();
-}
-
-QStringList colorFieldFallbacks(const QString &fieldPath)
-{
-    if (fieldPath == QStringLiteral("background.subtle"))
-        return { QStringLiteral("background.tinted") };
-    if (fieldPath == QStringLiteral("border.disabled"))
-        return { QStringLiteral("border.base") };
-
-    if (fieldPath == QStringLiteral("surface.base"))
-        return { QStringLiteral("background.surface") };
-    if (fieldPath == QStringLiteral("surface.tinted"))
-        return { QStringLiteral("background.tinted") };
-    if (fieldPath == QStringLiteral("surface.raised"))
-        return { QStringLiteral("background.elevated") };
-    if (fieldPath == QStringLiteral("surface.hover"))
-        return { QStringLiteral("background.hover") };
-    if (fieldPath == QStringLiteral("surface.pressed"))
-        return { QStringLiteral("background.pressed") };
-    if (fieldPath == QStringLiteral("surface.disabled"))
-        return { QStringLiteral("background.hover"), QStringLiteral("background.tinted") };
-
-    if (fieldPath.startsWith(QStringLiteral("status."))) {
-        const QStringList parts = fieldPath.split(QLatin1Char('.'));
-        if (parts.size() != 3)
-            return {};
-
-        const QString intent = parts.at(1);
-        const QString role = parts.at(2);
-        if (role == QStringLiteral("foreground")
-            || role == QStringLiteral("border")
-            || role == QStringLiteral("strong")) {
-            return { QStringLiteral("status.%1").arg(intent) };
-        }
-        if (role == QStringLiteral("background"))
-            return { QStringLiteral("status.%1Subtle").arg(intent) };
-        if (role == QStringLiteral("onStrong")) {
-            return {
-                intent == QStringLiteral("warning") ? QStringLiteral("text.primary")
-                                                    : QStringLiteral("text.inverse"),
-            };
-        }
-    }
-
-    return {};
-}
-
-bool hasValidColorPath(const QJsonObject &object, const QString &fieldPath)
-{
-    const QJsonValue value = valueAtPath(object, fieldPath);
-    return !value.isUndefined() && isValidColorValue(value);
-}
-
-void requireColorPath(const QJsonObject &object, const QString &fieldPath, QStringList *errors)
-{
-    const QJsonValue value = valueAtPath(object, fieldPath);
-    const QString fullPath = QStringLiteral("colors.%1").arg(fieldPath);
-    if (!value.isUndefined() && isValidColorValue(value))
-        return;
-
-    for (const QString &fallbackPath : colorFieldFallbacks(fieldPath)) {
-        if (hasValidColorPath(object, fallbackPath))
-            return;
-    }
-
-    if (value.isUndefined()) {
-        errors->append(QStringLiteral("missing required runtime field: %1").arg(fullPath));
-        return;
-    }
-
-    errors->append(QStringLiteral("runtime field %1 must be a valid color string").arg(fullPath));
-}
-
-QStringList validateColorFieldSet(const QJsonObject &colors, const QStringList &fields)
+QStringList unexpectedFields(const QJsonObject &object,
+                             const QString &section,
+                             const QStringList &allowedFields)
 {
     QStringList errors;
-    for (const QString &fieldPath : fields)
-        requireColorPath(colors, fieldPath, &errors);
+    const QSet<QString> allowed(allowedFields.cbegin(), allowedFields.cend());
+    for (const QString &field : object.keys()) {
+        if (!allowed.contains(field)) {
+            errors.append(QStringLiteral("profile.unexpected_field|%1.%2|field is not allowed")
+                              .arg(section, field));
+        }
+    }
     return errors;
-}
-
-void requireNumber(const QJsonObject &object, const QString &section, const QString &field, QStringList *errors)
-{
-    const QJsonValue value = object.value(field);
-    if (!value.isDouble()) {
-        errors->append(QStringLiteral("runtime field %1.%2 must be numeric").arg(section, field));
-    }
-}
-
-bool isUnresolvedTokenReference(const QString &value)
-{
-    const QString trimmed = value.trimmed();
-    return trimmed.startsWith(QLatin1Char('{')) && trimmed.endsWith(QLatin1Char('}'));
-}
-
-void requireString(const QJsonObject &object, const QString &section, const QString &field, QStringList *errors)
-{
-    const QJsonValue value = object.value(field);
-    const QString text = value.toString().trimmed();
-    if (!value.isString() || text.isEmpty() || isUnresolvedTokenReference(text)) {
-        errors->append(QStringLiteral("runtime field %1.%2 must be a resolved non-empty string").arg(section, field));
-        return;
-    }
-
-    if (section == QStringLiteral("typography")
-        && typographyStringFields().contains(field)
-        && (text.contains(QLatin1Char(','))
-            || text.startsWith(QLatin1Char('\''))
-            || text.startsWith(QLatin1Char('"'))
-            || text.endsWith(QLatin1Char('\''))
-            || text.endsWith(QLatin1Char('"'))
-            || genericFontFamilies().contains(text.toLower()))) {
-        errors->append(QStringLiteral("runtime field %1.%2 must be a single Qt font family name").arg(section, field));
-    }
 }
 
 JsonObjectResult readJsonObject(const QString &path, const QString &label)
@@ -371,24 +114,32 @@ JsonObjectResult readJsonObject(const QString &path, const QString &label)
     JsonObjectResult result;
     QFile file(path);
     if (!file.open(QIODevice::ReadOnly)) {
-        result.errors.append(QStringLiteral("%1 '%2' could not be opened: %3")
+        result.errors.append(QStringLiteral("%1.open_failed|%2|%3")
                                  .arg(label, path, file.errorString()));
+        return result;
+    }
+    const QByteArray json = file.read(kMaxThemeDocumentBytes + 1);
+    if (json.size() > kMaxThemeDocumentBytes) {
+        result.errors.append(QStringLiteral("%1.too_large|%2|maximum document size is %3 bytes")
+                                 .arg(label,
+                                      path,
+                                      QString::number(kMaxThemeDocumentBytes)));
         return result;
     }
 
     QJsonParseError parseError;
-    const QJsonDocument document = QJsonDocument::fromJson(file.readAll(), &parseError);
+    const QJsonDocument document = QJsonDocument::fromJson(json, &parseError);
     if (parseError.error != QJsonParseError::NoError) {
-        result.errors.append(QStringLiteral("%1 '%2' parse error at byte %3: %4")
+        result.errors.append(QStringLiteral("%1.parse_error|%2|byte %3: %4")
                                  .arg(label,
                                       path,
                                       QString::number(parseError.offset),
                                       parseError.errorString()));
         return result;
     }
-
     if (!document.isObject()) {
-        result.errors.append(QStringLiteral("%1 '%2' must contain a JSON object").arg(label, path));
+        result.errors.append(QStringLiteral("%1.not_object|%2|JSON document must be an object")
+                                 .arg(label, path));
         return result;
     }
 
@@ -397,288 +148,259 @@ JsonObjectResult readJsonObject(const QString &path, const QString &label)
     return result;
 }
 
-QJsonObject overlayManifest(const QJsonObject &base, const QJsonObject &active)
-{
-    QJsonObject merged = base;
-    for (const QString &key : active.keys()) {
-        if (supportedSections().contains(key) || key == QStringLiteral("schemaVersion")
-            || key == QStringLiteral("theme") || key == QStringLiteral("variant")
-            || key == QStringLiteral("fonts")) {
-            merged.insert(key, active.value(key));
-        }
-    }
-    return merged;
-}
-
-QStringList validateNoLegacySections(const QJsonObject &manifest)
+QStringList validationErrors(const ThemeValidationResult &validation)
 {
     QStringList errors;
-    if (manifest.contains(QStringLiteral("palette")))
-        errors.append(QStringLiteral("manifest must not contain a top-level palette section"));
-
-    const QJsonValue colorsValue = manifest.value(QStringLiteral("colors"));
-    if (colorsValue.isObject() && colorsValue.toObject().contains(QStringLiteral("raw")))
-        errors.append(QStringLiteral("runtime colors must not expose raw color scales"));
+    for (const auto &error : validation.errors) {
+        errors.append(QStringLiteral("%1|%2|%3")
+                          .arg(error.code, error.path, error.message));
+    }
     return errors;
 }
 
-QStringList validateColorsSection(const QJsonObject &manifest)
+QStringList validateNumberFields(const QJsonObject &object,
+                                 const QString &section,
+                                 const QStringList &fields,
+                                 double minimum,
+                                 double maximum,
+                                 bool requireInteger)
 {
     QStringList errors;
-    const QJsonValue sectionValue = manifest.value(QStringLiteral("colors"));
-    if (!sectionValue.isObject()) {
-        errors.append(QStringLiteral("missing required field: colors"));
-        return errors;
+    for (const QString &field : fields) {
+        const QJsonValue value = object.value(field);
+        const double number = value.toDouble((std::numeric_limits<double>::quiet_NaN)());
+        if (!value.isDouble() || !std::isfinite(number)
+            || number < minimum || number > maximum
+            || (requireInteger && std::floor(number) != number)) {
+            errors.append(QStringLiteral("profile.invalid_number|%1.%2|value is outside the supported numeric range")
+                              .arg(section, field));
+        }
     }
-
-    const QJsonObject colors = sectionValue.toObject();
-    if (colors.contains(QStringLiteral("raw")))
-        errors.append(QStringLiteral("runtime colors must not expose raw color scales"));
-
-    errors.append(validateColorFieldSet(colors, colorFields()));
-
     return errors;
 }
 
-QStringList validateSection(const QJsonObject &manifest, const QString &section)
-{
-    if (section == QStringLiteral("colors"))
-        return validateColorsSection(manifest);
-
-    QStringList errors;
-    const QJsonValue sectionValue = manifest.value(section);
-    if (!sectionValue.isObject()) {
-        errors.append(QStringLiteral("missing required field: %1").arg(section));
-        return errors;
-    }
-
-    const QJsonObject object = sectionValue.toObject();
-    for (const QString &field : requiredFieldsForSection(section)) {
-        if (!object.contains(field)) {
-            errors.append(QStringLiteral("missing required runtime field: %1.%2").arg(section, field));
-            continue;
-        }
-
-        if (section == QStringLiteral("typography")
-            && typographyStringFields().contains(field)) {
-            requireString(object, section, field, &errors);
-        } else {
-            requireNumber(object, section, field, &errors);
-        }
-    }
-
-    return errors;
-}
-
-QStringList validateFontsSection(const QJsonObject &manifest)
+QStringList validateProfile(const QJsonObject &profile,
+                            const MerceProfileRegistryEntry &entry)
 {
     QStringList errors;
-    if (!manifest.contains(QStringLiteral("fonts")))
-        return errors;
-
-    const QJsonValue fontsValue = manifest.value(QStringLiteral("fonts"));
-    if (!fontsValue.isArray()) {
-        errors.append(QStringLiteral("runtime field fonts must be an array"));
-        return errors;
+    errors.append(unexpectedFields(
+        profile,
+        QStringLiteral("profile"),
+        {QStringLiteral("profileSchemaVersion"),
+         QStringLiteral("profileId"),
+         QStringLiteral("spacing"),
+         QStringLiteral("radius"),
+         QStringLiteral("typography"),
+         QStringLiteral("size")}));
+    if (profile.value(QStringLiteral("profileSchemaVersion")).toInt(-1) != 1) {
+        errors.append(QStringLiteral(
+            "profile.unsupported_version|profileSchemaVersion|expected exactly 1"));
+    }
+    if (profile.value(QStringLiteral("profileId")).toString() != entry.profileId) {
+        errors.append(QStringLiteral("profile.id_mismatch|profileId|expected '%1'")
+                          .arg(entry.profileId));
     }
 
-    const QJsonArray fonts = fontsValue.toArray();
-    for (qsizetype i = 0; i < fonts.size(); ++i) {
-        const QString prefix = QStringLiteral("runtime field fonts[%1]").arg(i);
-        if (!fonts.at(i).isObject()) {
-            errors.append(QStringLiteral("%1 must be an object").arg(prefix));
-            continue;
-        }
-
-        const QJsonObject font = fonts.at(i).toObject();
-        const QString family = font.value(QStringLiteral("family")).toString().trimmed();
-        const QString source = font.value(QStringLiteral("source")).toString();
-        if (family.isEmpty())
-            errors.append(QStringLiteral("%1.family must be a non-empty string").arg(prefix));
-        if (!font.value(QStringLiteral("source")).isString() || !isSafeRelativeFontPath(source))
-            errors.append(QStringLiteral("%1.source must be a safe relative .ttf or .otf path").arg(prefix));
-        if (!font.value(QStringLiteral("weight")).isDouble())
-            errors.append(QStringLiteral("%1.weight must be numeric").arg(prefix));
-        if (font.contains(QStringLiteral("style"))
-            && (!font.value(QStringLiteral("style")).isString()
-                || font.value(QStringLiteral("style")).toString().trimmed().isEmpty())) {
-            errors.append(QStringLiteral("%1.style must be a non-empty string").arg(prefix));
-        }
-        if (font.contains(QStringLiteral("required")) && !font.value(QStringLiteral("required")).isBool())
-            errors.append(QStringLiteral("%1.required must be boolean").arg(prefix));
+    const QJsonObject spacing = profile.value(QStringLiteral("spacing")).toObject();
+    const QJsonObject radius = profile.value(QStringLiteral("radius")).toObject();
+    const QJsonObject typography = profile.value(QStringLiteral("typography")).toObject();
+    if (spacing.isEmpty())
+        errors.append(QStringLiteral("profile.missing_section|spacing|required section"));
+    else {
+        errors.append(unexpectedFields(spacing, QStringLiteral("spacing"), spacingFields()));
+        errors.append(validateNumberFields(spacing,
+                                           QStringLiteral("spacing"),
+                                           spacingFields(),
+                                           0.0,
+                                           (std::numeric_limits<int>::max)(),
+                                           true));
     }
-
-    return errors;
-}
-
-QStringList validateManifest(const QJsonObject &manifest, const MerceThemeRegistryEntry &entry)
-{
-    QStringList errors;
-
-    if (manifest.value(QStringLiteral("schemaVersion")).toInt(-1) != 1)
-        errors.append(QStringLiteral("schemaVersion must be 1"));
-
-    const QJsonValue themeValue = manifest.value(QStringLiteral("theme"));
-    if (!themeValue.isString() || themeValue.toString() != entry.theme)
-        errors.append(QStringLiteral("theme must be '%1'").arg(entry.theme));
-
-    if (entry.variant.isEmpty()) {
-        if (manifest.contains(QStringLiteral("variant")))
-            errors.append(QStringLiteral("single-manifest themes must not include variant"));
+    if (radius.isEmpty())
+        errors.append(QStringLiteral("profile.missing_section|radius|required section"));
+    else {
+        errors.append(unexpectedFields(radius, QStringLiteral("radius"), radiusFields()));
+        errors.append(validateNumberFields(radius,
+                                           QStringLiteral("radius"),
+                                           radiusFields(),
+                                           0.0,
+                                           (std::numeric_limits<int>::max)(),
+                                           true));
+    }
+    if (typography.isEmpty()) {
+        errors.append(QStringLiteral("profile.missing_section|typography|required section"));
     } else {
-        const QJsonValue variantValue = manifest.value(QStringLiteral("variant"));
-        if (!variantValue.isString() || variantValue.toString() != entry.variant)
-            errors.append(QStringLiteral("variant must be '%1'").arg(entry.variant));
-    }
-
-    errors.append(validateNoLegacySections(manifest));
-
-    for (const QString &section : supportedSections())
-        errors.append(validateSection(manifest, section));
-    errors.append(validateFontsSection(manifest));
-
-    return errors;
-}
-
-QString resolvedFontAssetPath(const MerceThemeRegistryEntry &entry, const QString &source)
-{
-    const QString manifestDirectory = QFileInfo(entry.manifestPath).path();
-    if (manifestDirectory.isEmpty() || manifestDirectory == QStringLiteral("."))
-        return source;
-
-    return manifestDirectory + QLatin1Char('/') + source;
-}
-
-QStringList loadManifestFonts(const QJsonObject &manifest, const MerceThemeRegistryEntry &entry)
-{
-    QStringList errors;
-    const QJsonValue fontsValue = manifest.value(QStringLiteral("fonts"));
-    if (!fontsValue.isArray())
-        return errors;
-
-    const QJsonArray fonts = fontsValue.toArray();
-    for (qsizetype i = 0; i < fonts.size(); ++i) {
-        const QJsonObject font = fonts.at(i).toObject();
-        const bool required = font.value(QStringLiteral("required")).toBool(true);
-        const QString family = font.value(QStringLiteral("family")).toString().trimmed();
-        const QString source = font.value(QStringLiteral("source")).toString();
-        const QString resolvedPath = resolvedFontAssetPath(entry, source);
-        const QString prefix = QStringLiteral("runtime field fonts[%1]").arg(i);
-
-        if (!QFile::exists(resolvedPath)) {
-            if (required)
-                errors.append(QStringLiteral("%1.source file does not exist: %2").arg(prefix, source));
-            continue;
-        }
-
-        const int fontId = QFontDatabase::addApplicationFont(resolvedPath);
-        if (fontId < 0) {
-            if (required)
-                errors.append(QStringLiteral("%1.source could not be loaded: %2").arg(prefix, source));
-            continue;
-        }
-
-        const QStringList loadedFamilies = QFontDatabase::applicationFontFamilies(fontId);
-        if (!loadedFamilies.contains(family) && required) {
-            errors.append(QStringLiteral("%1.family '%2' was not provided by %3")
-                              .arg(prefix, family, source));
+        QStringList typographyFields = typographyStringFields();
+        typographyFields.append(typographyIntegerFields());
+        typographyFields.append(typographyLeadingFields());
+        typographyFields.append(typographyTrackingFields());
+        errors.append(unexpectedFields(typography,
+                                       QStringLiteral("typography"),
+                                       typographyFields));
+        errors.append(validateNumberFields(typography,
+                                           QStringLiteral("typography"),
+                                           typographyIntegerFields(),
+                                           1.0,
+                                           (std::numeric_limits<int>::max)(),
+                                           true));
+        errors.append(validateNumberFields(typography,
+                                           QStringLiteral("typography"),
+                                           typographyLeadingFields(),
+                                           (std::numeric_limits<double>::min)(),
+                                           (std::numeric_limits<double>::max)(),
+                                           false));
+        errors.append(validateNumberFields(typography,
+                                           QStringLiteral("typography"),
+                                           typographyTrackingFields(),
+                                           -(std::numeric_limits<double>::max)(),
+                                           (std::numeric_limits<double>::max)(),
+                                           false));
+        for (const QString &field : typographyStringFields()) {
+            const QJsonValue value = typography.value(field);
+            if (!value.isString() || value.toString().trimmed().isEmpty()) {
+                errors.append(QStringLiteral(
+                    "profile.invalid_string|typography.%1|non-empty string required").arg(field));
+            }
         }
     }
 
+    const QJsonObject size = profile.value(QStringLiteral("size")).toObject();
+    const QHash<QString, QStringList> sizeFields{
+        {QStringLiteral("control"),
+         {QStringLiteral("small"),
+          QStringLiteral("medium"),
+          QStringLiteral("large"),
+          QStringLiteral("minimum")}},
+        {QStringLiteral("icon"),
+         {QStringLiteral("small"),
+          QStringLiteral("medium"),
+          QStringLiteral("large")}},
+        {QStringLiteral("outline"),
+         {QStringLiteral("hairline"),
+          QStringLiteral("strong"),
+          QStringLiteral("focus")}},
+    };
+    errors.append(unexpectedFields(size, QStringLiteral("size"), sizeFields.keys()));
+    for (auto it = sizeFields.cbegin(); it != sizeFields.cend(); ++it) {
+        const QString &group = it.key();
+        if (!size.value(group).isObject()) {
+            errors.append(QStringLiteral("profile.missing_section|size.%1|required section")
+                              .arg(group));
+            continue;
+        }
+        const QJsonObject values = size.value(group).toObject();
+        errors.append(unexpectedFields(values,
+                                       QStringLiteral("size.") + group,
+                                       it.value()));
+        errors.append(validateNumberFields(values,
+                                           QStringLiteral("size.") + group,
+                                           it.value(),
+                                           1.0,
+                                           (std::numeric_limits<int>::max)(),
+                                           true));
+    }
     return errors;
 }
 
-MerceThemeLoadResult loadEntry(const MerceThemeRegistryEntry &entry)
+MerceThemeLoadResult loadColorEntry(const MerceThemeRegistryEntry &entry)
 {
     MerceThemeLoadResult result;
-    result.theme = entry.theme;
-    result.variant = entry.variant;
+    result.brandId = entry.brandId;
+    result.mode = entry.mode;
 
-    QJsonObject mergedManifest;
-    if (!entry.basePath.isEmpty()) {
-        const JsonObjectResult base = readJsonObject(entry.basePath, QStringLiteral("base manifest"));
-        if (!base.ok) {
-            result.errors = base.errors;
-            return result;
-        }
-        result.errors.append(validateNoLegacySections(base.object));
-        mergedManifest = base.object;
-    }
-
-    const JsonObjectResult active = readJsonObject(entry.manifestPath, QStringLiteral("theme manifest"));
-    if (!active.ok) {
-        result.errors = active.errors;
+    const JsonObjectResult source = readJsonObject(entry.sourcePath,
+                                                   QStringLiteral("theme_source"));
+    if (!source.ok) {
+        result.errors = source.errors;
         return result;
     }
-    result.errors.append(validateNoLegacySections(active.object));
 
-    mergedManifest = overlayManifest(mergedManifest, active.object);
-    result.errors.append(validateManifest(mergedManifest, entry));
-    if (result.errors.isEmpty())
-        result.errors.append(loadManifestFonts(mergedManifest, entry));
+    QJsonObject resolved;
+    if (entry.sourceKind == MerceThemeSourceKind::TenantBrand) {
+        const ThemeValidationResult tenantValidation =
+            ThemeValidator::validateTenantBrand(source.object);
+        result.errors = validationErrors(tenantValidation);
+        if (!result.errors.isEmpty())
+            return result;
+
+        const BrandMode mode = entry.mode == QStringLiteral("dark")
+            ? BrandMode::Dark : BrandMode::Light;
+        const BrandDerivationResult derivation =
+            BrandDerivation::derive(QColor(source.object.value(QStringLiteral("seed")).toString()),
+                                    mode);
+        if (!derivation.ok) {
+            result.errors.append(QStringLiteral("%1|%2|%3")
+                                     .arg(derivation.errorCode,
+                                          derivation.errorPath,
+                                          derivation.errorMessage));
+            return result;
+        }
+
+        resolved = {
+            { QStringLiteral("kind"), QStringLiteral("resolved-theme") },
+            { QStringLiteral("resolvedThemeSchemaVersion"), 1 },
+            { QStringLiteral("brandId"), entry.brandId },
+            { QStringLiteral("mode"), entry.mode },
+            { QStringLiteral("identity"),
+              QJsonObject{{QStringLiteral("mark"),
+                           source.object.value(QStringLiteral("seed")).toString().toUpper()}} },
+            { QStringLiteral("colors"), derivation.colors },
+            { QStringLiteral("state"), derivation.state },
+        };
+    } else {
+        resolved = source.object;
+    }
+
+    if (resolved.value(QStringLiteral("brandId")).toString() != entry.brandId) {
+        result.errors.append(QStringLiteral("resolved.brand_mismatch|brandId|expected '%1'")
+                                 .arg(entry.brandId));
+    }
+    if (resolved.value(QStringLiteral("mode")).toString() != entry.mode) {
+        result.errors.append(QStringLiteral("resolved.mode_mismatch|mode|expected '%1'")
+                                 .arg(entry.mode));
+    }
+    result.errors.append(validationErrors(ThemeValidator::validateResolvedTheme(resolved)));
     result.ok = result.errors.isEmpty();
-    result.finalManifest = mergedManifest;
+    result.finalManifest = resolved;
     return result;
 }
 
-QString variantSuffix(const MerceThemeRegistryEntry &entry)
+JsonObjectResult loadProfileEntry(const MerceProfileRegistryEntry &entry)
 {
-    if (entry.variant.isEmpty())
-        return QString();
-
-    return QStringLiteral(" variant '%1'").arg(entry.variant);
+    JsonObjectResult result = readJsonObject(entry.manifestPath,
+                                             QStringLiteral("profile_manifest"));
+    if (!result.ok)
+        return result;
+    result.errors = validateProfile(result.object, entry);
+    result.ok = result.errors.isEmpty();
+    return result;
 }
 
-QStringList validateRegistryEntries(const MerceThemeRegistry &registry)
+QStringList validateRegistryEntries(const MerceThemeRegistry &colors,
+                                    const MerceProfileRegistry &profiles)
 {
     QStringList errors;
-    for (const auto &entry : registry.entries()) {
-        const MerceThemeLoadResult loaded = loadEntry(entry);
-        if (loaded.ok)
-            continue;
-
+    for (const auto &entry : colors.entries()) {
+        const MerceThemeLoadResult loaded = loadColorEntry(entry);
         for (const QString &error : loaded.errors) {
-            errors.append(QStringLiteral("theme '%1'%2: %3")
-                              .arg(entry.theme, variantSuffix(entry), error));
+            errors.append(QStringLiteral("%1/%2: %3")
+                              .arg(entry.brandId)
+                              .arg(entry.mode)
+                              .arg(error));
         }
+    }
+    for (const auto &entry : profiles.entries()) {
+        const JsonObjectResult loaded = loadProfileEntry(entry);
+        for (const QString &error : loaded.errors)
+            errors.append(QStringLiteral("%1: %2").arg(entry.profileId).arg(error));
     }
     return errors;
 }
 
-void logErrors(const QString &prefix, const QStringList &errors)
+QString modeDisplayName(QString mode)
 {
-    for (const QString &error : errors)
-        qCWarning(merceThemeLoaderLog) << prefix << error;
-}
-
-bool isDefaultEntry(const MerceThemeRegistry &registry, const MerceThemeRegistryEntry &entry)
-{
-    return entry.theme == registry.defaultTheme() && entry.variant == registry.defaultVariant();
-}
-
-QString modeDisplayName(QString variant)
-{
-    if (variant.isEmpty())
-        return QStringLiteral("Default");
-
-    variant[0] = variant.at(0).toUpper();
-    return variant;
-}
-
-MerceThemeLoadResult loadDefaultEntryFromRegistry(const MerceThemeRegistry &registry)
-{
-    const MerceThemeRegistryLookupResult lookup = registry.defaultEntry();
-    if (!lookup.ok) {
-        MerceThemeLoadResult result;
-        result.errors = lookup.errors;
-        logErrors(QStringLiteral("default theme lookup failed:"), result.errors);
-        return result;
-    }
-
-    MerceThemeLoadResult result = loadEntry(lookup.entry);
-    if (!result.ok)
-        logErrors(QStringLiteral("default theme load failed:"), result.errors);
-    return result;
+    if (!mode.isEmpty())
+        mode[0] = mode.at(0).toUpper();
+    return mode;
 }
 
 } // namespace
@@ -690,201 +412,254 @@ MerceThemeManifestLoader::MerceThemeManifestLoader(QString indexPath)
 
 MerceThemeLoadResult MerceThemeManifestLoader::loadDefault() const
 {
-    const MerceThemeRegistryLoadResult registry = loadRegistry(m_indexPath);
-    if (!registry.ok) {
+    const MerceThemeRegistryLoadResult registries = loadRegistry(m_indexPath);
+    if (!registries.ok) {
         MerceThemeLoadResult result;
-        result.errors = registry.errors;
-        logErrors(QStringLiteral("theme registry load failed:"), result.errors);
+        result.errors = registries.errors;
         return result;
     }
-
-    return loadDefaultFromRegistry(registry.registry);
+    return loadDefaultFromRegistries(registries.colorRegistry,
+                                     registries.profileRegistry);
 }
 
-MerceThemeLoadResult MerceThemeManifestLoader::load(const QString &theme, const QString &variant) const
+MerceThemeLoadResult MerceThemeManifestLoader::load(const QString &brandId,
+                                                    const QString &mode,
+                                                    const QString &profile) const
 {
-    const MerceThemeRegistryLoadResult registry = loadRegistry(m_indexPath);
-    if (!registry.ok) {
+    const MerceThemeRegistryLoadResult registries = loadRegistry(m_indexPath);
+    if (!registries.ok) {
         MerceThemeLoadResult result;
-        result.theme = theme;
-        result.variant = variant;
-        result.errors = registry.errors;
-        logErrors(QStringLiteral("theme registry load failed:"), result.errors);
+        result.brandId = brandId;
+        result.mode = mode;
+        result.profile = profile;
+        result.errors = registries.errors;
         return result;
     }
-
-    return loadFromRegistry(registry.registry, theme, variant);
+    return loadFromRegistries(registries.colorRegistry,
+                              registries.profileRegistry,
+                              brandId,
+                              mode,
+                              profile);
 }
 
 QVariantList MerceThemeManifestLoader::availableThemes() const
 {
-    const MerceThemeRegistryLoadResult registry = loadRegistry(m_indexPath);
-    if (!registry.ok) {
-        logErrors(QStringLiteral("theme registry discovery failed:"), registry.errors);
-        return {};
-    }
-
-    return availableThemesForRegistry(registry.registry);
+    const MerceThemeRegistryLoadResult registries = loadRegistry(m_indexPath);
+    return registries.ok ? availableThemesForRegistry(registries.colorRegistry)
+                         : QVariantList{};
 }
 
-MerceThemeRegistryLoadResult MerceThemeManifestLoader::loadRegistry(const QString &indexPath)
+QVariantList MerceThemeManifestLoader::availableProfiles() const
+{
+    const MerceThemeRegistryLoadResult registries = loadRegistry(m_indexPath);
+    return registries.ok ? availableProfilesForRegistry(registries.profileRegistry)
+                         : QVariantList{};
+}
+
+MerceThemeRegistryLoadResult MerceThemeManifestLoader::loadRegistry(
+    const QString &sourcePath)
 {
     MerceThemeRegistryLoadResult result;
-    const JsonObjectResult index = readJsonObject(indexPath, QStringLiteral("theme index"));
-    if (!index.ok) {
-        result.errors = index.errors;
+    const JsonObjectResult source = readJsonObject(sourcePath, QStringLiteral("theme_source"));
+    if (!source.ok) {
+        result.errors = source.errors;
         return result;
     }
 
-    const MerceThemeRegistryResult registryResult = MerceThemeRegistry::fromJson(index.object, indexPath);
-    if (!registryResult.ok) {
-        result.errors = registryResult.errors;
+    if (source.object.value(QStringLiteral("kind")).toString()
+        == QStringLiteral("tenant-brand")) {
+        const ThemeValidationResult validation =
+            ThemeValidator::validateTenantBrand(source.object);
+        result.errors = validationErrors(validation);
+        if (!result.errors.isEmpty())
+            return result;
+
+        const MerceThemeRegistryResult colors =
+            MerceThemeRegistry::fromTenantBrand(source.object, sourcePath);
+        result.ok = colors.ok;
+        result.colorRegistry = colors.registry;
+        result.errors.append(colors.errors);
         return result;
     }
 
-    result.ok = true;
-    result.registry = registryResult.registry;
+    if (source.object.value(QStringLiteral("schemaVersion")).toInt(-1) != 1) {
+        result.errors.append(QStringLiteral(
+            "index.unsupported_version|schemaVersion|expected exactly 1"));
+        return result;
+    }
+
+    const MerceThemeRegistryResult colors =
+        MerceThemeRegistry::fromJson(source.object, sourcePath);
+    const MerceProfileRegistryResult profiles =
+        MerceProfileRegistry::fromJson(source.object, sourcePath);
+    result.errors.append(colors.errors);
+    result.errors.append(profiles.errors);
+    result.ok = colors.ok && profiles.ok
+        && (!colors.registry.isEmpty() || !profiles.registry.isEmpty());
+    if (!result.ok && result.errors.isEmpty()) {
+        result.errors.append(QStringLiteral(
+            "index.empty|brands/profiles|at least one registry is required"));
+    }
+    result.colorRegistry = colors.registry;
+    result.profileRegistry = profiles.registry;
     return result;
 }
 
-MerceThemeRegistryLoadResult MerceThemeManifestLoader::loadMergedRegistry(const QStringList &indexPaths)
+MerceThemeRegistryLoadResult MerceThemeManifestLoader::loadMergedRegistry(
+    const QStringList &sourcePaths)
 {
     MerceThemeRegistryLoadResult result;
-    if (indexPaths.isEmpty()) {
-        result.errors.append(QStringLiteral("at least one theme index path is required"));
+    if (sourcePaths.isEmpty()) {
+        result.errors.append(QStringLiteral(
+            "index.missing|sources|at least one source path is required"));
         return result;
     }
 
-    MerceThemeRegistry merged;
-    for (int i = 0; i < indexPaths.size(); ++i) {
-        const QString &indexPath = indexPaths.at(i);
-        const MerceThemeRegistryLoadResult source = loadRegistry(indexPath);
+    for (int i = 0; i < sourcePaths.size(); ++i) {
+        const MerceThemeRegistryLoadResult source = loadRegistry(sourcePaths.at(i));
         if (!source.ok) {
             for (const QString &error : source.errors)
-                result.errors.append(QStringLiteral("%1: %2").arg(indexPath, error));
+                result.errors.append(QStringLiteral("%1: %2")
+                                         .arg(sourcePaths.at(i))
+                                         .arg(error));
             return result;
         }
-
         if (i == 0) {
-            merged = source.registry;
+            result.colorRegistry = source.colorRegistry;
+            result.profileRegistry = source.profileRegistry;
             continue;
         }
 
         QStringList mergeErrors;
-        if (!merged.appendRegistry(source.registry, &mergeErrors)) {
+        const bool colorsOk =
+            result.colorRegistry.appendRegistry(source.colorRegistry, &mergeErrors);
+        const bool profilesOk =
+            result.profileRegistry.appendRegistry(source.profileRegistry, &mergeErrors);
+        if (!colorsOk || !profilesOk) {
             for (const QString &error : mergeErrors)
-                result.errors.append(QStringLiteral("%1: %2").arg(indexPath, error));
+                result.errors.append(QStringLiteral("%1: %2")
+                                         .arg(sourcePaths.at(i))
+                                         .arg(error));
             return result;
         }
     }
 
-    result.errors = validateRegistryEntries(merged);
-    if (!result.errors.isEmpty())
+    if (result.colorRegistry.defaultBrand().isEmpty()
+        || result.profileRegistry.defaultProfile().isEmpty()) {
+        result.errors.append(QStringLiteral(
+            "index.missing_default|defaultBrand/defaultProfile|bundled registry requires both"));
         return result;
+    }
 
-    result.ok = true;
-    result.registry = merged;
+    result.errors = validateRegistryEntries(result.colorRegistry,
+                                            result.profileRegistry);
+    result.ok = result.errors.isEmpty();
     return result;
 }
 
-MerceThemeLoadResult MerceThemeManifestLoader::loadDefaultFromRegistry(const MerceThemeRegistry &registry)
+MerceThemeLoadResult MerceThemeManifestLoader::loadDefaultFromRegistries(
+    const MerceThemeRegistry &colorRegistry,
+    const MerceProfileRegistry &profileRegistry)
 {
-    return loadDefaultEntryFromRegistry(registry);
+    return loadFromRegistries(colorRegistry,
+                              profileRegistry,
+                              colorRegistry.defaultBrand(),
+                              colorRegistry.defaultMode(),
+                              profileRegistry.defaultProfile());
 }
 
-MerceThemeLoadResult MerceThemeManifestLoader::loadFromRegistry(const MerceThemeRegistry &registry,
-                                                                const QString &theme,
-                                                                const QString &variant)
+MerceThemeLoadResult MerceThemeManifestLoader::loadFromRegistries(
+    const MerceThemeRegistry &colorRegistry,
+    const MerceProfileRegistry &profileRegistry,
+    const QString &brandId,
+    const QString &mode,
+    const QString &profile)
 {
-    const MerceThemeRegistryLookupResult lookup = registry.lookup(theme, variant);
-    if (!lookup.ok) {
-        MerceThemeLoadResult result;
-        result.theme = theme;
-        result.variant = variant;
-        result.errors = lookup.errors;
-        logErrors(QStringLiteral("requested theme lookup failed:"), result.errors);
+    MerceThemeLoadResult result;
+    result.brandId = brandId;
+    result.mode = mode;
+    result.profile = profile;
+
+    const MerceThemeRegistryLookupResult color = colorRegistry.lookup(brandId, mode);
+    const QString effectiveProfile =
+        profile.isEmpty() ? profileRegistry.defaultProfile() : profile;
+    const MerceProfileRegistryLookupResult metrics =
+        profileRegistry.lookup(effectiveProfile);
+    if (!color.ok)
+        result.errors.append(color.errors);
+    if (!metrics.ok)
+        result.errors.append(metrics.errors);
+    if (!result.errors.isEmpty())
         return result;
-    }
 
-    MerceThemeLoadResult requested = loadEntry(lookup.entry);
-    if (requested.ok || isDefaultEntry(registry, lookup.entry)) {
-        if (!requested.ok)
-            logErrors(QStringLiteral("requested theme load failed:"), requested.errors);
-        return requested;
-    }
+    MerceThemeLoadResult loadedColor = loadColorEntry(color.entry);
+    const JsonObjectResult loadedProfile = loadProfileEntry(metrics.entry);
+    result.errors.append(loadedColor.errors);
+    result.errors.append(loadedProfile.errors);
+    if (!result.errors.isEmpty())
+        return result;
 
-    logErrors(QStringLiteral("requested theme load failed, falling back to default:"), requested.errors);
-    MerceThemeLoadResult fallback = loadDefaultEntryFromRegistry(registry);
-    if (fallback.ok) {
-        fallback.usedFallback = true;
-        fallback.errors = requested.errors;
-        return fallback;
+    result.brandId = color.entry.brandId;
+    result.mode = color.entry.mode;
+    result.profile = metrics.entry.profileId;
+    result.finalManifest = loadedColor.finalManifest;
+    for (const QString &section : {QStringLiteral("spacing"),
+                                   QStringLiteral("radius"),
+                                   QStringLiteral("typography"),
+                                   QStringLiteral("size")}) {
+        result.finalManifest.insert(section, loadedProfile.object.value(section));
     }
-
-    fallback.errors.prepend(QStringLiteral("fallback to default theme failed"));
-    fallback.errors.append(requested.errors);
-    return fallback;
+    result.ok = true;
+    return result;
 }
 
-QVariantList MerceThemeManifestLoader::availableThemesForRegistry(const MerceThemeRegistry &registry)
+QVariantList MerceThemeManifestLoader::availableThemesForRegistry(
+    const MerceThemeRegistry &registry)
 {
-    struct ThemeOption
-    {
-        QString value;
-        QString label;
-        QString defaultMode;
-        QVariantList modes;
-    };
-
-    QList<ThemeOption> options;
+    QVariantList result;
+    QStringList seen;
     for (const auto &entry : registry.entries()) {
-        int optionIndex = -1;
-        for (int i = 0; i < options.size(); ++i) {
-            if (options.at(i).value == entry.theme) {
-                optionIndex = i;
-                break;
-            }
-        }
+        if (seen.contains(entry.brandId))
+            continue;
+        seen.append(entry.brandId);
 
-        if (optionIndex < 0) {
-            options.append({
-                entry.theme,
-                entry.displayName.isEmpty() ? entry.theme : entry.displayName,
-                registry.defaultVariantForTheme(entry.theme),
-                {},
+        QVariantList modes;
+        for (const auto &candidate : registry.entries()) {
+            if (candidate.brandId != entry.brandId)
+                continue;
+            modes.append(QVariantMap{
+                {QStringLiteral("value"), candidate.mode},
+                {QStringLiteral("label"), modeDisplayName(candidate.mode)},
             });
-            optionIndex = options.size() - 1;
         }
-
-        if (!entry.variant.isEmpty()) {
-            QVariantMap mode;
-            mode.insert(QStringLiteral("value"), entry.variant);
-            mode.insert(QStringLiteral("label"), modeDisplayName(entry.variant));
-            options[optionIndex].modes.append(mode);
-        }
-    }
-
-    QVariantList themes;
-    for (ThemeOption option : options) {
-        if (option.defaultMode.isEmpty() && !option.modes.isEmpty())
-            option.defaultMode = option.modes.constFirst().toMap().value(QStringLiteral("value")).toString();
-
-        for (int i = 0; i < option.modes.size(); ++i) {
-            if (option.modes.at(i).toMap().value(QStringLiteral("value")).toString() == option.defaultMode) {
+        const QString defaultMode = registry.defaultModeForBrand(entry.brandId);
+        for (qsizetype i = 0; i < modes.size(); ++i) {
+            if (modes.at(i).toMap().value(QStringLiteral("value")).toString()
+                == defaultMode) {
                 if (i > 0)
-                    option.modes.move(i, 0);
+                    modes.move(i, 0);
                 break;
             }
         }
-
-        QVariantMap theme;
-        theme.insert(QStringLiteral("value"), option.value);
-        theme.insert(QStringLiteral("label"), option.label);
-        theme.insert(QStringLiteral("defaultMode"), option.defaultMode);
-        theme.insert(QStringLiteral("hasModes"), !option.modes.isEmpty());
-        theme.insert(QStringLiteral("modes"), option.modes);
-        themes.append(theme);
+        result.append(QVariantMap{
+            {QStringLiteral("value"), entry.brandId},
+            {QStringLiteral("label"), entry.displayName},
+            {QStringLiteral("defaultMode"), defaultMode},
+            {QStringLiteral("modes"), modes},
+        });
     }
+    return result;
+}
 
-    return themes;
+QVariantList MerceThemeManifestLoader::availableProfilesForRegistry(
+    const MerceProfileRegistry &registry)
+{
+    QVariantList result;
+    for (const auto &entry : registry.entries()) {
+        result.append(QVariantMap{
+            {QStringLiteral("value"), entry.profileId},
+            {QStringLiteral("label"), entry.displayName},
+        });
+    }
+    return result;
 }
