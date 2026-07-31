@@ -11,7 +11,7 @@ Rectangle {
 
     signal pageRequested(string key)
 
-    color: Theme.colors.background.surface
+    color: Theme.colors.surface.base
     border.width: 1
     border.color: Theme.colors.border.base
     clip: true

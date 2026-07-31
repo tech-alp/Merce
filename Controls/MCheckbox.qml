@@ -69,7 +69,7 @@ BaseControl {
     }
 
     readonly property color boxBackgroundColor: {
-        if (root.isDisabled && root.checked) return Theme.colors.background.hover
+        if (root.isDisabled && root.checked) return Theme.colors.surface.disabled
         if (root.checked) return root.accentColor
         return "transparent"
     }

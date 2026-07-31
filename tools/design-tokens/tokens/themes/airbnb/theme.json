@@ -359,23 +359,7 @@
         "$type": "color",
         "$value": "{color.palette.canvas}"
       },
-      "surface": {
-        "$type": "color",
-        "$value": "{color.palette.canvas}"
-      },
-      "elevated": {
-        "$type": "color",
-        "$value": "{color.palette.canvas}"
-      },
-      "hover": {
-        "$type": "color",
-        "$value": "{color.palette.surfaceSoft}"
-      },
-      "pressed": {
-        "$type": "color",
-        "$value": "{color.palette.surfaceStrong}"
-      },
-      "tinted": {
+      "subtle": {
         "$type": "color",
         "$value": "{color.palette.surfaceSoft}"
       }
@@ -414,16 +398,40 @@
       "focus": {
         "$type": "color",
         "$value": "{color.palette.ink}"
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "{color.palette.hairline}"
       }
     },
     "status": {
       "error": {
-        "$type": "color",
-        "$value": "{color.palette.primaryErrorText}"
+        "foreground": {
+          "$type": "color",
+          "$value": "{color.palette.primaryErrorText}"
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{color.palette.primaryErrorText}"
+        },
+        "strong": {
+          "$type": "color",
+          "$value": "{color.palette.primaryErrorText}"
+        }
       },
       "info": {
-        "$type": "color",
-        "$value": "{color.palette.legalLink}"
+        "foreground": {
+          "$type": "color",
+          "$value": "{color.palette.legalLink}"
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{color.palette.legalLink}"
+        },
+        "strong": {
+          "$type": "color",
+          "$value": "{color.palette.legalLink}"
+        }
       }
     },
     "surface": {
@@ -438,6 +446,18 @@
       "raised": {
         "$type": "color",
         "$value": "{color.palette.canvas}"
+      },
+      "hover": {
+        "$type": "color",
+        "$value": "{color.palette.surfaceSoft}"
+      },
+      "pressed": {
+        "$type": "color",
+        "$value": "{color.palette.surfaceStrong}"
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "{color.palette.surfaceSoft}"
       }
     }
   }

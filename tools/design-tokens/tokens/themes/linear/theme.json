@@ -403,23 +403,7 @@
         "$type": "color",
         "$value": "{color.palette.bgMarketing}"
       },
-      "surface": {
-        "$type": "color",
-        "$value": "{color.palette.bgPanel}"
-      },
-      "elevated": {
-        "$type": "color",
-        "$value": "{color.palette.bgLevel3}"
-      },
-      "hover": {
-        "$type": "color",
-        "$value": "{color.palette.bgSecondary}"
-      },
-      "pressed": {
-        "$type": "color",
-        "$value": "{color.palette.bgPressed}"
-      },
-      "tinted": {
+      "subtle": {
         "$type": "color",
         "$value": "{color.palette.bgSecondary}"
       },
@@ -441,13 +425,9 @@
         "$type": "color",
         "$value": "{color.palette.accentPrimary}"
       },
-      "error": {
+      "disabled": {
         "$type": "color",
-        "$value": "{color.palette.statusError}"
-      },
-      "success": {
-        "$type": "color",
-        "$value": "{color.palette.statusSuccess}"
+        "$value": "{color.palette.borderSubtle}"
       }
     },
     "action": {
@@ -486,36 +466,92 @@
     },
     "status": {
       "success": {
-        "$type": "color",
-        "$value": "{color.palette.statusSuccess}"
-      },
-      "successSubtle": {
-        "$type": "color",
-        "$value": "{color.palette.statusSuccessSubtle}"
+        "foreground": {
+          "$type": "color",
+          "$value": "{color.palette.statusSuccess}"
+        },
+        "background": {
+          "$type": "color",
+          "$value": "{color.palette.statusSuccessSubtle}"
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{color.palette.statusSuccess}"
+        },
+        "strong": {
+          "$type": "color",
+          "$value": "{color.palette.statusSuccess}"
+        },
+        "onStrong": {
+          "$type": "color",
+          "$value": "{color.text.inverse}"
+        }
       },
       "warning": {
-        "$type": "color",
-        "$value": "{color.palette.statusWarning}"
-      },
-      "warningSubtle": {
-        "$type": "color",
-        "$value": "{color.palette.statusWarningSubtle}"
+        "foreground": {
+          "$type": "color",
+          "$value": "{color.palette.statusWarning}"
+        },
+        "background": {
+          "$type": "color",
+          "$value": "{color.palette.statusWarningSubtle}"
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{color.palette.statusWarning}"
+        },
+        "strong": {
+          "$type": "color",
+          "$value": "{color.palette.statusWarning}"
+        },
+        "onStrong": {
+          "$type": "color",
+          "$value": "{color.text.primary}"
+        }
       },
       "error": {
-        "$type": "color",
-        "$value": "{color.palette.statusError}"
-      },
-      "errorSubtle": {
-        "$type": "color",
-        "$value": "{color.palette.statusErrorSubtle}"
+        "foreground": {
+          "$type": "color",
+          "$value": "{color.palette.statusError}"
+        },
+        "background": {
+          "$type": "color",
+          "$value": "{color.palette.statusErrorSubtle}"
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{color.palette.statusError}"
+        },
+        "strong": {
+          "$type": "color",
+          "$value": "{color.palette.statusError}"
+        },
+        "onStrong": {
+          "$type": "color",
+          "$value": "{color.text.inverse}"
+        }
       },
       "info": {
-        "$type": "color",
-        "$value": "{color.palette.accentPrimary}"
-      },
-      "infoSubtle": {
-        "$type": "color",
-        "$value": "{color.palette.statusInfoSubtle}"
+        "foreground": {
+          "$type": "color",
+          "$value": "{color.palette.accentPrimary}"
+        },
+        "background": {
+          "$type": "color",
+          "$value": "{color.palette.statusInfoSubtle}"
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{color.palette.accentPrimary}"
+        },
+        "strong": {
+          "$type": "color",
+          "$value": "{color.palette.accentPrimary}"
+        },
+        "onStrong": {
+          "$type": "color",
+          "$value": "{color.text.inverse}"
+        }
       }
     },
     "surface": {
@@ -530,6 +566,18 @@
       "raised": {
         "$type": "color",
         "$value": "{color.palette.bgLevel3}"
+      },
+      "hover": {
+        "$type": "color",
+        "$value": "{color.palette.bgSecondary}"
+      },
+      "pressed": {
+        "$type": "color",
+        "$value": "{color.palette.bgPressed}"
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "{color.palette.bgSecondary}"
       }
     }
   }

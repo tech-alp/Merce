@@ -101,10 +101,11 @@ Map from DESIGN.md frontmatter or prose into Merce fields:
 - Secondary text -> `color.text.secondary`
 - Muted text -> `color.text.tertiary` or `color.text.disabled`
 - Page canvas -> `color.background.base`
-- Card/surface -> `color.background.surface`, `color.surface.base`
-- Soft band/hover -> `color.background.hover`, `color.surface.tinted`
+- Subtle page band -> `color.background.subtle`
+- Card/surface -> `color.surface.base`, `color.surface.raised`, `color.surface.tinted`
+- Surface interaction states -> `color.surface.hover`, `color.surface.pressed`, `color.surface.disabled`
 - Border/hairline -> `color.border.base`, `color.border.strong`
-- Status tokens -> `color.status.error`, `color.status.success`, `color.status.warning`, `color.status.info` when present; otherwise core defaults are acceptable.
+- Status tokens -> `color.status.<intent>.foreground`, `.background`, `.border`, `.strong`, `.onStrong` for `success`, `warning`, `error`, and `info`; otherwise core defaults are acceptable.
 - Button/input/card radius -> `radius.button`, `radius.input`, `radius.card`
 - Section spacing -> `spacing.sectionGap`
 - Page/content padding -> `spacing.pagePadding`
@@ -117,7 +118,7 @@ Map from DESIGN.md frontmatter or prose into Merce fields:
 ## Action and Navigation Surfaces
 
 - Use `color.action.primarySubtle` for compact brand-selected action surfaces such as checked chips, toggles, badges, or small selected controls.
-- Use `color.background.hover` or `color.background.tinted` for broad navigation and list-row backgrounds; carry brand emphasis through `color.action.primary` content or a small indicator.
+- Use `color.surface.hover` or `color.surface.tinted` for broad navigation and list-row backgrounds; carry brand emphasis through `color.action.primary` content or a small indicator.
 
 For proprietary fonts, do not add font files without an explicit licensing
 decision. Runtime typography fields must still use a single Qt-loadable family

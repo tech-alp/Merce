@@ -44,14 +44,10 @@ Item {
         {
             "key": "background",
             "title": qsTr("Background"),
-            "description": qsTr("Application backgrounds, panels, and interaction states."),
+            "description": qsTr("Application backgrounds and modal overlays."),
             "tokens": [
                 { "key": "base", "usage": qsTr("Application background") },
-                { "key": "surface", "usage": qsTr("Panel and card background") },
-                { "key": "elevated", "usage": qsTr("Raised panel background") },
-                { "key": "hover", "usage": qsTr("Hovered neutral backgrounds") },
-                { "key": "pressed", "usage": qsTr("Pressed neutral backgrounds") },
-                { "key": "tinted", "usage": qsTr("Subtle tinted surfaces") },
+                { "key": "subtle", "usage": qsTr("Subtle page band") },
                 { "key": "overlay", "usage": qsTr("Modal and scrim overlays") }
             ]
         },
@@ -63,8 +59,7 @@ Item {
                 { "key": "base", "usage": qsTr("Default dividers and outlines") },
                 { "key": "strong", "usage": qsTr("Higher contrast outlines") },
                 { "key": "focus", "usage": qsTr("Focus ring and active outlines") },
-                { "key": "error", "usage": qsTr("Error borders") },
-                { "key": "success", "usage": qsTr("Success borders") }
+                { "key": "disabled", "usage": qsTr("Disabled outlines") }
             ]
         },
         {
@@ -87,14 +82,26 @@ Item {
             "title": qsTr("Status"),
             "description": qsTr("Success, warning, error, and information states."),
             "tokens": [
-                { "key": "success", "usage": qsTr("Success foreground and icon") },
-                { "key": "successSubtle", "usage": qsTr("Success soft background") },
-                { "key": "warning", "usage": qsTr("Warning foreground and icon") },
-                { "key": "warningSubtle", "usage": qsTr("Warning soft background") },
-                { "key": "error", "usage": qsTr("Error foreground and icon") },
-                { "key": "errorSubtle", "usage": qsTr("Error soft background") },
-                { "key": "info", "usage": qsTr("Information foreground and icon") },
-                { "key": "infoSubtle", "usage": qsTr("Information soft background") }
+                { "key": "success.foreground", "usage": qsTr("Success foreground and icon") },
+                { "key": "success.background", "usage": qsTr("Success soft background") },
+                { "key": "success.border", "usage": qsTr("Success outline") },
+                { "key": "success.strong", "usage": qsTr("Success solid fill") },
+                { "key": "success.onStrong", "usage": qsTr("Content on success solid fill") },
+                { "key": "warning.foreground", "usage": qsTr("Warning foreground and icon") },
+                { "key": "warning.background", "usage": qsTr("Warning soft background") },
+                { "key": "warning.border", "usage": qsTr("Warning outline") },
+                { "key": "warning.strong", "usage": qsTr("Warning solid fill") },
+                { "key": "warning.onStrong", "usage": qsTr("Content on warning solid fill") },
+                { "key": "error.foreground", "usage": qsTr("Error foreground and icon") },
+                { "key": "error.background", "usage": qsTr("Error soft background") },
+                { "key": "error.border", "usage": qsTr("Error outline") },
+                { "key": "error.strong", "usage": qsTr("Error solid fill") },
+                { "key": "error.onStrong", "usage": qsTr("Content on error solid fill") },
+                { "key": "info.foreground", "usage": qsTr("Information foreground and icon") },
+                { "key": "info.background", "usage": qsTr("Information soft background") },
+                { "key": "info.border", "usage": qsTr("Information outline") },
+                { "key": "info.strong", "usage": qsTr("Information solid fill") },
+                { "key": "info.onStrong", "usage": qsTr("Content on information solid fill") }
             ]
         },
         {
@@ -104,7 +111,10 @@ Item {
             "tokens": [
                 { "key": "base", "usage": qsTr("Default reusable surface") },
                 { "key": "tinted", "usage": qsTr("Tinted reusable surface") },
-                { "key": "raised", "usage": qsTr("Raised reusable surface") }
+                { "key": "raised", "usage": qsTr("Raised reusable surface") },
+                { "key": "hover", "usage": qsTr("Hovered surface state") },
+                { "key": "pressed", "usage": qsTr("Pressed surface state") },
+                { "key": "disabled", "usage": qsTr("Disabled surface state") }
             ]
         }
     ]
@@ -129,8 +139,13 @@ Item {
     }
 
     function currentColor(group, token) {
-        const section = Theme.colors[group]
-        return section ? section[token] : "#000000"
+        let value = Theme.colors[group]
+        for (const segment of token.split(".")) {
+            if (!value)
+                return "#000000"
+            value = value[segment]
+        }
+        return value || "#000000"
     }
 
     function hexByte(value) {
@@ -150,11 +165,23 @@ Item {
             const section = {}
             for (const token of group.tokens) {
                 const path = colorPath(group.key, token.key)
-                section[token.key] = colorValue(path, currentColor(group.key, token.key))
+                assignNestedColor(section, token.key, colorValue(path, currentColor(group.key, token.key)))
             }
             manifest[group.key] = section
         }
         return manifest
+    }
+
+    function assignNestedColor(section, token, value) {
+        const segments = token.split(".")
+        let cursor = section
+        for (let i = 0; i < segments.length - 1; ++i) {
+            const segment = segments[i]
+            if (!cursor[segment])
+                cursor[segment] = {}
+            cursor = cursor[segment]
+        }
+        cursor[segments[segments.length - 1]] = value
     }
 
     function spacingManifest() {
@@ -532,7 +559,7 @@ Item {
                     width: 220
                     height: 132
                     radius: Theme.radius.large
-                    color: root.colorValue("background.surface", Theme.colors.background.surface)
+                    color: root.colorValue("surface.base", Theme.colors.surface.base)
                     border.width: 1
                     border.color: root.colorValue("border.focus", Theme.colors.border.focus)
 

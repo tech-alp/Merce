@@ -67,7 +67,7 @@ BaseControl {
     }
 
     readonly property color circleBackgroundColor: {
-        if (root.isDisabled && root.checked) return Theme.colors.background.hover
+        if (root.isDisabled && root.checked) return Theme.colors.surface.disabled
         return "transparent"
     }
 

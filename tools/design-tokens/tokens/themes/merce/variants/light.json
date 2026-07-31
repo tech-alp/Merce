@@ -14,8 +14,10 @@
       "base": {
         "$type": "color",
         "$value": "{color.palette.gray50}"
-      },
-      "surface": {
+      }
+    },
+    "surface": {
+      "base": {
         "$type": "color",
         "$value": "{color.palette.white}"
       }

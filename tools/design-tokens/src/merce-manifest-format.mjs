@@ -1,4 +1,9 @@
-import { resolveReferences } from 'style-dictionary/utils';
+import {
+  normalizeValue,
+  requiredValue,
+  resolveValue,
+  tokenKey,
+} from './token-value-utils.mjs';
 
 export const COLOR_FIELD_MAP = {
   text: [
@@ -12,19 +17,14 @@ export const COLOR_FIELD_MAP = {
   ],
   background: [
     ['base', 'color.background.base'],
-    ['surface', 'color.background.surface'],
-    ['elevated', 'color.background.elevated'],
-    ['hover', 'color.background.hover'],
-    ['pressed', 'color.background.pressed'],
-    ['tinted', 'color.background.tinted'],
+    ['subtle', 'color.background.subtle'],
     ['overlay', 'color.background.overlay'],
   ],
   border: [
     ['base', 'color.border.base'],
     ['strong', 'color.border.strong'],
     ['focus', 'color.border.focus'],
-    ['error', 'color.border.error'],
-    ['success', 'color.border.success'],
+    ['disabled', 'color.border.disabled'],
   ],
   action: [
     ['primary', 'color.action.primary'],
@@ -37,19 +37,34 @@ export const COLOR_FIELD_MAP = {
     ['disabled', 'color.action.disabled'],
   ],
   status: [
-    ['success', 'color.status.success'],
-    ['successSubtle', 'color.status.successSubtle'],
-    ['warning', 'color.status.warning'],
-    ['warningSubtle', 'color.status.warningSubtle'],
-    ['error', 'color.status.error'],
-    ['errorSubtle', 'color.status.errorSubtle'],
-    ['info', 'color.status.info'],
-    ['infoSubtle', 'color.status.infoSubtle'],
+    ['success.foreground', 'color.status.success.foreground'],
+    ['success.background', 'color.status.success.background'],
+    ['success.border', 'color.status.success.border'],
+    ['success.strong', 'color.status.success.strong'],
+    ['success.onStrong', 'color.status.success.onStrong'],
+    ['warning.foreground', 'color.status.warning.foreground'],
+    ['warning.background', 'color.status.warning.background'],
+    ['warning.border', 'color.status.warning.border'],
+    ['warning.strong', 'color.status.warning.strong'],
+    ['warning.onStrong', 'color.status.warning.onStrong'],
+    ['error.foreground', 'color.status.error.foreground'],
+    ['error.background', 'color.status.error.background'],
+    ['error.border', 'color.status.error.border'],
+    ['error.strong', 'color.status.error.strong'],
+    ['error.onStrong', 'color.status.error.onStrong'],
+    ['info.foreground', 'color.status.info.foreground'],
+    ['info.background', 'color.status.info.background'],
+    ['info.border', 'color.status.info.border'],
+    ['info.strong', 'color.status.info.strong'],
+    ['info.onStrong', 'color.status.info.onStrong'],
   ],
   surface: [
     ['base', 'color.surface.base'],
     ['tinted', 'color.surface.tinted'],
     ['raised', 'color.surface.raised'],
+    ['hover', 'color.surface.hover'],
+    ['pressed', 'color.surface.pressed'],
+    ['disabled', 'color.surface.disabled'],
   ],
 };
 
@@ -125,6 +140,28 @@ export const FIELD_MAP = {
   ].map((name) => [name, `typography.${name}`]),
 };
 
+function assignNestedField(target, fieldPath, value) {
+  const segments = fieldPath.split('.');
+  let cursor = target;
+
+  for (const segment of segments.slice(0, -1)) {
+    cursor[segment] ??= {};
+    cursor = cursor[segment];
+  }
+
+  cursor[segments.at(-1)] = value;
+}
+
+function objectFromFieldMap(fields, tokenValues) {
+  const object = {};
+
+  for (const [name, tokenPath] of fields) {
+    assignNestedField(object, name, requiredValue(tokenValues, tokenPath));
+  }
+
+  return object;
+}
+
 export function formatMerceManifest(dictionary, options) {
   const tokenValues = new Map(
     dictionary.allTokens.map((token) => [
@@ -155,9 +192,7 @@ export function formatMerceManifest(dictionary, options) {
   manifest.colors = Object.fromEntries(
     Object.entries(COLOR_FIELD_MAP).map(([groupName, fields]) => [
       groupName,
-      Object.fromEntries(
-        fields.map(([name, tokenPath]) => [name, requiredValue(tokenValues, tokenPath)]),
-      ),
+      objectFromFieldMap(fields, tokenValues),
     ]),
   );
 
@@ -168,41 +203,4 @@ export function formatMerceManifest(dictionary, options) {
   }
 
   return manifest;
-}
-
-function requiredValue(values, tokenPath) {
-  if (!values.has(tokenPath)) {
-    throw new Error(`Missing token '${tokenPath}' required by Merce manifest format`);
-  }
-
-  return values.get(tokenPath);
-}
-
-function normalizeValue(value) {
-  if (typeof value === 'string' && /^-?\d+(\.\d+)?$/.test(value)) {
-    return Number(value);
-  }
-
-  return value;
-}
-
-function tokenKey(token) {
-  if (Array.isArray(token.path)) {
-    return token.path.join('.');
-  }
-
-  if (typeof token.key === 'string') {
-    return token.key.replace(/^\{|\}$/g, '');
-  }
-
-  throw new Error(`Token has no path metadata: ${JSON.stringify(token)}`);
-}
-
-function resolveValue(token, tokens) {
-  const value = token.value ?? token.$value;
-  if (typeof value === 'string' && value.includes('{')) {
-    return resolveReferences(value, tokens, { usesDtcg: true });
-  }
-
-  return value;
 }

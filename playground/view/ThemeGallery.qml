@@ -299,7 +299,7 @@ Item {
                     spacing: Theme.spacing.md
 
                     TokenSwatch { label: "backgroundBase"; swatchColor: Theme.colors.background.base }
-                    TokenSwatch { label: "backgroundSurface"; swatchColor: Theme.colors.background.surface }
+                    TokenSwatch { label: "surfaceBase"; swatchColor: Theme.colors.surface.base }
                     TokenSwatch { label: "textPrimary"; swatchColor: Theme.colors.text.primary }
                     TokenSwatch { label: "actionPrimary"; swatchColor: Theme.colors.action.primary }
                     TokenSwatch { label: "actionPrimaryDark"; swatchColor: Theme.colors.action.primaryPressed }
@@ -307,8 +307,8 @@ Item {
                     TokenSwatch { label: "actionSecondaryDark"; swatchColor: Theme.colors.action.secondaryPressed }
                     TokenSwatch { label: "borderBase"; swatchColor: Theme.colors.border.base }
                     TokenSwatch { label: "borderFocus"; swatchColor: Theme.colors.border.focus }
-                    TokenSwatch { label: "statusError"; swatchColor: Theme.colors.status.error }
-                    TokenSwatch { label: "statusSuccess"; swatchColor: Theme.colors.status.success }
+                    TokenSwatch { label: "statusError"; swatchColor: Theme.colors.status.error.foreground }
+                    TokenSwatch { label: "statusSuccess"; swatchColor: Theme.colors.status.success.foreground }
                 }
             }
         }
@@ -399,7 +399,7 @@ Item {
                         width: 96
                         height: 54
                         radius: Theme.radius.button
-                        color: Theme.colors.background.surface
+                        color: Theme.colors.surface.base
                         border.width: 1
                         border.color: Theme.colors.border.base
                     }
@@ -408,7 +408,7 @@ Item {
                         width: 96
                         height: 54
                         radius: Theme.radius.input
-                        color: Theme.colors.background.surface
+                        color: Theme.colors.surface.base
                         border.width: 1
                         border.color: Theme.colors.border.focus
                     }
@@ -417,7 +417,7 @@ Item {
                         width: 96
                         height: 54
                         radius: Theme.radius.dialog
-                        color: Theme.colors.background.elevated
+                        color: Theme.colors.surface.raised
                         border.width: 1
                         border.color: Theme.colors.border.base
                     }
@@ -604,7 +604,7 @@ Item {
         message: "Tema değerleri okunuyor."
         confirmText: "OK"
         showCancel: false
-        property color observedSurfaceColor: Theme.colors.background.surface
+        property color observedSurfaceColor: Theme.colors.surface.base
         onConfirmed: isOpen = false
     }
 }

@@ -5,10 +5,10 @@ import Toastify.Style
 
 ToastifyStyleProvider {
     colors: ({
-        info: Theme.colors.status.info,
-        success: Theme.colors.status.success,
-        warning: Theme.colors.status.warning,
-        error: Theme.colors.status.error
+        info: Theme.colors.status.info.foreground,
+        success: Theme.colors.status.success.foreground,
+        warning: Theme.colors.status.warning.foreground,
+        error: Theme.colors.status.error.foreground
     })
 
     fonts: ({

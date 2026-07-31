@@ -311,23 +311,7 @@
         "$type": "color",
         "$value": "{color.palette.canvasParchment}"
       },
-      "surface": {
-        "$type": "color",
-        "$value": "{color.palette.canvas}"
-      },
-      "elevated": {
-        "$type": "color",
-        "$value": "{color.palette.surfacePearl}"
-      },
-      "hover": {
-        "$type": "color",
-        "$value": "{color.palette.dividerSoft}"
-      },
-      "pressed": {
-        "$type": "color",
-        "$value": "{color.palette.hairline}"
-      },
-      "tinted": {
+      "subtle": {
         "$type": "color",
         "$value": "{color.palette.canvasParchment}"
       }
@@ -366,6 +350,10 @@
       "focus": {
         "$type": "color",
         "$value": "{color.palette.primaryFocus}"
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "{color.palette.dividerSoft}"
       }
     },
     "surface": {
@@ -380,6 +368,18 @@
       "raised": {
         "$type": "color",
         "$value": "{color.palette.surfacePearl}"
+      },
+      "hover": {
+        "$type": "color",
+        "$value": "{color.palette.dividerSoft}"
+      },
+      "pressed": {
+        "$type": "color",
+        "$value": "{color.palette.hairline}"
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "{color.palette.canvasParchment}"
       }
     }
   }

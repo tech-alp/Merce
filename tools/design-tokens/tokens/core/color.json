@@ -137,23 +137,7 @@
         "$type": "color",
         "$value": "{color.palette.gray50}"
       },
-      "surface": {
-        "$type": "color",
-        "$value": "{color.palette.white}"
-      },
-      "elevated": {
-        "$type": "color",
-        "$value": "{color.palette.white}"
-      },
-      "hover": {
-        "$type": "color",
-        "$value": "{color.palette.gray100}"
-      },
-      "pressed": {
-        "$type": "color",
-        "$value": "{color.palette.gray200}"
-      },
-      "tinted": {
+      "subtle": {
         "$type": "color",
         "$value": "{color.palette.gray100}"
       },
@@ -209,47 +193,99 @@
         "$type": "color",
         "$value": "{color.palette.primary}"
       },
-      "error": {
+      "disabled": {
         "$type": "color",
-        "$value": "{color.status.error}"
-      },
-      "success": {
-        "$type": "color",
-        "$value": "{color.status.success}"
+        "$value": "{color.palette.gray200}"
       }
     },
     "status": {
-      "error": {
-        "$type": "color",
-        "$value": "{color.palette.error}"
-      },
       "success": {
-        "$type": "color",
-        "$value": "{color.palette.success}"
+        "foreground": {
+          "$type": "color",
+          "$value": "{color.palette.success}"
+        },
+        "background": {
+          "$type": "color",
+          "$value": "{color.palette.successLight}"
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{color.palette.success}"
+        },
+        "strong": {
+          "$type": "color",
+          "$value": "{color.palette.success}"
+        },
+        "onStrong": {
+          "$type": "color",
+          "$value": "{color.text.inverse}"
+        }
       },
       "warning": {
-        "$type": "color",
-        "$value": "{color.palette.warning}"
+        "foreground": {
+          "$type": "color",
+          "$value": "{color.text.primary}"
+        },
+        "background": {
+          "$type": "color",
+          "$value": "{color.palette.warningLight}"
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{color.palette.warning}"
+        },
+        "strong": {
+          "$type": "color",
+          "$value": "{color.palette.warning}"
+        },
+        "onStrong": {
+          "$type": "color",
+          "$value": "{color.text.primary}"
+        }
+      },
+      "error": {
+        "foreground": {
+          "$type": "color",
+          "$value": "{color.palette.error}"
+        },
+        "background": {
+          "$type": "color",
+          "$value": "{color.palette.errorLight}"
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{color.palette.error}"
+        },
+        "strong": {
+          "$type": "color",
+          "$value": "{color.palette.error}"
+        },
+        "onStrong": {
+          "$type": "color",
+          "$value": "{color.text.inverse}"
+        }
       },
       "info": {
-        "$type": "color",
-        "$value": "{color.palette.info}"
-      },
-      "successSubtle": {
-        "$type": "color",
-        "$value": "{color.palette.successLight}"
-      },
-      "warningSubtle": {
-        "$type": "color",
-        "$value": "{color.palette.warningLight}"
-      },
-      "errorSubtle": {
-        "$type": "color",
-        "$value": "{color.palette.errorLight}"
-      },
-      "infoSubtle": {
-        "$type": "color",
-        "$value": "{color.palette.infoLight}"
+        "foreground": {
+          "$type": "color",
+          "$value": "{color.palette.info}"
+        },
+        "background": {
+          "$type": "color",
+          "$value": "{color.palette.infoLight}"
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{color.palette.info}"
+        },
+        "strong": {
+          "$type": "color",
+          "$value": "{color.palette.info}"
+        },
+        "onStrong": {
+          "$type": "color",
+          "$value": "{color.text.inverse}"
+        }
       }
     },
     "surface": {
@@ -263,7 +299,19 @@
       },
       "raised": {
         "$type": "color",
-        "$value": "{color.background.elevated}"
+        "$value": "{color.palette.white}"
+      },
+      "hover": {
+        "$type": "color",
+        "$value": "{color.palette.gray100}"
+      },
+      "pressed": {
+        "$type": "color",
+        "$value": "{color.palette.gray200}"
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "{color.palette.gray100}"
       }
     }
   }

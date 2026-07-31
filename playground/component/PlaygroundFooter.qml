@@ -10,7 +10,7 @@ Rectangle {
     property string activeTheme: ""
     property int stackDepth: 0
 
-    color: Theme.colors.background.surface
+    color: Theme.colors.surface.base
 
     Rectangle {
         anchors {

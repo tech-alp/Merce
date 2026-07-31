@@ -42,14 +42,14 @@ Surface {
     // OVERRIDEN PROPERTIES
     // ====================================================================
     override property color backgroundColor: {
-        if (root.isDisabled) return Theme.colors.background.hover
-        return Theme.colors.background.surface
+        if (root.isDisabled) return Theme.colors.surface.disabled
+        return Theme.colors.surface.base
     }
 
     override property color borderColor: {
         if (root.isDisabled) return Theme.colors.border.base
-        if (root.validationState === MInput.Error) return Theme.colors.border.error
-        if (root.validationState === MInput.Success) return Theme.colors.border.success
+        if (root.validationState === MInput.Error) return Theme.colors.status.error.border
+        if (root.validationState === MInput.Success) return Theme.colors.status.success.border
         if (root.isFocused) return Theme.colors.border.focus
         if (root.isHovered) return Theme.colors.border.strong
         return Theme.colors.border.base
@@ -159,7 +159,7 @@ Surface {
         size: Theme.icons.medium
         color: {
             if (root.isDisabled) return Theme.colors.text.disabled
-            if (root.validationState === MInput.Error) return Theme.colors.status.error
+            if (root.validationState === MInput.Error) return Theme.colors.status.error.foreground
             return Theme.colors.text.tertiary
         }
         anchors {
@@ -176,8 +176,8 @@ Surface {
         size: Theme.icons.medium
         color: {
             if (root.isDisabled) return Theme.colors.text.disabled
-            if (root.validationState === MInput.Error) return Theme.colors.status.error
-            if (root.validationState === MInput.Success) return Theme.colors.status.success
+            if (root.validationState === MInput.Error) return Theme.colors.status.error.foreground
+            if (root.validationState === MInput.Success) return Theme.colors.status.success.foreground
             return Theme.colors.text.tertiary
         }
         anchors {
@@ -211,7 +211,7 @@ Surface {
         font.pixelSize: Theme.typography.sizeXSmall
         color: {
             if (root.currentLength > root.maxLength && root.maxLength > 0) {
-                return Theme.colors.status.error
+                return Theme.colors.status.error.foreground
             }
             return Theme.colors.text.tertiary
         }

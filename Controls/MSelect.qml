@@ -34,9 +34,9 @@ Basic.ComboBox {
     readonly property real dropdownVerticalOffset: 4
     readonly property int optionHeight: Theme.spacing.touchTargetCompact
     readonly property int optionCount: root.options ? root.options.length : 0
-    readonly property color transparentOptionBackground: Qt.rgba(Theme.colors.background.hover.r,
-                                                                 Theme.colors.background.hover.g,
-                                                                 Theme.colors.background.hover.b,
+    readonly property color transparentOptionBackground: Qt.rgba(Theme.colors.surface.hover.r,
+                                                                 Theme.colors.surface.hover.g,
+                                                                 Theme.colors.surface.hover.b,
                                                                  0)
     readonly property real dropdownContentHeight: {
         const spacingHeight = Math.max(0, root.optionCount - 1) * Theme.spacing.xxs
@@ -141,7 +141,7 @@ Basic.ComboBox {
         implicitWidth: 280
         implicitHeight: root.currentSizeConfig.height
         radius: Theme.radius.input
-        color: root.enabled ? Theme.colors.background.surface : Theme.colors.background.base
+        color: root.enabled ? Theme.colors.surface.base : Theme.colors.background.base
         border.width: root.isOpen || root.isFocused ? 2 : 1
         border.color: {
             if (!root.enabled)
@@ -224,9 +224,9 @@ Basic.ComboBox {
                     return Theme.colors.action.primary
                 }
                 if (optionDelegate.pressed)
-                    return Theme.colors.background.pressed
+                    return Theme.colors.surface.pressed
                 if (optionDelegate.highlighted || optionDelegate.hovered)
-                    return Theme.colors.background.hover
+                    return Theme.colors.surface.hover
                 return root.transparentOptionBackground
             }
 
@@ -262,7 +262,7 @@ Basic.ComboBox {
 
         background: Rectangle {
             radius: Theme.radius.input
-            color: Theme.colors.background.surface
+            color: Theme.colors.surface.base
             border.width: 1
             border.color: Theme.colors.border.base
 

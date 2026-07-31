@@ -176,7 +176,7 @@ Item {
             AppIcon {
                 name: "status:check"
                 size: Theme.icons.large
-                color: Theme.colors.status.success
+                color: Theme.colors.status.success.foreground
             }
 
             AppIcon {

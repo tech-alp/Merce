@@ -14,6 +14,7 @@ manifests, not public DTCG interchange files.
 - Source tokens live under `tools/design-tokens/tokens/`.
 - Style Dictionary resolves core, theme, and variant layers in deterministic order.
 - Generated manifests live under `generated/themes/` and are committed or packaged for Qt consumers.
+- Figma import files live under `generated/figma/` and are generated from the same sources as a separate interchange output.
 - Runtime QML and C++ APIs continue to use `Theme`; generated token objects are not public QML API.
 
 ## Theme Registry
@@ -42,6 +43,33 @@ Generated manifests use shallow semantic sections aligned with the C++ runtime:
 
 Generated manifests do not expose raw DTCG paths or compatibility sections from the old QML facade. Compatibility aliases should be derived inside the runtime layer when needed.
 
+## Figma DTCG Export
+
+`npm run build:figma` writes strict Figma-compatible DTCG JSON files under
+`generated/figma/`. This output is intended for Figma Variables import and
+exports only Merce's semantic public token surface:
+
+- `color.text.*`
+- `color.background.*`
+- `color.border.*`
+- `color.action.*`
+- `color.status.*`
+- `color.surface.*`
+- `spacing.*`
+- `radius.*`
+- `typography.*`
+
+The Figma output intentionally omits raw palette scales and Merce runtime
+metadata. Variant-backed themes export one file per real variant; `basePath`
+manifests are not exported as Figma modes. Single-manifest themes export one
+file.
+
+Generated Figma tokens include `com.figma.scopes` metadata so variables appear
+only in relevant picker contexts where Figma honors scope extensions. Text colors
+are scoped to text fills, background/surface colors to frame and shape fills,
+border colors to strokes, spacing to gaps, radius to corner radius, and
+typography fields to their matching text controls.
+
 ## Phase 3 Runtime Support
 
 Phase 3 runtime apply validates and applies these manifest-backed sections:
@@ -60,12 +88,22 @@ Run these commands from `tools/design-tokens`:
 ```bash
 npm install
 npm run build
+npm run build:figma
 npm run validate
+npm run validate:figma
 npm run check
 ```
 
 `npm run build` writes `generated/themes/index.json` plus every manifest declared by `themes.json`.
 
+`npm run build:figma` writes `generated/figma/index.json` plus Figma DTCG files
+for every importable theme or variant.
+
 `npm run validate` checks schema version, theme identity, required semantic sections, and required runtime fields.
 
-`npm run check` rebuilds the manifests and fails if the generated files differ from what is already present.
+`npm run validate:figma` checks the generated Figma DTCG files for supported
+token types, Figma-compatible color/dimension values, safe names, and matching
+token names/types across variant mode files.
+
+`npm run check` rebuilds runtime manifests and Figma DTCG files, then fails if
+the generated files differ from what is already present.

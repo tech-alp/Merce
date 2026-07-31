@@ -2,16 +2,30 @@
 
 #include <QColor>
 #include <QJsonObject>
+#include <QJsonValue>
 #include <QObject>
 #include <QString>
 #include <QtQml/qqmlregistration.h>
 
 namespace MerceColorJson {
 
+inline QColor colorValue(const QJsonValue &value, const QColor &fallback)
+{
+    QJsonValue resolvedValue = value;
+    if (value.isObject()) {
+        const QJsonObject object = value.toObject();
+        resolvedValue = object.value(QStringLiteral("$value"));
+        if (resolvedValue.isUndefined())
+            resolvedValue = object.value(QStringLiteral("value"));
+    }
+
+    const QColor candidate(resolvedValue.toString());
+    return candidate.isValid() ? candidate : fallback;
+}
+
 inline QColor color(const QJsonObject &object, const QString &field, const QColor &fallback)
 {
-    const QColor candidate(object.value(field).toString());
-    return candidate.isValid() ? candidate : fallback;
+    return colorValue(object.value(field), fallback);
 }
 
 } // namespace MerceColorJson
@@ -68,6 +82,7 @@ class MerceColorsBackground : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QColor base READ base NOTIFY changed FINAL)
+    Q_PROPERTY(QColor subtle READ subtle NOTIFY changed FINAL)
     Q_PROPERTY(QColor surface READ surface NOTIFY changed FINAL)
     Q_PROPERTY(QColor elevated READ elevated NOTIFY changed FINAL)
     Q_PROPERTY(QColor hover READ hover NOTIFY changed FINAL)
@@ -80,6 +95,7 @@ public:
     explicit MerceColorsBackground(QObject *parent = nullptr) : QObject(parent) {}
 
     QColor base() const { return m_base; }
+    QColor subtle() const { return m_subtle; }
     QColor surface() const { return m_surface; }
     QColor elevated() const { return m_elevated; }
     QColor hover() const { return m_hover; }
@@ -90,6 +106,9 @@ public:
     void applyManifestSection(const QJsonObject &section)
     {
         m_base = MerceColorJson::color(section, QStringLiteral("base"), m_base);
+        m_subtle = MerceColorJson::color(section, QStringLiteral("subtle"), m_subtle);
+        if (!section.contains(QStringLiteral("subtle")))
+            m_subtle = MerceColorJson::color(section, QStringLiteral("tinted"), m_subtle);
         m_surface = MerceColorJson::color(section, QStringLiteral("surface"), m_surface);
         m_elevated = MerceColorJson::color(section, QStringLiteral("elevated"), m_elevated);
         m_hover = MerceColorJson::color(section, QStringLiteral("hover"), m_hover);
@@ -99,11 +118,22 @@ public:
         emit changed();
     }
 
+    void applySurfaceCompatibilitySection(const QJsonObject &section)
+    {
+        m_surface = MerceColorJson::color(section, QStringLiteral("base"), m_surface);
+        m_elevated = MerceColorJson::color(section, QStringLiteral("raised"), m_elevated);
+        m_hover = MerceColorJson::color(section, QStringLiteral("hover"), m_hover);
+        m_pressed = MerceColorJson::color(section, QStringLiteral("pressed"), m_pressed);
+        m_tinted = MerceColorJson::color(section, QStringLiteral("tinted"), m_tinted);
+        emit changed();
+    }
+
 signals:
     void changed();
 
 private:
     QColor m_base = QColor(QStringLiteral("#FAF8F6"));
+    QColor m_subtle = QColor(QStringLiteral("#F5F0EB"));
     QColor m_surface = QColor(QStringLiteral("#FFFFFF"));
     QColor m_elevated = QColor(QStringLiteral("#FFFFFF"));
     QColor m_hover = QColor(QStringLiteral("#F5F0EB"));
@@ -118,6 +148,7 @@ class MerceColorsBorder : public QObject
     Q_PROPERTY(QColor base READ base NOTIFY changed FINAL)
     Q_PROPERTY(QColor strong READ strong NOTIFY changed FINAL)
     Q_PROPERTY(QColor focus READ focus NOTIFY changed FINAL)
+    Q_PROPERTY(QColor disabled READ disabled NOTIFY changed FINAL)
     Q_PROPERTY(QColor error READ error NOTIFY changed FINAL)
     Q_PROPERTY(QColor success READ success NOTIFY changed FINAL)
     QML_ANONYMOUS
@@ -128,6 +159,7 @@ public:
     QColor base() const { return m_base; }
     QColor strong() const { return m_strong; }
     QColor focus() const { return m_focus; }
+    QColor disabled() const { return m_disabled; }
     QColor error() const { return m_error; }
     QColor success() const { return m_success; }
 
@@ -136,8 +168,22 @@ public:
         m_base = MerceColorJson::color(section, QStringLiteral("base"), m_base);
         m_strong = MerceColorJson::color(section, QStringLiteral("strong"), m_strong);
         m_focus = MerceColorJson::color(section, QStringLiteral("focus"), m_focus);
+        m_disabled = MerceColorJson::color(section,
+                                           QStringLiteral("disabled"),
+                                           section.contains(QStringLiteral("disabled")) ? m_disabled : m_base);
         m_error = MerceColorJson::color(section, QStringLiteral("error"), m_error);
         m_success = MerceColorJson::color(section, QStringLiteral("success"), m_success);
+        emit changed();
+    }
+
+    void applyStatusCompatibilitySection(const QJsonObject &section)
+    {
+        m_error = MerceColorJson::color(section.value(QStringLiteral("error")).toObject(),
+                                        QStringLiteral("border"),
+                                        m_error);
+        m_success = MerceColorJson::color(section.value(QStringLiteral("success")).toObject(),
+                                          QStringLiteral("border"),
+                                          m_success);
         emit changed();
     }
 
@@ -148,6 +194,7 @@ private:
     QColor m_base = QColor(QStringLiteral("#E8DFD5"));
     QColor m_strong = QColor(QStringLiteral("#D4C4B5"));
     QColor m_focus = QColor(QStringLiteral("#C4785A"));
+    QColor m_disabled = QColor(QStringLiteral("#E8DFD5"));
     QColor m_error = QColor(QStringLiteral("#C45A5A"));
     QColor m_success = QColor(QStringLiteral("#4A7C59"));
 };
@@ -231,41 +278,57 @@ private:
     QColor m_disabled = QColor(QStringLiteral("#B8A494"));
 };
 
-class MerceColorsStatus : public QObject
+class MerceColorsStatusRole : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QColor success READ success NOTIFY changed FINAL)
-    Q_PROPERTY(QColor successSubtle READ successSubtle NOTIFY changed FINAL)
-    Q_PROPERTY(QColor warning READ warning NOTIFY changed FINAL)
-    Q_PROPERTY(QColor warningSubtle READ warningSubtle NOTIFY changed FINAL)
-    Q_PROPERTY(QColor error READ error NOTIFY changed FINAL)
-    Q_PROPERTY(QColor errorSubtle READ errorSubtle NOTIFY changed FINAL)
-    Q_PROPERTY(QColor info READ info NOTIFY changed FINAL)
-    Q_PROPERTY(QColor infoSubtle READ infoSubtle NOTIFY changed FINAL)
+    Q_PROPERTY(QColor foreground READ foreground NOTIFY changed FINAL)
+    Q_PROPERTY(QColor background READ background NOTIFY changed FINAL)
+    Q_PROPERTY(QColor border READ border NOTIFY changed FINAL)
+    Q_PROPERTY(QColor strong READ strong NOTIFY changed FINAL)
+    Q_PROPERTY(QColor onStrong READ onStrong NOTIFY changed FINAL)
     QML_ANONYMOUS
 
 public:
-    explicit MerceColorsStatus(QObject *parent = nullptr) : QObject(parent) {}
+    explicit MerceColorsStatusRole(const QColor &foreground,
+                                   const QColor &background,
+                                   const QColor &border,
+                                   const QColor &strong,
+                                   const QColor &onStrong,
+                                   QObject *parent = nullptr)
+        : QObject(parent),
+          m_foreground(foreground),
+          m_background(background),
+          m_border(border),
+          m_strong(strong),
+          m_onStrong(onStrong)
+    {
+    }
 
-    QColor success() const { return m_success; }
-    QColor successSubtle() const { return m_successSubtle; }
-    QColor warning() const { return m_warning; }
-    QColor warningSubtle() const { return m_warningSubtle; }
-    QColor error() const { return m_error; }
-    QColor errorSubtle() const { return m_errorSubtle; }
-    QColor info() const { return m_info; }
-    QColor infoSubtle() const { return m_infoSubtle; }
+    QColor foreground() const { return m_foreground; }
+    QColor background() const { return m_background; }
+    QColor border() const { return m_border; }
+    QColor strong() const { return m_strong; }
+    QColor onStrong() const { return m_onStrong; }
 
     void applyManifestSection(const QJsonObject &section)
     {
-        m_success = MerceColorJson::color(section, QStringLiteral("success"), m_success);
-        m_successSubtle = MerceColorJson::color(section, QStringLiteral("successSubtle"), m_successSubtle);
-        m_warning = MerceColorJson::color(section, QStringLiteral("warning"), m_warning);
-        m_warningSubtle = MerceColorJson::color(section, QStringLiteral("warningSubtle"), m_warningSubtle);
-        m_error = MerceColorJson::color(section, QStringLiteral("error"), m_error);
-        m_errorSubtle = MerceColorJson::color(section, QStringLiteral("errorSubtle"), m_errorSubtle);
-        m_info = MerceColorJson::color(section, QStringLiteral("info"), m_info);
-        m_infoSubtle = MerceColorJson::color(section, QStringLiteral("infoSubtle"), m_infoSubtle);
+        m_foreground = MerceColorJson::color(section, QStringLiteral("foreground"), m_foreground);
+        m_background = MerceColorJson::color(section, QStringLiteral("background"), m_background);
+        m_border = MerceColorJson::color(section, QStringLiteral("border"), m_border);
+        m_strong = MerceColorJson::color(section, QStringLiteral("strong"), m_strong);
+        m_onStrong = MerceColorJson::color(section, QStringLiteral("onStrong"), m_onStrong);
+        emit changed();
+    }
+
+    void applyLegacyColors(const QJsonValue &foregroundValue, const QJsonValue &backgroundValue)
+    {
+        const QColor foreground = MerceColorJson::colorValue(foregroundValue, m_foreground);
+        const QColor background = MerceColorJson::colorValue(backgroundValue, m_background);
+
+        m_foreground = foreground;
+        m_background = background;
+        m_border = foreground;
+        m_strong = foreground;
         emit changed();
     }
 
@@ -273,14 +336,100 @@ signals:
     void changed();
 
 private:
-    QColor m_success = QColor(QStringLiteral("#4A7C59"));
-    QColor m_successSubtle = QColor(QStringLiteral("#A8D4B8"));
-    QColor m_warning = QColor(QStringLiteral("#D4A854"));
-    QColor m_warningSubtle = QColor(QStringLiteral("#F0D9A8"));
-    QColor m_error = QColor(QStringLiteral("#C45A5A"));
-    QColor m_errorSubtle = QColor(QStringLiteral("#E8A8A8"));
-    QColor m_info = QColor(QStringLiteral("#5A8FC4"));
-    QColor m_infoSubtle = QColor(QStringLiteral("#A8CCE8"));
+    QColor m_foreground;
+    QColor m_background;
+    QColor m_border;
+    QColor m_strong;
+    QColor m_onStrong;
+};
+
+class MerceColorsStatus : public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY(MerceColorsStatusRole *success READ success CONSTANT FINAL)
+    Q_PROPERTY(MerceColorsStatusRole *warning READ warning CONSTANT FINAL)
+    Q_PROPERTY(MerceColorsStatusRole *error READ error CONSTANT FINAL)
+    Q_PROPERTY(MerceColorsStatusRole *info READ info CONSTANT FINAL)
+    QML_ANONYMOUS
+
+public:
+    explicit MerceColorsStatus(QObject *parent = nullptr)
+        : QObject(parent),
+          m_success(new MerceColorsStatusRole(QColor(QStringLiteral("#4A7C59")),
+                                              QColor(QStringLiteral("#A8D4B8")),
+                                              QColor(QStringLiteral("#4A7C59")),
+                                              QColor(QStringLiteral("#4A7C59")),
+                                              QColor(QStringLiteral("#FAF8F6")),
+                                              this)),
+          m_warning(new MerceColorsStatusRole(QColor(QStringLiteral("#1F1510")),
+                                              QColor(QStringLiteral("#F0D9A8")),
+                                              QColor(QStringLiteral("#D4A854")),
+                                              QColor(QStringLiteral("#D4A854")),
+                                              QColor(QStringLiteral("#1F1510")),
+                                              this)),
+          m_error(new MerceColorsStatusRole(QColor(QStringLiteral("#C45A5A")),
+                                            QColor(QStringLiteral("#E8A8A8")),
+                                            QColor(QStringLiteral("#C45A5A")),
+                                            QColor(QStringLiteral("#C45A5A")),
+                                            QColor(QStringLiteral("#FAF8F6")),
+                                            this)),
+          m_info(new MerceColorsStatusRole(QColor(QStringLiteral("#5A8FC4")),
+                                           QColor(QStringLiteral("#A8CCE8")),
+                                           QColor(QStringLiteral("#5A8FC4")),
+                                           QColor(QStringLiteral("#5A8FC4")),
+                                           QColor(QStringLiteral("#FAF8F6")),
+                                           this))
+    {
+    }
+
+    MerceColorsStatusRole *success() const { return m_success; }
+    MerceColorsStatusRole *warning() const { return m_warning; }
+    MerceColorsStatusRole *error() const { return m_error; }
+    MerceColorsStatusRole *info() const { return m_info; }
+
+    void applyManifestSection(const QJsonObject &section)
+    {
+        applyRole(m_success,
+                  section,
+                  QStringLiteral("success"),
+                  QStringLiteral("successSubtle"));
+        applyRole(m_warning,
+                  section,
+                  QStringLiteral("warning"),
+                  QStringLiteral("warningSubtle"));
+        applyRole(m_error,
+                  section,
+                  QStringLiteral("error"),
+                  QStringLiteral("errorSubtle"));
+        applyRole(m_info,
+                  section,
+                  QStringLiteral("info"),
+                  QStringLiteral("infoSubtle"));
+        emit changed();
+    }
+
+signals:
+    void changed();
+
+private:
+    static void applyRole(MerceColorsStatusRole *role,
+                          const QJsonObject &section,
+                          const QString &name,
+                          const QString &legacyBackgroundName)
+    {
+        const QJsonValue value = section.value(name);
+        if (value.isObject()) {
+            role->applyManifestSection(value.toObject());
+            return;
+        }
+
+        role->applyLegacyColors(value, section.value(legacyBackgroundName));
+    }
+
+    MerceColorsStatusRole *m_success = nullptr;
+    MerceColorsStatusRole *m_warning = nullptr;
+    MerceColorsStatusRole *m_error = nullptr;
+    MerceColorsStatusRole *m_info = nullptr;
 };
 
 class MerceColorsSurface : public QObject
@@ -289,6 +438,9 @@ class MerceColorsSurface : public QObject
     Q_PROPERTY(QColor base READ base NOTIFY changed FINAL)
     Q_PROPERTY(QColor tinted READ tinted NOTIFY changed FINAL)
     Q_PROPERTY(QColor raised READ raised NOTIFY changed FINAL)
+    Q_PROPERTY(QColor hover READ hover NOTIFY changed FINAL)
+    Q_PROPERTY(QColor pressed READ pressed NOTIFY changed FINAL)
+    Q_PROPERTY(QColor disabled READ disabled NOTIFY changed FINAL)
     QML_ANONYMOUS
 
 public:
@@ -297,12 +449,29 @@ public:
     QColor base() const { return m_base; }
     QColor tinted() const { return m_tinted; }
     QColor raised() const { return m_raised; }
+    QColor hover() const { return m_hover; }
+    QColor pressed() const { return m_pressed; }
+    QColor disabled() const { return m_disabled; }
 
     void applyManifestSection(const QJsonObject &section)
     {
         m_base = MerceColorJson::color(section, QStringLiteral("base"), m_base);
         m_tinted = MerceColorJson::color(section, QStringLiteral("tinted"), m_tinted);
         m_raised = MerceColorJson::color(section, QStringLiteral("raised"), m_raised);
+        m_hover = MerceColorJson::color(section, QStringLiteral("hover"), m_hover);
+        m_pressed = MerceColorJson::color(section, QStringLiteral("pressed"), m_pressed);
+        m_disabled = MerceColorJson::color(section, QStringLiteral("disabled"), m_disabled);
+        emit changed();
+    }
+
+    void applyBackgroundCompatibilitySection(const QJsonObject &section)
+    {
+        m_base = MerceColorJson::color(section, QStringLiteral("surface"), m_base);
+        m_tinted = MerceColorJson::color(section, QStringLiteral("tinted"), m_tinted);
+        m_raised = MerceColorJson::color(section, QStringLiteral("elevated"), m_raised);
+        m_hover = MerceColorJson::color(section, QStringLiteral("hover"), m_hover);
+        m_pressed = MerceColorJson::color(section, QStringLiteral("pressed"), m_pressed);
+        m_disabled = MerceColorJson::color(section, QStringLiteral("hover"), m_disabled);
         emit changed();
     }
 
@@ -313,6 +482,9 @@ private:
     QColor m_base = QColor(QStringLiteral("#FFFFFF"));
     QColor m_tinted = QColor(QStringLiteral("#F5F0EB"));
     QColor m_raised = QColor(QStringLiteral("#FFFFFF"));
+    QColor m_hover = QColor(QStringLiteral("#F5F0EB"));
+    QColor m_pressed = QColor(QStringLiteral("#E8DFD5"));
+    QColor m_disabled = QColor(QStringLiteral("#F5F0EB"));
 };
 
 class MerceColors : public QObject
@@ -347,12 +519,20 @@ public:
 
     void applyManifestSection(const QJsonObject &section)
     {
+        const QJsonObject backgroundSection = section.value(QStringLiteral("background")).toObject();
+        const QJsonObject borderSection = section.value(QStringLiteral("border")).toObject();
+        const QJsonObject statusSection = section.value(QStringLiteral("status")).toObject();
+        const QJsonObject surfaceSection = section.value(QStringLiteral("surface")).toObject();
+
         m_text->applyManifestSection(section.value(QStringLiteral("text")).toObject());
-        m_background->applyManifestSection(section.value(QStringLiteral("background")).toObject());
-        m_border->applyManifestSection(section.value(QStringLiteral("border")).toObject());
+        m_background->applyManifestSection(backgroundSection);
+        m_border->applyManifestSection(borderSection);
         m_action->applyManifestSection(section.value(QStringLiteral("action")).toObject());
-        m_status->applyManifestSection(section.value(QStringLiteral("status")).toObject());
-        m_surface->applyManifestSection(section.value(QStringLiteral("surface")).toObject());
+        m_status->applyManifestSection(statusSection);
+        m_surface->applyManifestSection(surfaceSection);
+        m_surface->applyBackgroundCompatibilitySection(backgroundSection);
+        m_background->applySurfaceCompatibilitySection(surfaceSection);
+        m_border->applyStatusCompatibilitySection(statusSection);
         emit changed();
     }
 

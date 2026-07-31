@@ -2,19 +2,39 @@ import { readdir, readFile } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { validateFigmaDtcgDirectory } from './validate-figma-dtcg.mjs';
 
 const GENERATED_DIR = path.resolve(new URL('../../../generated/themes', import.meta.url).pathname);
+const GENERATED_FIGMA_DIR = path.resolve(new URL('../../../generated/figma', import.meta.url).pathname);
 const BUILD_SCRIPT = path.resolve(new URL('../build.mjs', import.meta.url).pathname);
+const BUILD_FIGMA_SCRIPT = path.resolve(new URL('../build-figma.mjs', import.meta.url).pathname);
 
 export async function checkGenerated() {
-  const before = await snapshotDirectory(GENERATED_DIR);
+  const before = await snapshotDirectories([GENERATED_DIR, GENERATED_FIGMA_DIR]);
   await runNode(BUILD_SCRIPT);
-  const after = await snapshotDirectory(GENERATED_DIR);
+  await runNode(BUILD_FIGMA_SCRIPT);
+  await validateFigmaDtcgDirectory(GENERATED_FIGMA_DIR);
+  const after = await snapshotDirectories([GENERATED_DIR, GENERATED_FIGMA_DIR]);
 
   const changed = diffSnapshots(before, after);
   if (changed.length > 0) {
     throw new Error(`Generated theme manifests are stale:\n${changed.map((file) => `- ${file}`).join('\n')}`);
   }
+}
+
+async function snapshotDirectories(directoryPaths) {
+  const snapshots = await Promise.all(
+    directoryPaths.map(async (directoryPath) => [directoryPath, await snapshotDirectory(directoryPath)]),
+  );
+
+  return new Map(
+    snapshots.flatMap(([directoryPath, snapshot]) => (
+      [...snapshot.entries()].map(([name, content]) => [
+        path.join(path.basename(directoryPath), name),
+        content,
+      ])
+    )),
+  );
 }
 
 async function snapshotDirectory(directoryPath) {

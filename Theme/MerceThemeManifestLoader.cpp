@@ -64,17 +64,12 @@ const QStringList colorFields()
         QStringLiteral("text.link"),
         QStringLiteral("text.linkHover"),
         QStringLiteral("background.base"),
-        QStringLiteral("background.surface"),
-        QStringLiteral("background.elevated"),
-        QStringLiteral("background.hover"),
-        QStringLiteral("background.pressed"),
-        QStringLiteral("background.tinted"),
+        QStringLiteral("background.subtle"),
         QStringLiteral("background.overlay"),
         QStringLiteral("border.base"),
         QStringLiteral("border.strong"),
         QStringLiteral("border.focus"),
-        QStringLiteral("border.error"),
-        QStringLiteral("border.success"),
+        QStringLiteral("border.disabled"),
         QStringLiteral("action.primary"),
         QStringLiteral("action.primaryHover"),
         QStringLiteral("action.primaryPressed"),
@@ -83,17 +78,32 @@ const QStringList colorFields()
         QStringLiteral("action.secondaryHover"),
         QStringLiteral("action.secondaryPressed"),
         QStringLiteral("action.disabled"),
-        QStringLiteral("status.success"),
-        QStringLiteral("status.successSubtle"),
-        QStringLiteral("status.warning"),
-        QStringLiteral("status.warningSubtle"),
-        QStringLiteral("status.error"),
-        QStringLiteral("status.errorSubtle"),
-        QStringLiteral("status.info"),
-        QStringLiteral("status.infoSubtle"),
+        QStringLiteral("status.success.foreground"),
+        QStringLiteral("status.success.background"),
+        QStringLiteral("status.success.border"),
+        QStringLiteral("status.success.strong"),
+        QStringLiteral("status.success.onStrong"),
+        QStringLiteral("status.warning.foreground"),
+        QStringLiteral("status.warning.background"),
+        QStringLiteral("status.warning.border"),
+        QStringLiteral("status.warning.strong"),
+        QStringLiteral("status.warning.onStrong"),
+        QStringLiteral("status.error.foreground"),
+        QStringLiteral("status.error.background"),
+        QStringLiteral("status.error.border"),
+        QStringLiteral("status.error.strong"),
+        QStringLiteral("status.error.onStrong"),
+        QStringLiteral("status.info.foreground"),
+        QStringLiteral("status.info.background"),
+        QStringLiteral("status.info.border"),
+        QStringLiteral("status.info.strong"),
+        QStringLiteral("status.info.onStrong"),
         QStringLiteral("surface.base"),
         QStringLiteral("surface.tinted"),
         QStringLiteral("surface.raised"),
+        QStringLiteral("surface.hover"),
+        QStringLiteral("surface.pressed"),
+        QStringLiteral("surface.disabled"),
     };
 }
 
@@ -226,18 +236,99 @@ QJsonValue valueAtPath(const QJsonObject &object, const QString &path)
     return value;
 }
 
+QJsonValue colorJsonValue(const QJsonValue &value)
+{
+    if (!value.isObject())
+        return value;
+
+    const QJsonObject object = value.toObject();
+    const QJsonValue dtcgValue = object.value(QStringLiteral("$value"));
+    return dtcgValue.isUndefined() ? object.value(QStringLiteral("value")) : dtcgValue;
+}
+
+bool isValidColorValue(const QJsonValue &value)
+{
+    const QJsonValue resolvedValue = colorJsonValue(value);
+    return resolvedValue.isString() && QColor(resolvedValue.toString()).isValid();
+}
+
+QStringList colorFieldFallbacks(const QString &fieldPath)
+{
+    if (fieldPath == QStringLiteral("background.subtle"))
+        return { QStringLiteral("background.tinted") };
+    if (fieldPath == QStringLiteral("border.disabled"))
+        return { QStringLiteral("border.base") };
+
+    if (fieldPath == QStringLiteral("surface.base"))
+        return { QStringLiteral("background.surface") };
+    if (fieldPath == QStringLiteral("surface.tinted"))
+        return { QStringLiteral("background.tinted") };
+    if (fieldPath == QStringLiteral("surface.raised"))
+        return { QStringLiteral("background.elevated") };
+    if (fieldPath == QStringLiteral("surface.hover"))
+        return { QStringLiteral("background.hover") };
+    if (fieldPath == QStringLiteral("surface.pressed"))
+        return { QStringLiteral("background.pressed") };
+    if (fieldPath == QStringLiteral("surface.disabled"))
+        return { QStringLiteral("background.hover"), QStringLiteral("background.tinted") };
+
+    if (fieldPath.startsWith(QStringLiteral("status."))) {
+        const QStringList parts = fieldPath.split(QLatin1Char('.'));
+        if (parts.size() != 3)
+            return {};
+
+        const QString intent = parts.at(1);
+        const QString role = parts.at(2);
+        if (role == QStringLiteral("foreground")
+            || role == QStringLiteral("border")
+            || role == QStringLiteral("strong")) {
+            return { QStringLiteral("status.%1").arg(intent) };
+        }
+        if (role == QStringLiteral("background"))
+            return { QStringLiteral("status.%1Subtle").arg(intent) };
+        if (role == QStringLiteral("onStrong")) {
+            return {
+                intent == QStringLiteral("warning") ? QStringLiteral("text.primary")
+                                                    : QStringLiteral("text.inverse"),
+            };
+        }
+    }
+
+    return {};
+}
+
+bool hasValidColorPath(const QJsonObject &object, const QString &fieldPath)
+{
+    const QJsonValue value = valueAtPath(object, fieldPath);
+    return !value.isUndefined() && isValidColorValue(value);
+}
+
 void requireColorPath(const QJsonObject &object, const QString &fieldPath, QStringList *errors)
 {
     const QJsonValue value = valueAtPath(object, fieldPath);
     const QString fullPath = QStringLiteral("colors.%1").arg(fieldPath);
+    if (!value.isUndefined() && isValidColorValue(value))
+        return;
+
+    for (const QString &fallbackPath : colorFieldFallbacks(fieldPath)) {
+        if (hasValidColorPath(object, fallbackPath))
+            return;
+    }
+
     if (value.isUndefined()) {
         errors->append(QStringLiteral("missing required runtime field: %1").arg(fullPath));
         return;
     }
 
-    if (!value.isString() || !QColor(value.toString()).isValid()) {
-        errors->append(QStringLiteral("runtime field %1 must be a valid color string").arg(fullPath));
-    }
+    errors->append(QStringLiteral("runtime field %1 must be a valid color string").arg(fullPath));
+}
+
+QStringList validateColorFieldSet(const QJsonObject &colors, const QStringList &fields)
+{
+    QStringList errors;
+    for (const QString &fieldPath : fields)
+        requireColorPath(colors, fieldPath, &errors);
+    return errors;
 }
 
 void requireNumber(const QJsonObject &object, const QString &section, const QString &field, QStringList *errors)
@@ -344,8 +435,7 @@ QStringList validateColorsSection(const QJsonObject &manifest)
     if (colors.contains(QStringLiteral("raw")))
         errors.append(QStringLiteral("runtime colors must not expose raw color scales"));
 
-    for (const QString &fieldPath : colorFields())
-        requireColorPath(colors, fieldPath, &errors);
+    errors.append(validateColorFieldSet(colors, colorFields()));
 
     return errors;
 }

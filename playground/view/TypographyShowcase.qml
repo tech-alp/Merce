@@ -1,7 +1,9 @@
 import QtQuick
+import QtQuick.Layouts
 import Merce.Theme
 import Merce.Foundation
 import Merce.Controls
+import Toastify
 
 Item {
     id: root
@@ -17,13 +19,18 @@ Item {
     readonly property int leftPanelWidth: compactLayout ? width : Math.max(0, width - rightPanelWidth - panelSpacing)
     readonly property int tableCompactThreshold: 560
     readonly property int usageCardMinWidth: 156
+    readonly property int usageCardPreferredWidth: 220
     readonly property color dividerColor: Theme.colors.border.base
-    readonly property color cardColor: Theme.colors.background.surface
+    readonly property color cardColor: Theme.colors.surface.base
     readonly property color mutedTextColor: Theme.colors.text.secondary
     readonly property color faintTextColor: Theme.colors.text.tertiary
     readonly property color accentColor: Theme.colors.action.primary
     readonly property color darkPreviewTextColor: Theme.colors.text.inverse
     readonly property color darkPreviewMutedColor: Qt.rgba(darkPreviewTextColor.r, darkPreviewTextColor.g, darkPreviewTextColor.b, 0.72)
+
+    MerceToastifyStyleProvider {
+        id: toastStyle
+    }
 
     readonly property var typeRows: [
         {
@@ -219,7 +226,7 @@ Item {
         backgroundColor: root.cardColor
         borderColor: root.dividerColor
         radiusValue: Theme.radius.large
-        height: cardContent.childrenRect.height + Theme.spacing.md * 2
+        implicitHeight: cardContent.childrenRect.height + Theme.spacing.md * 2
 
         Item {
             id: cardContent
@@ -412,9 +419,12 @@ Item {
     }
 
     component TypeScaleCard: Card {
-        Column {
+        FlexboxLayout {
             width: parent.width
-            spacing: Theme.spacing.md
+            height: implicitHeight
+            direction: FlexboxLayout.Column
+            gap: Theme.spacing.md
+            alignItems: FlexboxLayout.AlignStart
 
             SectionTitle {
                 width: parent.width
@@ -424,14 +434,16 @@ Item {
             Repeater {
                 model: 9
 
-                Row {
+                FlexboxLayout {
                     required property int index
 
                     readonly property var entry: root.typeRows[index]
 
                     width: parent.width
                     height: 20
-                    spacing: Theme.spacing.sm
+                    direction: FlexboxLayout.Row
+                    gap: Theme.spacing.sm
+                    alignItems: FlexboxLayout.AlignCenter
 
                     MetaText {
                         width: 72
@@ -454,7 +466,6 @@ Item {
                         height: 7
                         radius: 0
                         color: root.accentColor
-                        anchors.verticalCenter: parent.verticalCenter
                     }
                 }
             }
@@ -465,9 +476,12 @@ Item {
                 color: root.dividerColor
             }
 
-            Row {
+            FlexboxLayout {
                 width: parent.width
                 height: 18
+                direction: FlexboxLayout.Row
+                gap: 0
+                alignItems: FlexboxLayout.AlignCenter
 
                 Repeater {
                     model: [0, 20, 40, 60, 80]
@@ -487,9 +501,12 @@ Item {
     }
 
     component BaselineCard: Card {
-        Column {
+        FlexboxLayout {
             width: parent.width
-            spacing: Theme.spacing.md
+            height: implicitHeight
+            direction: FlexboxLayout.Column
+            gap: Theme.spacing.md
+            alignItems: FlexboxLayout.AlignStart
 
             SectionTitle {
                 width: parent.width
@@ -504,7 +521,7 @@ Item {
                     model: [
                         { "y": 18, "label": "Ascender", "color": root.faintTextColor },
                         { "y": 40, "label": "Cap Height", "color": root.accentColor },
-                        { "y": 66, "label": "X-Height", "color": Theme.colors.status.success },
+                        { "y": 66, "label": "X-Height", "color": Theme.colors.status.success.foreground },
                         { "y": 98, "label": "Baseline", "color": root.accentColor },
                         { "y": 120, "label": "Descender", "color": root.faintTextColor }
                     ]
@@ -553,15 +570,17 @@ Item {
                 }
             }
 
-            Row {
-                spacing: Theme.spacing.sm
+            FlexboxLayout {
+                height: implicitHeight
+                direction: FlexboxLayout.Row
+                gap: Theme.spacing.sm
+                alignItems: FlexboxLayout.AlignCenter
 
                 Rectangle {
                     width: 8
                     height: 8
                     radius: 4
                     color: root.accentColor
-                    anchors.verticalCenter: parent.verticalCenter
                 }
 
                 MetaText {
@@ -573,21 +592,31 @@ Item {
     }
 
     component PreviewCard: Card {
-        Column {
+        FlexboxLayout {
             width: parent.width
-            spacing: Theme.spacing.md
+            height: implicitHeight
+            direction: FlexboxLayout.Column
+            gap: Theme.spacing.md
+            alignItems: FlexboxLayout.AlignStart
 
-            Row {
+            FlexboxLayout {
                 width: parent.width
+                height: implicitHeight
+                direction: FlexboxLayout.Row
+                gap: Theme.spacing.sm
+                alignItems: FlexboxLayout.AlignCenter
 
                 SectionTitle {
                     width: Math.max(0, parent.width - modeButtons.width)
                     text: "Light / Dark Preview"
                 }
 
-                Row {
+                FlexboxLayout {
                     id: modeButtons
-                    spacing: Theme.spacing.xs
+                    height: implicitHeight
+                    direction: FlexboxLayout.Row
+                    gap: Theme.spacing.xs
+                    alignItems: FlexboxLayout.AlignCenter
 
                     Rectangle {
                         width: 28
@@ -621,18 +650,27 @@ Item {
                 }
             }
 
-            Flow {
+            FlexboxLayout {
+                id: previewPanels
+
                 width: parent.width
-                height: childrenRect.height
-                spacing: Theme.spacing.sm
+                height: implicitHeight
+                direction: FlexboxLayout.Row
+                wrap: FlexboxLayout.Wrap
+                gap: Theme.spacing.sm
+                alignItems: FlexboxLayout.AlignStart
 
                 PreviewPanel {
-                    width: parent.width < 560 ? parent.width : (parent.width - parent.spacing) / 2
+                    Layout.minimumWidth: Math.min(240, previewPanels.width)
+                    Layout.preferredWidth: previewPanels.width < 560 ? previewPanels.width : (previewPanels.width - Theme.spacing.sm) / 2
+                    Layout.maximumWidth: previewPanels.width
                     dark: false
                 }
 
                 PreviewPanel {
-                    width: parent.width < 560 ? parent.width : (parent.width - parent.spacing) / 2
+                    Layout.minimumWidth: Math.min(240, previewPanels.width)
+                    Layout.preferredWidth: previewPanels.width < 560 ? previewPanels.width : (previewPanels.width - Theme.spacing.sm) / 2
+                    Layout.maximumWidth: previewPanels.width
                     dark: true
                 }
             }
@@ -642,12 +680,12 @@ Item {
     component PreviewPanel: Rectangle {
         required property bool dark
 
-        height: previewPanelContent.implicitHeight + Theme.spacing.md * 2
+        implicitHeight: previewPanelContent.implicitHeight + Theme.spacing.md * 2
         radius: Theme.radius.medium
-        color: dark ? Theme.colors.action.secondaryPressed : Theme.colors.background.surface
+        color: dark ? Theme.colors.action.secondaryPressed : Theme.colors.surface.base
         border.color: dark ? Theme.colors.action.secondaryHover : root.dividerColor
 
-        Column {
+        FlexboxLayout {
             id: previewPanelContent
             anchors {
                 left: parent.left
@@ -655,7 +693,10 @@ Item {
                 top: parent.top
                 margins: Theme.spacing.md
             }
-            spacing: Theme.spacing.sm
+            height: implicitHeight
+            direction: FlexboxLayout.Column
+            gap: Theme.spacing.sm
+            alignItems: FlexboxLayout.AlignStart
 
             Text {
                 width: parent.width
@@ -695,77 +736,75 @@ Item {
                 font.weight: Theme.typography.weightMedium
             }
 
-            Rectangle {
-                width: parent.width
-                height: 32
-                radius: Theme.radius.input
-                color: dark ? Qt.rgba(1, 1, 1, 0.08) : Theme.colors.background.surface
-                border.color: dark ? Qt.rgba(1, 1, 1, 0.22) : root.dividerColor
-
-                Text {
-                    anchors {
-                        left: parent.left
-                        right: parent.right
-                        verticalCenter: parent.verticalCenter
-                        margins: Theme.spacing.sm
-                    }
-                    text: "user@example.com"
-                    color: dark ? root.darkPreviewMutedColor : root.faintTextColor
-                    font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
-                    font.pixelSize: Theme.typography.sizeXSmall
-                    elide: Text.ElideRight
-                }
+            MInput {
+                text: "user@example.com"
+                inputType: "email"
+                isReadOnly: true
+                Layout.fillWidth: true
+                Layout.preferredWidth: parent.width
+                Layout.maximumWidth: parent.width
             }
 
-            Rectangle {
-                width: parent.width
-                height: 34
-                radius: Theme.radius.button
-                color: root.accentColor
-
-                Text {
-                    anchors.centerIn: parent
-                    text: "Checkout"
-                    color: Theme.colors.text.inverse
-                    font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
-                    font.pixelSize: Theme.typography.sizeSmall
-                    font.weight: Theme.typography.weightSemibold
-                }
+            MButton {
+                text: "Checkout"
+                variant: MButton.Primary
+                size: MButton.Small
+                fullWidth: true
+                Layout.fillWidth: true
+                Layout.preferredWidth: parent.width
+                Layout.maximumWidth: parent.width
             }
         }
     }
 
-    component UsageCard: Rectangle {
+    component UsageCard: Surface {
+        id: usageCard
+
         required property string title
+        property int contentHeight: 112
         default property alias contentData: usageSlot.data
 
-        width: Math.max(0, (usageGrid.width - usageGrid.columnSpacing * (usageGrid.columns - 1)) / usageGrid.columns)
-        height: 170
-        radius: Theme.radius.medium
-        color: root.cardColor
-        border.color: root.dividerColor
+        surfaceType: Surface.Default
+        backgroundColor: root.cardColor
+        borderColor: root.dividerColor
+        radiusValue: Theme.radius.medium
+        implicitWidth: root.usageCardPreferredWidth
+        implicitHeight: usageCardContent.implicitHeight + Theme.spacing.md * 2
+        Layout.minimumWidth: Math.min(root.usageCardMinWidth, parent ? parent.width : root.usageCardMinWidth)
+        Layout.preferredWidth: Math.min(root.usageCardPreferredWidth, parent ? parent.width : root.usageCardPreferredWidth)
+        Layout.maximumWidth: parent ? parent.width : root.usageCardPreferredWidth
+        Layout.preferredHeight: implicitHeight
 
-        Column {
+        FlexboxLayout {
+            id: usageCardContent
+
             anchors {
-                fill: parent
+                left: parent.left
+                right: parent.right
+                top: parent.top
                 margins: Theme.spacing.md
             }
-            spacing: Theme.spacing.sm
+            height: implicitHeight
+            direction: FlexboxLayout.Column
+            gap: Theme.spacing.sm
+            alignItems: FlexboxLayout.AlignStart
 
-            Text {
-                width: parent.width
+            AppLabel {
                 text: title
+                textType: AppLabel.Button
                 color: Theme.colors.text.primary
-                font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
-                font.pixelSize: Theme.typography.sizeSmall
-                font.weight: Theme.typography.weightSemibold
                 elide: Text.ElideRight
+                Layout.fillWidth: true
+                Layout.preferredWidth: parent.width
             }
 
             Item {
                 width: parent.width
-                height: parent.height - 26
+                height: usageCard.contentHeight
                 clip: true
+                Layout.fillWidth: true
+                Layout.preferredWidth: parent.width
+                Layout.preferredHeight: usageCard.contentHeight
 
                 Item {
                     id: usageSlot
@@ -775,14 +814,25 @@ Item {
         }
     }
 
-    Column {
+    FlexboxLayout {
         id: page
+        implicitWidth: root.width
         width: root.width
-        spacing: Theme.spacing.lg
+        height: implicitHeight
+        direction: FlexboxLayout.Column
+        gap: Theme.spacing.lg
+        alignItems: FlexboxLayout.AlignStart
 
-        Column {
+        FlexboxLayout {
+            implicitWidth: root.width
             width: parent.width
-            spacing: Theme.spacing.xs
+            Layout.fillWidth: true
+            Layout.preferredWidth: root.width
+            Layout.maximumWidth: root.width
+            height: implicitHeight
+            direction: FlexboxLayout.Column
+            gap: Theme.spacing.xs
+            alignItems: FlexboxLayout.AlignStart
 
             Text {
                 width: parent.width
@@ -800,22 +850,39 @@ Item {
             }
         }
 
-        Flow {
+        FlexboxLayout {
+            id: panelLayout
+
+            implicitWidth: root.width
             width: parent.width
-            spacing: root.panelSpacing
+            Layout.fillWidth: true
+            Layout.preferredWidth: root.width
+            Layout.maximumWidth: root.width
+            height: implicitHeight
+            direction: FlexboxLayout.Row
+            wrap: FlexboxLayout.Wrap
+            gap: root.panelSpacing
+            alignItems: FlexboxLayout.AlignStart
 
             Card {
                 id: typeTable
                 objectName: "merce.playground.typography.scale"
-                width: root.leftPanelWidth
-                visible: width > 0
-                Column {
+                Layout.minimumWidth: root.compactLayout ? root.width : Math.min(root.tableCompactThreshold, root.width)
+                Layout.preferredWidth: root.compactLayout ? root.width : root.leftPanelWidth
+                Layout.maximumWidth: root.width
+                FlexboxLayout {
                     width: parent.width
-                    spacing: 0
+                    height: implicitHeight
+                    direction: FlexboxLayout.Column
+                    gap: 0
+                    alignItems: FlexboxLayout.AlignStart
 
-                    Row {
+                    FlexboxLayout {
                         width: parent.width
                         height: 32
+                        direction: FlexboxLayout.Row
+                        gap: 0
+                        alignItems: FlexboxLayout.AlignCenter
 
                         readonly property bool compact: root.typeTableCompact(width)
                         readonly property int styleWidth: root.typeStyleColumnWidth(width)
@@ -892,6 +959,8 @@ Item {
                             required property int index
 
                             width: parent.width
+                            Layout.preferredWidth: parent.width
+                            Layout.maximumWidth: parent.width
                             entry: modelData
                             rowIndex: index
                         }
@@ -899,9 +968,15 @@ Item {
                 }
             }
 
-            Column {
-                width: root.compactLayout ? parent.width : root.rightPanelWidth
-                spacing: root.panelSpacing
+            FlexboxLayout {
+                Layout.minimumWidth: Math.min(240, root.width)
+                Layout.preferredWidth: root.compactLayout ? root.width : root.rightPanelWidth
+                Layout.maximumWidth: root.width
+                Layout.preferredHeight: implicitHeight
+                height: implicitHeight
+                direction: FlexboxLayout.Column
+                gap: root.panelSpacing
+                alignItems: FlexboxLayout.AlignStart
 
                 TypeScaleCard {
                     width: parent.width
@@ -917,21 +992,31 @@ Item {
             }
         }
 
-        Column {
+        FlexboxLayout {
+            implicitWidth: root.width
             width: parent.width
-            spacing: Theme.spacing.md
+            Layout.fillWidth: true
+            Layout.preferredWidth: root.width
+            Layout.maximumWidth: root.width
+            height: implicitHeight
+            direction: FlexboxLayout.Column
+            gap: Theme.spacing.md
+            alignItems: FlexboxLayout.AlignStart
 
             SectionTitle {
                 width: parent.width
                 text: "Usage Examples"
             }
 
-            Grid {
-                id: usageGrid
+            FlexboxLayout {
+                id: usageCards
+
                 width: parent.width
-                columns: Math.max(1, Math.floor((width + columnSpacing) / (root.usageCardMinWidth + columnSpacing)))
-                columnSpacing: Theme.spacing.md
-                rowSpacing: Theme.spacing.md
+                height: implicitHeight
+                direction: FlexboxLayout.Row
+                wrap: FlexboxLayout.Wrap
+                gap: Theme.spacing.md
+                alignItems: FlexboxLayout.AlignStart
 
                 UsageCard {
                     title: "Product Card"
@@ -943,7 +1028,7 @@ Item {
                         width: parent.width < 150 ? 44 : 54
                         height: parent.width < 150 ? 64 : 74
                         radius: Theme.radius.small
-                        color: Theme.colors.background.hover
+                        color: Theme.colors.surface.hover
                         border.color: root.dividerColor
 
                         AppIcon {
@@ -997,47 +1082,31 @@ Item {
 
                 UsageCard {
                     title: "Navigation"
+                    contentHeight: Theme.spacing.touchTargetCompact * 4 + Theme.spacing.xxs * 3
 
-                    Repeater {
-                        model: [
-                            { "icon": "material:home", "label": "Home", "active": true },
-                            { "icon": "material:storefront", "label": "Shop", "active": false },
-                            { "icon": "material:category", "label": "Categories", "active": false },
-                            { "icon": "material:person", "label": "Profile", "active": false }
-                        ]
+                    FlexboxLayout {
+                        anchors.fill: parent
+                        direction: FlexboxLayout.Column
+                        gap: Theme.spacing.xxs
+                        alignItems: FlexboxLayout.AlignStart
 
-                        Item {
-                            required property var modelData
-                            required property int index
+                        Repeater {
+                            model: [
+                                { "icon": "material:home", "label": "Home", "active": true },
+                                { "icon": "material:storefront", "label": "Shop", "active": false },
+                                { "icon": "material:category", "label": "Categories", "active": false },
+                                { "icon": "material:person", "label": "Profile", "active": false }
+                            ]
 
-                            y: index * 26 + 6
-                            width: parent.width
-                            height: 22
+                            NavigationButton {
+                                required property var modelData
 
-                            Rectangle {
-                                anchors.fill: parent
-                                radius: Theme.radius.small
-                                color: modelData.active ? Theme.colors.background.hover : "transparent"
-                            }
-
-                            AppIcon {
-                                x: Theme.spacing.xs
-                                size: Theme.icons.small
-                                name: modelData.icon
-                                color: modelData.active ? root.accentColor : root.mutedTextColor
-                                anchors.verticalCenter: parent.verticalCenter
-                            }
-
-                            Text {
-                                x: Theme.icons.small + Theme.spacing.md
-                                width: parent.width - x - Theme.spacing.xs
-                                height: parent.height
                                 text: modelData.label
-                                color: modelData.active ? root.accentColor : Theme.colors.text.primary
-                                font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
-                                font.pixelSize: Theme.typography.sizeXSmall
-                                verticalAlignment: Text.AlignVCenter
-                                elide: Text.ElideRight
+                                icon.name: modelData.icon
+                                current: modelData.active
+                                Layout.fillWidth: true
+                                Layout.preferredWidth: parent.width
+                                Layout.maximumWidth: parent.width
                             }
                         }
                     }
@@ -1045,77 +1114,37 @@ Item {
 
                 UsageCard {
                     title: "Form Example"
+                    contentHeight: 128
 
-                    Text {
-                        x: 0
-                        y: 0
-                        text: "Label"
-                        color: Theme.colors.text.primary
-                        font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
-                        font.pixelSize: Theme.typography.sizeXSmall
-                        font.weight: Theme.typography.weightMedium
-                    }
+                    FlexboxLayout {
+                        anchors.fill: parent
+                        direction: FlexboxLayout.Column
+                        gap: Theme.spacing.xs
+                        alignItems: FlexboxLayout.AlignStart
 
-                    Rectangle {
-                        x: 0
-                        y: 20
-                        width: parent.width
-                        height: 26
-                        radius: Theme.radius.input
-                        color: Theme.colors.background.surface
-                        border.color: root.dividerColor
-
-                        Text {
-                            anchors {
-                                left: parent.left
-                                right: parent.right
-                                verticalCenter: parent.verticalCenter
-                                margins: Theme.spacing.sm
-                            }
-                            text: "Input text"
-                            color: root.mutedTextColor
-                            font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
-                            font.pixelSize: Theme.typography.sizeXSmall
+                        AppLabel {
+                            text: "Label"
+                            textType: AppLabel.Caption
+                            color: Theme.colors.text.primary
                         }
-                    }
 
-                    Text {
-                        x: 0
-                        y: 50
-                        text: "Helper text goes here"
-                        color: root.mutedTextColor
-                        font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
-                        font.pixelSize: 10
-                    }
+                        MInput {
+                            text: "Input text"
+                            isReadOnly: true
+                            validationState: MInput.Error
+                            trailingIcon: "material:error"
+                            Layout.fillWidth: true
+                            Layout.preferredWidth: parent.width
+                            Layout.maximumWidth: parent.width
+                        }
 
-                    Text {
-                        x: 0
-                        y: 67
-                        text: "Error message"
-                        color: Theme.colors.status.error
-                        font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
-                        font.pixelSize: 10
-                        font.weight: Theme.typography.weightSemibold
-                    }
-
-                    Rectangle {
-                        x: 0
-                        y: 86
-                        width: parent.width
-                        height: 24
-                        radius: Theme.radius.input
-                        color: Theme.colors.background.surface
-                        border.color: Theme.colors.status.error
-
-                        AppIcon {
-                            anchors {
-                                right: parent.right
-                                rightMargin: Theme.spacing.sm
-                                verticalCenter: parent.verticalCenter
-                            }
-                            name: "material:error"
-                            size: Theme.icons.small
-                            color: Theme.colors.status.error
+                        AppLabel {
+                            text: "Error message"
+                            textType: AppLabel.Caption
+                            color: Theme.colors.status.error.foreground
+                            wrapMode: Text.WordWrap
+                            Layout.fillWidth: true
+                            Layout.preferredWidth: parent.width
                         }
                     }
                 }
@@ -1123,9 +1152,12 @@ Item {
                 UsageCard {
                     title: "Checkout Summary"
 
-                    Column {
+                    FlexboxLayout {
                         width: parent.width
-                        spacing: Theme.spacing.sm
+                        height: implicitHeight
+                        direction: FlexboxLayout.Column
+                        gap: Theme.spacing.sm
+                        alignItems: FlexboxLayout.AlignStart
 
                         Repeater {
                             model: [
@@ -1134,10 +1166,14 @@ Item {
                                 { "label": "Tax", "value": "$11.70" }
                             ]
 
-                            Row {
+                            FlexboxLayout {
                                 required property var modelData
 
                                 width: parent.width
+                                height: implicitHeight
+                                direction: FlexboxLayout.Row
+                                gap: 0
+                                alignItems: FlexboxLayout.AlignCenter
 
                                 Text {
                                     width: parent.width - valueText.width
@@ -1164,8 +1200,12 @@ Item {
                             color: root.dividerColor
                         }
 
-                        Row {
+                        FlexboxLayout {
                             width: parent.width
+                            height: implicitHeight
+                            direction: FlexboxLayout.Row
+                            gap: 0
+                            alignItems: FlexboxLayout.AlignCenter
 
                             Text {
                                 width: parent.width - totalText.width
@@ -1190,77 +1230,20 @@ Item {
 
                 UsageCard {
                     title: "Toast Message"
+                    contentHeight: 92
 
-                    Rectangle {
+                    ToastifyDelegate {
                         anchors.centerIn: parent
                         width: parent.width
-                        height: narrow ? 92 : 78
-                        radius: Theme.radius.medium
-                        color: Theme.colors.background.surface
-                        border.color: root.dividerColor
-
-                        readonly property bool narrow: width < 150
-
-                        AppIcon {
-                            id: toastIcon
-                            anchors {
-                                left: parent.left
-                                leftMargin: parent.narrow ? Theme.spacing.sm : Theme.spacing.md
-                                verticalCenter: parent.verticalCenter
-                            }
-                            name: "material:check_circle"
-                            size: parent.narrow ? Theme.icons.medium : Theme.icons.large
-                            color: Theme.colors.status.success
-                        }
-
-                        Text {
-                            anchors {
-                                left: toastIcon.right
-                                leftMargin: Theme.spacing.sm
-                                right: parent.narrow ? parent.right : closeIcon.left
-                                rightMargin: Theme.spacing.sm
-                                top: parent.top
-                                topMargin: parent.narrow ? Theme.spacing.sm : Theme.spacing.md
-                            }
-                            text: parent.narrow ? "Added to cart" : "Item added to cart"
-                            color: Theme.colors.text.primary
-                            font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
-                            font.pixelSize: Theme.typography.sizeSmall
-                            font.weight: Theme.typography.weightSemibold
-                            elide: Text.ElideRight
-                        }
-
-                        Text {
-                            anchors {
-                                left: toastIcon.right
-                                leftMargin: Theme.spacing.sm
-                                right: parent.narrow ? parent.right : closeIcon.left
-                                rightMargin: Theme.spacing.sm
-                                bottom: parent.bottom
-                                bottomMargin: parent.narrow ? Theme.spacing.sm : Theme.spacing.md
-                            }
-                            text: parent.narrow ? "Added successfully." : "Your item was added successfully."
-                            color: root.mutedTextColor
-                            font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
-                            font.pixelSize: 10
-                            wrapMode: Text.WordWrap
-                            maximumLineCount: 2
-                            elide: Text.ElideRight
-                        }
-
-                        AppIcon {
-                            id: closeIcon
-                            visible: !parent.narrow
-                            anchors {
-                                right: parent.right
-                                rightMargin: Theme.spacing.sm
-                                top: parent.top
-                                topMargin: Theme.spacing.sm
-                            }
-                            name: "material:close"
-                            size: Theme.icons.small
-                            color: root.mutedTextColor
-                        }
+                        minimumWidth: parent.width
+                        preferredWidth: parent.width
+                        maximumWidth: parent.width
+                        message: "Item added to cart"
+                        type: Toastify.Success
+                        autoClose: 0
+                        closeOnClick: false
+                        hideProgressBar: true
+                        styleProvider: toastStyle
                     }
                 }
             }

@@ -32,8 +32,8 @@ Window {
                 || colorKey(gallery.observedInputBorderColor) !== colorKey(Theme.colors.border.base)
                 || colorKey(gallery.observedToggleColor) !== colorKey(Theme.colors.action.primary)
                 || colorKey(gallery.observedSelectColor) !== colorKey(Theme.colors.text.primary)
-                || colorKey(gallery.observedToastColor) !== colorKey(Theme.colors.status.success)
-                || colorKey(gallery.observedDialogColor) !== colorKey(Theme.colors.background.surface)) {
+                || colorKey(gallery.observedToastColor) !== colorKey(Theme.colors.status.success.foreground)
+                || colorKey(gallery.observedDialogColor) !== colorKey(Theme.colors.surface.base)) {
             fail(label + " sample observations",
                  [gallery.observedButtonColor,
                   gallery.observedTextColor,
@@ -45,8 +45,8 @@ Window {
                   Theme.colors.action.primary,
                   Theme.colors.text.primary,
                   Theme.colors.border.base,
-                  Theme.colors.status.success,
-                  Theme.colors.background.surface])
+                  Theme.colors.status.success.foreground,
+                  Theme.colors.surface.base])
             return false
         }
 

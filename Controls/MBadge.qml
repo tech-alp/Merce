@@ -43,27 +43,27 @@ Item {
         if (value === "primary")
             return Theme.colors.action.primaryHover
         if (value === "success")
-            return Theme.colors.status.successSubtle
+            return Theme.colors.status.success.background
         if (value === "warning")
-            return Theme.colors.status.warningSubtle
+            return Theme.colors.status.warning.background
         if (value === "error")
-            return Theme.colors.status.errorSubtle
+            return Theme.colors.status.error.background
         if (value === "info")
-            return Theme.colors.status.infoSubtle
-        return Theme.colors.background.hover
+            return Theme.colors.status.info.background
+        return Theme.colors.surface.hover
     }
 
     function foregroundFor(value) {
         if (value === "primary")
             return Theme.colors.action.primaryPressed
         if (value === "success")
-            return Theme.colors.status.success
+            return Theme.colors.status.success.foreground
         if (value === "warning")
-            return Theme.colors.text.primary
+            return Theme.colors.status.warning.foreground
         if (value === "error")
-            return Theme.colors.status.error
+            return Theme.colors.status.error.foreground
         if (value === "info")
-            return Theme.colors.status.info
+            return Theme.colors.status.info.foreground
         return Theme.colors.text.secondary
     }
 
@@ -71,13 +71,13 @@ Item {
         if (value === "primary")
             return Theme.colors.action.primary
         if (value === "success")
-            return Theme.colors.status.success
+            return Theme.colors.status.success.border
         if (value === "warning")
-            return Theme.colors.status.warning
+            return Theme.colors.status.warning.border
         if (value === "error")
-            return Theme.colors.status.error
+            return Theme.colors.status.error.border
         if (value === "info")
-            return Theme.colors.status.info
+            return Theme.colors.status.info.border
         return Theme.colors.border.base
     }
 

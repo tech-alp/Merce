@@ -67,9 +67,9 @@ T.Button {
     readonly property color foregroundColor: visualStyle.foregroundColor
     readonly property color borderColor: visualStyle.borderColor
     readonly property int borderWidth: visualStyle.borderWidth
-    readonly property color transparentHoverBackground: Qt.rgba(Theme.colors.background.hover.r,
-                                                                Theme.colors.background.hover.g,
-                                                                Theme.colors.background.hover.b,
+    readonly property color transparentHoverBackground: Qt.rgba(Theme.colors.surface.hover.r,
+                                                                Theme.colors.surface.hover.g,
+                                                                Theme.colors.surface.hover.b,
                                                                 0)
 
     enabled: !root.isLoading
@@ -375,7 +375,7 @@ T.Button {
                 name: "outlinePressed"
                 when: root.variant === MButton.Outline && controlState.pressed
                 PropertyChanges {
-                    visualStyle.backgroundColor: Theme.colors.background.pressed
+                    visualStyle.backgroundColor: Theme.colors.surface.pressed
                     visualStyle.foregroundColor: Theme.colors.action.primary
                 }
                 PropertyChanges {
@@ -399,7 +399,7 @@ T.Button {
                 name: "outlineFocused"
                 when: root.variant === MButton.Outline && controlState.focused
                 PropertyChanges {
-                    visualStyle.backgroundColor: Theme.colors.background.hover
+                    visualStyle.backgroundColor: Theme.colors.surface.hover
                     visualStyle.foregroundColor: Theme.colors.action.primary
                 }
                 PropertyChanges {
@@ -411,7 +411,7 @@ T.Button {
                 name: "outlineHovered"
                 when: root.variant === MButton.Outline && controlState.hovered
                 PropertyChanges {
-                    visualStyle.backgroundColor: Theme.colors.background.hover
+                    visualStyle.backgroundColor: Theme.colors.surface.hover
                     visualStyle.foregroundColor: Theme.colors.action.primary
                 }
                 PropertyChanges {
@@ -447,7 +447,7 @@ T.Button {
                 name: "ghostPressed"
                 when: root.variant === MButton.Ghost && controlState.pressed
                 PropertyChanges {
-                    visualStyle.backgroundColor: Theme.colors.background.pressed
+                    visualStyle.backgroundColor: Theme.colors.surface.pressed
                     visualStyle.foregroundColor: Theme.colors.action.primary
                 }
                 PropertyChanges {
@@ -471,7 +471,7 @@ T.Button {
                 name: "ghostFocused"
                 when: root.variant === MButton.Ghost && controlState.focused
                 PropertyChanges {
-                    visualStyle.backgroundColor: Theme.colors.background.hover
+                    visualStyle.backgroundColor: Theme.colors.surface.hover
                     visualStyle.foregroundColor: Theme.colors.action.primary
                 }
                 PropertyChanges {
@@ -483,7 +483,7 @@ T.Button {
                 name: "ghostHovered"
                 when: root.variant === MButton.Ghost && controlState.hovered
                 PropertyChanges {
-                    visualStyle.backgroundColor: Theme.colors.background.hover
+                    visualStyle.backgroundColor: Theme.colors.surface.hover
                     visualStyle.foregroundColor: Theme.colors.action.primary
                 }
                 PropertyChanges {
@@ -519,8 +519,8 @@ T.Button {
                 name: "destructivePressed"
                 when: root.variant === MButton.Destructive && (controlState.pressed || controlState.checked)
                 PropertyChanges {
-                    visualStyle.backgroundColor: Theme.colors.status.error
-                    visualStyle.foregroundColor: Theme.colors.text.inverse
+                    visualStyle.backgroundColor: Theme.colors.status.error.strong
+                    visualStyle.foregroundColor: Theme.colors.status.error.onStrong
                 }
                 PropertyChanges {
                     visualStyle.borderColor: "transparent"
@@ -531,8 +531,8 @@ T.Button {
                 name: "destructiveFocused"
                 when: root.variant === MButton.Destructive && controlState.focused
                 PropertyChanges {
-                    visualStyle.backgroundColor: Theme.colors.status.error
-                    visualStyle.foregroundColor: Theme.colors.text.inverse
+                    visualStyle.backgroundColor: Theme.colors.status.error.strong
+                    visualStyle.foregroundColor: Theme.colors.status.error.onStrong
                 }
                 PropertyChanges {
                     visualStyle.borderColor: Theme.colors.border.focus
@@ -543,8 +543,8 @@ T.Button {
                 name: "destructiveHovered"
                 when: root.variant === MButton.Destructive && controlState.hovered
                 PropertyChanges {
-                    visualStyle.backgroundColor: Theme.colors.status.error
-                    visualStyle.foregroundColor: Theme.colors.text.inverse
+                    visualStyle.backgroundColor: Theme.colors.status.error.strong
+                    visualStyle.foregroundColor: Theme.colors.status.error.onStrong
                 }
                 PropertyChanges {
                     visualStyle.borderColor: "transparent"
@@ -555,8 +555,8 @@ T.Button {
                 name: "destructiveNormal"
                 when: root.variant === MButton.Destructive && controlState.normal
                 PropertyChanges {
-                    visualStyle.backgroundColor: Theme.colors.status.error
-                    visualStyle.foregroundColor: Theme.colors.text.inverse
+                    visualStyle.backgroundColor: Theme.colors.status.error.strong
+                    visualStyle.foregroundColor: Theme.colors.status.error.onStrong
                 }
                 PropertyChanges {
                     visualStyle.borderColor: "transparent"

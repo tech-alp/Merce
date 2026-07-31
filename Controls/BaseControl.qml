@@ -23,7 +23,7 @@ Item {
 
     // State colors
     virtual property color disabledColor: Theme.colors.text.disabled
-    virtual property color disabledBackground: Theme.colors.background.hover
+    virtual property color disabledBackground: Theme.colors.surface.disabled
 
     // ====================================================================
     // FINAL PROPERTIES (System standards - cannot be overridden)

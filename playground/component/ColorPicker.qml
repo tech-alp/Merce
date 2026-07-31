@@ -137,7 +137,7 @@ Item {
                 width: 96
                 height: Theme.spacing.touchTargetCompact
                 radius: Theme.radius.input
-                color: Theme.colors.background.surface
+                color: Theme.colors.surface.base
                 border.width: 1
                 border.color: hexInput.activeFocus ? Theme.colors.border.focus : Theme.colors.border.base
                 anchors.verticalCenter: parent.verticalCenter
@@ -255,7 +255,7 @@ Item {
                     width: parent.width + 6
                     height: 8
                     radius: 4
-                    color: Theme.colors.background.surface
+                    color: Theme.colors.surface.base
                     border.width: 1
                     border.color: Theme.colors.border.strong
                 }

@@ -60,7 +60,7 @@ FocusScope {
         height: 184
         surfaceType: Surface.Default
         radiusValue: Theme.radius.large
-        backgroundColor: Theme.colors.background.surface
+        backgroundColor: Theme.colors.surface.base
         borderWidth: root.activeFocus ? 2 : 1
         borderColor: root.activeFocus ? Theme.colors.border.focus
                                       : cardHover.hovered ? Theme.colors.border.strong : Theme.colors.border.base
@@ -172,7 +172,7 @@ FocusScope {
 
         background: Rectangle {
             radius: Theme.radius.large
-            color: Theme.colors.background.surface
+            color: Theme.colors.surface.base
             border.width: 1
             border.color: Theme.colors.border.base
 

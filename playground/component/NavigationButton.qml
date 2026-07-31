@@ -11,9 +11,9 @@ T.Button {
 
     readonly property color contentColor: root.current ? Theme.colors.action.primary
                                                        : Theme.colors.text.secondary
-    readonly property color transparentHoverBackground: Qt.rgba(Theme.colors.background.hover.r,
-                                                                Theme.colors.background.hover.g,
-                                                                Theme.colors.background.hover.b,
+    readonly property color transparentHoverBackground: Qt.rgba(Theme.colors.surface.hover.r,
+                                                                Theme.colors.surface.hover.g,
+                                                                Theme.colors.surface.hover.b,
                                                                 0)
     readonly property color transparentFocusBorder: Qt.rgba(Theme.colors.border.focus.r,
                                                             Theme.colors.border.focus.g,
@@ -23,11 +23,11 @@ T.Button {
         if (!root.enabled)
             return root.transparentHoverBackground
         if (root.current)
-            return Theme.colors.background.hover
+            return Theme.colors.surface.hover
         if (root.pressed)
-            return Theme.colors.background.pressed
+            return Theme.colors.surface.pressed
         if (root.hovered || root.visualFocus)
-            return Theme.colors.background.hover
+            return Theme.colors.surface.hover
         return root.transparentHoverBackground
     }
     readonly property color outlineColor: root.visualFocus ? Theme.colors.border.focus : root.transparentFocusBorder

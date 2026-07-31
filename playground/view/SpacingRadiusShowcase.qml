@@ -89,7 +89,7 @@ Item {
                 width: 36
                 height: 36
                 radius: Theme.radius.medium
-                color: Theme.colors.background.hover
+                color: Theme.colors.surface.hover
                 border.width: 1
                 border.color: Theme.colors.border.base
 
@@ -355,7 +355,7 @@ Item {
             }
             name: "material:check_circle"
             size: Theme.icons.small
-            color: Theme.colors.status.success
+            color: Theme.colors.status.success.foreground
         }
     }
 
@@ -451,7 +451,7 @@ Item {
                     }
                     height: Theme.spacing.touchTargetCompact + Theme.spacing.sm
                     radius: Theme.radius.input
-                    color: Theme.colors.background.surface
+                    color: Theme.colors.surface.base
                     border.width: 1
                     border.color: Theme.colors.border.base
 
@@ -638,7 +638,7 @@ Item {
                     }
                     height: Theme.spacing.touchTarget + Theme.spacing.lg
                     radius: Theme.radius.medium
-                    color: Theme.colors.background.surface
+                    color: Theme.colors.surface.base
                     border.width: 1
                     border.color: Theme.colors.border.base
 
@@ -732,7 +732,7 @@ Item {
                             height: 58
                             radius: Theme.radius.small
                             anchors.verticalCenter: parent.verticalCenter
-                            color: Theme.colors.background.hover
+                            color: Theme.colors.surface.hover
 
                             AppIcon {
                                 anchors.centerIn: parent

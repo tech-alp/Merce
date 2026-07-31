@@ -85,7 +85,7 @@ Item {
         width: sizeConfig[root.size].width
         height: dialogContent.height + header.height + buttonRow.height + Theme.spacing.xl2
         radius: Theme.radius.dialog
-        color: Theme.colors.background.surface
+        color: Theme.colors.surface.base
 
         // Shadow
         layer.enabled: true
@@ -123,7 +123,7 @@ Item {
             }
             height: headerContent.height + Theme.spacing.md
             radius: Theme.radius.dialog
-            color: Theme.colors.background.surface
+            color: Theme.colors.surface.base
 
             clip: true
 
@@ -149,8 +149,8 @@ Item {
                     }
                     size: Theme.icons.large
                     color: {
-                        if (root.variant === "destructive") return Theme.colors.status.error
-                        if (root.variant === "warning") return Theme.colors.status.warning
+                        if (root.variant === "destructive") return Theme.colors.status.error.foreground
+                        if (root.variant === "warning") return Theme.colors.status.warning.foreground
                         return Theme.colors.text.primary
                     }
                     visible: root.variant !== "default"
@@ -183,7 +183,7 @@ Item {
                     Rectangle {
                         anchors.fill: parent
                         radius: Theme.radius.small
-                        color: parent.containsMouse ? Theme.colors.background.hover : "transparent"
+                        color: parent.containsMouse ? Theme.colors.surface.hover : "transparent"
 
                         Behavior on color {
                             ColorAnimation {

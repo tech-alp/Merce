@@ -62,14 +62,14 @@ BaseControl {
     // VISUAL STATES
     // ====================================================================
     readonly property color trackColor: {
-        if (root.isDisabled) return Theme.colors.background.hover
+        if (root.isDisabled) return Theme.colors.surface.disabled
         if (root.checked) return root.accentColor
         return Theme.colors.border.base
     }
 
     readonly property color thumbColor: {
         if (root.isDisabled) return Theme.colors.text.disabled
-        return Theme.colors.background.surface
+        return Theme.colors.surface.base
     }
 
     // Thumb position (animated)

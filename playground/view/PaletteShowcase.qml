@@ -108,16 +108,16 @@ Item {
         implicitWidth: badgeText.implicitWidth + Theme.spacing.sm
         implicitHeight: 26
         radius: Theme.radius.full
-        color: grade === "Fail" ? Theme.colors.status.errorSubtle : Theme.colors.status.successSubtle
+        color: grade === "Fail" ? Theme.colors.status.error.background : Theme.colors.status.success.background
         border.width: 1
-        border.color: grade === "Fail" ? Theme.colors.status.error : Theme.colors.status.success
+        border.color: grade === "Fail" ? Theme.colors.status.error.border : Theme.colors.status.success.border
 
         AppLabel {
             id: badgeText
             anchors.centerIn: parent
             textType: AppLabel.Caption
             text: parent.grade + " " + parent.ratio.toFixed(2)
-            color: parent.grade === "Fail" ? Theme.colors.status.error : Theme.colors.status.success
+            color: parent.grade === "Fail" ? Theme.colors.status.error.foreground : Theme.colors.status.success.foreground
             wrapMode: Text.NoWrap
             maximumLineCount: 1
         }
@@ -321,7 +321,7 @@ Item {
         width: parent ? parent.width : 240
         height: Theme.spacing.touchTarget
         radius: Theme.radius.input
-        color: Theme.colors.background.surface
+        color: Theme.colors.surface.base
         border.width: focused ? 2 : 1
         border.color: focused ? Theme.colors.border.focus : Theme.colors.border.base
 
@@ -517,14 +517,13 @@ Item {
                     showContrast: true
                     contrastForeground: Theme.colors.text.primary
                 }
-                TokenRow { label: "colors.background.surface"; swatchColor: Theme.colors.background.surface; usage: "Default panel fill" }
-                TokenRow { label: "colors.background.elevated"; swatchColor: Theme.colors.background.elevated; usage: "Raised container fill" }
-                TokenRow { label: "colors.background.hover"; swatchColor: Theme.colors.background.hover; usage: "Hover state fill" }
-                TokenRow { label: "colors.background.pressed"; swatchColor: Theme.colors.background.pressed; usage: "Pressed state fill" }
-                TokenRow { label: "colors.background.tinted"; swatchColor: Theme.colors.background.tinted; usage: "Soft tinted fill" }
-                TokenRow { label: "colors.surface.base"; swatchColor: Theme.colors.surface.base; usage: "Explicit surface base" }
-                TokenRow { label: "colors.surface.raised"; swatchColor: Theme.colors.surface.raised; usage: "Explicit raised surface" }
-                TokenRow { label: "colors.surface.tinted"; swatchColor: Theme.colors.surface.tinted; usage: "Explicit tinted surface" }
+                TokenRow { label: "colors.background.subtle"; swatchColor: Theme.colors.background.subtle; usage: "Subtle page band" }
+                TokenRow { label: "colors.surface.base"; swatchColor: Theme.colors.surface.base; usage: "Default panel fill" }
+                TokenRow { label: "colors.surface.raised"; swatchColor: Theme.colors.surface.raised; usage: "Raised container fill" }
+                TokenRow { label: "colors.surface.hover"; swatchColor: Theme.colors.surface.hover; usage: "Hover state fill" }
+                TokenRow { label: "colors.surface.pressed"; swatchColor: Theme.colors.surface.pressed; usage: "Pressed state fill" }
+                TokenRow { label: "colors.surface.tinted"; swatchColor: Theme.colors.surface.tinted; usage: "Soft tinted fill" }
+                TokenRow { label: "colors.surface.disabled"; swatchColor: Theme.colors.surface.disabled; usage: "Disabled container fill" }
             }
 
             TokenGroup {
@@ -573,11 +572,10 @@ Item {
                     usage: "Focus ring"
                     showContrast: true
                     contrastForeground: Theme.colors.border.focus
-                    contrastBackground: Theme.colors.background.surface
+                    contrastBackground: Theme.colors.surface.base
                     contrastKind: "nonText"
                 }
-                TokenRow { label: "colors.border.error"; swatchColor: Theme.colors.border.error; usage: "Error input border" }
-                TokenRow { label: "colors.border.success"; swatchColor: Theme.colors.border.success; usage: "Success input border" }
+                TokenRow { label: "colors.border.disabled"; swatchColor: Theme.colors.border.disabled; usage: "Disabled border" }
             }
 
             TokenGroup {
@@ -585,37 +583,45 @@ Item {
                 subtitle: "Feedback and state colors"
 
                 TokenRow {
-                    label: "colors.status.success"
-                    swatchColor: Theme.colors.status.success
+                    label: "colors.status.success.foreground"
+                    swatchColor: Theme.colors.status.success.foreground
                     usage: "Success foreground or icon"
                     showContrast: true
-                    contrastForeground: Theme.colors.status.success
-                    contrastBackground: Theme.colors.status.successSubtle
+                    contrastForeground: Theme.colors.status.success.foreground
+                    contrastBackground: Theme.colors.status.success.background
                     contrastKind: "nonText"
                 }
-                TokenRow { label: "colors.status.successSubtle"; swatchColor: Theme.colors.status.successSubtle; usage: "Success alert fill" }
+                TokenRow { label: "colors.status.success.background"; swatchColor: Theme.colors.status.success.background; usage: "Success alert fill" }
+                TokenRow { label: "colors.status.success.border"; swatchColor: Theme.colors.status.success.border; usage: "Success outline" }
+                TokenRow { label: "colors.status.success.strong"; swatchColor: Theme.colors.status.success.strong; usage: "Success solid fill" }
                 TokenRow {
-                    label: "colors.status.warning"
-                    swatchColor: Theme.colors.status.warning
+                    label: "colors.status.warning.foreground"
+                    swatchColor: Theme.colors.status.warning.foreground
                     usage: "Warning foreground or icon"
                     showContrast: true
-                    contrastForeground: Theme.colors.status.warning
-                    contrastBackground: Theme.colors.status.warningSubtle
+                    contrastForeground: Theme.colors.status.warning.foreground
+                    contrastBackground: Theme.colors.status.warning.background
                     contrastKind: "nonText"
                 }
-                TokenRow { label: "colors.status.warningSubtle"; swatchColor: Theme.colors.status.warningSubtle; usage: "Warning alert fill" }
+                TokenRow { label: "colors.status.warning.background"; swatchColor: Theme.colors.status.warning.background; usage: "Warning alert fill" }
+                TokenRow { label: "colors.status.warning.border"; swatchColor: Theme.colors.status.warning.border; usage: "Warning outline" }
+                TokenRow { label: "colors.status.warning.strong"; swatchColor: Theme.colors.status.warning.strong; usage: "Warning solid fill" }
                 TokenRow {
-                    label: "colors.status.error"
-                    swatchColor: Theme.colors.status.error
+                    label: "colors.status.error.foreground"
+                    swatchColor: Theme.colors.status.error.foreground
                     usage: "Error foreground or icon"
                     showContrast: true
-                    contrastForeground: Theme.colors.status.error
-                    contrastBackground: Theme.colors.status.errorSubtle
+                    contrastForeground: Theme.colors.status.error.foreground
+                    contrastBackground: Theme.colors.status.error.background
                     contrastKind: "nonText"
                 }
-                TokenRow { label: "colors.status.errorSubtle"; swatchColor: Theme.colors.status.errorSubtle; usage: "Error alert fill" }
-                TokenRow { label: "colors.status.info"; swatchColor: Theme.colors.status.info; usage: "Information foreground or icon" }
-                TokenRow { label: "colors.status.infoSubtle"; swatchColor: Theme.colors.status.infoSubtle; usage: "Information alert fill" }
+                TokenRow { label: "colors.status.error.background"; swatchColor: Theme.colors.status.error.background; usage: "Error alert fill" }
+                TokenRow { label: "colors.status.error.border"; swatchColor: Theme.colors.status.error.border; usage: "Error outline" }
+                TokenRow { label: "colors.status.error.strong"; swatchColor: Theme.colors.status.error.strong; usage: "Error solid fill" }
+                TokenRow { label: "colors.status.info.foreground"; swatchColor: Theme.colors.status.info.foreground; usage: "Information foreground or icon" }
+                TokenRow { label: "colors.status.info.background"; swatchColor: Theme.colors.status.info.background; usage: "Information alert fill" }
+                TokenRow { label: "colors.status.info.border"; swatchColor: Theme.colors.status.info.border; usage: "Information outline" }
+                TokenRow { label: "colors.status.info.strong"; swatchColor: Theme.colors.status.info.strong; usage: "Information solid fill" }
             }
         }
 
@@ -698,22 +704,22 @@ Item {
                         AlertPreview {
                             label: "Success message"
                             iconName: "material:check_circle"
-                            accentColor: Theme.colors.status.success
-                            fillColor: Theme.colors.status.successSubtle
+                            accentColor: Theme.colors.status.success.foreground
+                            fillColor: Theme.colors.status.success.background
                         }
 
                         AlertPreview {
                             label: "Warning message"
                             iconName: "material:warning"
-                            accentColor: Theme.colors.status.warning
-                            fillColor: Theme.colors.status.warningSubtle
+                            accentColor: Theme.colors.status.warning.foreground
+                            fillColor: Theme.colors.status.warning.background
                         }
 
                         AlertPreview {
                             label: "Error message"
                             iconName: "material:error"
-                            accentColor: Theme.colors.status.error
-                            fillColor: Theme.colors.status.errorSubtle
+                            accentColor: Theme.colors.status.error.foreground
+                            fillColor: Theme.colors.status.error.background
                         }
                     }
 
@@ -811,28 +817,28 @@ Item {
                     MetricCard {
                         label: "Focus ring on surface"
                         foregroundColor: Theme.colors.border.focus
-                        sampleBackgroundColor: Theme.colors.background.surface
+                        sampleBackgroundColor: Theme.colors.surface.base
                         kind: "nonText"
                     }
 
                     MetricCard {
                         label: "Error icon on soft fill"
-                        foregroundColor: Theme.colors.status.error
-                        sampleBackgroundColor: Theme.colors.status.errorSubtle
+                        foregroundColor: Theme.colors.status.error.foreground
+                        sampleBackgroundColor: Theme.colors.status.error.background
                         kind: "nonText"
                     }
 
                     MetricCard {
                         label: "Success icon on soft fill"
-                        foregroundColor: Theme.colors.status.success
-                        sampleBackgroundColor: Theme.colors.status.successSubtle
+                        foregroundColor: Theme.colors.status.success.foreground
+                        sampleBackgroundColor: Theme.colors.status.success.background
                         kind: "nonText"
                     }
 
                     MetricCard {
                         label: "Warning icon on soft fill"
-                        foregroundColor: Theme.colors.status.warning
-                        sampleBackgroundColor: Theme.colors.status.warningSubtle
+                        foregroundColor: Theme.colors.status.warning.foreground
+                        sampleBackgroundColor: Theme.colors.status.warning.background
                         kind: "nonText"
                     }
                 }

@@ -236,7 +236,7 @@ Item {
                             width: 52
                             height: 52
                             radius: Theme.radius.medium
-                            color: tileMouse.containsMouse ? Theme.colors.background.hover : "transparent"
+                            color: tileMouse.containsMouse ? Theme.colors.surface.hover : "transparent"
 
                             AppIcon {
                                 anchors.centerIn: parent
