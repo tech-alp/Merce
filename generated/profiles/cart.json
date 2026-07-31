@@ -1,0 +1,91 @@
+{
+  "profileSchemaVersion": 1,
+  "profileId": "cart",
+  "spacing": {
+    "base": 8,
+    "none": 0,
+    "xxs": 4,
+    "xs": 8,
+    "sm": 12,
+    "md": 16,
+    "lg": 24,
+    "xl": 32,
+    "xl2": 48,
+    "xl3": 64,
+    "xl4": 80,
+    "xl5": 96,
+    "xl6": 128,
+    "componentGap": 16,
+    "sectionGap": 48,
+    "pagePadding": 24,
+    "touchTarget": 64,
+    "touchTargetCompact": 56,
+    "gridGap": 16,
+    "stackGap": 12,
+    "inlineGap": 8
+  },
+  "radius": {
+    "none": 0,
+    "small": 4,
+    "medium": 6,
+    "large": 10,
+    "xlarge": 16,
+    "xxlarge": 24,
+    "full": 999,
+    "button": 6,
+    "input": 6,
+    "card": 10,
+    "badge": 999,
+    "dialog": 16,
+    "tooltip": 4
+  },
+  "typography": {
+    "displayFont": "Lexend",
+    "bodyFont": "Lexend",
+    "monoFont": "JetBrains Mono",
+    "displayFontFallback": "Lexend",
+    "bodyFontFallback": "Lexend",
+    "sizeXSmall": 14,
+    "sizeSmall": 16,
+    "sizeMedium": 20,
+    "sizeLarge": 22,
+    "sizeXLarge": 24,
+    "size2XLarge": 28,
+    "size3XLarge": 40,
+    "size4XLarge": 48,
+    "size5XLarge": 64,
+    "size6XLarge": 64,
+    "size7XLarge": 64,
+    "weightRegular": 400,
+    "weightMedium": 500,
+    "weightSemibold": 600,
+    "weightBold": 700,
+    "leadingTight": 1.2,
+    "leadingSnug": 1.35,
+    "leadingNormal": 1.5,
+    "leadingRelaxed": 1.7,
+    "trackingTight": -0.02,
+    "trackingNormal": 0,
+    "trackingWide": 0.02,
+    "trackingWider": 0.05,
+    "trackingWidest": 0.1
+  },
+  "size": {
+    "control": {
+      "small": 64,
+      "medium": 72,
+      "large": 80,
+      "minimum": 64
+    },
+    "icon": {
+      "small": 24,
+      "medium": 32,
+      "large": 48
+    },
+    "outline": {
+      "hairline": 1,
+      "strong": 2,
+      "focus": 3
+    }
+  }
+}

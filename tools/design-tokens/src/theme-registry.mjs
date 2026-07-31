@@ -2,129 +2,82 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
 export async function loadThemeRegistry(registryPath = new URL('../themes.json', import.meta.url)) {
-  const raw = await readFile(registryPath, 'utf8');
-  const registry = JSON.parse(raw);
+  const registry = JSON.parse(await readFile(registryPath, 'utf8'));
 
   if (registry.schemaVersion !== 1) {
     throw new Error('themes.json schemaVersion must be 1');
   }
-
-  if (!registry.defaultTheme) {
-    throw new Error('themes.json must declare defaultTheme');
-  }
-
-  if (!registry.themes || typeof registry.themes !== 'object') {
-    throw new Error('themes.json must declare a themes object');
-  }
-
-  if (containsKey(registry, 'defaultMode')) {
-    throw new Error('themes.json must not use defaultMode; use sparse path or variant registry fields');
-  }
+  requireRegisteredDefault(registry, 'defaultBrand', 'brands');
+  requireRegisteredDefault(registry, 'defaultProfile', 'profiles');
 
   return registry;
 }
 
 export function themeEntries(registry) {
-  const coreSources = registry.core ?? [
-    'tokens/core/color.json',
-    'tokens/core/spacing.json',
-    'tokens/core/radius.json',
-    'tokens/core/typography.json',
-  ];
-
-  return Object.entries(registry.themes).flatMap(([themeName, theme]) => {
-    const themeSources = theme.source ?? [];
-
-    if (theme.variants) {
-      const entries = [];
-
-      if (theme.basePath) {
-        entries.push({
-          theme: themeName,
-          displayName: theme.displayName ?? themeName,
-          path: validateManifestPath(theme.basePath, `Theme '${themeName}' basePath`),
-          source: [...coreSources, ...themeSources],
-          fonts: normalizeFontAssets(theme.fontAssets ?? [], themeName),
-        });
-      }
-
-      entries.push(...Object.entries(theme.variants).map(([variantName, destination]) => {
-        const variantSources = theme.variantSources?.[variantName] ?? [
-          `tokens/themes/${themeName}/variants/${variantName}.json`,
-        ];
-
-        return {
-          theme: themeName,
-          displayName: theme.displayName ?? themeName,
-          variant: variantName,
-          path: validateManifestPath(destination, `Theme '${themeName}' variant '${variantName}' path`),
-          source: [...coreSources, ...themeSources, ...variantSources],
-          fonts: normalizeFontAssets(theme.fontAssets ?? [], themeName),
-        };
-      }));
-
-      return entries;
+  return Object.entries(registry.brands).flatMap(([brandId, brand]) => {
+    if (!brand || typeof brand !== 'object' || Array.isArray(brand)) {
+      throw new Error(`Brand '${brandId}' must be an object`);
+    }
+    if (!brand.modes || typeof brand.modes !== 'object' || Array.isArray(brand.modes)
+        || Object.keys(brand.modes).length === 0) {
+      throw new Error(`Brand '${brandId}' must declare modes`);
+    }
+    if (!Object.prototype.hasOwnProperty.call(brand.modes, brand.defaultMode)) {
+      throw new Error(`Brand '${brandId}' defaultMode '${brand.defaultMode}' is not registered`);
     }
 
-    if (!theme.path) {
-      throw new Error(`Theme '${themeName}' must declare path or variants`);
-    }
-
-    return [{
-      theme: themeName,
-      displayName: theme.displayName ?? themeName,
-      path: validateManifestPath(theme.path, `Theme '${themeName}' path`),
-      source: [...coreSources, ...themeSources],
-      fonts: normalizeFontAssets(theme.fontAssets ?? [], themeName),
-    }];
+    return Object.entries(brand.modes).map(([mode, entry]) => normalizeEntry(
+      entry,
+      `Brand '${brandId}' mode '${mode}'`,
+      { brandId, mode },
+    ));
   });
 }
 
+export function profileEntries(registry) {
+  return Object.entries(registry.profiles).map(([profileId, profile]) => normalizeEntry(
+    profile,
+    `Profile '${profileId}'`,
+    { profileId },
+  ));
+}
+
 export function generatedIndex(registry) {
-  const themes = Object.fromEntries(
-    Object.entries(registry.themes).map(([themeName, theme]) => {
-      if (theme.variants) {
-        return [themeName, {
-          displayName: theme.displayName ?? themeName,
-          ...(theme.basePath ? { basePath: validateManifestPath(theme.basePath, `Theme '${themeName}' basePath`) } : {}),
-          defaultVariant: theme.defaultVariant,
-          variants: Object.fromEntries(
-            Object.entries(theme.variants).map(([variantName, destination]) => [
-              variantName,
-              validateManifestPath(destination, `Theme '${themeName}' variant '${variantName}' path`),
+  return {
+    schemaVersion: 1,
+    defaultBrand: registry.defaultBrand,
+    brands: Object.fromEntries(
+      Object.entries(registry.brands)
+        .filter(([, brand]) => brand.runtime !== false)
+        .map(([brandId, brand]) => [
+        brandId,
+        {
+          displayName: nonEmptyString(brand.displayName, `Brand '${brandId}' displayName`),
+          defaultMode: nonEmptyString(brand.defaultMode, `Brand '${brandId}' defaultMode`),
+          modes: Object.fromEntries(
+            Object.entries(brand.modes).map(([mode, entry]) => [
+              mode,
+              validateManifestPath(entry.path, `Brand '${brandId}' mode '${mode}' path`),
             ]),
           ),
-        }];
-      }
-
-      return [themeName, {
-        displayName: theme.displayName ?? themeName,
-        path: validateManifestPath(theme.path, `Theme '${themeName}' path`),
-      }];
-    }),
-  );
-
-  return {
-    schemaVersion: registry.schemaVersion,
-    defaultTheme: registry.defaultTheme,
-    themes,
+        },
+        ]),
+    ),
+    defaultProfile: registry.defaultProfile,
+    profiles: Object.fromEntries(
+      Object.entries(registry.profiles).map(([profileId, profile]) => [
+        profileId,
+        {
+          displayName: nonEmptyString(profile.displayName, `Profile '${profileId}' displayName`),
+          path: validateManifestPath(profile.path, `Profile '${profileId}' path`),
+        },
+      ]),
+    ),
   };
 }
 
 export function resolveRegistryPath(relativePath, baseDir = process.cwd()) {
   return path.resolve(baseDir, relativePath);
-}
-
-function containsKey(value, key) {
-  if (!value || typeof value !== 'object') {
-    return false;
-  }
-
-  if (Object.prototype.hasOwnProperty.call(value, key)) {
-    return true;
-  }
-
-  return Object.values(value).some((child) => containsKey(child, key));
 }
 
 export function validateManifestPath(value, label) {
@@ -141,45 +94,38 @@ export function validateManifestPath(value, label) {
   return value;
 }
 
-export function validateRelativeAssetPath(value, label) {
-  if (typeof value !== 'string'
-      || value.length === 0
-      || path.isAbsolute(value)
-      || value.startsWith(':')
-      || value.includes('\\')
-      || value.split('/').some((part) => part === '' || part === '..')) {
-    throw new Error(`${label} must be a safe relative asset path`);
+function requireRegisteredDefault(registry, defaultField, entriesField) {
+  const entries = registry[entriesField];
+  if (!entries || typeof entries !== 'object' || Array.isArray(entries)
+      || Object.keys(entries).length === 0) {
+    throw new Error(`themes.json must declare a non-empty ${entriesField} object`);
   }
-
-  return value;
+  if (typeof registry[defaultField] !== 'string'
+      || !Object.prototype.hasOwnProperty.call(entries, registry[defaultField])) {
+    throw new Error(`themes.json ${defaultField} must name a registered ${entriesField} entry`);
+  }
 }
 
-function normalizeFontAssets(fontAssets, themeName) {
-  if (!Array.isArray(fontAssets)) {
-    throw new Error(`Theme '${themeName}' fontAssets must be an array`);
+function normalizeEntry(entry, label, identity) {
+  if (!entry || typeof entry !== 'object' || Array.isArray(entry)) {
+    throw new Error(`${label} must be an object`);
+  }
+  if (!Array.isArray(entry.source) || entry.source.length === 0
+      || entry.source.some((source) => typeof source !== 'string' || source.length === 0)) {
+    throw new Error(`${label} source must be a non-empty string array`);
   }
 
-  return fontAssets.map((font, index) => {
-    const label = `Theme '${themeName}' fontAssets[${index}]`;
-    if (!font || typeof font !== 'object' || Array.isArray(font)) {
-      throw new Error(`${label} must be an object`);
-    }
+  return {
+    ...identity,
+    displayName: nonEmptyString(entry.displayName, `${label} displayName`),
+    path: validateManifestPath(entry.path, `${label} path`),
+    source: entry.source,
+  };
+}
 
-    if (typeof font.family !== 'string' || font.family.trim().length === 0) {
-      throw new Error(`${label}.family must be a non-empty string`);
-    }
-
-    if (!Number.isFinite(font.weight)) {
-      throw new Error(`${label}.weight must be numeric`);
-    }
-
-    return {
-      family: font.family,
-      source: validateRelativeAssetPath(font.source, `${label}.source`),
-      destination: validateRelativeAssetPath(font.destination, `${label}.destination`),
-      weight: font.weight,
-      style: typeof font.style === 'string' && font.style.length > 0 ? font.style : 'normal',
-      required: font.required !== false,
-    };
-  });
+function nonEmptyString(value, label) {
+  if (typeof value !== 'string' || value.trim().length === 0) {
+    throw new Error(`${label} must be a non-empty string`);
+  }
+  return value;
 }

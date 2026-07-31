@@ -1,0 +1,37 @@
+{
+  "spacing": {
+    "touchTarget": { "$type": "dimension", "$value": 64 },
+    "touchTargetCompact": { "$type": "dimension", "$value": 56 }
+  },
+  "typography": {
+    "sizeXSmall": { "$type": "dimension", "$value": 14 },
+    "sizeSmall": { "$type": "dimension", "$value": 16 },
+    "sizeMedium": { "$type": "dimension", "$value": 20 },
+    "sizeLarge": { "$type": "dimension", "$value": 22 },
+    "sizeXLarge": { "$type": "dimension", "$value": 24 },
+    "size2XLarge": { "$type": "dimension", "$value": 28 },
+    "size3XLarge": { "$type": "dimension", "$value": 40 },
+    "size4XLarge": { "$type": "dimension", "$value": 48 },
+    "size5XLarge": { "$type": "dimension", "$value": 64 },
+    "size6XLarge": { "$type": "dimension", "$value": 64 },
+    "size7XLarge": { "$type": "dimension", "$value": 64 }
+  },
+  "size": {
+    "control": {
+      "small": { "$type": "dimension", "$value": 64 },
+      "medium": { "$type": "dimension", "$value": 72 },
+      "large": { "$type": "dimension", "$value": 80 },
+      "minimum": { "$type": "dimension", "$value": 64 }
+    },
+    "icon": {
+      "small": { "$type": "dimension", "$value": 24 },
+      "medium": { "$type": "dimension", "$value": 32 },
+      "large": { "$type": "dimension", "$value": 48 }
+    },
+    "outline": {
+      "hairline": { "$type": "dimension", "$value": 1 },
+      "strong": { "$type": "dimension", "$value": 2 },
+      "focus": { "$type": "dimension", "$value": 3 }
+    }
+  }
+}

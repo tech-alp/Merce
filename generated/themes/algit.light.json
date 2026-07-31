@@ -1,10 +1,10 @@
 {
   "kind": "resolved-theme",
   "resolvedThemeSchemaVersion": 1,
-  "brandId": "apple",
+  "brandId": "algit",
   "mode": "light",
   "identity": {
-    "mark": "#0066CC"
+    "mark": "#C96442"
   },
   "colors": {
     "surface": {
@@ -23,13 +23,13 @@
       "tertiary": "#6D7874",
       "inverse": "#FFFFFF",
       "disabled": "#7A847F",
-      "link": "#0066CC"
+      "link": "#006B63"
     },
     "action": {
       "primary": {
-        "container": "#0066CC",
+        "container": "#006B63",
         "content": "#FFFFFF",
-        "outline": "#0066CC"
+        "outline": "#006B63"
       },
       "secondary": {
         "container": "#65716D",
@@ -72,7 +72,7 @@
     "outline": {
       "subtle": "#CBD2CF",
       "strong": "#A9B2AE",
-      "focus": "#0071E3"
+      "focus": "#006B63"
     }
   },
   "state": {

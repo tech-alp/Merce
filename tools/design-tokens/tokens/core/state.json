@@ -1,0 +1,14 @@
+{
+  "state": {
+    "layer": {
+      "hover": { "$type": "number", "$value": 0.08 },
+      "focus": { "$type": "number", "$value": 0.1 },
+      "pressed": { "$type": "number", "$value": 0.1 },
+      "selected": { "$type": "number", "$value": 0.12 }
+    },
+    "disabled": {
+      "containerOpacity": { "$type": "number", "$value": 0.12 },
+      "contentOpacity": { "$type": "number", "$value": 0.38 }
+    }
+  }
+}

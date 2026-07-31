@@ -10,11 +10,11 @@
     },
     "medium": {
       "$type": "dimension",
-      "$value": 8
+      "$value": 6
     },
     "large": {
       "$type": "dimension",
-      "$value": 12
+      "$value": 10
     },
     "xlarge": {
       "$type": "dimension",
@@ -26,11 +26,11 @@
     },
     "full": {
       "$type": "dimension",
-      "$value": 9999
+      "$value": 999
     },
     "button": {
       "$type": "dimension",
-      "$value": "{radius.large}"
+      "$value": "{radius.medium}"
     },
     "input": {
       "$type": "dimension",
@@ -38,7 +38,7 @@
     },
     "card": {
       "$type": "dimension",
-      "$value": "{radius.xlarge}"
+      "$value": "{radius.large}"
     },
     "badge": {
       "$type": "dimension",
@@ -46,7 +46,7 @@
     },
     "dialog": {
       "$type": "dimension",
-      "$value": "{radius.xxlarge}"
+      "$value": "{radius.xlarge}"
     },
     "tooltip": {
       "$type": "dimension",

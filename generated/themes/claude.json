@@ -1,125 +1,90 @@
 {
-  "schemaVersion": 1,
-  "theme": "claude",
+  "kind": "resolved-theme",
+  "resolvedThemeSchemaVersion": 1,
+  "brandId": "claude",
+  "mode": "light",
+  "identity": {
+    "mark": "#CC785C"
+  },
   "colors": {
-    "text": {
-      "primary": "#141413",
-      "secondary": "#3D3D3A",
-      "tertiary": "#6C6A64",
-      "inverse": "#FAF9F5",
-      "disabled": "#B8A494",
-      "link": "#CC785C",
-      "linkHover": "#9A4F34"
+    "surface": {
+      "canvas": "#F6F4EE",
+      "container": "#FFFFFF",
+      "containerRaised": "#FFFFFF",
+      "containerSunken": "#EDEAE2",
+      "containerTinted": "#EFF5F3",
+      "floating": "#FFFFFF",
+      "scrim": "#99000000",
+      "inverse": "#151A19"
     },
-    "background": {
-      "base": "#FAF9F5",
-      "surface": "#FAF9F5",
-      "elevated": "#EFE9DE",
-      "hover": "#F5F0E8",
-      "pressed": "#EFE9DE",
-      "tinted": "#F5F0E8",
-      "overlay": "#000000"
-    },
-    "border": {
-      "base": "#E6DFD8",
-      "strong": "#E8E0D2",
-      "focus": "#CC785C",
-      "error": "#C64545",
-      "success": "#5DB872"
+    "content": {
+      "primary": "#151A19",
+      "secondary": "#4E5B58",
+      "tertiary": "#6D7874",
+      "inverse": "#FFFFFF",
+      "disabled": "#7A847F",
+      "link": "#A9583E"
     },
     "action": {
-      "primary": "#CC785C",
-      "primaryHover": "#A9583E",
-      "primaryPressed": "#A9583E",
-      "primarySubtle": "#E6DFD8",
-      "secondary": "#5DB8A6",
-      "secondaryHover": "#1A2C24",
-      "secondaryPressed": "#1A2C24",
-      "disabled": "#B8A494"
+      "primary": {
+        "container": "#CB775B",
+        "content": "#151A19",
+        "outline": "#CB775B"
+      },
+      "secondary": {
+        "container": "#65716D",
+        "content": "#FFFFFF",
+        "outline": "#65716D"
+      },
+      "destructive": {
+        "container": "#B3261E",
+        "content": "#FFFFFF",
+        "outline": "#B3261E"
+      }
     },
     "status": {
-      "success": "#5DB872",
-      "successSubtle": "#A8D4B8",
-      "warning": "#D4A017",
-      "warningSubtle": "#F0D9A8",
-      "error": "#C64545",
-      "errorSubtle": "#E8A8A8",
-      "info": "#5DB8A6",
-      "infoSubtle": "#A8CCE8"
+      "success": {
+        "container": "#ECFDF3",
+        "content": "#166B3B",
+        "outline": "#166B3B"
+      },
+      "warning": {
+        "container": "#FFFBEB",
+        "content": "#8A4B00",
+        "outline": "#8A4B00"
+      },
+      "error": {
+        "container": "#FEF2F2",
+        "content": "#B3261E",
+        "outline": "#B3261E"
+      },
+      "info": {
+        "container": "#EFF4FC",
+        "content": "#245EA8",
+        "outline": "#245EA8"
+      },
+      "neutral": {
+        "container": "#EFF1F0",
+        "content": "#4E5B58",
+        "outline": "#65716D"
+      }
     },
-    "surface": {
-      "base": "#FAF9F5",
-      "tinted": "#F5F0E8",
-      "raised": "#EFE9DE"
+    "outline": {
+      "subtle": "#CBD2CF",
+      "strong": "#A9B2AE",
+      "focus": "#A9583E"
     }
   },
-  "spacing": {
-    "base": 8,
-    "none": 0,
-    "xxs": 4,
-    "xs": 8,
-    "sm": 12,
-    "md": 16,
-    "lg": 24,
-    "xl": 32,
-    "xl2": 48,
-    "xl3": 64,
-    "xl4": 96,
-    "xl5": 128,
-    "xl6": 160,
-    "componentGap": 16,
-    "sectionGap": 96,
-    "pagePadding": 32,
-    "touchTarget": 44,
-    "touchTargetCompact": 40,
-    "gridGap": 24,
-    "stackGap": 16,
-    "inlineGap": 8
-  },
-  "radius": {
-    "none": 0,
-    "small": 4,
-    "medium": 8,
-    "large": 12,
-    "xlarge": 16,
-    "xxlarge": 24,
-    "full": 9999,
-    "button": 8,
-    "input": 8,
-    "card": 12,
-    "badge": 9999,
-    "dialog": 16,
-    "tooltip": 4
-  },
-  "typography": {
-    "displayFont": "Inter",
-    "bodyFont": "Inter",
-    "monoFont": "Roboto Mono",
-    "displayFontFallback": "Inter",
-    "bodyFontFallback": "Inter",
-    "sizeXSmall": 12,
-    "sizeSmall": 13,
-    "sizeMedium": 14,
-    "sizeLarge": 16,
-    "sizeXLarge": 18,
-    "size2XLarge": 22,
-    "size3XLarge": 28,
-    "size4XLarge": 36,
-    "size5XLarge": 48,
-    "size6XLarge": 64,
-    "size7XLarge": 72,
-    "weightRegular": 400,
-    "weightMedium": 500,
-    "weightSemibold": 600,
-    "weightBold": 700,
-    "leadingTight": 1.05,
-    "leadingSnug": 1.2,
-    "leadingNormal": 1.55,
-    "leadingRelaxed": 1.6,
-    "trackingTight": -0.025,
-    "trackingNormal": 0,
-    "trackingWide": 0.02,
-    "trackingWider": 0.05,
-    "trackingWidest": 0.1
+  "state": {
+    "layer": {
+      "hover": 0.08,
+      "focus": 0.1,
+      "pressed": 0.1,
+      "selected": 0.12
+    },
+    "disabled": {
+      "containerOpacity": 0.12,
+      "contentOpacity": 0.38
+    }
   }
 }

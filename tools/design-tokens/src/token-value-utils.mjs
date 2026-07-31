@@ -1,5 +1,3 @@
-import { resolveReferences } from 'style-dictionary/utils';
-
 export function requiredValue(values, tokenPath) {
   if (!values.has(tokenPath)) {
     throw new Error(`Missing token '${tokenPath}' required by Merce manifest format`);
@@ -10,7 +8,14 @@ export function requiredValue(values, tokenPath) {
 
 export function normalizeValue(value) {
   if (value && typeof value === 'object' && !Array.isArray(value)) {
-    return normalizeValue(value.$value ?? value.value);
+    if (Object.prototype.hasOwnProperty.call(value, '$value')
+        || Object.prototype.hasOwnProperty.call(value, 'value')) {
+      return normalizeValue(value.$value ?? value.value);
+    }
+
+    return Object.fromEntries(
+      Object.entries(value).map(([key, child]) => [key, normalizeValue(child)]),
+    );
   }
 
   if (typeof value === 'string' && /^-?\d+(\.\d+)?$/.test(value)) {
@@ -32,12 +37,6 @@ export function tokenKey(token) {
   throw new Error(`Token has no path metadata: ${JSON.stringify(token)}`);
 }
 
-export function resolveValue(token, tokens) {
-  const value = token.$value ?? token.value;
-
-  if (typeof value === 'string' && value.includes('{')) {
-    return resolveReferences(value, tokens, { usesDtcg: true });
-  }
-
-  return value;
+export function resolveValue(token) {
+  return token.$value ?? token.value;
 }

@@ -8,14 +8,8 @@
   },
   "scripts": {
     "build": "node build.mjs",
-    "build:figma": "node build-figma.mjs",
     "clean": "node build.mjs --clean",
-    "clean:figma": "node build-figma.mjs --clean",
     "validate": "node src/validate-manifest.mjs ../../generated/themes",
-    "validate:figma": "node src/validate-figma-dtcg.mjs ../../generated/figma",
     "check": "node src/check-generated.mjs"
-  },
-  "dependencies": {
-    "style-dictionary": "^5.0.0"
   }
 }

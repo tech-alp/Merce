@@ -1,17 +1,28 @@
-import { access, readFile, readdir } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { COLOR_FIELD_MAP, FIELD_MAP } from './merce-manifest-format.mjs';
+import {
+  COLOR_FIELD_MAP,
+  PROFILE_FIELD_MAP,
+  STATE_FIELD_MAP,
+} from './merce-manifest-format.mjs';
 import { validateManifestPath } from './theme-registry.mjs';
 
-const REQUIRED_TOP_LEVEL = [
-  'schemaVersion',
-  'theme',
+const RESOLVED_THEME_FIELDS = new Set([
+  'kind',
+  'resolvedThemeSchemaVersion',
+  'brandId',
+  'mode',
+  'identity',
   'colors',
-  'spacing',
-  'radius',
-  'typography',
-];
+  'state',
+]);
+
+const PROFILE_FIELDS = new Set([
+  'profileSchemaVersion',
+  'profileId',
+  ...Object.keys(PROFILE_FIELD_MAP),
+]);
 
 const TYPOGRAPHY_STRING_FIELDS = new Set([
   'displayFont',
@@ -21,223 +32,252 @@ const TYPOGRAPHY_STRING_FIELDS = new Set([
   'bodyFontFallback',
 ]);
 
-const GENERIC_FONT_FAMILIES = new Set([
-  '-apple-system',
-  'blinkmacsystemfont',
-  'serif',
-  'sans-serif',
-  'sans serif',
-  'monospace',
-  'ui-monospace',
-  'system-ui',
-]);
-
-const REQUIRED_FIELDS = Object.entries(FIELD_MAP).flatMap(([section, fields]) => (
-  fields.map(([field]) => `${section}.${field}`)
+const COLOR_PATHS = Object.entries(COLOR_FIELD_MAP).flatMap(([group, fields]) => (
+  fields.map((field) => `colors.${group}.${field}`)
 ));
 
-const REQUIRED_COLOR_FIELDS = Object.entries(COLOR_FIELD_MAP).flatMap(([group, fields]) => (
-  fields.map(([field]) => `colors.${group}.${field}`)
+const STATE_PATHS = Object.entries(STATE_FIELD_MAP).flatMap(([group, fields]) => (
+  fields.map((field) => `state.${group}.${field}`)
 ));
 
-export function validateManifest(manifest, context = {}) {
+const PROFILE_PATHS = Object.entries(PROFILE_FIELD_MAP).flatMap(([section, fields]) => (
+  fields.map((field) => `${section}.${field}`)
+));
+
+export function validateResolvedTheme(manifest, context = {}) {
   const errors = [];
 
-  for (const field of REQUIRED_TOP_LEVEL) {
+  requireExactVersion(manifest, 'resolvedThemeSchemaVersion', errors);
+  requireString(manifest, 'kind', errors);
+  if (manifest.kind !== 'resolved-theme') {
+    errors.push("kind must be 'resolved-theme'");
+  }
+  requireString(manifest, 'brandId', errors);
+  requireString(manifest, 'mode', errors);
+
+  if (context.brandId && manifest.brandId !== context.brandId) {
+    errors.push(`brandId must be '${context.brandId}'`);
+  }
+  if (context.mode && manifest.mode !== context.mode) {
+    errors.push(`mode must be '${context.mode}'`);
+  }
+
+  rejectUnknownFields(manifest, RESOLVED_THEME_FIELDS, 'resolved theme', errors);
+
+  if (!hasPath(manifest, 'identity.mark')) {
+    errors.push('missing required field: identity.mark');
+  } else {
+    validateColor(manifest, 'identity.mark', errors);
+  }
+
+  for (const field of COLOR_PATHS) {
     if (!hasPath(manifest, field)) {
-      errors.push(`missing required field: ${field}`);
+      errors.push(`missing required runtime field: ${field}`);
+    } else {
+      validateColor(manifest, field, errors);
     }
   }
 
-  if (manifest.schemaVersion !== 1) {
-    errors.push('schemaVersion must be 1');
+  rejectUnknownFields(manifest.state ?? {}, new Set(Object.keys(STATE_FIELD_MAP)), 'state', errors);
+  for (const [group, fields] of Object.entries(STATE_FIELD_MAP)) {
+    rejectUnknownFields(
+      manifest.state?.[group] ?? {},
+      new Set(fields),
+      `state.${group}`,
+      errors,
+    );
   }
-
-  if (context.theme && manifest.theme !== context.theme) {
-    errors.push(`theme must be '${context.theme}'`);
-  }
-
-  if (context.variant && manifest.variant !== context.variant) {
-    errors.push(`variant must be '${context.variant}'`);
-  }
-
-  if (!context.variant && Object.prototype.hasOwnProperty.call(context, 'variant') && 'variant' in manifest) {
-    errors.push('single-manifest themes must not include variant');
-  }
-
-  if ('palette' in manifest) {
-    errors.push('manifest must not contain a top-level palette section');
-  }
-
-  if (manifest.colors && typeof manifest.colors === 'object' && !Array.isArray(manifest.colors)
-      && 'raw' in manifest.colors) {
-    errors.push('runtime colors must not expose raw color scales');
-  }
-
-  for (const field of REQUIRED_COLOR_FIELDS) {
+  for (const field of STATE_PATHS) {
     if (!hasPath(manifest, field)) {
       errors.push(`missing required runtime field: ${field}`);
       continue;
     }
-
-    validateRuntimeField(manifest, field, errors);
+    const opacity = valueAtPath(manifest, field);
+    if (typeof opacity !== 'number' || !Number.isFinite(opacity)
+        || opacity < 0 || opacity > 1) {
+      errors.push(`runtime field ${field} must be a finite number from 0 to 1`);
+    }
   }
 
-  for (const field of REQUIRED_FIELDS) {
-    if (!hasPath(manifest, field)) {
+  rejectRawDtcg(manifest, errors);
+  return { ok: errors.length === 0, errors };
+}
+
+export function validateProfile(profile, context = {}) {
+  const errors = [];
+
+  requireExactVersion(profile, 'profileSchemaVersion', errors);
+  requireString(profile, 'profileId', errors);
+  if (context.profileId && profile.profileId !== context.profileId) {
+    errors.push(`profileId must be '${context.profileId}'`);
+  }
+
+  rejectUnknownFields(profile, PROFILE_FIELDS, 'profile', errors);
+
+  for (const field of PROFILE_PATHS) {
+    if (!hasPath(profile, field)) {
       errors.push(`missing required runtime field: ${field}`);
       continue;
     }
 
-    validateRuntimeField(manifest, field, errors);
+    const value = valueAtPath(profile, field);
+    const [section, name] = field.split('.');
+    if (section === 'typography' && TYPOGRAPHY_STRING_FIELDS.has(name)) {
+      if (typeof value !== 'string' || value.trim().length === 0) {
+        errors.push(`runtime field ${field} must be a resolved non-empty string`);
+      }
+    } else if (typeof value !== 'number' || !Number.isFinite(value)) {
+      errors.push(`runtime field ${field} must be numeric`);
+    }
   }
 
-  if (containsRawDtcg(manifest)) {
-    errors.push('manifest must not contain raw DTCG keys or unresolved token references');
-  }
-
-  validateFonts(manifest, errors);
-
-  return {
-    ok: errors.length === 0,
-    errors,
-  };
+  rejectRawDtcg(profile, errors);
+  return { ok: errors.length === 0, errors };
 }
 
-export async function validateManifestFile(filePath, context = {}) {
-  const manifest = JSON.parse(await readFile(filePath, 'utf8'));
-  const result = validateManifest(manifest, { ...context, manifestPath: filePath });
-
-  if (!result.ok) {
-    throw new Error(`${filePath}\n- ${result.errors.join('\n- ')}`);
-  }
-
-  if (Array.isArray(manifest.fonts)) {
-    await validateFontFiles(manifest.fonts, filePath);
-  }
-
-  return result;
+export async function validateResolvedThemeFile(filePath, context = {}) {
+  return validateJsonFile(filePath, (value) => validateResolvedTheme(value, context));
 }
 
-async function validateDirectory(directoryPath) {
-  const indexPath = path.join(directoryPath, 'index.json');
+export async function validateProfileFile(filePath, context = {}) {
+  return validateJsonFile(filePath, (value) => validateProfile(value, context));
+}
+
+export async function validateGeneratedDirectory(themeDirectory) {
+  const indexPath = path.join(themeDirectory, 'index.json');
   const index = JSON.parse(await readFile(indexPath, 'utf8'));
   const indexErrors = validateIndex(index);
   if (indexErrors.length > 0) {
     throw new Error(`${indexPath}\n- ${indexErrors.join('\n- ')}`);
   }
 
+  const expectedThemeFiles = new Set(['index.json']);
   const validations = [];
-
-  for (const [theme, entry] of Object.entries(index.themes ?? {})) {
-    if (entry.basePath) {
-      validations.push(validateManifestFile(path.join(directoryPath, entry.basePath), { theme, variant: undefined }));
+  for (const [brandId, brand] of Object.entries(index.brands)) {
+    for (const [mode, fileName] of Object.entries(brand.modes)) {
+      expectedThemeFiles.add(fileName);
+      validations.push(validateResolvedThemeFile(
+        path.join(themeDirectory, fileName),
+        { brandId, mode },
+      ));
     }
+  }
 
-    if (entry.variants) {
-      for (const [variant, manifestPath] of Object.entries(entry.variants)) {
-        validations.push(validateManifestFile(path.join(directoryPath, manifestPath), { theme, variant }));
-      }
-    } else if (entry.path) {
-      validations.push(validateManifestFile(path.join(directoryPath, entry.path), { theme, variant: undefined }));
-    }
+  const profileDirectory = path.resolve(themeDirectory, '../profiles');
+  const expectedProfileFiles = new Set();
+  for (const [profileId, profile] of Object.entries(index.profiles)) {
+    expectedProfileFiles.add(profile.path);
+    validations.push(validateProfileFile(
+      path.join(profileDirectory, profile.path),
+      { profileId },
+    ));
   }
 
   await Promise.all(validations);
-
-  const files = await readdir(directoryPath);
-  if (!files.includes('index.json')) {
-    throw new Error(`${directoryPath} must include index.json`);
-  }
+  await validateFixtureFiles(themeDirectory, expectedThemeFiles);
+  await rejectUnexpectedJsonFiles(profileDirectory, expectedProfileFiles, 'profile');
 }
 
 function validateIndex(index) {
   const errors = [];
-
   if (index.schemaVersion !== 1) {
-    errors.push('theme index schemaVersion must be 1');
+    errors.push('theme index schemaVersion must be exactly 1');
   }
 
-  if (typeof index.defaultTheme !== 'string' || index.defaultTheme.length === 0) {
-    errors.push('theme index must declare a non-empty defaultTheme');
-  }
-
-  if (!index.themes || typeof index.themes !== 'object' || Array.isArray(index.themes)
-      || Object.keys(index.themes).length === 0) {
-    errors.push('theme index must declare a non-empty themes object');
-    return errors;
-  }
-
-  let defaultThemeRegistered = false;
-
-  for (const [themeName, theme] of Object.entries(index.themes)) {
-    if (!themeName) {
-      errors.push('theme index contains an empty theme name');
-      continue;
-    }
-
-    if (!theme || typeof theme !== 'object' || Array.isArray(theme)) {
-      errors.push(`theme '${themeName}' must be an object`);
-      continue;
-    }
-
-    if (themeName === index.defaultTheme) {
-      defaultThemeRegistered = true;
-    }
-
-    if (typeof theme.displayName !== 'string' || theme.displayName.length === 0) {
-      errors.push(`theme '${themeName}' must declare a non-empty displayName`);
-    }
-
-    if ('basePath' in theme) {
-      validateIndexManifestPath(theme.basePath, `theme '${themeName}' basePath`, errors);
-    }
-
-    const hasPath = Object.prototype.hasOwnProperty.call(theme, 'path');
-    const hasVariants = Object.prototype.hasOwnProperty.call(theme, 'variants');
-    if (hasPath && hasVariants) {
-      errors.push(`theme '${themeName}' must not declare both path and variants`);
-    }
-
-    if (hasVariants) {
-      if (!theme.variants || typeof theme.variants !== 'object' || Array.isArray(theme.variants)
-          || Object.keys(theme.variants).length === 0) {
-        errors.push(`theme '${themeName}' variants must be a non-empty object`);
-        continue;
+  validateRegistryAxis(index, {
+    defaultField: 'defaultBrand',
+    entriesField: 'brands',
+    entryLabel: 'brand',
+    validateEntry: (brandId, brand) => {
+      const entryErrors = [];
+      requireString(brand, 'displayName', entryErrors, `brand '${brandId}'`);
+      requireString(brand, 'defaultMode', entryErrors, `brand '${brandId}'`);
+      if (!brand.modes || typeof brand.modes !== 'object' || Array.isArray(brand.modes)
+          || Object.keys(brand.modes).length === 0) {
+        entryErrors.push(`brand '${brandId}' must declare non-empty modes`);
+        return entryErrors;
       }
-
-      if (typeof theme.defaultVariant !== 'string' || theme.defaultVariant.length === 0) {
-        errors.push(`theme '${themeName}' must declare a non-empty defaultVariant`);
-      } else if (!Object.prototype.hasOwnProperty.call(theme.variants, theme.defaultVariant)) {
-        errors.push(`theme '${themeName}' defaultVariant '${theme.defaultVariant}' is not registered`);
+      if (!Object.prototype.hasOwnProperty.call(brand.modes, brand.defaultMode)) {
+        entryErrors.push(`brand '${brandId}' defaultMode '${brand.defaultMode}' is not registered`);
       }
-
-      for (const [variantName, manifestPath] of Object.entries(theme.variants)) {
-        if (!variantName) {
-          errors.push(`theme '${themeName}' contains an empty variant name`);
-          continue;
+      for (const [mode, fileName] of Object.entries(brand.modes)) {
+        if (!mode) {
+          entryErrors.push(`brand '${brandId}' contains an empty mode`);
         }
-        validateIndexManifestPath(manifestPath, `theme '${themeName}' variant '${variantName}' path`, errors);
+        validateIndexPath(fileName, `brand '${brandId}' mode '${mode}' path`, entryErrors);
       }
-      continue;
-    }
+      return entryErrors;
+    },
+  }, errors);
 
-    if (!hasPath) {
-      errors.push(`theme '${themeName}' must declare path or variants`);
-      continue;
-    }
-
-    validateIndexManifestPath(theme.path, `theme '${themeName}' path`, errors);
-  }
-
-  if (index.defaultTheme && !defaultThemeRegistered) {
-    errors.push(`defaultTheme '${index.defaultTheme}' is not registered`);
-  }
+  validateRegistryAxis(index, {
+    defaultField: 'defaultProfile',
+    entriesField: 'profiles',
+    entryLabel: 'profile',
+    validateEntry: (profileId, profile) => {
+      const entryErrors = [];
+      requireString(profile, 'displayName', entryErrors, `profile '${profileId}'`);
+      validateIndexPath(profile.path, `profile '${profileId}' path`, entryErrors);
+      return entryErrors;
+    },
+  }, errors);
 
   return errors;
 }
 
-function validateIndexManifestPath(value, label, errors) {
+function validateRegistryAxis(index, config, errors) {
+  const entries = index[config.entriesField];
+  if (!entries || typeof entries !== 'object' || Array.isArray(entries)
+      || Object.keys(entries).length === 0) {
+    errors.push(`theme index must declare a non-empty ${config.entriesField} object`);
+    return;
+  }
+  if (typeof index[config.defaultField] !== 'string' || index[config.defaultField].length === 0) {
+    errors.push(`theme index must declare a non-empty ${config.defaultField}`);
+  } else if (!Object.prototype.hasOwnProperty.call(entries, index[config.defaultField])) {
+    errors.push(`${config.defaultField} '${index[config.defaultField]}' is not registered`);
+  }
+
+  for (const [id, entry] of Object.entries(entries)) {
+    if (!id) {
+      errors.push(`theme index contains an empty ${config.entryLabel} id`);
+      continue;
+    }
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) {
+      errors.push(`${config.entryLabel} '${id}' must be an object`);
+      continue;
+    }
+    errors.push(...config.validateEntry(id, entry));
+  }
+}
+
+async function validateJsonFile(filePath, validator) {
+  const value = JSON.parse(await readFile(filePath, 'utf8'));
+  const result = validator(value);
+  if (!result.ok) {
+    throw new Error(`${filePath}\n- ${result.errors.join('\n- ')}`);
+  }
+  return result;
+}
+
+async function rejectUnexpectedJsonFiles(directory, expected, label) {
+  const actual = (await readdir(directory))
+    .filter((name) => name.endsWith('.json'));
+  const unexpected = actual.filter((name) => !expected.has(name));
+  if (unexpected.length > 0) {
+    throw new Error(`${directory}\n- unregistered generated ${label} manifest: ${unexpected.join(', ')}`);
+  }
+}
+
+async function validateFixtureFiles(directory, registeredFiles) {
+  const fixtures = (await readdir(directory))
+    .filter((name) => name.endsWith('.json') && !registeredFiles.has(name));
+  await Promise.all(
+    fixtures.map((name) => validateResolvedThemeFile(path.join(directory, name))),
+  );
+}
+
+function validateIndexPath(value, label, errors) {
   try {
     validateManifestPath(value, label);
   } catch (error) {
@@ -245,153 +285,80 @@ function validateIndexManifestPath(value, label, errors) {
   }
 }
 
-function validateFonts(manifest, errors) {
-  if (!Object.prototype.hasOwnProperty.call(manifest, 'fonts')) {
-    return;
+function requireExactVersion(value, field, errors) {
+  if (value[field] !== 1) {
+    errors.push(`${field} must be exactly 1`);
   }
+}
 
-  if (!Array.isArray(manifest.fonts)) {
-    errors.push('runtime field fonts must be an array');
-    return;
+function requireString(value, field, errors, prefix = '') {
+  if (typeof value[field] !== 'string' || value[field].trim().length === 0) {
+    errors.push(`${prefix ? `${prefix} ` : ''}${field} must be a non-empty string`);
   }
-
-  manifest.fonts.forEach((font, index) => {
-    const prefix = `runtime field fonts[${index}]`;
-    if (!font || typeof font !== 'object' || Array.isArray(font)) {
-      errors.push(`${prefix} must be an object`);
-      return;
-    }
-
-    if (typeof font.family !== 'string' || font.family.trim().length === 0) {
-      errors.push(`${prefix}.family must be a non-empty string`);
-    }
-    if (typeof font.source !== 'string' || !isSafeRelativeAssetPath(font.source)) {
-      errors.push(`${prefix}.source must be a safe relative .ttf or .otf path`);
-    }
-    if (typeof font.weight !== 'number' || !Number.isFinite(font.weight)) {
-      errors.push(`${prefix}.weight must be numeric`);
-    }
-    if ('style' in font && (typeof font.style !== 'string' || font.style.trim().length === 0)) {
-      errors.push(`${prefix}.style must be a non-empty string`);
-    }
-    if ('required' in font && typeof font.required !== 'boolean') {
-      errors.push(`${prefix}.required must be boolean`);
-    }
-  });
 }
 
-async function validateFontFiles(fonts, manifestPath) {
-  const manifestDir = path.dirname(manifestPath);
-  await Promise.all(fonts.map(async (font, index) => {
-    if (!font || typeof font.source !== 'string' || !isSafeRelativeAssetPath(font.source)) {
-      return;
+function rejectUnknownFields(value, allowed, label, errors) {
+  for (const field of Object.keys(value)) {
+    if (!allowed.has(field)) {
+      errors.push(`${label} must not contain top-level field: ${field}`);
     }
-
-    try {
-      await access(path.join(manifestDir, font.source));
-    } catch {
-      throw new Error(`${manifestPath}\n- runtime field fonts[${index}].source file does not exist: ${font.source}`);
-    }
-  }));
+  }
 }
 
-function isSafeRelativeAssetPath(value) {
-  const lower = value.toLowerCase();
-  return value.length > 0
-    && !path.isAbsolute(value)
-    && !value.startsWith(':')
-    && !value.includes('\\')
-    && (lower.endsWith('.ttf') || lower.endsWith('.otf'))
-    && value.split('/').every((part) => part.length > 0 && part !== '..');
+function validateColor(value, field, errors) {
+  const color = valueAtPath(value, field);
+  const isScrim = field === 'colors.surface.scrim';
+  const pattern = isScrim ? /^#[0-9a-fA-F]{8}$/ : /^#[0-9a-fA-F]{6}$/;
+  if (typeof color !== 'string' || !pattern.test(color)) {
+    errors.push(
+      `runtime field ${field} must be a valid ${isScrim ? '#AARRGGBB' : '#RRGGBB'} color`,
+    );
+  }
 }
 
-function hasPath(object, dottedPath) {
-  let current = object;
-
-  for (const part of dottedPath.split('.')) {
-    if (!current || !Object.prototype.hasOwnProperty.call(current, part)) {
+function hasPath(value, dottedPath) {
+  let cursor = value;
+  for (const segment of dottedPath.split('.')) {
+    if (!cursor || typeof cursor !== 'object'
+        || !Object.prototype.hasOwnProperty.call(cursor, segment)) {
       return false;
     }
-    current = current[part];
+    cursor = cursor[segment];
   }
-
   return true;
 }
 
-function valueAtPath(object, dottedPath) {
-  let current = object;
-
-  for (const part of dottedPath.split('.')) {
-    current = current[part];
-  }
-
-  return current;
+function valueAtPath(value, dottedPath) {
+  return dottedPath.split('.').reduce((cursor, segment) => cursor[segment], value);
 }
 
-function validateRuntimeField(manifest, dottedPath, errors) {
-  const [section, field] = dottedPath.split('.');
-  const value = valueAtPath(manifest, dottedPath);
-
-  if (section === 'colors') {
-    if (typeof value !== 'string' || !/^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(value)) {
-      errors.push(`runtime field ${dottedPath} must be a valid color string`);
-    }
-    return;
+function rejectRawDtcg(value, errors) {
+  if (containsRawDtcg(value)) {
+    errors.push('document must not contain raw DTCG keys or unresolved token references');
   }
-
-  if (section === 'typography' && TYPOGRAPHY_STRING_FIELDS.has(field)) {
-    if (typeof value !== 'string'
-        || value.trim().length === 0
-        || isUnresolvedTokenReference(value)) {
-      errors.push(`runtime field ${dottedPath} must be a resolved non-empty string`);
-    } else if (!isSingleQtFontFamily(value)) {
-      errors.push(`runtime field ${dottedPath} must be a single Qt font family name`);
-    }
-    return;
-  }
-
-  if (typeof value !== 'number' || !Number.isFinite(value)) {
-    errors.push(`runtime field ${dottedPath} must be numeric`);
-  }
-}
-
-function isUnresolvedTokenReference(value) {
-  const trimmed = value.trim();
-  return trimmed.startsWith('{') && trimmed.endsWith('}');
-}
-
-function isSingleQtFontFamily(value) {
-  const trimmed = value.trim();
-  if (trimmed.includes(',') || /^['"]|['"]$/.test(trimmed)) {
-    return false;
-  }
-
-  return !GENERIC_FONT_FAMILIES.has(trimmed.toLowerCase());
 }
 
 function containsRawDtcg(value) {
   if (Array.isArray(value)) {
     return value.some(containsRawDtcg);
   }
-
   if (!value || typeof value !== 'object') {
     return typeof value === 'string' && /^\{.+\}$/.test(value);
   }
-
   return Object.entries(value).some(([key, child]) => key.startsWith('$') || containsRawDtcg(child));
 }
 
 async function main() {
   const target = process.argv[2];
   if (!target) {
-    throw new Error('Usage: validate-manifest.mjs <manifest-file-or-generated-directory>');
+    throw new Error('Usage: validate-manifest.mjs <resolved-theme-file-or-generated-theme-directory>');
   }
 
   const resolved = path.resolve(process.cwd(), target);
   if (path.extname(resolved) === '.json') {
-    await validateManifestFile(resolved);
+    await validateResolvedThemeFile(resolved);
   } else {
-    await validateDirectory(resolved);
+    await validateGeneratedDirectory(resolved);
   }
 }
 

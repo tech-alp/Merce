@@ -1,39 +1,29 @@
 {
   "schemaVersion": 1,
-  "defaultTheme": "merce",
-  "themes": {
-    "merce": {
-      "displayName": "Merce",
-      "basePath": "merce.default.json",
-      "defaultVariant": "light",
-      "variants": {
-        "light": "merce.light.json",
-        "dark": "merce.dark.json"
+  "defaultBrand": "algit",
+  "brands": {
+    "algit": {
+      "displayName": "AlGit",
+      "defaultMode": "light",
+      "modes": {
+        "light": "algit.light.json",
+        "dark": "algit.dark.json"
       }
+    }
+  },
+  "defaultProfile": "cart",
+  "profiles": {
+    "cart": {
+      "displayName": "Cart",
+      "path": "cart.json"
     },
-    "apple": {
-      "displayName": "Apple Reference",
-      "path": "apple.json"
+    "maintenance": {
+      "displayName": "Maintenance",
+      "path": "maintenance.json"
     },
-    "claude": {
-      "displayName": "Claude Reference",
-      "path": "claude.json"
-    },
-    "airbnb": {
-      "displayName": "Airbnb Reference",
-      "path": "airbnb.json"
-    },
-    "stripe": {
-      "displayName": "Stripe Reference",
-      "path": "stripe.json"
-    },
-    "linear": {
-      "displayName": "Linear Reference",
-      "defaultVariant": "dark",
-      "variants": {
-        "dark": "linear.dark.json",
-        "light": "linear.light.json"
-      }
+    "ops": {
+      "displayName": "Operations",
+      "path": "ops.json"
     }
   }
 }

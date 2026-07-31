@@ -2,23 +2,22 @@ import { readdir, readFile } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { validateFigmaDtcgDirectory } from './validate-figma-dtcg.mjs';
+import { validateGeneratedDirectory } from './validate-manifest.mjs';
 
-const GENERATED_DIR = path.resolve(new URL('../../../generated/themes', import.meta.url).pathname);
-const GENERATED_FIGMA_DIR = path.resolve(new URL('../../../generated/figma', import.meta.url).pathname);
+const GENERATED_THEME_DIR = path.resolve(new URL('../../../generated/themes', import.meta.url).pathname);
+const GENERATED_PROFILE_DIR = path.resolve(new URL('../../../generated/profiles', import.meta.url).pathname);
 const BUILD_SCRIPT = path.resolve(new URL('../build.mjs', import.meta.url).pathname);
-const BUILD_FIGMA_SCRIPT = path.resolve(new URL('../build-figma.mjs', import.meta.url).pathname);
 
 export async function checkGenerated() {
-  const before = await snapshotDirectories([GENERATED_DIR, GENERATED_FIGMA_DIR]);
+  const generatedDirectories = [GENERATED_THEME_DIR, GENERATED_PROFILE_DIR];
+  const before = await snapshotDirectories(generatedDirectories);
   await runNode(BUILD_SCRIPT);
-  await runNode(BUILD_FIGMA_SCRIPT);
-  await validateFigmaDtcgDirectory(GENERATED_FIGMA_DIR);
-  const after = await snapshotDirectories([GENERATED_DIR, GENERATED_FIGMA_DIR]);
+  await validateGeneratedDirectory(GENERATED_THEME_DIR);
+  const after = await snapshotDirectories(generatedDirectories);
 
   const changed = diffSnapshots(before, after);
   if (changed.length > 0) {
-    throw new Error(`Generated theme manifests are stale:\n${changed.map((file) => `- ${file}`).join('\n')}`);
+    throw new Error(`Generated theme/profile manifests are stale:\n${changed.map((file) => `- ${file}`).join('\n')}`);
   }
 }
 

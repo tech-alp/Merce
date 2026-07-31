@@ -1,126 +1,90 @@
 {
-  "schemaVersion": 1,
-  "theme": "merce",
-  "variant": "light",
+  "kind": "resolved-theme",
+  "resolvedThemeSchemaVersion": 1,
+  "brandId": "merce",
+  "mode": "light",
+  "identity": {
+    "mark": "#C4785A"
+  },
   "colors": {
-    "text": {
-      "primary": "#1F1510",
-      "secondary": "#5C4A3D",
-      "tertiary": "#9A8472",
-      "inverse": "#FAF8F6",
-      "disabled": "#B8A494",
-      "link": "#C4785A",
-      "linkHover": "#9A4F34"
+    "surface": {
+      "canvas": "#F6F4EE",
+      "container": "#FFFFFF",
+      "containerRaised": "#FFFFFF",
+      "containerSunken": "#EDEAE2",
+      "containerTinted": "#EFF5F3",
+      "floating": "#FFFFFF",
+      "scrim": "#99000000",
+      "inverse": "#151A19"
     },
-    "background": {
-      "base": "#FAF8F6",
-      "surface": "#FFFFFF",
-      "elevated": "#FFFFFF",
-      "hover": "#F5F0EB",
-      "pressed": "#E8DFD5",
-      "tinted": "#F5F0EB",
-      "overlay": "#000000"
-    },
-    "border": {
-      "base": "#E8DFD5",
-      "strong": "#D4C4B5",
-      "focus": "#C4785A",
-      "error": "#C45A5A",
-      "success": "#4A7C59"
+    "content": {
+      "primary": "#151A19",
+      "secondary": "#4E5B58",
+      "tertiary": "#6D7874",
+      "inverse": "#FFFFFF",
+      "disabled": "#7A847F",
+      "link": "#9A4F34"
     },
     "action": {
-      "primary": "#C4785A",
-      "primaryHover": "#9A4F34",
-      "primaryPressed": "#9A4F34",
-      "primarySubtle": "#E8B5A3",
-      "secondary": "#2D4A3E",
-      "secondaryHover": "#1A2C24",
-      "secondaryPressed": "#1A2C24",
-      "disabled": "#B8A494"
+      "primary": {
+        "container": "#C4785A",
+        "content": "#151A19",
+        "outline": "#C4785A"
+      },
+      "secondary": {
+        "container": "#65716D",
+        "content": "#FFFFFF",
+        "outline": "#65716D"
+      },
+      "destructive": {
+        "container": "#B3261E",
+        "content": "#FFFFFF",
+        "outline": "#B3261E"
+      }
     },
     "status": {
-      "success": "#4A7C59",
-      "successSubtle": "#A8D4B8",
-      "warning": "#D4A854",
-      "warningSubtle": "#F0D9A8",
-      "error": "#C45A5A",
-      "errorSubtle": "#E8A8A8",
-      "info": "#5A8FC4",
-      "infoSubtle": "#A8CCE8"
+      "success": {
+        "container": "#ECFDF3",
+        "content": "#166B3B",
+        "outline": "#166B3B"
+      },
+      "warning": {
+        "container": "#FFFBEB",
+        "content": "#8A4B00",
+        "outline": "#8A4B00"
+      },
+      "error": {
+        "container": "#FEF2F2",
+        "content": "#B3261E",
+        "outline": "#B3261E"
+      },
+      "info": {
+        "container": "#EFF4FC",
+        "content": "#245EA8",
+        "outline": "#245EA8"
+      },
+      "neutral": {
+        "container": "#EFF1F0",
+        "content": "#4E5B58",
+        "outline": "#65716D"
+      }
     },
-    "surface": {
-      "base": "#FFFFFF",
-      "tinted": "#F5F0EB",
-      "raised": "#FFFFFF"
+    "outline": {
+      "subtle": "#CBD2CF",
+      "strong": "#A9B2AE",
+      "focus": "#9A4F34"
     }
   },
-  "spacing": {
-    "base": 8,
-    "none": 0,
-    "xxs": 4,
-    "xs": 8,
-    "sm": 12,
-    "md": 16,
-    "lg": 20,
-    "xl": 24,
-    "xl2": 32,
-    "xl3": 40,
-    "xl4": 48,
-    "xl5": 64,
-    "xl6": 80,
-    "componentGap": 16,
-    "sectionGap": 48,
-    "pagePadding": 24,
-    "touchTarget": 44,
-    "touchTargetCompact": 36,
-    "gridGap": 16,
-    "stackGap": 12,
-    "inlineGap": 8
-  },
-  "radius": {
-    "none": 0,
-    "small": 4,
-    "medium": 8,
-    "large": 12,
-    "xlarge": 16,
-    "xxlarge": 24,
-    "full": 9999,
-    "button": 12,
-    "input": 8,
-    "card": 16,
-    "badge": 9999,
-    "dialog": 24,
-    "tooltip": 4
-  },
-  "typography": {
-    "displayFont": "Inter",
-    "bodyFont": "Inter",
-    "monoFont": "Roboto Mono",
-    "displayFontFallback": "Inter",
-    "bodyFontFallback": "Inter",
-    "sizeXSmall": 12,
-    "sizeSmall": 14,
-    "sizeMedium": 16,
-    "sizeLarge": 18,
-    "sizeXLarge": 20,
-    "size2XLarge": 24,
-    "size3XLarge": 30,
-    "size4XLarge": 36,
-    "size5XLarge": 48,
-    "size6XLarge": 60,
-    "size7XLarge": 72,
-    "weightRegular": 400,
-    "weightMedium": 500,
-    "weightSemibold": 600,
-    "weightBold": 700,
-    "leadingTight": 1.2,
-    "leadingSnug": 1.35,
-    "leadingNormal": 1.5,
-    "leadingRelaxed": 1.7,
-    "trackingTight": -0.02,
-    "trackingNormal": 0,
-    "trackingWide": 0.02,
-    "trackingWider": 0.05,
-    "trackingWidest": 0.1
+  "state": {
+    "layer": {
+      "hover": 0.08,
+      "focus": 0.1,
+      "pressed": 0.1,
+      "selected": 0.12
+    },
+    "disabled": {
+      "containerOpacity": 0.12,
+      "contentOpacity": 0.38
+    }
   }
 }

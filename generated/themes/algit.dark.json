@@ -1,10 +1,10 @@
 {
   "kind": "resolved-theme",
   "resolvedThemeSchemaVersion": 1,
-  "brandId": "linear",
+  "brandId": "algit",
   "mode": "dark",
   "identity": {
-    "mark": "#5E6AD2"
+    "mark": "#E58A67"
   },
   "colors": {
     "surface": {
@@ -23,13 +23,13 @@
       "tertiary": "#8F9A96",
       "inverse": "#151A19",
       "disabled": "#7C8783",
-      "link": "#5E6AD2"
+      "link": "#56D6C7"
     },
     "action": {
       "primary": {
-        "container": "#5E6AD2",
-        "content": "#FFFFFF",
-        "outline": "#5E6AD2"
+        "container": "#56D6C7",
+        "content": "#08201D",
+        "outline": "#56D6C7"
       },
       "secondary": {
         "container": "#AEBAB6",
@@ -72,7 +72,7 @@
     "outline": {
       "subtle": "#35423F",
       "strong": "#52605C",
-      "focus": "#7B89F0"
+      "focus": "#70E1D4"
     }
   },
   "state": {

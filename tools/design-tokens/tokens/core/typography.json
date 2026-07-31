@@ -2,23 +2,23 @@
   "typography": {
     "displayFont": {
       "$type": "fontFamily",
-      "$value": "Inter"
+      "$value": "Lexend"
     },
     "bodyFont": {
       "$type": "fontFamily",
-      "$value": "Inter"
+      "$value": "Lexend"
     },
     "monoFont": {
       "$type": "fontFamily",
-      "$value": "Roboto Mono"
+      "$value": "JetBrains Mono"
     },
     "displayFontFallback": {
       "$type": "fontFamily",
-      "$value": "Inter"
+      "$value": "Lexend"
     },
     "bodyFontFallback": {
       "$type": "fontFamily",
-      "$value": "Inter"
+      "$value": "Lexend"
     },
     "sizeXSmall": {
       "$type": "dimension",

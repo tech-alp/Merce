@@ -1,78 +1,158 @@
-import { copyFile, mkdir, rm, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import StyleDictionary from 'style-dictionary';
-import { formatMerceManifest } from './src/merce-manifest-format.mjs';
-import { generatedIndex, loadThemeRegistry, resolveRegistryPath, themeEntries } from './src/theme-registry.mjs';
-import { validateManifestFile } from './src/validate-manifest.mjs';
+import {
+  formatProfile,
+  formatResolvedTheme,
+} from './src/merce-manifest-format.mjs';
+import {
+  generatedIndex,
+  loadThemeRegistry,
+  profileEntries,
+  resolveRegistryPath,
+  themeEntries,
+} from './src/theme-registry.mjs';
+import {
+  validateProfileFile,
+  validateResolvedThemeFile,
+} from './src/validate-manifest.mjs';
 
 const TOOL_ROOT = process.cwd();
-const GENERATED_DIR = path.resolve(TOOL_ROOT, '../../generated/themes');
-const FORMAT_NAME = 'merce/manifest-json';
-
-StyleDictionary.registerFormat({
-  name: FORMAT_NAME,
-  format: ({ dictionary, options }) => `${JSON.stringify(formatMerceManifest(dictionary, options), null, 2)}\n`,
-});
+const GENERATED_THEME_DIR = path.resolve(TOOL_ROOT, '../../generated/themes');
+const GENERATED_PROFILE_DIR = path.resolve(TOOL_ROOT, '../../generated/profiles');
 
 if (process.argv.includes('--clean')) {
-  await rm(GENERATED_DIR, { recursive: true, force: true });
+  await Promise.all([
+    rm(GENERATED_THEME_DIR, { recursive: true, force: true }),
+    rm(GENERATED_PROFILE_DIR, { recursive: true, force: true }),
+  ]);
   process.exit(0);
 }
 
-await mkdir(GENERATED_DIR, { recursive: true });
+await Promise.all([
+  mkdir(GENERATED_THEME_DIR, { recursive: true }),
+  mkdir(GENERATED_PROFILE_DIR, { recursive: true }),
+]);
 
 const registry = await loadThemeRegistry();
-const index = generatedIndex(registry);
-await writeFile(path.join(GENERATED_DIR, 'index.json'), `${JSON.stringify(index, null, 2)}\n`);
+await writeFile(
+  path.join(GENERATED_THEME_DIR, 'index.json'),
+  `${JSON.stringify(generatedIndex(registry), null, 2)}\n`,
+);
 
-const entries = themeEntries(registry);
-await copyFontAssets(entries);
-
-for (const entry of entries) {
-  const sd = new StyleDictionary({
-    source: entry.source.map((sourcePath) => resolveRegistryPath(sourcePath, TOOL_ROOT)),
-    platforms: {
-      merce: {
-        buildPath: `${GENERATED_DIR}/`,
-        files: [{
-          destination: entry.path,
-          format: FORMAT_NAME,
-          options: {
-            theme: entry.theme,
-            variant: entry.variant,
-            fonts: entry.fonts,
-          },
-        }],
-      },
-    },
-    log: {
-      warnings: 'warn',
-      verbosity: 'default',
-      errors: {
-        brokenReferences: 'throw',
-      },
+for (const entry of themeEntries(registry)) {
+  await writeDocument({
+    entry,
+    outputDir: GENERATED_THEME_DIR,
+    formatter: formatResolvedTheme,
+    options: {
+      brandId: entry.brandId,
+      mode: entry.mode,
     },
   });
-
-  await sd.buildAllPlatforms();
-  await validateManifestFile(path.join(GENERATED_DIR, entry.path), {
-    theme: entry.theme,
-    variant: entry.variant,
-  });
+  await validateResolvedThemeFile(path.join(GENERATED_THEME_DIR, entry.path), entry);
 }
 
-async function copyFontAssets(entries) {
-  const copied = new Set();
-  for (const entry of entries) {
-    for (const font of entry.fonts ?? []) {
-      if (copied.has(font.destination))
-        continue;
+for (const entry of profileEntries(registry)) {
+  await writeDocument({
+    entry,
+    outputDir: GENERATED_PROFILE_DIR,
+    formatter: formatProfile,
+    options: {
+      profileId: entry.profileId,
+    },
+  });
+  await validateProfileFile(path.join(GENERATED_PROFILE_DIR, entry.path), entry);
+}
 
-      const sourcePath = resolveRegistryPath(font.source, TOOL_ROOT);
-      const destinationPath = path.join(GENERATED_DIR, font.destination);
-      await mkdir(path.dirname(destinationPath), { recursive: true });
-      await copyFile(sourcePath, destinationPath);
-      copied.add(font.destination);
+async function writeDocument({
+  entry,
+  outputDir,
+  formatter,
+  options,
+}) {
+  const sources = await Promise.all(entry.source.map(async (sourcePath) => (
+    JSON.parse(await readFile(resolveRegistryPath(sourcePath, TOOL_ROOT), 'utf8'))
+  )));
+  const dictionary = resolveDictionary(sources.reduce(deepMerge, {}));
+  const document = formatter(dictionary, options);
+  await writeFile(path.join(outputDir, entry.path), `${JSON.stringify(document, null, 2)}\n`);
+}
+
+function deepMerge(base, overlay) {
+  const merged = structuredClone(base);
+  for (const [key, value] of Object.entries(overlay)) {
+    if (isObject(value) && isObject(merged[key])) {
+      merged[key] = deepMerge(merged[key], value);
+    } else {
+      merged[key] = structuredClone(value);
     }
   }
+  return merged;
+}
+
+function resolveDictionary(tokens) {
+  const raw = new Map();
+  collectTokens(tokens, [], raw);
+
+  const resolved = new Map();
+  const resolving = new Set();
+  const resolveToken = (name) => {
+    if (resolved.has(name)) {
+      return resolved.get(name);
+    }
+    if (!raw.has(name)) {
+      throw new Error(`Unresolved token reference '{${name}}'`);
+    }
+    if (resolving.has(name)) {
+      throw new Error(`Circular token reference '{${name}}'`);
+    }
+
+    resolving.add(name);
+    const value = resolveReferences(raw.get(name), resolveToken);
+    resolving.delete(name);
+    resolved.set(name, value);
+    return value;
+  };
+
+  return {
+    allTokens: [...raw.keys()].map((name) => ({
+      path: name.split('.'),
+      $value: resolveToken(name),
+    })),
+    tokens,
+  };
+}
+
+function collectTokens(value, pathSegments, target) {
+  if (!isObject(value)) {
+    return;
+  }
+  if (Object.prototype.hasOwnProperty.call(value, '$value')
+      || Object.prototype.hasOwnProperty.call(value, 'value')) {
+    target.set(pathSegments.join('.'), value.$value ?? value.value);
+    return;
+  }
+  for (const [key, child] of Object.entries(value)) {
+    collectTokens(child, [...pathSegments, key], target);
+  }
+}
+
+function resolveReferences(value, resolveToken) {
+  if (typeof value === 'string') {
+    const match = value.match(/^\{([^{}]+)\}$/);
+    return match ? resolveToken(match[1]) : value;
+  }
+  if (Array.isArray(value)) {
+    return value.map((child) => resolveReferences(child, resolveToken));
+  }
+  if (isObject(value)) {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, child]) => [key, resolveReferences(child, resolveToken)]),
+    );
+  }
+  return value;
+}
+
+function isObject(value) {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
 }

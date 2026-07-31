@@ -1,149 +1,90 @@
 {
-  "schemaVersion": 1,
-  "theme": "linear",
-  "variant": "light",
-  "fonts": [
-    {
-      "family": "IoskeleyMono Nerd Font",
-      "source": "fonts/linear/IoskeleyMonoNerdFont-Regular.ttf",
-      "weight": 400,
-      "style": "normal",
-      "required": true
-    },
-    {
-      "family": "IoskeleyMono Nerd Font",
-      "source": "fonts/linear/IoskeleyMonoNerdFont-Medium.ttf",
-      "weight": 510,
-      "style": "normal",
-      "required": true
-    },
-    {
-      "family": "IoskeleyMono Nerd Font",
-      "source": "fonts/linear/IoskeleyMonoNerdFont-Bold.ttf",
-      "weight": 700,
-      "style": "normal",
-      "required": true
-    }
-  ],
+  "kind": "resolved-theme",
+  "resolvedThemeSchemaVersion": 1,
+  "brandId": "linear",
+  "mode": "light",
+  "identity": {
+    "mark": "#5E6AD2"
+  },
   "colors": {
-    "text": {
-      "primary": "#08090A",
-      "secondary": "#2C2E33",
-      "tertiary": "#5A5F6B",
-      "inverse": "#F7F8F8",
-      "disabled": "#8A8F98",
-      "link": "#4B57C8",
-      "linkHover": "#7B89F0"
+    "surface": {
+      "canvas": "#F6F4EE",
+      "container": "#FFFFFF",
+      "containerRaised": "#FFFFFF",
+      "containerSunken": "#EDEAE2",
+      "containerTinted": "#EFF5F3",
+      "floating": "#FFFFFF",
+      "scrim": "#99000000",
+      "inverse": "#151A19"
     },
-    "background": {
-      "base": "#F7F8F8",
-      "surface": "#FFFFFF",
-      "elevated": "#F0F1F2",
-      "hover": "#E8E9EB",
-      "pressed": "#DADCE0",
-      "tinted": "#E8E9EB",
-      "overlay": "#000000"
-    },
-    "border": {
-      "base": "#E5E7EB",
-      "strong": "#D0D3D9",
-      "focus": "#5E6AD2",
-      "error": "#E53935",
-      "success": "#27A644"
+    "content": {
+      "primary": "#151A19",
+      "secondary": "#4E5B58",
+      "tertiary": "#6D7874",
+      "inverse": "#FFFFFF",
+      "disabled": "#7A847F",
+      "link": "#5E6AD2"
     },
     "action": {
-      "primary": "#5E6AD2",
-      "primaryHover": "#4B57C8",
-      "primaryPressed": "#3F49B6",
-      "primarySubtle": "#ECEEFF",
-      "secondary": "#E8E9EB",
-      "secondaryHover": "#F0F1F2",
-      "secondaryPressed": "#DADCE0",
-      "disabled": "#8A8F98"
+      "primary": {
+        "container": "#5E6AD2",
+        "content": "#FFFFFF",
+        "outline": "#5E6AD2"
+      },
+      "secondary": {
+        "container": "#65716D",
+        "content": "#FFFFFF",
+        "outline": "#65716D"
+      },
+      "destructive": {
+        "container": "#B3261E",
+        "content": "#FFFFFF",
+        "outline": "#B3261E"
+      }
     },
     "status": {
-      "success": "#27A644",
-      "successSubtle": "#E6F6EA",
-      "warning": "#F59E0B",
-      "warningSubtle": "#FEF3C7",
-      "error": "#E53935",
-      "errorSubtle": "#FCE7E7",
-      "info": "#5E6AD2",
-      "infoSubtle": "#ECEEFF"
+      "success": {
+        "container": "#ECFDF3",
+        "content": "#166B3B",
+        "outline": "#166B3B"
+      },
+      "warning": {
+        "container": "#FFFBEB",
+        "content": "#8A4B00",
+        "outline": "#8A4B00"
+      },
+      "error": {
+        "container": "#FEF2F2",
+        "content": "#B3261E",
+        "outline": "#B3261E"
+      },
+      "info": {
+        "container": "#EFF4FC",
+        "content": "#245EA8",
+        "outline": "#245EA8"
+      },
+      "neutral": {
+        "container": "#EFF1F0",
+        "content": "#4E5B58",
+        "outline": "#65716D"
+      }
     },
-    "surface": {
-      "base": "#FFFFFF",
-      "tinted": "#E8E9EB",
-      "raised": "#F0F1F2"
+    "outline": {
+      "subtle": "#CBD2CF",
+      "strong": "#A9B2AE",
+      "focus": "#7B89F0"
     }
   },
-  "spacing": {
-    "base": 4,
-    "none": 0,
-    "xxs": 2,
-    "xs": 4,
-    "sm": 8,
-    "md": 12,
-    "lg": 16,
-    "xl": 24,
-    "xl2": 32,
-    "xl3": 48,
-    "xl4": 64,
-    "xl5": 96,
-    "xl6": 128,
-    "componentGap": 12,
-    "sectionGap": 48,
-    "pagePadding": 24,
-    "touchTarget": 40,
-    "touchTargetCompact": 32,
-    "gridGap": 16,
-    "stackGap": 8,
-    "inlineGap": 6
-  },
-  "radius": {
-    "none": 0,
-    "small": 4,
-    "medium": 6,
-    "large": 8,
-    "xlarge": 12,
-    "xxlarge": 16,
-    "full": 9999,
-    "button": 6,
-    "input": 6,
-    "card": 8,
-    "badge": 9999,
-    "dialog": 12,
-    "tooltip": 4
-  },
-  "typography": {
-    "displayFont": "Inter",
-    "bodyFont": "Inter",
-    "monoFont": "IoskeleyMono Nerd Font",
-    "displayFontFallback": "Inter",
-    "bodyFontFallback": "Inter",
-    "sizeXSmall": 12,
-    "sizeSmall": 14,
-    "sizeMedium": 16,
-    "sizeLarge": 18,
-    "sizeXLarge": 20,
-    "size2XLarge": 24,
-    "size3XLarge": 32,
-    "size4XLarge": 48,
-    "size5XLarge": 72,
-    "size6XLarge": 72,
-    "size7XLarge": 72,
-    "weightRegular": 400,
-    "weightMedium": 510,
-    "weightSemibold": 590,
-    "weightBold": 700,
-    "leadingTight": 1,
-    "leadingSnug": 1.2,
-    "leadingNormal": 1.5,
-    "leadingRelaxed": 1.6,
-    "trackingTight": -0.022,
-    "trackingNormal": 0,
-    "trackingWide": 0.01,
-    "trackingWider": 0.02,
-    "trackingWidest": 0.04
+  "state": {
+    "layer": {
+      "hover": 0.08,
+      "focus": 0.1,
+      "pressed": 0.1,
+      "selected": 0.12
+    },
+    "disabled": {
+      "containerOpacity": 0.12,
+      "contentOpacity": 0.38
+    }
   }
 }

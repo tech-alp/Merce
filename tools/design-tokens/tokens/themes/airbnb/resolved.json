@@ -1,0 +1,14 @@
+{
+  "identity": { "mark": { "$type": "color", "$value": "#FF385C" } },
+  "color": {
+    "content": { "link": { "$type": "color", "$value": "#C61D45" } },
+    "action": {
+      "primary": {
+        "container": { "$type": "color", "$value": "#FF385C" },
+        "content": { "$type": "color", "$value": "#151A19" },
+        "outline": { "$type": "color", "$value": "#FF385C" }
+      }
+    },
+    "outline": { "focus": { "$type": "color", "$value": "#C61D45" } }
+  }
+}

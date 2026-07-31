@@ -6,69 +6,73 @@ import {
 } from './token-value-utils.mjs';
 
 export const COLOR_FIELD_MAP = {
-  text: [
-    ['primary', 'color.text.primary'],
-    ['secondary', 'color.text.secondary'],
-    ['tertiary', 'color.text.tertiary'],
-    ['inverse', 'color.text.inverse'],
-    ['disabled', 'color.text.disabled'],
-    ['link', 'color.text.link'],
-    ['linkHover', 'color.text.linkHover'],
+  surface: [
+    'canvas',
+    'container',
+    'containerRaised',
+    'containerSunken',
+    'containerTinted',
+    'floating',
+    'scrim',
+    'inverse',
   ],
-  background: [
-    ['base', 'color.background.base'],
-    ['subtle', 'color.background.subtle'],
-    ['overlay', 'color.background.overlay'],
-  ],
-  border: [
-    ['base', 'color.border.base'],
-    ['strong', 'color.border.strong'],
-    ['focus', 'color.border.focus'],
-    ['disabled', 'color.border.disabled'],
+  content: [
+    'primary',
+    'secondary',
+    'tertiary',
+    'inverse',
+    'disabled',
+    'link',
   ],
   action: [
-    ['primary', 'color.action.primary'],
-    ['primaryHover', 'color.action.primaryHover'],
-    ['primaryPressed', 'color.action.primaryPressed'],
-    ['primarySubtle', 'color.action.primarySubtle'],
-    ['secondary', 'color.action.secondary'],
-    ['secondaryHover', 'color.action.secondaryHover'],
-    ['secondaryPressed', 'color.action.secondaryPressed'],
-    ['disabled', 'color.action.disabled'],
+    'primary.container',
+    'primary.content',
+    'primary.outline',
+    'secondary.container',
+    'secondary.content',
+    'secondary.outline',
+    'destructive.container',
+    'destructive.content',
+    'destructive.outline',
   ],
   status: [
-    ['success.foreground', 'color.status.success.foreground'],
-    ['success.background', 'color.status.success.background'],
-    ['success.border', 'color.status.success.border'],
-    ['success.strong', 'color.status.success.strong'],
-    ['success.onStrong', 'color.status.success.onStrong'],
-    ['warning.foreground', 'color.status.warning.foreground'],
-    ['warning.background', 'color.status.warning.background'],
-    ['warning.border', 'color.status.warning.border'],
-    ['warning.strong', 'color.status.warning.strong'],
-    ['warning.onStrong', 'color.status.warning.onStrong'],
-    ['error.foreground', 'color.status.error.foreground'],
-    ['error.background', 'color.status.error.background'],
-    ['error.border', 'color.status.error.border'],
-    ['error.strong', 'color.status.error.strong'],
-    ['error.onStrong', 'color.status.error.onStrong'],
-    ['info.foreground', 'color.status.info.foreground'],
-    ['info.background', 'color.status.info.background'],
-    ['info.border', 'color.status.info.border'],
-    ['info.strong', 'color.status.info.strong'],
-    ['info.onStrong', 'color.status.info.onStrong'],
+    'success.container',
+    'success.content',
+    'success.outline',
+    'warning.container',
+    'warning.content',
+    'warning.outline',
+    'error.container',
+    'error.content',
+    'error.outline',
+    'info.container',
+    'info.content',
+    'info.outline',
+    'neutral.container',
+    'neutral.content',
+    'neutral.outline',
   ],
-  surface: [
-    ['base', 'color.surface.base'],
-    ['tinted', 'color.surface.tinted'],
-    ['raised', 'color.surface.raised'],
-    ['hover', 'color.surface.hover'],
-    ['pressed', 'color.surface.pressed'],
-    ['disabled', 'color.surface.disabled'],
+  outline: [
+    'subtle',
+    'strong',
+    'focus',
   ],
 };
 
-export const FIELD_MAP = {
+export const STATE_FIELD_MAP = {
+  layer: [
+    'hover',
+    'focus',
+    'pressed',
+    'selected',
+  ],
+  disabled: [
+    'containerOpacity',
+    'contentOpacity',
+  ],
+};
+
+export const PROFILE_FIELD_MAP = {
   spacing: [
     'base',
     'none',
@@ -91,7 +95,7 @@ export const FIELD_MAP = {
     'gridGap',
     'stackGap',
     'inlineGap',
-  ].map((name) => [name, `spacing.${name}`]),
+  ],
   radius: [
     'none',
     'small',
@@ -106,7 +110,7 @@ export const FIELD_MAP = {
     'badge',
     'dialog',
     'tooltip',
-  ].map((name) => [name, `radius.${name}`]),
+  ],
   typography: [
     'displayFont',
     'bodyFont',
@@ -137,8 +141,29 @@ export const FIELD_MAP = {
     'trackingWide',
     'trackingWider',
     'trackingWidest',
-  ].map((name) => [name, `typography.${name}`]),
+  ],
+  size: [
+    'control.small',
+    'control.medium',
+    'control.large',
+    'control.minimum',
+    'icon.small',
+    'icon.medium',
+    'icon.large',
+    'outline.hairline',
+    'outline.strong',
+    'outline.focus',
+  ],
 };
+
+function tokenValues(dictionary) {
+  return new Map(
+    dictionary.allTokens.map((token) => [
+      tokenKey(token),
+      normalizeValue(resolveValue(token, dictionary.tokens)),
+    ]),
+  );
+}
 
 function assignNestedField(target, fieldPath, value) {
   const segments = fieldPath.split('.');
@@ -152,55 +177,55 @@ function assignNestedField(target, fieldPath, value) {
   cursor[segments.at(-1)] = value;
 }
 
-function objectFromFieldMap(fields, tokenValues) {
-  const object = {};
-
-  for (const [name, tokenPath] of fields) {
-    assignNestedField(object, name, requiredValue(tokenValues, tokenPath));
-  }
-
-  return object;
+function mappedObject(prefix, groups, values) {
+  return Object.fromEntries(
+    Object.entries(groups).map(([group, fields]) => {
+      const result = {};
+      for (const field of fields) {
+        assignNestedField(result, field, requiredValue(values, `${prefix}.${group}.${field}`));
+      }
+      return [group, result];
+    }),
+  );
 }
 
-export function formatMerceManifest(dictionary, options) {
-  const tokenValues = new Map(
-    dictionary.allTokens.map((token) => [
-      tokenKey(token),
-      normalizeValue(resolveValue(token, dictionary.tokens)),
-    ]),
-  );
+export function formatResolvedTheme(dictionary, options) {
+  const values = tokenValues(dictionary);
+  const colors = mappedObject('color', COLOR_FIELD_MAP, values);
+  const state = mappedObject('state', STATE_FIELD_MAP, values);
+  const scrim = colors.surface.scrim;
+  if (!/^#[0-9a-fA-F]{8}$/.test(scrim)) {
+    throw new Error('color.surface.scrim must be an #RRGGBBAA color');
+  }
+  colors.surface.scrim = `#${scrim.slice(7)}${scrim.slice(1, 7)}`;
 
-  const manifest = {
-    schemaVersion: 1,
-    theme: options.theme,
+  return {
+    kind: 'resolved-theme',
+    resolvedThemeSchemaVersion: 1,
+    brandId: options.brandId,
+    mode: options.mode,
+    identity: {
+      mark: requiredValue(values, 'identity.mark'),
+    },
+    colors,
+    state,
+  };
+}
+
+export function formatProfile(dictionary, options) {
+  const values = tokenValues(dictionary);
+  const profile = {
+    profileSchemaVersion: 1,
+    profileId: options.profileId,
   };
 
-  if (options.variant) {
-    manifest.variant = options.variant;
+  for (const [section, fields] of Object.entries(PROFILE_FIELD_MAP)) {
+    const result = {};
+    for (const field of fields) {
+      assignNestedField(result, field, requiredValue(values, `${section}.${field}`));
+    }
+    profile[section] = result;
   }
 
-  if (Array.isArray(options.fonts) && options.fonts.length > 0) {
-    manifest.fonts = options.fonts.map((font) => ({
-      family: font.family,
-      source: font.destination,
-      weight: font.weight,
-      style: font.style ?? 'normal',
-      required: font.required !== false,
-    }));
-  }
-
-  manifest.colors = Object.fromEntries(
-    Object.entries(COLOR_FIELD_MAP).map(([groupName, fields]) => [
-      groupName,
-      objectFromFieldMap(fields, tokenValues),
-    ]),
-  );
-
-  for (const [section, fields] of Object.entries(FIELD_MAP)) {
-    manifest[section] = Object.fromEntries(
-      fields.map(([name, tokenPath]) => [name, requiredValue(tokenValues, tokenPath)]),
-    );
-  }
-
-  return manifest;
+  return profile;
 }
