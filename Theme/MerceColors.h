@@ -563,6 +563,7 @@ class MerceColorsSurface : public QObject
     Q_PROPERTY(QColor floating READ floating NOTIFY changed FINAL)
     Q_PROPERTY(QColor scrim READ scrim NOTIFY changed FINAL)
     Q_PROPERTY(QColor inverse READ inverse NOTIFY changed FINAL)
+    Q_PROPERTY(QColor shadow READ shadow NOTIFY changed FINAL)
     Q_PROPERTY(QColor base READ base NOTIFY changed FINAL)
     Q_PROPERTY(QColor tinted READ tinted NOTIFY changed FINAL)
     Q_PROPERTY(QColor raised READ raised NOTIFY changed FINAL)
@@ -585,6 +586,7 @@ public:
     QColor floating() const { return m_floating; }
     QColor scrim() const { return m_scrim; }
     QColor inverse() const { return m_inverse; }
+    QColor shadow() const { return m_shadow; }
 
     void applyManifestSection(const QJsonObject &section)
     {
@@ -609,6 +611,7 @@ public:
         m_floating = MerceColorJson::color(section, QStringLiteral("floating"), m_floating);
         m_scrim = MerceColorJson::color(section, QStringLiteral("scrim"), m_scrim);
         m_inverse = MerceColorJson::color(section, QStringLiteral("inverse"), m_inverse);
+        m_shadow = MerceColorJson::color(section, QStringLiteral("shadow"), m_shadow);
         m_hover = MerceColorJson::color(section, QStringLiteral("hover"), m_hover);
         m_pressed = MerceColorJson::color(section, QStringLiteral("pressed"), m_pressed);
         m_disabled = MerceColorJson::color(section, QStringLiteral("disabled"), m_disabled);
@@ -646,6 +649,7 @@ private:
     QColor m_floating = QColor(QStringLiteral("#FFFFFF"));
     QColor m_scrim = QColor(QStringLiteral("#80000000"));
     QColor m_inverse = QColor(QStringLiteral("#151A19"));
+    QColor m_shadow = QColor(QStringLiteral("#151A19"));
 };
 
 class MerceColors : public QObject

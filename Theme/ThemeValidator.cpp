@@ -28,6 +28,7 @@ const QStringList kSurfaceRoles{
     QStringLiteral("floating"),
     QStringLiteral("scrim"),
     QStringLiteral("inverse"),
+    QStringLiteral("shadow"),
 };
 
 const QStringList kContentRoles{

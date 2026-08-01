@@ -77,6 +77,7 @@ QJsonObject surfaces(BrandMode mode)
             {QStringLiteral("floating"), QStringLiteral("#242B29")},
             {QStringLiteral("scrim"), QStringLiteral("#A3000000")},
             {QStringLiteral("inverse"), QStringLiteral("#F6F4EE")},
+            {QStringLiteral("shadow"), QStringLiteral("#000000")},
         };
     }
 
@@ -89,6 +90,7 @@ QJsonObject surfaces(BrandMode mode)
         {QStringLiteral("floating"), QStringLiteral("#FFFFFF")},
         {QStringLiteral("scrim"), QStringLiteral("#A3000000")},
         {QStringLiteral("inverse"), QStringLiteral("#0E1514")},
+        {QStringLiteral("shadow"), QStringLiteral("#151A19")},
     };
 }
 

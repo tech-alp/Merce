@@ -18,7 +18,7 @@ struct BrandDerivationResult
     QJsonObject colors;
     QJsonObject state;
     // Interaction previews prove direction without adding obsolete hover/pressed
-    // roles to the resolved 41-role manifest; runtime states use opacity layers.
+    // roles to the resolved 42-role manifest; runtime states use opacity layers.
     QColor hoverContainer;
     QColor pressedContainer;
     QString errorCode;

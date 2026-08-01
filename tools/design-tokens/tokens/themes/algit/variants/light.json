@@ -11,7 +11,8 @@
       "containerTinted": { "$type": "color", "$value": "#EFF5F3" },
       "floating": { "$type": "color", "$value": "#FFFFFF" },
       "scrim": { "$type": "color", "$value": "#00000099" },
-      "inverse": { "$type": "color", "$value": "#151A19" }
+      "inverse": { "$type": "color", "$value": "#151A19" },
+      "shadow": { "$type": "color", "$value": "#151A19" }
     },
     "content": {
       "primary": { "$type": "color", "$value": "#151A19" },

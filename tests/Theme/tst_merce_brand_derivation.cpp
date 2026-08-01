@@ -187,7 +187,7 @@ void MerceBrandDerivationTest::derivesCompleteRoleVocabulary()
     QVERIFY2(result.ok, qPrintable(result.errorMessage));
 
     const QJsonObject colors = result.colors;
-    QCOMPARE(colors.value(QStringLiteral("surface")).toObject().size(), 8);
+    QCOMPARE(colors.value(QStringLiteral("surface")).toObject().size(), 9);
     QCOMPARE(colors.value(QStringLiteral("content")).toObject().size(), 6);
     QCOMPARE(colors.value(QStringLiteral("action")).toObject().size(), 3);
     QCOMPARE(colors.value(QStringLiteral("status")).toObject().size(), 5);
@@ -203,7 +203,7 @@ void MerceBrandDerivationTest::derivesCompleteRoleVocabulary()
                                 QStringLiteral("outline")}));
     }
 
-    QCOMPARE(8 + 6 + triplePaths(colors).size() * 3 + 3, 41);
+    QCOMPARE(9 + 6 + triplePaths(colors).size() * 3 + 3, 42);
     QCOMPARE(result.state.value(QStringLiteral("layer")).toObject().size(), 4);
     QCOMPARE(result.state.value(QStringLiteral("disabled")).toObject().size(), 2);
     QVERIFY(ThemeValidator::validateResolvedTheme(

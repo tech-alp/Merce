@@ -15,6 +15,7 @@ export const COLOR_FIELD_MAP = {
     'floating',
     'scrim',
     'inverse',
+    'shadow',
   ],
   content: [
     'primary',

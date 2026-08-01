@@ -15,7 +15,8 @@
       "containerTinted": "#EFF5F3",
       "floating": "#FFFFFF",
       "scrim": "#99000000",
-      "inverse": "#151A19"
+      "inverse": "#151A19",
+      "shadow": "#151A19"
     },
     "content": {
       "primary": "#151A19",
