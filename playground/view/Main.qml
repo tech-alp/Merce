@@ -1,17 +1,20 @@
 import QtQuick
 import QtQuick.Controls.Basic as Basic
+import Qt.labs.StyleKit
 import QtQml.Models
+import Merce.Style
 import Merce.Theme
 
-Basic.ApplicationWindow {
+ApplicationWindow {
     id: root
     objectName: "merce.playground.window"
 
     width: 1180
     height: 760
     visible: true
-    color: Theme.colors.background.base
     title: "Merce Playground"
+
+    StyleKit.style: MerceStyle {}
 
     property string selectedPage: "theme"
     readonly property var materialIcons: playgroundMaterialIcons
@@ -182,21 +185,21 @@ Basic.ApplicationWindow {
     }
 
     function navigateTo(key) {
-        if (selectedPage === key && pageStack.depth > 0)
+        if (selectedPage === key && !pageStack.empty)
             return
 
         selectedPage = key
     }
 
-    function replaceCurrentPage(key, operation) {
-        const component = pageComponent(key)
+    function replaceCurrentPage(operation) {
+        const component = pageComponent(selectedPage)
         if (!component || pageStack.empty)
             return
 
         pageStack.replace(component, operation || Basic.StackView.ReplaceTransition)
     }
 
-    onSelectedPageChanged: replaceCurrentPage(selectedPage)
+    onSelectedPageChanged: replaceCurrentPage()
 
     Component.onCompleted: loadThemeSources()
 
@@ -226,7 +229,11 @@ Basic.ApplicationWindow {
     Item {
         id: contentShell
         objectName: "merce.playground.content"
-        anchors.fill: parent
+        anchors {
+            fill: parent
+            topMargin: root.header ? root.header.height : 0
+            bottomMargin: root.footer ? root.footer.height : 0
+        }
 
         NavigationBar {
             id: navigationBar
@@ -385,17 +392,15 @@ Basic.ApplicationWindow {
 
     Component {
         id: shadowsShowcase
-        PlaceholderShowcase {
+        ShadowsShowcase {
             objectName: "merce.playground.shadowsShowcase"
-            title: "Shadows"
         }
     }
 
     Component {
         id: motionShowcase
-        PlaceholderShowcase {
+        MotionShowcase {
             objectName: "merce.playground.motionShowcase"
-            title: "Motion"
         }
     }
 
@@ -430,17 +435,15 @@ Basic.ApplicationWindow {
 
     Component {
         id: formsShowcase
-        PlaceholderShowcase {
+        FormsShowcase {
             objectName: "merce.playground.formsShowcase"
-            title: "Forms"
         }
     }
 
     Component {
         id: statesShowcase
-        PlaceholderShowcase {
+        StatesShowcase {
             objectName: "merce.playground.statesShowcase"
-            title: "States"
         }
     }
 }

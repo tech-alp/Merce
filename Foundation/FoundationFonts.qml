@@ -39,12 +39,13 @@ Item {
 
     function resolveFamily(family) {
         const requested = String(family || "").trim()
-        if (requested === "" || requested === "Inter" || requested === "DM Sans")
+        if (requested === "" || requested === "Inter" || requested === "DM Sans" ||
+                requested === "Lexend")
             return bodyFamily
         if (requested === "Playfair Display")
             return displayFamily
         if (requested === "SF Mono" || requested === "Roboto Mono" ||
-                requested === "RobotoMono")
+                requested === "RobotoMono" || requested === "JetBrains Mono")
             return monoFamily
         if (requested === "Material Symbols Rounded" ||
                 requested === "Material Symbols Outlined" ||

@@ -1,7 +1,11 @@
 import QtQml
+import Qt.labs.StyleKit as SK
+import Merce.Style
 import Merce.Theme
 
 ThemeBuilderShowcase {
+    SK.StyleKit.style: MerceStyle {}
+
     Timer {
         interval: 0
         running: true

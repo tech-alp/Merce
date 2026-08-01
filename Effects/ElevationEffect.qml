@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Effects
+import Merce.Theme as MerceRuntime
 
 /**
  * ElevationEffect - Shadow/gölge efekti componenti
@@ -22,7 +23,7 @@ Item {
     /**
      * Shadow color (optional, defaults to black with alpha)
      */
-    property color shadowColor: "#000000"
+    property color shadowColor: MerceRuntime.Theme.colors.surface.shadow
 
     /**
      * Shadow radius multiplier (for customization)

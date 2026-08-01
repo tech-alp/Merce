@@ -3,7 +3,8 @@
 import { spawn } from "node:child_process";
 
 const repoRoot = new URL("..", import.meta.url).pathname.replace(/\/$/, "");
-const mcpPath = `${repoRoot}/build/qmlagent/tools/qmlagent/qmlagent-mcp`;
+const mcpPath = process.env.QMLAGENT_MCP
+  ?? `${repoRoot}/build/qmlagent/tools/qmlagent/qmlagent-mcp`;
 const port = Number(process.argv[2] ?? "3771");
 
 let nextId = 1;
@@ -135,15 +136,20 @@ try {
   });
   notify("notifications/initialized");
 
-  const connect = await tool("qmlagent.connect_tcp", {
+  const connect = await tool("qmlagent_connect_tcp", {
     host: "127.0.0.1",
     port,
     timeoutMs: 10000,
   });
 
-  const status = await tool("qmlagent.target_status", {});
+  const connectPayload = payload(connect);
+  if (!connectPayload.connected) {
+    throw new Error(connectPayload.lastError ?? "QMLAgent TCP connection failed");
+  }
+
+  const status = await tool("qmlagent_target_status", {});
   const gallerySelectors = [
-    ["root", 'objectName="merce.playground.gallery"', ["width", "height", "visible"]],
+    ["root", 'objectName="merce.playground.content"', ["width", "height", "visible"]],
     ["activeTheme", 'objectName="merce.playground.gallery.activeTheme"', ["width", "height", "visible"]],
     ["palette", 'objectName="merce.playground.gallery.palette"', ["width", "height", "visible"]],
     ["typography", 'objectName="merce.playground.gallery.typography"', ["width", "height", "visible"]],
@@ -153,25 +159,24 @@ try {
   ];
   const gallery = {};
   for (const [name, selector, properties] of gallerySelectors) {
-    gallery[name] = await tool("qmlagent.ui_query", {
+    gallery[name] = await tool("qmlagent_ui_query", {
       selector,
       verbosity: "summary",
       includeSource: true,
       properties,
     });
   }
-  const tree = await tool("qmlagent.ui_get_tree", {
+  const tree = await tool("qmlagent_ui_get_tree", {
     depth: 3,
     maxNodes: 80,
     fields: ["nodeId", "id", "type", "objectName", "text", "visible", "enabled", "bounds"],
     properties: ["width", "height", "title"],
   });
-  const diagnostics = await tool("qmlagent.diagnostics_analyze_tree", {
+  const diagnostics = await tool("qmlagent_diagnostics_analyze_tree", {
     maxIssues: 10,
     verbosity: "summary",
   });
 
-  const connectPayload = payload(connect);
   const statusPayload = payload(status);
   const treePayload = payload(tree);
   const diagnosticsPayload = payload(diagnostics);
@@ -190,6 +195,7 @@ try {
       serviceEnabled: connectPayload.serviceEnabled,
       host: connectPayload.host,
       port: connectPayload.port,
+      lastError: connectPayload.lastError,
     },
     status: {
       connected: statusPayload.connected,

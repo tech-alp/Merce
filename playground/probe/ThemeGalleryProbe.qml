@@ -1,12 +1,15 @@
 import QtQuick
+import Qt.labs.StyleKit as SK
+import Merce.Style
 import Merce.Theme
 
-Window {
+SK.ApplicationWindow {
     id: root
     width: 1100
     height: 760
     visible: true
-    color: Theme.colors.background.base
+
+    SK.StyleKit.style: MerceStyle {}
 
     ThemeGallery {
         id: gallery

@@ -47,3 +47,10 @@ tmp/
 temp/
 *.tmp
 .qtcreator/
+
+# local agent tooling
+external/qmlagent/
+.qmlagent/
+.gitmodules
+.agents/skills/qmlagent-runtime
+.claude/skills/qmlagent-runtime

@@ -1,4 +1,5 @@
 import QtQuick
+import Qt.labs.StyleKit as SK
 import Merce.Theme
 import Merce.Foundation
 import Merce.Controls
@@ -479,13 +480,23 @@ Item {
                             wrapMode: Text.NoWrap
                         }
 
-                        MInput {
+                        SK.TextField {
                             width: Math.max(120, parent.width - 196)
                             anchors.verticalCenter: parent.verticalCenter
-                            placeholder: "Search..."
-                            inputType: "search"
-                            trailingIcon: "material:search"
-                            isReadOnly: true
+                            placeholderText: "Search..."
+                            readOnly: true
+                            rightPadding: Theme.spacing.xl2
+
+                            AppIcon {
+                                anchors {
+                                    right: parent.right
+                                    rightMargin: Theme.spacing.md
+                                    verticalCenter: parent.verticalCenter
+                                }
+                                name: "material:search"
+                                size: Theme.icons.small
+                                color: Theme.colors.text.secondary
+                            }
                         }
 
                         AppIcon {
@@ -532,11 +543,11 @@ Item {
                         width: parent.width - 72 - parent.spacing
                         spacing: Theme.spacing.xs
 
-                        MInput {
+                        SK.TextField {
                             id: inputField
                             width: parent.width
                             text: "Input text"
-                            isReadOnly: true
+                            readOnly: true
                         }
 
                         CaptionText {
@@ -562,16 +573,21 @@ Item {
                 metaLeft: "Content padding: xl"
                 metaMiddle: "Section gap: md"
                 metaRight: "Radius: dialog"
-                previewHeight: 152
+                previewHeight: dialogPreview.implicitHeight + Theme.spacing.md
 
                 Surface {
-                    width: Math.min(parent.width - Theme.spacing.xl2, 300)
-                    height: 126
+                    id: dialogPreview
+
+                    width: Math.min(parent.width - Theme.spacing.xl2, 360)
+                    height: implicitHeight
+                    implicitHeight: dialogPreviewContent.implicitHeight + Theme.spacing.lg * 2
                     anchors.centerIn: parent
                     surfaceType: Surface.Default
                     radiusValue: Theme.radius.dialog
 
                     Column {
+                        id: dialogPreviewContent
+
                         anchors {
                             fill: parent
                             margins: Theme.spacing.lg
@@ -607,8 +623,15 @@ Item {
                             anchors.right: parent.right
                             spacing: Theme.spacing.sm
 
-                            MButton { text: "Cancel"; variant: MButton.Outline; size: MButton.Small }
-                            MButton { text: "Confirm"; size: MButton.Small }
+                            MButton {
+                                text: "Cancel"
+                                variant: MButton.Outline
+                                size: MButton.Small
+                            }
+                            MButton {
+                                text: "Confirm"
+                                size: MButton.Small
+                            }
                         }
                     }
                 }
@@ -787,22 +810,22 @@ Item {
 
                     MButton {
                         text: "Action"
-                        icon.name: "material:home"
                         variant: MButton.Outline
-                        size: MButton.Medium
+                        iconName: "go-home"
+                        iconPosition: MButton.IconLeft
                     }
 
                     MButton {
                         text: "Primary"
-                        icon.name: "material:check_circle"
-                        size: MButton.Medium
+                        iconName: "dialog-ok"
+                        iconPosition: MButton.IconLeft
                     }
 
                     MButton {
                         text: "More"
-                        icon.name: "material:menu"
                         variant: MButton.Outline
-                        size: MButton.Medium
+                        iconName: "open-menu-symbolic"
+                        iconPosition: MButton.IconLeft
                     }
                 }
 

@@ -8,10 +8,13 @@ set(MERCE_PLAYGROUND_VIEW_QML
     view/Main.qml
     view/ControlsShowcase.qml
     view/FeedbackShowcase.qml
+    view/FormsShowcase.qml
     view/IconsShowcase.qml
+    view/MotionShowcase.qml
     view/PaletteShowcase.qml
-    view/PlaceholderShowcase.qml
+    view/ShadowsShowcase.qml
     view/SpacingRadiusShowcase.qml
+    view/StatesShowcase.qml
     view/ThemeGalleryExport.qml
     view/ThemeGallery.qml
     view/ThemeBuilderShowcase.qml
@@ -63,10 +66,13 @@ qt_add_qml_module(MercePlayground
 target_link_libraries(MercePlayground
     PRIVATE
         Qt6::Core
+        Qt6::LabsStyleKit
         Qt6::Quick
+        Qt6::QuickControls2
         Qt6::Qml
         MerceCore
         MercePlatform
+        MerceStyle
         MerceTheme
         MerceEffects
         MerceFoundation

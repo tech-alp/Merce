@@ -5,4 +5,4 @@ qt_add_qml_module(MerceEffects
         ElevationEffect.qml
 )
 
-target_link_libraries(MerceEffects PRIVATE Qt6::Quick Qt6::Qml)
+target_link_libraries(MerceEffects PRIVATE MerceTheme Qt6::Quick Qt6::Qml)

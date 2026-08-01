@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Optional design-token build tooling. This stays off by default so normal
 # Qt configure/build paths never require Node or npm.
-option(MERCE_ENABLE_TOKEN_BUILD "Enable the Style Dictionary token manifest build target" OFF)
+option(MERCE_ENABLE_TOKEN_BUILD "Enable the design-token manifest build target" OFF)
 option(MERCE_ENABLE_FONTAWESOME "Build the optional Font Awesome SVG QML module" ON)
 
 if(MERCE_ENABLE_TOKEN_BUILD)
@@ -24,8 +24,8 @@ if(MERCE_ENABLE_TOKEN_BUILD)
     )
 endif()
 
-# Qt 6.11+ required
-find_package(Qt6 6.11 REQUIRED COMPONENTS Core Gui Quick Qml)
+# Qt 6.11+ / Qt.labs.StyleKit baseline required
+find_package(Qt6 6.11 REQUIRED COMPONENTS Core Gui Quick Qml QuickControls2 LabsStyleKit)
 
 qt_standard_project_setup(REQUIRES 6.11)
 include(CTest)
@@ -33,7 +33,7 @@ include(FetchContent)
 set(QT_QML_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/qml")
 
 # External QML modules
-set(MERCE_QTTOASTIFY_GIT_TAG "09e7e12f7228a00efbb0c25920545de134620359" CACHE STRING "Pinned QtToastify revision")
+set(MERCE_QTTOASTIFY_GIT_TAG "79348334ec24c46b5c4aad8b3d14265099612ffe" CACHE STRING "Pinned QtToastify revision")
 set(BUILD_PLAYGROUND OFF CACHE BOOL "Build QtToastify playground examples" FORCE)
 set(BUILD_TESTS OFF CACHE BOOL "Build QtToastify tests" FORCE)
 
@@ -51,6 +51,7 @@ add_subdirectory(Core)
 add_subdirectory(Platform)
 add_subdirectory(Theme)
 add_subdirectory(Foundation)
+add_subdirectory(Style)
 add_subdirectory(Effects)
 if(MERCE_ENABLE_FONTAWESOME)
     add_subdirectory(Icons/FontAwesome)
@@ -89,6 +90,7 @@ set(MERCE_QML_MODULE_TARGETS
     MercePlatform
     MerceTheme
     MerceFoundation
+    MerceStyle
     MerceEffects
     MerceControls
     MerceNotifications
@@ -207,16 +209,18 @@ message(STATUS "Merce Design System v${PROJECT_VERSION}")
 message(STATUS "  Qt Version: ${Qt6_VERSION}")
 message(STATUS "  Build Type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "  Install Prefix: ${CMAKE_INSTALL_PREFIX}")
-message(STATUS "  Build Examples: ${BUILD_MERCE_EXAMPLES}")
+message(STATUS "  Build Playground: ${BUILD_MERCE_PLAYGROUND}")
 message(STATUS "")
 message(STATUS "Module Dependency Tree:")
 message(STATUS "  Application")
-message(STATUS "    ├── Merce.Controls")
-message(STATUS "    │       └── Merce.Foundation")
+message(STATUS "    ├── Qt.labs.StyleKit controls")
+message(STATUS "    │       └── Merce.Style")
+message(STATUS "    │               ├── Merce.Foundation")
 message(STATUS "    │               └── Merce.Theme")
-message(STATUS "    │                       └── Merce.Core")
+message(STATUS "    ├── Merce.Controls (optional)")
+message(STATUS "    │       ├── Merce.Foundation")
+message(STATUS "    │       └── Merce.Theme")
 message(STATUS "    └── Merce.Notifications")
-message(STATUS "            └── Merce.Foundation")
-message(STATUS "                    └── Merce.Theme")
-message(STATUS "                            └── Merce.Core")
+message(STATUS "            ├── Merce.Foundation")
+message(STATUS "            └── Merce.Theme")
 message(STATUS "")

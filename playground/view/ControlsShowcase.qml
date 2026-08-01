@@ -1,4 +1,5 @@
 import QtQuick
+import Qt.labs.StyleKit as SK
 import Merce.Theme
 import Merce.Foundation
 import Merce.Controls
@@ -10,7 +11,7 @@ Item {
     implicitHeight: page.implicitHeight
     height: implicitHeight
 
-    property bool checkboxValue: true
+    property int checkboxState: Qt.PartiallyChecked
     property bool radioValue: true
     property bool switchValue: true
 
@@ -60,22 +61,57 @@ Item {
         DemoSection {
             title: "Buttons"
 
-            MButton { text: "Primary"; variant: MButton.Primary }
-            MButton { text: "Secondary"; variant: MButton.Secondary }
-            MButton { text: "Outline"; variant: MButton.Outline }
-            MButton { text: "Ghost"; variant: MButton.Ghost }
-            MButton { text: "Destructive"; variant: MButton.Destructive }
-            MButton { text: "Disabled"; enabled: false }
-            MButton { text: "Loading"; isLoading: true }
-            MButton { text: "With icon"; icon.name: "material:check" }
             MButton {
+                objectName: "merce.playground.controls.button.primary"
+                text: "Primary"
+            }
+            MButton {
+                objectName: "merce.playground.controls.button.secondary"
+                text: "Secondary"
+                variant: MButton.Secondary
+            }
+            MButton {
+                objectName: "merce.playground.controls.button.outline"
+                text: "Outline"
+                variant: MButton.Outline
+            }
+            MButton {
+                objectName: "merce.playground.controls.button.ghost"
+                text: "Ghost"
+                variant: MButton.Ghost
+            }
+            MButton {
+                objectName: "merce.playground.controls.button.destructive"
+                text: "Destructive"
+                variant: MButton.Destructive
+            }
+            MButton {
+                objectName: "merce.playground.controls.button.disabled"
+                text: "Disabled"
+                enabled: false
+            }
+            MButton {
+                objectName: "merce.playground.controls.button.loading"
+                text: "Loading"
+                loading: true
+                enabled: false
+            }
+            MButton {
+                objectName: "merce.playground.controls.button.nativeIcon"
+                text: "Native icon"
+                iconName: "document-save"
+                iconPosition: MButton.IconLeft
+            }
+            MButton {
+                objectName: "merce.playground.controls.button.topIcon"
                 text: "Top icon"
-                icon.name: "material:dashboard"
+                iconName: "go-up"
                 iconPosition: MButton.IconTop
             }
             MButton {
+                objectName: "merce.playground.controls.button.rightIcon"
                 text: "Right icon"
-                icon.name: "material:dashboard"
+                iconName: "go-next"
                 iconPosition: MButton.IconRight
             }
         }
@@ -83,9 +119,20 @@ Item {
         DemoSection {
             title: "Button sizes"
 
-            MButton { text: "Small"; size: MButton.Small }
-            MButton { text: "Medium"; size: MButton.Medium }
-            MButton { text: "Large"; size: MButton.Large }
+            MButton {
+                objectName: "merce.playground.controls.button.small"
+                text: "Small"
+                size: MButton.Small
+            }
+            MButton {
+                objectName: "merce.playground.controls.button.medium"
+                text: "Medium"
+            }
+            MButton {
+                objectName: "merce.playground.controls.button.large"
+                text: "Large"
+                size: MButton.Large
+            }
         }
 
         DemoSection {
@@ -99,68 +146,107 @@ Item {
             MBadge {
                 objectName: "merce.playground.controls.badge.primary"
                 text: "Primary"
-                variant: "primary"
+                variant: MBadge.Primary
                 icon: "material:palette"
             }
 
             MBadge {
                 objectName: "merce.playground.controls.badge.success"
                 text: "Live"
-                variant: "success"
+                variant: MBadge.Success
                 icon: "material:check_circle"
             }
 
             MBadge {
                 objectName: "merce.playground.controls.badge.warning"
                 text: "Beta"
-                variant: "warning"
+                variant: MBadge.Warning
             }
 
             MBadge {
                 objectName: "merce.playground.controls.badge.error"
                 text: "Error"
-                variant: "error"
+                variant: MBadge.Error
                 icon: "material:error"
             }
 
             MBadge {
                 objectName: "merce.playground.controls.badge.info"
                 text: "Info"
-                variant: "info"
+                variant: MBadge.Info
             }
 
             MBadge {
                 objectName: "merce.playground.controls.badge.small"
                 text: "Small"
-                size: "small"
+                size: MBadge.Small
             }
         }
 
         DemoSection {
             title: "Inputs"
 
-            MInput {
+            SK.TextField {
+                objectName: "merce.playground.controls.input.email"
                 width: 300
-                placeholder: "Email"
+                placeholderText: "Email"
                 text: "theme@merce.local"
-                inputType: "email"
-                icon: "material:mail"
+                inputMethodHints: Qt.ImhEmailCharactersOnly
+                leftPadding: Theme.spacing.xl2
+                validator: RegularExpressionValidator {
+                    regularExpression: /.+@.+\..+/
+                }
+
+                AppIcon {
+                    anchors {
+                        left: parent.left
+                        leftMargin: Theme.spacing.md
+                        verticalCenter: parent.verticalCenter
+                    }
+                    name: "material:mail"
+                    size: Theme.icons.medium
+                    color: Theme.colors.text.tertiary
+                }
             }
 
-            MInput {
+            SK.TextField {
+                objectName: "merce.playground.controls.input.success"
                 width: 300
-                placeholder: "Success"
+                placeholderText: "Success"
                 text: "Valid value"
-                validationState: MInput.Success
-                trailingIcon: "material:check_circle"
+                rightPadding: Theme.spacing.xl2
+                SK.StyleVariation.variations: ["success"]
+
+                AppIcon {
+                    anchors {
+                        right: parent.right
+                        rightMargin: Theme.spacing.md
+                        verticalCenter: parent.verticalCenter
+                    }
+                    name: "material:check_circle"
+                    size: Theme.icons.medium
+                    color: Theme.colors.status.success.foreground
+                }
             }
 
-            MInput {
+            SK.TextField {
+                objectName: "merce.playground.controls.input.error"
                 width: 300
-                placeholder: "Error"
+                placeholderText: "Error"
                 text: "invalid"
-                validationState: MInput.Error
-                trailingIcon: "material:error"
+                rightPadding: Theme.spacing.xl2
+                SK.StyleVariation.variations: ["error"]
+
+                AppIcon {
+                    anchors {
+                        right: parent.right
+                        rightMargin: Theme.spacing.md
+                        verticalCenter: parent.verticalCenter
+                    }
+                    name: "material:error"
+                    size: Theme.icons.medium
+                    color: Theme.colors.status.error.foreground
+                }
             }
         }
 
@@ -195,32 +281,43 @@ Item {
         DemoSection {
             title: "Selection"
 
-            MCheckbox {
-                label: "Checkbox"
-                checked: root.checkboxValue
-                onToggled: function(checked) { root.checkboxValue = checked }
+            SK.CheckBox {
+                objectName: "merce.playground.controls.selection.checkbox"
+                text: "Checkbox"
+                tristate: true
+                checkState: root.checkboxState
+                nextCheckState: function() {
+                    return checkState === Qt.Checked ? Qt.Unchecked : Qt.Checked
+                }
+                SK.StyleVariation.variations: checkState === Qt.PartiallyChecked ? ["indeterminate"] : []
+                onCheckStateChanged: root.checkboxState = checkState
             }
 
-            MRadio {
-                label: "Radio"
+            SK.RadioButton {
+                objectName: "merce.playground.controls.selection.radio"
+                text: "Radio"
                 checked: root.radioValue
-                onToggled: function(checked) { root.radioValue = checked }
+                onToggled: root.radioValue = checked
             }
 
-            MSwitch {
-                label: "Switch"
+            SK.Switch {
+                objectName: "merce.playground.controls.selection.switch"
+                text: "Switch"
                 checked: root.switchValue
-                onToggled: function(checked) { root.switchValue = checked }
+                onToggled: root.switchValue = checked
             }
 
-            MSelect {
+            SK.ComboBox {
+                objectName: "merce.playground.controls.selection.combo"
                 width: 300
-                selectedValue: "runtime"
-                options: [
+                currentValue: "runtime"
+                model: [
                     { "value": "runtime", "label": "Runtime theme" },
                     { "value": "gallery", "label": "Gallery proof" },
                     { "value": "export", "label": "Export evidence" }
                 ]
+                textRole: "label"
+                valueRole: "value"
             }
         }
     }

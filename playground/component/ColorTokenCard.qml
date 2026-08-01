@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls.Basic as Basic
+import Qt.labs.StyleKit
 import QtQuick.Effects
 import Merce.Theme
 import Merce.Foundation
@@ -68,7 +68,7 @@ FocusScope {
         layer.enabled: true
         layer.effect: MultiEffect {
             shadowEnabled: true
-            shadowColor: "#26000000"
+            shadowColor: Theme.colors.surface.shadow
             shadowBlur: 0.7
             shadowOpacity: cardHover.hovered || pickerPopup.visible ? 0.35 : 0.22
         }
@@ -157,33 +157,18 @@ FocusScope {
         }
     }
 
-    Basic.Popup {
+    Popup {
         id: pickerPopup
 
-        popupType: Basic.Popup.Item
+        popupType: Popup.Item
         y: root.height + Theme.spacing.xs
         width: Math.max(root.width, 340)
         padding: Theme.spacing.md
         modal: false
         dim: false
         focus: true
-        closePolicy: Basic.Popup.CloseOnEscape | Basic.Popup.CloseOnPressOutsideParent
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
         z: Theme.zIndex.dropdown
-
-        background: Rectangle {
-            radius: Theme.radius.large
-            color: Theme.colors.surface.base
-            border.width: 1
-            border.color: Theme.colors.border.base
-
-            layer.enabled: true
-            layer.effect: MultiEffect {
-                shadowEnabled: true
-                shadowColor: "#40000000"
-                shadowBlur: 1.0
-                shadowOpacity: 0.32
-            }
-        }
 
         contentItem: Column {
             spacing: Theme.spacing.md
@@ -210,7 +195,6 @@ FocusScope {
                     id: doneButton
 
                     text: qsTr("Done")
-                    icon.name: "material:check"
                     size: MButton.Small
                     onClicked: pickerPopup.close()
                 }

@@ -1,114 +1,129 @@
-Merce Design System - Teknik Spesifikasyon (Qt 6.11+)Sürüm: 1.1.0Hedef Framework: Qt 6.11+ (QML Modern Syntax)Mimari: Modüler, CMake Tabanlı, Katı Tip GüvenliğiKullanım Alanı: Smart Cart Ekosistemi (Kiosk, Tablet, Gömülü Sistemler)1. Mimari Genel BakışMerce, "Monolitik" bir kütüphane yerine, bağımlılıkları yönetilen ayrık QML Modülleri olarak tasarlanmıştır. Qt 6.11'in yeni property semantikleri (virtual, override, final) kullanılarak bileşen hiyerarşisi katı kurallara bağlanmıştır.Modül Bağımlılık Ağacıgraph TD
-    A[Uygulama (SmartCart App)] --> B[Merce.Controls]
-    A --> C[Merce.Notifications]
-    B --> D[Merce.Foundation]
-    C --> D
-    D --> E[Merce.Core]
-2. Klasör ve Dosya YapısıProje kök dizininde modern Qt 6 modül yapısı uygulanır. Her modül kendi içinde tip-güvenli ve izoledir./Merce
-├── CMakeLists.txt              (Root Build Konfigürasyonu)
-├── /Core                       (URI: Merce.Core) - Theme, Palette, Icons
-├── /Foundation                 (URI: Merce.Foundation) - MSurface, MText
-├── /Controls                   (URI: Merce.Controls) - MButton, MInput
-└── /Notifications              (URI: Merce.Notifications) - MToast, MDialog
-3. QML İmplementasyon Standartları (Qt 6.11+ Syntax)Qt 6.11 ile gelen yeni mülkiyet (property) semantikleri Merce'nin kalbini oluşturur. Bu anahtar kelimeler, bileşenlerin genişletilebilirliğini kontrol eder.3.1. Virtual ve Override KullanımıBileşen kalıtımında, üst bileşende özelleştirilmeye izin verilen özellikler virtual olarak işaretlenir. Alt bileşenler bu özellikleri override ile ezmek zorundadır.Örnek: Foundation Seviyesinde Base Kontrol// MBaseControl.qml (Merce.Foundation)
+# Merce Design System - Konumlandirma
+
+Merce artik merkezi bir QML control kutuphanesi degil; Qt Labs StyleKit uzerine kurulu bir tema, stil ve feedback runtime katmanidir. Uygulama kendi urun componentlerini yazabilir, Merce ise ortak token sozlugunu, runtime theme gecisini ve feedback altyapisini tutar.
+
+## Hedef
+
+- Qt 6.11+ `Qt.labs.StyleKit` core dependency.
+- Kontrol davranisi Qt Labs StyleKit tarafinda kalir.
+- Merce semantic token, runtime theme, StyleKit mapping, notification ve dialog orkestrasyonu saglar.
+- Uygulama katmani kendi componentlerini ve gerekirse kendi StyleKit variation sozlugunu genisletir.
+
+## Modul Sorumluluklari
+
+```mermaid
+graph TD
+    App[Application] --> StyleKitControls[Qt.labs.StyleKit controls]
+    App --> MerceStyle[Merce.Style]
+    App --> MerceNotifications[Merce.Notifications]
+    App --> MerceControls[Merce.Controls optional]
+
+    MerceStyle --> MerceTheme[Merce.Theme]
+    MerceStyle --> StyleKit[Qt.labs.StyleKit]
+    MerceNotifications --> MerceTheme
+    MerceNotifications --> MerceFoundation[Merce.Foundation]
+    MerceNotifications --> MerceEffects[Merce.Effects]
+    MerceControls --> MerceTheme
+    MerceControls --> MerceFoundation
+    MerceEffects --> MerceTheme
+    MerceFoundation --> MerceTheme
+```
+
+### Merce.Theme
+
+Runtime singleton ve manifest sozlesmesidir. Brand, mode ve profile secimini; semantic color, spacing, radius, size, typography, motion, icon ve shadow tokenlarini yayinlar.
+
+Ana renk sozlugu:
+
+- `colors.surface.*`: uygulama zemini, container ve floating yuzeyler.
+- `colors.content.*`: metin, ikon ve genel foreground rolleri.
+- `colors.action.*`: primary, secondary ve destructive interactive kanallar.
+- `colors.status.*`: success, warning, error, info ve neutral durum kanallari.
+- `colors.outline.*`: border, focus ve ayrac rolleri.
+
+### Merce.Style
+
+`Merce.Theme` tokenlarini `Qt.labs.StyleKit` `Style {}` objesine map eder. StyleKit kontrolleri bu style'i otomatik tuketir.
+
+Uygulama root'u:
+
+```qml
 import QtQuick
+import Qt.labs.StyleKit as SK
+import Merce.Style
 
-Item {
-    // Alt bileşenlerin bu rengi değiştirmesine izin veriyoruz
-    virtual property color accentColor: "blue"
-    
-    // Alt bileşenlerin bu metriği değiştirmesine izin verilmiyor
-    final property int touchTarget: 44 
+SK.ApplicationWindow {
+    visible: true
+    SK.StyleKit.style: MerceStyle {}
 }
-Örnek: Controls Seviyesinde Uygulama// MButton.qml (Merce.Controls)
-import QtQuick
-import Merce.Foundation
+```
 
-MBaseControl {
-    // Üst sınıftaki özelliği açıkça ezdiğimizi belirtiyoruz
-    override property color accentColor: Theme.colors.action.primary
+Control kullanimi:
+
+```qml
+import Qt.labs.StyleKit as SK
+
+SK.Button {
+    text: qsTr("Save")
+    SK.StyleVariation.variations: ["secondary"]
 }
-3.2. Final ve Required Property StratejisiSistemin kararlılığı için kritik olan (örneğin kurumsal kimlik renkleri veya dokunmatik hedef boyutları) özellikler final olarak işaretlenerek alt sınıflarda değiştirilmeleri engellenir.// MSurface.qml (Merce.Foundation)
-import QtQuick
+```
 
-Rectangle {
-    // Zorunlu özellik: Bu yüzeyin bir tipi olmalı
-    required property int surfaceType 
-    
-    // Değiştirilemez özellik: Kiosk cihaz standartı
-    final property int minTouchArea: 44 
-}
-4. Singleton "Theme" Yönetimi (Merce.Core)Theme.qml, nested QtObject yapısı kullanılarak semantik olarak organize edilir. Bu yapı, Theme.colors.text.primary gibi anlamlı zincirleme erişim sağlar.// Merce/Core/Theme.qml
-pragma Singleton
-import QtQuick
+`secondary`, `destructive`, `outline`, `ghost`, `small`, `large`, `loading`, `success`, `warning`, `error` ve `indeterminate` variation isimleri Merce tarafindan saglanan baslangic sozlugudur. Uygulama bu sozlugu genisletebilir veya kendi style'i ile degistirebilir.
 
-QtObject {
-    id: themeRoot
+### Merce.Foundation
 
-    // -------------------------------------------------------------------------
-    // 1. PALETTE (PRIVATE) - Ham Renkler
-    // -------------------------------------------------------------------------
-    property QtObject _palette: QtObject {
-        readonly property color blue500: "#2A64DB"
-        readonly property color green400: "#28A745"
-        readonly property color red600: "#DC3545"
-        readonly property color gray900: "#212529"
-        readonly property color white: "#FFFFFF"
-    }
+StyleKit disinda kalan temel QML yapilarini tutar: yuzey, label, ikon, font resolver ve ortak primitive helper'lar. Foundation componentleri semantic token okur, ancak control state machine yazmaz.
 
-    // -------------------------------------------------------------------------
-    // 2. SEMANTIC TOKENS (PUBLIC API)
-    // -------------------------------------------------------------------------
-    
-    property QtObject colors: QtObject {
-        // Eylem Grubu (Nested)
-        property QtObject action: QtObject {
-            readonly property color primary: themeRoot._palette.blue500
-            readonly property color success: themeRoot._palette.green400
-            readonly property color destructive: themeRoot._palette.red600
-            
-            function base(variant) {
-                if (variant === "success") return success
-                if (variant === "destructive") return destructive
-                return primary
-            }
-        }
+### Merce.Controls
 
-        // Metin Grubu (Nested)
-        property QtObject text: QtObject {
-            readonly property color primary: themeRoot._palette.gray900
-            readonly property color inverse: themeRoot._palette.white
-        }
-    }
-    
-    property QtObject metrics: QtObject {
-        final property int touchTarget: 44 
-        readonly property int spacingBase: 8
-    }
-}
-5. Modüler CMake EntegrasyonuHer modül, CMake üzerinden bağımsız bir target olarak tanımlanır.# Merce/Controls/CMakeLists.txt
-qt_add_qml_module(MerceControls
-    URI "Merce.Controls"
-    VERSION 1.0
-    QML_FILES
-        MButton.qml
-        MInput.qml
-)
+Merkezi control sistemi degildir. Sadece StyleKit ile dogrudan karsilanmayan kucuk custom primitive'ler burada kalir.
 
-target_link_libraries(MerceControls PRIVATE MerceFoundation MerceCore)
-6. Geliştirici Deneyimi (Vibe Code)Merce, geliştiricilere tip-güvenli bir deneyim sunar. Yanlışlıkla final bir özelliği ezmeye çalışmak derleme veya çalışma zamanında (QML linter/engine) hata verecektir.Kullanım Örneği:import Merce.Core
-import Merce.Controls
+Su an yasayan kapsam:
 
-MButton {
-    text: "Ödemeyi Yap"
-    variant: "primary"
-    
-    // Layout kuralları Merce.Foundation'dan override edilerek gelir
-    width: parent.width
-    height: Theme.metrics.touchTarget
-    
-    onClicked: {
-        // Semantic access
-        console.log("Color used:", Theme.colors.action.primary)
-    }
-}
+- `MButton` (StyleKit `Button` API wrapper)
+- `MBadge`
+- `LoadingIndicator`
+
+`MInput`, `MSelect`, `MCheckbox`, `MRadio`, `MSwitch` eklemek varsayilan yol degildir. Once StyleKit kontrolu + `Merce.Style` ile cozulur; gercek davranis ihtiyaci varsa uygulama katmaninda component yazilir.
+
+### Merce.Notifications
+
+Toast, dialog ve feedback runtime katmanidir. `Merce.Controls`'a baglanmaz. Button/input gibi davranislar icin `Qt.labs.StyleKit` kontrollerini kullanir; gorunum `Merce.Style` uzerinden gelir.
+
+### Merce.Effects
+
+Golge/elevation gibi gorsel efekt helper'larini tutar. Renk ve shadow semantic kaynagi `Merce.Theme` olur.
+
+## Uygulama Entegrasyonu
+
+Bir uygulama Merce kullanirken ihtiyac duydugu minimum parcalar:
+
+1. `Merce.Theme` runtime'i configure edilir.
+2. Root `ApplicationWindow` uzerinde `StyleKit.style: MerceStyle {}` atanir.
+3. Uygulama `Qt.labs.StyleKit` kontrollerini kullanir.
+4. Gereken yerde `SK.StyleVariation.variations` ile semantic varyasyon secilir.
+5. Toast/dialog gerekiyorsa `Merce.Notifications` import edilir.
+6. Badge/loading gibi kalan custom primitive gerekiyorsa `Merce.Controls` import edilir.
+
+## CMake Konumu
+
+Core Qt dependency seti Qt 6.11+ ve StyleKit'i icerir:
+
+```cmake
+find_package(Qt6 6.11 REQUIRED COMPONENTS Core Gui Quick Qml QuickControls2 LabsStyleKit)
+```
+
+`Merce.Style`, `Merce.Theme` ve `Qt6::LabsStyleKit` uzerine kurulur. `Merce.Notifications`, `Merce.Controls`'a baglanmaz.
+
+## Tasarim Kurali
+
+Yeni bir gorsel ihtiyac geldiginde sira su olmalidir:
+
+1. Semantic token eksik mi?
+2. `Merce.Style` mapping'i yeterli mi?
+3. StyleKit variation yeterli mi?
+4. Foundation primitive gerekir mi?
+5. En son, gercek davranis farki varsa custom control yazilir.
+
+Bu siralama Merce'i starter kit olarak kullanilabilir tutar; uygulamayi tek bir merkezi component API'sine kilitlemez.

@@ -5,34 +5,38 @@ import Merce.Foundation
 Item {
     id: root
 
+    enum Variant {
+        Neutral,
+        Primary,
+        Success,
+        Warning,
+        Error,
+        Info
+    }
+
+    enum Size {
+        Small,
+        Medium
+    }
+
     property string text: ""
-    property string variant: "neutral" // neutral, primary, success, warning, error, info
-    property string size: "medium"     // small, medium
+    property int variant: MBadge.Neutral
+    property int size: MBadge.Medium
     property string icon: ""
 
-    readonly property var sizeConfig: {
-        "small": {
-            "height": 24,
-            "paddingH": Theme.spacing.xs,
-            "gap": Theme.spacing.xxs,
-            "textType": AppLabel.Caption,
-            "iconSize": Theme.icons.small
-        },
-        "medium": {
-            "height": 28,
-            "paddingH": Theme.spacing.sm,
-            "gap": Theme.spacing.xs,
-            "textType": AppLabel.BodySmall,
-            "iconSize": Theme.icons.small
-        }
-    }
-    readonly property var currentSize: sizeConfig[size] || sizeConfig.medium
+    readonly property var colors: Theme.colors
+
+    readonly property bool compact: root.size === MBadge.Small
+    readonly property real badgeHeight: root.compact ? 24 : 28
+    readonly property real horizontalPadding: root.compact ? Theme.spacing.xs : Theme.spacing.sm
+    readonly property real contentGap: root.compact ? Theme.spacing.xxs : Theme.spacing.xs
+    readonly property int labelType: root.compact ? AppLabel.Caption : AppLabel.BodySmall
     readonly property color badgeBackgroundColor: backgroundFor(variant)
     readonly property color badgeForegroundColor: foregroundFor(variant)
     readonly property color badgeBorderColor: borderFor(variant)
 
-    implicitWidth: contentRow.implicitWidth + currentSize.paddingH * 2
-    implicitHeight: currentSize.height
+    implicitWidth: contentRow.implicitWidth + root.horizontalPadding * 2
+    implicitHeight: root.badgeHeight
     width: implicitWidth
     height: implicitHeight
 
@@ -40,71 +44,80 @@ Item {
     Accessible.name: root.text
 
     function backgroundFor(value) {
-        if (value === "primary")
-            return Theme.colors.action.primaryHover
-        if (value === "success")
-            return Theme.colors.status.success.background
-        if (value === "warning")
-            return Theme.colors.status.warning.background
-        if (value === "error")
-            return Theme.colors.status.error.background
-        if (value === "info")
-            return Theme.colors.status.info.background
-        return Theme.colors.surface.hover
+        switch (value) {
+        case MBadge.Primary:
+            return Qt.alpha(root.colors.action.primary.container, 0.12)
+        case MBadge.Success:
+            return root.colors.status.success.container
+        case MBadge.Warning:
+            return root.colors.status.warning.container
+        case MBadge.Error:
+            return root.colors.status.error.container
+        case MBadge.Info:
+            return root.colors.status.info.container
+        default:
+            return root.colors.status.neutral.container
+        }
     }
 
     function foregroundFor(value) {
-        if (value === "primary")
-            return Theme.colors.action.primaryPressed
-        if (value === "success")
-            return Theme.colors.status.success.foreground
-        if (value === "warning")
-            return Theme.colors.status.warning.foreground
-        if (value === "error")
-            return Theme.colors.status.error.foreground
-        if (value === "info")
-            return Theme.colors.status.info.foreground
-        return Theme.colors.text.secondary
+        switch (value) {
+        case MBadge.Primary:
+            return root.colors.action.primary.container
+        case MBadge.Success:
+            return root.colors.status.success.content
+        case MBadge.Warning:
+            return root.colors.status.warning.content
+        case MBadge.Error:
+            return root.colors.status.error.content
+        case MBadge.Info:
+            return root.colors.status.info.content
+        default:
+            return root.colors.status.neutral.content
+        }
     }
 
     function borderFor(value) {
-        if (value === "primary")
-            return Theme.colors.action.primary.container
-        if (value === "success")
-            return Theme.colors.status.success.border
-        if (value === "warning")
-            return Theme.colors.status.warning.border
-        if (value === "error")
-            return Theme.colors.status.error.border
-        if (value === "info")
-            return Theme.colors.status.info.border
-        return Theme.colors.border.base
+        switch (value) {
+        case MBadge.Primary:
+            return root.colors.action.primary.outline
+        case MBadge.Success:
+            return root.colors.status.success.outline
+        case MBadge.Warning:
+            return root.colors.status.warning.outline
+        case MBadge.Error:
+            return root.colors.status.error.outline
+        case MBadge.Info:
+            return root.colors.status.info.outline
+        default:
+            return root.colors.status.neutral.outline
+        }
     }
 
     Rectangle {
         anchors.fill: parent
         radius: Theme.radius.badge
         color: root.badgeBackgroundColor
-        border.width: 1
+        border.width: Theme.size.outline.hairline
         border.color: root.badgeBorderColor
     }
 
     Row {
         id: contentRow
         anchors.centerIn: parent
-        spacing: root.currentSize.gap
+        spacing: root.contentGap
 
         AppIcon {
             anchors.verticalCenter: parent.verticalCenter
             name: root.icon
-            size: root.currentSize.iconSize
+            size: Theme.icons.small
             color: root.badgeForegroundColor
             visible: root.icon !== ""
         }
 
         AppLabel {
             anchors.verticalCenter: parent.verticalCenter
-            textType: root.currentSize.textType
+            textType: root.labelType
             text: root.text
             color: root.badgeForegroundColor
             wrapMode: Text.NoWrap

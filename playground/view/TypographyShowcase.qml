@@ -1,8 +1,8 @@
 import QtQuick
 import QtQuick.Layouts
+import Qt.labs.StyleKit as SK
 import Merce.Theme
 import Merce.Foundation
-import Merce.Controls
 import Toastify
 
 Item {
@@ -17,7 +17,7 @@ Item {
     readonly property int panelSpacing: Theme.spacing.md
     readonly property int rightPanelWidth: compactLayout ? width : Math.min(320, Math.max(240, Math.round(width * 0.28)))
     readonly property int leftPanelWidth: compactLayout ? width : Math.max(0, width - rightPanelWidth - panelSpacing)
-    readonly property int tableCompactThreshold: 560
+    readonly property int tableCompactThreshold: 760
     readonly property int usageCardMinWidth: 156
     readonly property int usageCardPreferredWidth: 220
     readonly property color dividerColor: Theme.colors.border.base
@@ -179,7 +179,7 @@ Item {
     }
 
     function typeStyleColumnWidth(tableWidth) {
-        return typeTableCompact(tableWidth) ? Math.max(58, Math.min(76, Math.round(tableWidth * 0.28))) : 78
+        return typeTableCompact(tableWidth) ? Math.max(80, Math.min(96, Math.round(tableWidth * 0.28))) : 96
     }
 
     function typeFamilyColumnWidth(tableWidth) {
@@ -736,20 +736,18 @@ Item {
                 font.weight: Theme.typography.weightMedium
             }
 
-            MInput {
+            SK.TextField {
                 text: "user@example.com"
-                inputType: "email"
-                isReadOnly: true
+                inputMethodHints: Qt.ImhEmailCharactersOnly
+                readOnly: true
                 Layout.fillWidth: true
                 Layout.preferredWidth: parent.width
                 Layout.maximumWidth: parent.width
             }
 
-            MButton {
+            SK.Button {
                 text: "Checkout"
-                variant: MButton.Primary
-                size: MButton.Small
-                fullWidth: true
+                SK.StyleVariation.variations: ["small"]
                 Layout.fillWidth: true
                 Layout.preferredWidth: parent.width
                 Layout.maximumWidth: parent.width
@@ -877,12 +875,10 @@ Item {
                     gap: 0
                     alignItems: FlexboxLayout.AlignStart
 
-                    FlexboxLayout {
+                    Row {
                         width: parent.width
                         height: 32
-                        direction: FlexboxLayout.Row
-                        gap: 0
-                        alignItems: FlexboxLayout.AlignCenter
+                        spacing: 0
 
                         readonly property bool compact: root.typeTableCompact(width)
                         readonly property int styleWidth: root.typeStyleColumnWidth(width)
@@ -1128,14 +1124,25 @@ Item {
                             color: Theme.colors.text.primary
                         }
 
-                        MInput {
+                        SK.TextField {
                             text: "Input text"
-                            isReadOnly: true
-                            validationState: MInput.Error
-                            trailingIcon: "material:error"
+                            readOnly: true
+                            rightPadding: Theme.spacing.xl2
+                            SK.StyleVariation.variations: ["error"]
                             Layout.fillWidth: true
                             Layout.preferredWidth: parent.width
                             Layout.maximumWidth: parent.width
+
+                            AppIcon {
+                                anchors {
+                                    right: parent.right
+                                    rightMargin: Theme.spacing.md
+                                    verticalCenter: parent.verticalCenter
+                                }
+                                name: "material:error"
+                                size: Theme.icons.small
+                                color: Theme.colors.status.error.foreground
+                            }
                         }
 
                         AppLabel {

@@ -2,15 +2,9 @@ qt_add_qml_module(MerceControls
     URI "Merce.Controls"
     VERSION 1.0
     QML_FILES
-        BaseControl.qml
-        MBadge.qml
         MButton.qml
-        MInput.qml
-        MCheckbox.qml
-        MRadio.qml
-        MSwitch.qml
-        MSelect.qml
+        MBadge.qml
         LoadingIndicator.qml
 )
 
-target_link_libraries(MerceControls PRIVATE MerceFoundation MerceTheme)
+target_link_libraries(MerceControls PRIVATE MerceFoundation MerceTheme Qt6::LabsStyleKit)

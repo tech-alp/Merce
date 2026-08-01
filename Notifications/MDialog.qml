@@ -1,324 +1,170 @@
 import QtQuick
+import QtQuick.Controls as QQC
 import QtQuick.Layouts
-import Merce.Theme
-import Merce.Effects
-import Merce.Controls
+import Qt.labs.StyleKit as SK
 import Merce.Foundation
+import Merce.Theme
 
-/**
- * MDialog - Modal dialog component
- * Overlay dialogs for important interactions and confirmations
- */
-Item {
+SK.Popup {
     id: root
 
-    // ====================================================================
-    // DIALOG PROPERTIES
-    // ====================================================================
+    enum Variant {
+        Default,
+        Warning,
+        Destructive
+    }
+
+    enum Size {
+        Small,
+        Medium,
+        Large
+    }
+
     property string title: ""
     property string message: ""
-
-    // Buttons
     property string confirmText: "Confirm"
     property string cancelText: "Cancel"
     property bool showCancel: true
-
-    // Variant
-    property string variant: "default"  // default, destructive, warning
-
-    // Size
-    property string size: "medium"  // small, medium, large
-
-    // State
+    property int variant: MDialog.Default
+    property int size: MDialog.Medium
     property bool isOpen: false
 
-    // Callbacks
     signal confirmed()
     signal cancelled()
     signal dismissed()
 
-    // ====================================================================
-    // SIZE CONFIG
-    // ====================================================================
-    readonly property var sizeConfig: {
-        "small": { "width": 320 },
-        "medium": { "width": 480 },
-        "large": { "width": 640 }
+    parent: QQC.Overlay.overlay
+    anchors.centerIn: parent
+    width: Math.min(dialogWidth(root.size), parent ? parent.width - Theme.spacing.xl2 : dialogWidth(root.size))
+    implicitHeight: dialogContent.implicitHeight + Theme.spacing.xl * 2
+    modal: true
+    dim: true
+    focus: true
+    closePolicy: SK.Popup.CloseOnEscape | SK.Popup.CloseOnPressOutside
+
+    onIsOpenChanged: {
+        if (root.isOpen && !root.opened)
+            root.open()
+        else if (!root.isOpen && root.opened)
+            root.close()
+    }
+    onOpened: root.isOpen = true
+    onClosed: {
+        root.isOpen = false
+        root.dismissed()
     }
 
-    // ====================================================================
-    // DIMENSIONS
-    // ====================================================================
-    anchors.fill: parent
-
-    // ====================================================================
-    // OVERLAY (BACKDROP)
-    // ====================================================================
-    Rectangle {
-        id: overlay
-        anchors.fill: parent
-        color: Theme.colors.background.overlay
-        opacity: root.isOpen ? 1.0 : 0.0
-        visible: opacity > 0
-
-        Behavior on opacity {
-            NumberAnimation {
-                duration: Theme.motion.durationNormal
-                easing: Theme.motion.easingOut
-            }
-        }
-
-        // Click outside to dismiss
-        MouseArea {
-            anchors.fill: parent
-            cursorShape: Qt.ArrowCursor
-            onClicked: dismiss()
+    function dialogWidth(value) {
+        switch (value) {
+        case MDialog.Small:
+            return 320
+        case MDialog.Large:
+            return 640
+        default:
+            return 480
         }
     }
 
-    // ====================================================================
-    // DIALOG CONTENT
-    // ====================================================================
-    Rectangle {
-        id: dialogBox
-        anchors.centerIn: parent
-        width: sizeConfig[root.size].width
-        height: dialogContent.height + header.height + buttonRow.height + Theme.spacing.xl2
-        radius: Theme.radius.dialog
-        color: Theme.colors.surface.base
-
-        // Shadow
-        layer.enabled: true
-        layer.effect: ElevationEffect {
-            elevation: 8
-        }
-
-        // Opacity and scale animation
-        opacity: root.isOpen ? 1.0 : 0.0
-        scale: root.isOpen ? 1.0 : 0.95
-
-        Behavior on opacity {
-            NumberAnimation {
-                duration: Theme.motion.durationNormal
-                easing: Theme.motion.easingOut
-            }
-        }
-
-        Behavior on scale {
-            NumberAnimation {
-                duration: Theme.motion.durationNormal
-                easing: Theme.motion.easingOut
-            }
-        }
-
-        // ====================================================================
-        // HEADER
-        // ====================================================================
-        Rectangle {
-            id: header
-            anchors {
-                top: parent.top
-                left: parent.left
-                right: parent.right
-            }
-            height: headerContent.height + Theme.spacing.md
-            radius: Theme.radius.dialog
-            color: Theme.colors.surface.base
-
-            clip: true
-
-            // Header content
-            Row {
-                id: headerContent
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                    leftMargin: Theme.spacing.xl
-                    rightMargin: Theme.spacing.md
-                    verticalCenter: parent.verticalCenter
-                }
-                spacing: Theme.spacing.md
-
-                // Icon (for variant)
-                AppIcon {
-                    id: variantIcon
-                    name: {
-                        if (root.variant === "destructive") return "material:error"
-                        if (root.variant === "warning") return "material:warning"
-                        return ""
-                    }
-                    size: Theme.icons.large
-                    color: {
-                        if (root.variant === "destructive") return Theme.colors.status.error.foreground
-                        if (root.variant === "warning") return Theme.colors.status.warning.foreground
-                        return Theme.colors.text.primary
-                    }
-                    visible: root.variant !== "default"
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-
-                // Title
-                Text {
-                    id: titleText
-                    text: root.title
-                    font.family: FoundationFonts.resolveFamily(Theme.typography.fontDisplay)
-                    font.pixelSize: Theme.typography.size2XLarge
-                    font.weight: Theme.typography.weightSemibold
-                    color: Theme.colors.text.primary
-                    visible: root.title !== ""
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-
-                // Spacer
-                Item { width: 1; height: 1; Layout.fillWidth: true }
-
-                // Close button
-                MouseArea {
-                    id: closeButton
-                    width: Theme.spacing.touchTargetCompact
-                    height: Theme.spacing.touchTargetCompact
-                    cursorShape: Qt.PointingHandCursor
-                    anchors.verticalCenter: parent.verticalCenter
-
-                    Rectangle {
-                        anchors.fill: parent
-                        radius: Theme.radius.small
-                        color: parent.containsMouse ? Theme.colors.surface.hover : "transparent"
-
-                        Behavior on color {
-                            ColorAnimation {
-                                duration: Theme.motion.durationFast
-                                easing: Theme.motion.easingOut
-                            }
-                        }
-                    }
-
-                    AppIcon {
-                        anchors.centerIn: parent
-                        name: "material:close"
-                        size: Theme.icons.small
-                        color: Theme.colors.text.tertiary
-                    }
-
-                    onClicked: dismiss()
-                    hoverEnabled: true
-                }
-            }
-        }
-
-        // Divider
-        Rectangle {
-            id: divider
-            anchors {
-                top: header.bottom
-                left: parent.left
-                right: parent.right
-            }
-            height: 1
-            color: Theme.colors.border.base
-        }
-
-        // ====================================================================
-        // CONTENT
-        // ====================================================================
-        Column {
-            id: dialogContent
-            anchors {
-                top: divider.bottom
-                left: parent.left
-                right: parent.right
-                margins: Theme.spacing.xl
-            }
-            spacing: Theme.spacing.md
-
-            // Message
-            Text {
-                id: messageText
-                text: root.message
-                font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
-                font.pixelSize: Theme.typography.sizeMedium
-                color: Theme.colors.text.secondary
-                width: parent.width
-                wrapMode: Text.WordWrap
-                lineHeight: Theme.typography.leadingNormal
-                lineHeightMode: Text.ProportionalHeight
-            }
-
-            // Custom content slot (for future use)
-            Item {
-                id: customContent
-                width: parent.width
-                height: childrenRect.height
-                visible: children.length > 0
-            }
-        }
-
-        // ====================================================================
-        // BUTTONS
-        // ====================================================================
-        Row {
-            id: buttonRow
-            anchors {
-                top: dialogContent.bottom
-                right: parent.right
-                rightMargin: Theme.spacing.xl
-                topMargin: Theme.spacing.xl
-            }
-            spacing: Theme.spacing.sm
-            layoutDirection: Qt.RightToLeft
-
-            // Cancel button
-            MButton {
-                text: root.cancelText
-                variant: MButton.Outline
-                visible: root.showCancel
-                onClicked: {
-                    root.cancelled()
-                    dismiss()
-                }
-            }
-
-            // Confirm button
-            MButton {
-                text: root.confirmText
-                variant: root.variant === "destructive" ? MButton.Destructive : MButton.Primary
-                onClicked: {
-                    root.confirmed()
-                    dismiss()
-                }
-            }
-        }
+    function confirm() {
+        root.confirmed()
+        root.close()
     }
 
-    // ====================================================================
-    // PUBLIC METHODS
-    // ====================================================================
-    function open() {
-        isOpen = true
+    function cancel() {
+        root.cancelled()
+        root.close()
     }
 
     function dismiss() {
-        isOpen = false
-        dismissedDelayTimer.restart()
+        root.close()
     }
 
-    Timer {
-        id: dismissedDelayTimer
-        interval: Theme.motion.durationNormal + 50
-        onTriggered: root.dismissed()
+    Shortcut {
+        sequences: [StandardKey.InsertParagraphSeparator, StandardKey.InsertLineSeparator]
+        enabled: root.opened
+        onActivated: root.confirm()
     }
 
-    // ====================================================================
-    // KEYBOARD HANDLING
-    // ====================================================================
-    focus: root.isOpen
-    Keys.onEscapePressed: dismiss()
-    Keys.onEnterPressed: if (root.isOpen) root.confirmed()
-    Keys.onReturnPressed: if (root.isOpen) root.confirmed()
+    ColumnLayout {
+        id: dialogContent
 
-    // ====================================================================
-    // ACCESSIBILITY
-    // ====================================================================
-    Accessible.role: Accessible.Dialog
-    Accessible.name: root.title + (root.title !== "" && root.message !== "" ? ": " : "") + root.message
+        objectName: root.objectName + ".content"
+        x: Theme.spacing.xl
+        y: Theme.spacing.xl
+        width: Math.max(0, root.width - Theme.spacing.xl * 2)
+        spacing: Theme.spacing.lg
+        Accessible.role: Accessible.Dialog
+        Accessible.name: root.title + (root.title !== "" && root.message !== "" ? ": " : "") + root.message
+
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: Theme.spacing.md
+
+            AppIcon {
+                visible: root.variant !== MDialog.Default
+                name: root.variant === MDialog.Destructive ? "material:error" : "material:warning"
+                size: Theme.icons.large
+                color: root.variant === MDialog.Destructive
+                    ? Theme.colors.status.error.content
+                    : Theme.colors.status.warning.content
+            }
+
+            AppLabel {
+                Layout.fillWidth: true
+                text: root.title
+                textType: AppLabel.H3
+                wrapMode: Text.WordWrap
+                color: Theme.colors.content.primary
+            }
+
+            SK.ToolButton {
+                objectName: root.objectName + ".close"
+                Layout.preferredWidth: Theme.spacing.touchTargetCompact
+                Layout.preferredHeight: Theme.spacing.touchTargetCompact
+                text: "\u00d7"
+                Accessible.name: "Close"
+                onClicked: root.dismiss()
+            }
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            implicitHeight: Theme.size.outline.hairline
+            color: Theme.colors.outline.subtle
+        }
+
+        AppLabel {
+            Layout.fillWidth: true
+            text: root.message
+            textType: AppLabel.Body
+            wrapMode: Text.WordWrap
+            color: Theme.colors.content.secondary
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: Theme.spacing.sm
+
+            Item {
+                Layout.fillWidth: true
+            }
+
+            SK.Button {
+                objectName: root.objectName + ".cancel"
+                visible: root.showCancel
+                text: root.cancelText
+                SK.StyleVariation.variations: ["outline"]
+                onClicked: root.cancel()
+            }
+
+            SK.Button {
+                objectName: root.objectName + ".confirm"
+                text: root.confirmText
+                SK.StyleVariation.variations: root.variant === MDialog.Destructive
+                    ? ["destructive"]
+                    : []
+                onClicked: root.confirm()
+            }
+        }
+    }
 }

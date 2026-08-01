@@ -1,4 +1,5 @@
 import QtQuick
+import Merce.Controls
 import Merce.Theme
 import Merce.Icons.FontAwesome
 
@@ -44,15 +45,40 @@ Main {
                 || root.findObject(root.contentItem, name, 0)
     }
 
-    function verifyPlaceholderPage(key, title, objectName) {
-        const placeholder = root.findNamed(objectName)
+    function activateComboValue(comboBox, value) {
+        const index = comboBox.indexOfValue(value)
+        if (index < 0)
+            return false
+        comboBox.currentIndex = index
+        comboBox.activated(index)
+        return true
+    }
+
+    function rectInContent(item) {
+        if (!item || !root.contentItem)
+            return null
+        const point = item.mapToItem(root.contentItem, 0, 0)
+        return Qt.rect(point.x, point.y, item.width, item.height)
+    }
+
+    function includesVariation(item, name) {
+        if (!item || !item.styleVariations)
+            return false
+        return item.styleVariations.indexOf(name) >= 0
+    }
+
+    function verifyShowcasePage(key, title, objectName, anchorObjectName) {
+        const showcase = root.findNamed(objectName)
+        const anchor = root.findNamed(anchorObjectName)
         if (root.selectedPage !== key
                 || root.pageTitle(root.selectedPage) !== title
-                || !placeholder) {
-            root.fail(title + " placeholder page switch", [
+                || !showcase
+                || !anchor) {
+            root.fail(title + " showcase page switch", [
                           root.selectedPage,
                           root.pageTitle(root.selectedPage),
-                          placeholder !== null
+                          showcase !== null,
+                          anchor !== null
                       ])
             return false
         }
@@ -76,7 +102,7 @@ Main {
                     return
                 }
 
-                themeSelect.openDropdown()
+                themeSelect.popup.open()
                 step = 1
                 interval = 120
                 restart()
@@ -85,15 +111,14 @@ Main {
 
             if (step === 1) {
                 const themeSelect = root.findNamed("merce.playground.header.themeSelect")
-                if (!themeSelect || !themeSelect.isOpen || !themeSelect.popup.visible) {
+                if (!themeSelect || !themeSelect.popup.visible) {
                     root.fail("header theme select popup", [
-                                  themeSelect ? themeSelect.isOpen : null,
                                   themeSelect && themeSelect.popup ? themeSelect.popup.visible : null
                               ])
                     return
                 }
 
-                themeSelect.closeDropdown()
+                themeSelect.popup.close()
                 step = 2
                 interval = 80
                 restart()
@@ -224,7 +249,9 @@ Main {
             }
 
             if (step === 6) {
-                if (!root.verifyPlaceholderPage("shadows", "Shadows", "merce.playground.shadowsShowcase"))
+                if (!root.verifyShowcasePage("shadows", "Shadows",
+                                             "merce.playground.shadowsShowcase",
+                                             "merce.playground.shadows.scale"))
                     return
 
                 root.selectedPage = "motion"
@@ -235,7 +262,9 @@ Main {
             }
 
             if (step === 7) {
-                if (!root.verifyPlaceholderPage("motion", "Motion", "merce.playground.motionShowcase"))
+                if (!root.verifyShowcasePage("motion", "Motion",
+                                             "merce.playground.motionShowcase",
+                                             "merce.playground.motion.easingPreview"))
                     return
 
                 root.selectedPage = "theme-builder"
@@ -266,7 +295,9 @@ Main {
             }
 
             if (step === 9) {
-                if (!root.verifyPlaceholderPage("forms", "Forms", "merce.playground.formsShowcase"))
+                if (!root.verifyShowcasePage("forms", "Forms",
+                                             "merce.playground.formsShowcase",
+                                             "merce.playground.forms.fieldStates"))
                     return
 
                 root.selectedPage = "states"
@@ -277,7 +308,9 @@ Main {
             }
 
             if (step === 10) {
-                if (!root.verifyPlaceholderPage("states", "States", "merce.playground.statesShowcase"))
+                if (!root.verifyShowcasePage("states", "States",
+                                             "merce.playground.statesShowcase",
+                                             "merce.playground.states.matrix"))
                     return
 
                 root.selectedPage = "icons"
@@ -317,7 +350,10 @@ Main {
                     return
                 }
                 iconsShowcase.searchQuery = ""
-                iconsFontSelect.selectOption("fa-solid")
+                if (!root.activateComboValue(iconsFontSelect, "fa-solid")) {
+                    root.fail("icons solid option lookup", [])
+                    return
+                }
                 const audioDescriptionIcon = FontAwesomeRegistry.resolve("fa-solid:audio-description")
                 if (iconsShowcase.activeIconPrefix !== "fa-solid:"
                         || iconsShowcase.selectedIconFont !== "fa-solid"
@@ -334,7 +370,10 @@ Main {
                               ])
                     return
                 }
-                iconsFontSelect.selectOption("fa-brands")
+                if (!root.activateComboValue(iconsFontSelect, "fa-brands")) {
+                    root.fail("icons brands option lookup", [])
+                    return
+                }
                 if (iconsShowcase.activeIconPrefix !== "fa-brands:"
                         || iconsShowcase.selectedIconFont !== "fa-brands"
                         || iconsShowcase.iconCount !== iconsShowcase.fontAwesomeBrandsIconCount
@@ -356,24 +395,53 @@ Main {
                 return
             }
 
+            const header = root.findNamed("merce.playground.header")
+            const footer = root.findNamed("merce.playground.footer")
+            const content = root.findNamed("merce.playground.content")
+            const headerRect = root.rectInContent(header)
+            const footerRect = root.rectInContent(footer)
+            const contentRect = root.rectInContent(content)
             const controlsShowcase = root.findNamed("merce.playground.controlsShowcase")
+            const secondaryButton = root.findNamed("merce.playground.controls.button.secondary")
+            const outlineButton = root.findNamed("merce.playground.controls.button.outline")
+            const ghostButton = root.findNamed("merce.playground.controls.button.ghost")
+            const destructiveButton = root.findNamed("merce.playground.controls.button.destructive")
+            const smallButton = root.findNamed("merce.playground.controls.button.small")
             const primaryBadge = root.findNamed("merce.playground.controls.badge.primary")
             const successBadge = root.findNamed("merce.playground.controls.badge.success")
             const smallBadge = root.findNamed("merce.playground.controls.badge.small")
             if (root.selectedPage !== "controls"
                     || root.pageTitle(root.selectedPage) !== "Controls"
+                    || !headerRect
+                    || !footerRect
+                    || !contentRect
+                    || contentRect.y < headerRect.y + headerRect.height - 1
+                    || contentRect.y + contentRect.height > footerRect.y + 1
                     || !controlsShowcase
+                    || !root.includesVariation(secondaryButton, "secondary")
+                    || !root.includesVariation(outlineButton, "outline")
+                    || !root.includesVariation(ghostButton, "ghost")
+                    || !root.includesVariation(destructiveButton, "destructive")
+                    || !root.includesVariation(smallButton, "small")
                     || !primaryBadge
-                    || primaryBadge.variant !== "primary"
+                    || primaryBadge.variant !== MBadge.Primary
                     || primaryBadge.icon !== "material:palette"
                     || !successBadge
-                    || successBadge.variant !== "success"
+                    || successBadge.variant !== MBadge.Success
                     || !smallBadge
-                    || smallBadge.size !== "small") {
+                    || smallBadge.size !== MBadge.Small) {
                 root.fail("controls page switch", [
                               root.selectedPage,
                               root.pageTitle(root.selectedPage),
+                              headerRect,
+                              footerRect,
+                              contentRect,
                               controlsShowcase !== null,
+                              secondaryButton ? secondaryButton.styleVariations : null,
+                              outlineButton ? outlineButton.styleVariations : null,
+                              ghostButton ? ghostButton.styleVariations : null,
+                              destructiveButton ? destructiveButton.styleVariations : null,
+                              smallButton ? smallButton.styleVariations : null,
                               primaryBadge ? primaryBadge.variant : null,
                               primaryBadge ? primaryBadge.icon : null,
                               successBadge ? successBadge.variant : null,

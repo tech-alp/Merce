@@ -2,7 +2,7 @@
 
 # Find dependencies
 include(CMakeFindDependencyMacro)
-find_dependency(Qt6 REQUIRED COMPONENTS Core Gui Quick Qml)
+find_dependency(Qt6 6.11 REQUIRED COMPONENTS Core Gui Quick Qml LabsStyleKit)
 
 # Include module targets
 include("${CMAKE_CURRENT_LIST_DIR}/MerceTargets.cmake")
@@ -22,6 +22,10 @@ endif()
 
 if(NOT TARGET Merce::Foundation)
     add_library(Merce::Foundation ALIAS MerceFoundation)
+endif()
+
+if(NOT TARGET Merce::Style)
+    add_library(Merce::Style ALIAS MerceStyle)
 endif()
 
 if(NOT TARGET Merce::Effects)

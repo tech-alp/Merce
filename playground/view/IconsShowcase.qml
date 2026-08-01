@@ -1,9 +1,8 @@
 import QtQuick
-import QtQuick.Controls.Basic as Basic
+import Qt.labs.StyleKit as SK
 import Merce.Theme
 import Merce.Foundation
 import Merce.Icons.FontAwesome
-import Merce.Controls
 
 Item {
     id: root
@@ -31,6 +30,9 @@ Item {
     readonly property int fontAwesomeSolidIconCount: fontAwesomeSolidIconList.length
     readonly property int fontAwesomeRegularIconCount: fontAwesomeRegularIconList.length
     readonly property int fontAwesomeBrandsIconCount: fontAwesomeBrandsIconList.length
+    property string activeTooltip: ""
+    property real activeTooltipX: 0
+    property real activeTooltipY: 0
 
     ListModel {
         id: filteredIcons
@@ -113,6 +115,17 @@ Item {
         return iconEntry.name + " / U+" + codepoint.toUpperCase()
     }
 
+    function showTooltip(item, text) {
+        const point = item.mapToItem(root, item.width / 2, 0)
+        activeTooltip = String(text || "")
+        activeTooltipX = point.x
+        activeTooltipY = point.y
+    }
+
+    function hideTooltip() {
+        activeTooltip = ""
+    }
+
     function refreshFilteredIcons() {
         filteredIcons.clear()
         const query = String(root.searchQuery || "").trim()
@@ -176,30 +189,43 @@ Item {
                         text: "Icons"
                     }
 
-                    MSelect {
+                    SK.ComboBox {
                         id: fontSelect
                         objectName: "merce.playground.icons.fontSelect"
                         width: 260
                         anchors.verticalCenter: parent.verticalCenter
-                        size: "small"
-                        placeholder: "Font"
-                        options: root.iconFontOptions
-                        selectedValue: root.selectedIconFont
-                        onSelected: function(value) {
-                            root.selectedIconFont = String(value)
+                        SK.StyleVariation.variations: ["small"]
+                        model: root.iconFontOptions
+                        textRole: "label"
+                        valueRole: "value"
+                        currentValue: root.selectedIconFont
+                        displayText: currentIndex < 0 ? qsTr("Font") : currentText
+                        onActivated: {
+                            root.selectedIconFont = String(currentValue)
                         }
                     }
 
-                    MInput {
+                    SK.TextField {
                         id: searchField
                         objectName: "merce.playground.icons.search"
                         width: 320
                         anchors.verticalCenter: parent.verticalCenter
-                        placeholder: "Search icons"
-                        inputType: "search"
-                        icon: "material:search"
+                        placeholderText: qsTr("Search icons")
                         text: root.searchQuery
-                        onInputTextChanged: function(text) {
+                        leftPadding: Theme.spacing.xl2
+
+                        AppIcon {
+                            anchors {
+                                left: parent.left
+                                leftMargin: Theme.spacing.md
+                                verticalCenter: parent.verticalCenter
+                            }
+                            name: "material:search"
+                            size: Theme.icons.small
+                            color: Theme.colors.text.secondary
+                        }
+
+                        onTextEdited: {
                             root.searchQuery = text
                         }
                     }
@@ -225,11 +251,6 @@ Item {
 
                         width: iconsGrid.cellWidth
                         height: iconsGrid.cellHeight
-
-                        Basic.ToolTip.delay: 250
-                        Basic.ToolTip.timeout: 4000
-                        Basic.ToolTip.visible: tileMouse.containsMouse
-                        Basic.ToolTip.text: tooltip
 
                         Rectangle {
                             anchors.centerIn: parent
@@ -260,6 +281,12 @@ Item {
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
+                            onContainsMouseChanged: {
+                                if (containsMouse)
+                                    root.showTooltip(iconTile, iconTile.tooltip)
+                                else
+                                    root.hideTooltip()
+                            }
                         }
                     }
                 }
@@ -272,6 +299,36 @@ Item {
                     wrapMode: Text.WordWrap
                 }
             }
+        }
+    }
+
+    Rectangle {
+        id: tooltipBubble
+        z: 20
+        visible: root.activeTooltip.length > 0
+        x: Math.max(Theme.spacing.sm,
+                    Math.min(root.width - width - Theme.spacing.sm,
+                             root.activeTooltipX - width / 2))
+        y: Math.max(Theme.spacing.sm,
+                    root.activeTooltipY - height - Theme.spacing.xs)
+        implicitWidth: Math.min(280, tooltipLabel.implicitWidth + Theme.spacing.md)
+        implicitHeight: tooltipLabel.implicitHeight + Theme.spacing.xs
+        width: implicitWidth
+        height: implicitHeight
+        radius: Theme.radius.tooltip
+        color: Theme.colors.surface.inverse
+        border.width: 1
+        border.color: Theme.colors.border.strong
+
+        AppLabel {
+            id: tooltipLabel
+            anchors.centerIn: parent
+            width: Math.min(260, implicitWidth)
+            textType: AppLabel.Caption
+            text: root.activeTooltip
+            color: Theme.colors.text.inverse
+            wrapMode: Text.NoWrap
+            maximumLineCount: 1
         }
     }
 }

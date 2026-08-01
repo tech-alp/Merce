@@ -5,10 +5,10 @@ import Toastify.Style
 
 ToastifyStyleProvider {
     colors: ({
-        info: Theme.colors.status.info.foreground,
-        success: Theme.colors.status.success.foreground,
-        warning: Theme.colors.status.warning.foreground,
-        error: Theme.colors.status.error.foreground
+        info: Theme.colors.status.info.content,
+        success: Theme.colors.status.success.content,
+        warning: Theme.colors.status.warning.content,
+        error: Theme.colors.status.error.content
     })
 
     fonts: ({
@@ -45,7 +45,7 @@ ToastifyStyleProvider {
 
     shadow: ({
         blur: 0.5,
-        color: "#000000",
+        color: Theme.colors.surface.shadow,
         opacity: 0.16,
         horizontalOffset: 0,
         verticalOffset: 3
@@ -57,7 +57,7 @@ ToastifyStyleProvider {
     })
 
     textColors: ({
-        color: Theme.colors.text.inverse
+        color: Theme.colors.content.inverse
     })
 
     progressBar: ({

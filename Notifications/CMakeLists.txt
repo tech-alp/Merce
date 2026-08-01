@@ -5,4 +5,9 @@ qt_add_qml_module(MerceNotifications
         MDialog.qml
 )
 
-target_link_libraries(MerceNotifications PRIVATE MerceControls MerceEffects MerceFoundation MerceTheme)
+target_link_libraries(MerceNotifications
+    PRIVATE
+        MerceFoundation
+        MerceTheme
+        Qt6::LabsStyleKit
+)

@@ -1,4 +1,5 @@
 import QtQuick
+import Qt.labs.StyleKit as SK
 import Merce.Theme
 import Merce.Foundation
 import Merce.Controls
@@ -353,12 +354,14 @@ Item {
             text: parent.label
         }
 
-        MSelect {
+        SK.ComboBox {
             width: parent.width
-            options: root.fontOptions
-            selectedValue: parent.selectedValue
-            onSelected: function(value) {
-                parent.selected(String(value))
+            model: root.fontOptions
+            textRole: "label"
+            valueRole: "value"
+            currentValue: parent.selectedValue
+            onActivated: {
+                parent.selected(String(currentValue))
             }
         }
     }
@@ -391,19 +394,18 @@ Item {
                 width: parent.width
                 spacing: Theme.spacing.md
 
-                MInput {
+                SK.TextField {
                     width: Math.min(360, parent.width - applyButton.width - parent.spacing)
                     text: root.themeName
-                    placeholder: qsTr("Theme name")
-                    onInputTextChanged: function(value) {
-                        root.themeName = value
+                    placeholderText: qsTr("Theme name")
+                    onTextEdited: {
+                        root.themeName = text
                     }
                 }
 
                 MButton {
                     id: applyButton
                     text: qsTr("Save & Apply")
-                    icon.name: "material:save"
                     enabled: root.authoringEnabled
                     onClicked: root.saveAndApply()
                 }
@@ -411,7 +413,7 @@ Item {
 
             MBadge {
                 text: root.statusMessage
-                variant: root.statusOk ? "success" : "error"
+                variant: root.statusOk ? MBadge.Success : MBadge.Error
                 visible: root.statusMessage.length > 0
             }
         }

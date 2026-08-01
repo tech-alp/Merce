@@ -1,7 +1,7 @@
 import QtQuick
+import Qt.labs.StyleKit as SK
 import Merce.Theme
 import Merce.Foundation
-import Merce.Controls
 import Merce.Notifications
 import Toastify
 
@@ -80,27 +80,30 @@ Item {
                     width: parent.width
                     spacing: Theme.spacing.md
 
-                    MButton {
+                    SK.Button {
+                        objectName: "merce.playground.feedback.toast.info"
                         text: "Info"
-                        variant: MButton.Outline
+                        SK.StyleVariation.variations: ["outline"]
                         onClicked: root.showToast(Toastify.Info, "Informational toast")
                     }
 
-                    MButton {
+                    SK.Button {
+                        objectName: "merce.playground.feedback.toast.success"
                         text: "Success"
-                        variant: MButton.Primary
                         onClicked: root.showToast(Toastify.Success, "Success toast")
                     }
 
-                    MButton {
+                    SK.Button {
+                        objectName: "merce.playground.feedback.toast.warning"
                         text: "Warning"
-                        variant: MButton.Secondary
+                        SK.StyleVariation.variations: ["secondary"]
                         onClicked: root.showToast(Toastify.Warning, "Warning toast")
                     }
 
-                    MButton {
+                    SK.Button {
+                        objectName: "merce.playground.feedback.toast.error"
                         text: "Error"
-                        variant: MButton.Destructive
+                        SK.StyleVariation.variations: ["destructive"]
                         onClicked: root.showToast(Toastify.Error, "Error toast")
                     }
                 }
@@ -132,33 +135,35 @@ Item {
                     width: parent.width
                     spacing: Theme.spacing.md
 
-                    MButton {
+                    SK.Button {
+                        objectName: "merce.playground.feedback.dialog.default"
                         text: "Default dialog"
-                        variant: MButton.Primary
                         onClicked: {
-                            dialog.variant = "default"
+                            dialog.variant = MDialog.Default
                             dialog.title = "Dialog sample"
                             dialog.message = "This dialog uses the active Merce theme tokens."
                             dialog.isOpen = true
                         }
                     }
 
-                    MButton {
+                    SK.Button {
+                        objectName: "merce.playground.feedback.dialog.warning"
                         text: "Warning dialog"
-                        variant: MButton.Secondary
+                        SK.StyleVariation.variations: ["secondary"]
                         onClicked: {
-                            dialog.variant = "warning"
+                            dialog.variant = MDialog.Warning
                             dialog.title = "Warning"
                             dialog.message = "Review the current theme state before continuing."
                             dialog.isOpen = true
                         }
                     }
 
-                    MButton {
+                    SK.Button {
+                        objectName: "merce.playground.feedback.dialog.destructive"
                         text: "Destructive dialog"
-                        variant: MButton.Destructive
+                        SK.StyleVariation.variations: ["destructive"]
                         onClicked: {
-                            dialog.variant = "destructive"
+                            dialog.variant = MDialog.Destructive
                             dialog.title = "Destructive action"
                             dialog.message = "This state uses the destructive semantic color."
                             dialog.isOpen = true

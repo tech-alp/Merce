@@ -4,7 +4,7 @@ import Merce.Theme
 
 /**
  * AppLabel - Theme-aware text label
- * Applies Merce typography presets to a Qt Quick Controls text template.
+ * Applies Merce typography presets to a Qt Quick Templates label.
  */
 T.Label {
     id: root

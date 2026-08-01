@@ -1,7 +1,7 @@
 import QtQuick
+import Qt.labs.StyleKit as SK
 import Merce.Theme
 import Merce.Foundation
-import Merce.Controls
 import Merce.Notifications
 import Toastify
 
@@ -15,10 +15,10 @@ Item {
     readonly property string displayMode: Theme.activeMode === "" ? "default" : Theme.activeMode
     readonly property var themeOptions: Theme.availableThemes
     readonly property var modeOptions: root.modeOptionsFor(Theme.activeBrand)
-    readonly property color observedButtonColor: primaryButton.backgroundColor
+    readonly property color observedButtonColor: primaryButton.observedContainerColor
     readonly property color observedTextColor: bodySample.color
-    readonly property color observedInputBorderColor: emailInput.borderColor
-    readonly property color observedToggleColor: switchSample.trackColor
+    readonly property color observedInputBorderColor: emailInput.observedBorderColor
+    readonly property color observedToggleColor: switchSample.observedTrackColor
     readonly property color observedSelectColor: selectSample.observedPaletteColor
     readonly property color observedToastColor: toastStyle.colors.success
     readonly property color observedDialogColor: galleryDialog.observedSurfaceColor
@@ -233,13 +233,15 @@ Item {
                                 text: "Tasarım sistemi"
                             }
 
-                            MSelect {
+                            SK.ComboBox {
                                 objectName: "merce.playground.gallery.selector.theme"
                                 width: parent.width
-                                selectedValue: Theme.activeBrand
-                                options: root.themeOptions
-                                onSelected: function(value) {
-                                    const brand = String(value)
+                                model: root.themeOptions
+                                textRole: "label"
+                                valueRole: "value"
+                                currentValue: Theme.activeBrand
+                                onActivated: {
+                                    const brand = String(currentValue)
                                     root.applyTheme(brand, root.defaultModeFor(brand))
                                 }
                             }
@@ -256,13 +258,15 @@ Item {
                                 text: "Mode"
                             }
 
-                            MSelect {
+                            SK.ComboBox {
                                 objectName: "merce.playground.gallery.selector.mode"
                                 width: parent.width
-                                selectedValue: Theme.activeMode
-                                options: root.modeOptions
-                                onSelected: function(value) {
-                                    root.applyTheme(Theme.activeBrand, String(value))
+                                model: root.modeOptions
+                                textRole: "label"
+                                valueRole: "value"
+                                currentValue: Theme.activeMode
+                                onActivated: {
+                                    root.applyTheme(Theme.activeBrand, String(currentValue))
                                 }
                             }
                         }
@@ -452,11 +456,11 @@ Item {
                     width: parent.width
                     spacing: Theme.spacing.md
 
-                    MButton {
+                    SK.Button {
                         id: primaryButton
                         objectName: "merce.playground.gallery.primaryButton"
                         text: "Primary"
-                        variant: MButton.Primary
+                        property color observedContainerColor: Theme.colors.action.primary.container
                         onClicked: galleryToast.success("Galeri örneği yüklendi.", {
                             position: Toastify.BottomRightCorner,
                             autoClose: 4000,
@@ -465,70 +469,78 @@ Item {
                         })
                     }
 
-                    MButton {
+                    SK.Button {
                         objectName: "merce.playground.gallery.secondaryButton"
                         text: "Secondary"
-                        variant: MButton.Secondary
+                        SK.StyleVariation.variations: ["secondary"]
                     }
 
-                    MButton {
+                    SK.Button {
                         objectName: "merce.playground.gallery.outlineButton"
                         text: "Outline"
-                        variant: MButton.Outline
+                        SK.StyleVariation.variations: ["outline"]
                     }
 
-                    MButton {
+                    SK.Button {
                         objectName: "merce.playground.gallery.destructiveButton"
                         text: "Destructive"
-                        variant: MButton.Destructive
+                        SK.StyleVariation.variations: ["destructive"]
                         onClicked: galleryDialog.isOpen = true
                     }
                 }
 
-                MInput {
+                SK.TextField {
                     id: emailInput
                     objectName: "merce.playground.gallery.input"
                     width: 360
-                    placeholder: "Email"
-                    inputType: "email"
+                    placeholderText: "Email"
+                    inputMethodHints: Qt.ImhEmailCharactersOnly
                     text: "theme@merce.local"
+                    property color observedBorderColor: Theme.colors.border.base
+
+                    validator: RegularExpressionValidator {
+                        regularExpression: /.+@.+\..+/
+                    }
                 }
 
                 Flow {
                     width: parent.width
                     spacing: Theme.spacing.xl
 
-                    MCheckbox {
+                    SK.CheckBox {
                         objectName: "merce.playground.gallery.checkbox"
-                        label: "Checkbox"
+                        text: "Checkbox"
                         checked: true
                     }
 
-                    MRadio {
+                    SK.RadioButton {
                         objectName: "merce.playground.gallery.radio"
-                        label: "Radio"
+                        text: "Radio"
                         checked: true
                     }
 
-                    MSwitch {
+                    SK.Switch {
                         id: switchSample
                         objectName: "merce.playground.gallery.switch"
-                        label: "Switch"
+                        text: "Switch"
                         checked: true
+                        property color observedTrackColor: Theme.colors.action.primary.container
                     }
                 }
 
-                MSelect {
+                SK.ComboBox {
                     id: selectSample
                     objectName: "merce.playground.gallery.select"
                     width: 360
-                    selectedValue: "runtime"
                     property color observedPaletteColor: Theme.colors.text.primary
-                    options: [
+                    model: [
                         { "value": "runtime", "label": "Runtime theme" },
                         { "value": "gallery", "label": "Gallery proof" },
                         { "value": "export", "label": "Export evidence" }
                     ]
+                    textRole: "label"
+                    valueRole: "value"
+                    currentValue: "runtime"
                 }
             }
         }
@@ -559,17 +571,16 @@ Item {
                 Row {
                     spacing: Theme.spacing.md
 
-                    MButton {
+                    SK.Button {
                         objectName: "merce.playground.gallery.exportButton"
                         text: "Tema galerisini dışa aktar"
-                        variant: MButton.Primary
                         onClicked: exportState.text = "Galeri görselleri hazır"
                     }
 
-                    MButton {
+                    SK.Button {
                         objectName: "merce.playground.gallery.changeThemeButton"
                         text: "Temayı değiştir"
-                        variant: MButton.Outline
+                        SK.StyleVariation.variations: ["outline"]
                         onClicked: root.setMerceDark()
                     }
                 }

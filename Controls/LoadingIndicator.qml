@@ -1,44 +1,50 @@
 import QtQuick
+import QtQuick.Shapes
+import Merce.Theme
 
 Item {
     id: root
 
-    property int size: 24
-    property color color: "#000000"
+    property real size: Theme.icons.medium
+
+    readonly property var colors: Theme.colors
+    property color color: root.colors.action.primary.content
     property bool running: false
 
     implicitWidth: size
     implicitHeight: size
-    width: size
-    height: size
 
-    Canvas {
-        id: canvas
+    Shape {
         anchors.fill: parent
-        opacity: root.running ? 1.0 : 0.0
-        onPaint: {
-            const ctx = getContext("2d")
-            const lineWidth = Math.max(2, root.size / 8)
-            const radius = root.size / 2 - lineWidth
+        visible: root.running
 
-            ctx.clearRect(0, 0, width, height)
-            ctx.beginPath()
-            ctx.lineWidth = lineWidth
-            ctx.lineCap = "round"
-            ctx.strokeStyle = root.color
-            ctx.arc(width / 2, height / 2, radius, -Math.PI / 2, Math.PI * 0.9)
-            ctx.stroke()
+        ShapePath {
+            id: spinnerPath
+
+            readonly property real lineWidth: Math.max(2, root.size / 8)
+            readonly property real arcRadius: Math.max(0, Math.min(root.width, root.height) / 2 - lineWidth)
+
+            fillColor: "transparent"
+            strokeColor: root.color
+            strokeWidth: lineWidth
+            capStyle: ShapePath.RoundCap
+
+            PathAngleArc {
+                centerX: root.width / 2
+                centerY: root.height / 2
+                radiusX: spinnerPath.arcRadius
+                radiusY: spinnerPath.arcRadius
+                startAngle: -90
+                sweepAngle: 252
+            }
         }
 
         RotationAnimator on rotation {
             from: 0
             to: 360
-            duration: 900
+            duration: Theme.motion.durationSlowest
             loops: Animation.Infinite
             running: root.running
         }
     }
-
-    onColorChanged: canvas.requestPaint()
-    onSizeChanged: canvas.requestPaint()
 }

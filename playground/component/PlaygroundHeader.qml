@@ -1,7 +1,7 @@
 import QtQuick
+import Qt.labs.StyleKit
 import Merce.Theme
 import Merce.Foundation
-import Merce.Controls
 
 Rectangle {
     id: root
@@ -38,24 +38,30 @@ Rectangle {
         }
         spacing: Theme.spacing.sm
 
-        MSelect {
+        ComboBox {
             objectName: "merce.playground.header.themeSelect"
             width: 230
-            selectedValue: Theme.activeBrand
-            options: root.themeOptions
-            onSelected: function(value) {
-                root.themeSelected(value)
+            StyleVariation.variations: ["small"]
+            model: root.themeOptions
+            textRole: "label"
+            valueRole: "value"
+            currentValue: Theme.activeBrand
+            onActivated: {
+                root.themeSelected(currentValue)
             }
         }
 
-        MSelect {
+        ComboBox {
             objectName: "merce.playground.header.modeSelect"
             width: 150
+            StyleVariation.variations: ["small"]
             visible: root.modeOptions.length > 0
-            selectedValue: Theme.activeMode
-            options: root.modeOptions
-            onSelected: function(value) {
-                root.modeSelected(value)
+            model: root.modeOptions
+            textRole: "label"
+            valueRole: "value"
+            currentValue: Theme.activeMode
+            onActivated: {
+                root.modeSelected(currentValue)
             }
         }
     }

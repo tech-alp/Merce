@@ -1,12 +1,15 @@
 import QtQuick
+import Qt.labs.StyleKit as SK
+import Merce.Style
 import Merce.Theme
 
-Window {
+SK.ApplicationWindow {
     id: root
     width: 1100
     height: Math.ceil(captureFrame.height)
     visible: true
-    color: Theme.colors.background.base
+
+    SK.StyleKit.style: MerceStyle {}
 
     readonly property string outputDirectory: typeof themeGalleryOutputDir === "undefined" ? "" : String(themeGalleryOutputDir)
     property int exportIndex: 0

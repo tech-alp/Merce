@@ -1,4 +1,5 @@
 import QtQuick
+import Qt.labs.StyleKit as SK
 import Merce.Theme
 import Merce.Foundation
 import Merce.Controls
@@ -463,14 +464,14 @@ Item {
 
                     MBadge {
                         text: Theme.activeBrand
-                        variant: "primary"
-                        size: "small"
+                        variant: MBadge.Primary
+                        size: MBadge.Small
                     }
 
                     MBadge {
                         text: Theme.activeMode === "" ? "default mode" : Theme.activeMode + " mode"
-                        variant: "neutral"
-                        size: "small"
+                        variant: MBadge.Neutral
+                        size: MBadge.Small
                     }
                 }
             }
@@ -663,22 +664,21 @@ Item {
                     PreviewCard {
                         title: "Buttons"
 
-                        MButton {
+                        SK.Button {
                             width: parent.width
                             text: "Primary Button"
-                            variant: MButton.Primary
                         }
 
-                        MButton {
+                        SK.Button {
                             width: parent.width
                             text: "Secondary Button"
-                            variant: MButton.Secondary
+                            SK.StyleVariation.variations: ["secondary"]
                         }
 
-                        MButton {
+                        SK.Button {
                             width: parent.width
                             text: "Outline Button"
-                            variant: MButton.Outline
+                            SK.StyleVariation.variations: ["outline"]
                         }
                     }
 
@@ -689,12 +689,23 @@ Item {
 
                         InputPreview { text: "Focused input"; focused: true }
 
-                        MInput {
+                        SK.TextField {
                             width: parent.width
                             text: "Error input"
-                            isReadOnly: true
-                            validationState: MInput.Error
-                            trailingIcon: "material:error"
+                            readOnly: true
+                            rightPadding: Theme.spacing.xl2
+                            SK.StyleVariation.variations: ["error"]
+
+                            AppIcon {
+                                anchors {
+                                    right: parent.right
+                                    rightMargin: Theme.spacing.md
+                                    verticalCenter: parent.verticalCenter
+                                }
+                                name: "material:error"
+                                size: Theme.icons.small
+                                color: Theme.colors.status.error.foreground
+                            }
                         }
                     }
 
@@ -730,12 +741,12 @@ Item {
                             width: parent.width
                             spacing: Theme.spacing.sm
 
-                            MBadge { text: "Primary"; variant: "primary" }
-                            MBadge { text: "Success"; variant: "success" }
-                            MBadge { text: "Warning"; variant: "warning" }
-                            MBadge { text: "Error"; variant: "error" }
-                            MBadge { text: "Info"; variant: "info" }
-                            MBadge { text: "Neutral"; variant: "neutral" }
+                            MBadge { text: "Primary"; variant: MBadge.Primary }
+                            MBadge { text: "Success"; variant: MBadge.Success }
+                            MBadge { text: "Warning"; variant: MBadge.Warning }
+                            MBadge { text: "Error"; variant: MBadge.Error }
+                            MBadge { text: "Info"; variant: MBadge.Info }
+                            MBadge { text: "Neutral"; variant: MBadge.Neutral }
                         }
                     }
                 }
@@ -781,8 +792,8 @@ Item {
                         id: wcagBadge
                         anchors.verticalCenter: parent.verticalCenter
                         text: "WCAG 2.2"
-                        variant: "success"
-                        size: "small"
+                        variant: MBadge.Success
+                        size: MBadge.Small
                     }
                 }
 
