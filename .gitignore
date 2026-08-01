@@ -46,4 +46,4 @@ tools/design-tokens/node_modules/
 tmp/
 temp/
 *.tmp
-Merce/.qtcreator
+.qtcreator/
