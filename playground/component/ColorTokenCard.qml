@@ -60,10 +60,10 @@ FocusScope {
         height: 184
         surfaceType: Surface.Default
         radiusValue: Theme.radius.large
-        backgroundColor: Theme.colors.surface.base
+        backgroundColor: Theme.colors.surface.container
         borderWidth: root.activeFocus ? 2 : 1
-        borderColor: root.activeFocus ? Theme.colors.border.focus
-                                      : cardHover.hovered ? Theme.colors.border.strong : Theme.colors.border.base
+        borderColor: root.activeFocus ? Theme.colors.outline.focus
+                                      : cardHover.hovered ? Theme.colors.outline.strong : Theme.colors.outline.subtle
 
         layer.enabled: true
         layer.effect: MultiEffect {
@@ -124,7 +124,7 @@ FocusScope {
                 width: parent.width
                 textType: AppLabel.Body
                 text: root.tokenPath
-                color: Theme.colors.text.primary
+                color: Theme.colors.content.primary
                 wrapMode: Text.WordWrap
             }
 
@@ -132,7 +132,7 @@ FocusScope {
                 width: parent.width
                 textType: AppLabel.Caption
                 text: root.usage
-                color: Theme.colors.text.secondary
+                color: Theme.colors.content.secondary
                 wrapMode: Text.WordWrap
                 maximumLineCount: root.narrow ? 1 : 2
                 elide: Text.ElideRight
@@ -142,7 +142,7 @@ FocusScope {
                 width: parent.width
                 textType: AppLabel.Caption
                 text: root.hexValue
-                color: Theme.colors.text.secondary
+                color: Theme.colors.content.secondary
                 font.family: FoundationFonts.resolveFamily(Theme.typography.fontMono)
                 elide: Text.ElideRight
             }

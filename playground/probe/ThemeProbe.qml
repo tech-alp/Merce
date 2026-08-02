@@ -8,8 +8,8 @@ QtObject {
     }
 
     Component.onCompleted: {
-        const backgroundBase = String(Theme.colors.background.base).toLowerCase()
-        const textPrimary = String(Theme.colors.text.primary).toLowerCase()
+        const backgroundBase = String(Theme.colors.surface.canvas).toLowerCase()
+        const textPrimary = String(Theme.colors.content.primary).toLowerCase()
         const actionPrimary = String(Theme.colors.action.primary.container).toLowerCase()
         const bodyFont = String(Theme.typography.fontBody)
 
@@ -38,8 +38,8 @@ QtObject {
         }
 
         console.log("theme-probe ok",
-                    Theme.colors.background.base,
-                    Theme.colors.text.primary,
+                    Theme.colors.surface.canvas,
+                    Theme.colors.content.primary,
                     Theme.colors.action.primary.container,
                     Theme.spacing.md,
                     Theme.radius.button,

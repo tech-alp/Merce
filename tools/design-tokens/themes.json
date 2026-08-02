@@ -26,7 +26,6 @@
     },
     "merce": {
       "displayName": "Merce Reference",
-      "runtime": false,
       "defaultMode": "light",
       "modes": {
         "light": {
@@ -51,7 +50,6 @@
     },
     "apple": {
       "displayName": "Apple Reference",
-      "runtime": false,
       "defaultMode": "light",
       "modes": {
         "light": {
@@ -67,7 +65,6 @@
     },
     "claude": {
       "displayName": "Claude Reference",
-      "runtime": false,
       "defaultMode": "light",
       "modes": {
         "light": {
@@ -83,7 +80,6 @@
     },
     "airbnb": {
       "displayName": "Airbnb Reference",
-      "runtime": false,
       "defaultMode": "light",
       "modes": {
         "light": {
@@ -99,7 +95,6 @@
     },
     "stripe": {
       "displayName": "Stripe Reference",
-      "runtime": false,
       "defaultMode": "light",
       "modes": {
         "light": {
@@ -115,7 +110,6 @@
     },
     "linear": {
       "displayName": "Linear Reference",
-      "runtime": false,
       "defaultMode": "dark",
       "modes": {
         "dark": {

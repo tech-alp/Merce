@@ -4,9 +4,9 @@
     "content": { "link": { "$type": "color", "$value": "#0066CC" } },
     "action": {
       "primary": {
-        "container": { "$type": "color", "$value": "#0066CC" },
+        "container": { "$type": "color", "$value": "#0071E3" },
         "content": { "$type": "color", "$value": "#FFFFFF" },
-        "outline": { "$type": "color", "$value": "#0066CC" }
+        "outline": { "$type": "color", "$value": "#0071E3" }
       }
     },
     "outline": { "focus": { "$type": "color", "$value": "#0071E3" } }

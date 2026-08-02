@@ -144,9 +144,9 @@ void tst_merce_style_runtime_switch::existingStyleKitControlsRepaintAfterContext
              qPrintable(QStringLiteral("button rendered %1, expected %2")
                             .arg(lightButton.name(),
                                  theme->colors()->action()->primary()->container().name())));
-    QVERIFY2(colorsNear(lightField, theme->colors()->surface()->base()),
+    QVERIFY2(colorsNear(lightField, theme->colors()->surface()->container()),
              qPrintable(QStringLiteral("field rendered %1, expected %2")
-                            .arg(lightField.name(), theme->colors()->surface()->base().name())));
+                            .arg(lightField.name(), theme->colors()->surface()->container().name())));
     QVERIFY2(colorsNear(lightSwitch, theme->colors()->surface()->containerSunken()),
              qPrintable(QStringLiteral("switch rendered %1, expected %2")
                             .arg(lightSwitch.name(),
@@ -202,7 +202,7 @@ void tst_merce_style_runtime_switch::existingStyleKitControlsRepaintAfterContext
         2000);
     QTRY_VERIFY_WITH_TIMEOUT(
         colorsNear(darkField = renderedCenter(window, textField),
-                   theme->colors()->surface()->base()),
+                   theme->colors()->surface()->container()),
         2000);
     QTRY_VERIFY_WITH_TIMEOUT(
         colorsNear(darkSwitch = renderedColorMatch(

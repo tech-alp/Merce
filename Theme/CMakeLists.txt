@@ -27,6 +27,7 @@ set(MERCE_THEME_SOURCES
 
 set(MERCE_GENERATED_DIR "${CMAKE_CURRENT_LIST_DIR}/../generated")
 set(MERCE_THEME_INDEX_FILE "${MERCE_GENERATED_DIR}/themes/index.json")
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${MERCE_THEME_INDEX_FILE}")
 
 if(NOT EXISTS "${MERCE_THEME_INDEX_FILE}")
     message(FATAL_ERROR "Missing generated theme index: ${MERCE_THEME_INDEX_FILE}")
@@ -64,6 +65,8 @@ endforeach()
 qt_add_qml_module(MerceTheme
     URI "Merce.Theme"
     VERSION 1.0
+    DEPENDENCIES
+        QtQuick
     SOURCES
         ${MERCE_THEME_SOURCES}
 )
@@ -80,6 +83,7 @@ target_link_libraries(MerceTheme
         Qt6::Core
         Qt6::Gui
         Qt6::Qml
+        Qt6::Quick
     PRIVATE
         MerceMcuSubset
 )

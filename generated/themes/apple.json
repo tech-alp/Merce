@@ -28,9 +28,9 @@
     },
     "action": {
       "primary": {
-        "container": "#0066CC",
+        "container": "#0071E3",
         "content": "#FFFFFF",
-        "outline": "#0066CC"
+        "outline": "#0071E3"
       },
       "secondary": {
         "container": "#65716D",

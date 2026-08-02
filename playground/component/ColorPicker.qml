@@ -105,7 +105,7 @@ Item {
                 radius: Theme.radius.medium
                 color: root.selectedColor
                 border.width: 1
-                border.color: Theme.colors.border.base
+                border.color: Theme.colors.outline.subtle
                 anchors.verticalCenter: parent.verticalCenter
             }
 
@@ -118,7 +118,7 @@ Item {
                     width: parent.width
                     textType: AppLabel.Caption
                     text: root.label
-                    color: Theme.colors.text.primary
+                    color: Theme.colors.content.primary
                     wrapMode: Text.WordWrap
                 }
 
@@ -126,7 +126,7 @@ Item {
                     width: parent.width
                     textType: AppLabel.Caption
                     text: root.usage
-                    color: Theme.colors.text.secondary
+                    color: Theme.colors.content.secondary
                     visible: root.usage.length > 0
                     wrapMode: Text.WordWrap
                 }
@@ -137,9 +137,9 @@ Item {
                 width: 96
                 height: Theme.spacing.touchTargetCompact
                 radius: Theme.radius.input
-                color: Theme.colors.surface.base
+                color: Theme.colors.surface.container
                 border.width: 1
-                border.color: hexInput.activeFocus ? Theme.colors.border.focus : Theme.colors.border.base
+                border.color: hexInput.activeFocus ? Theme.colors.outline.focus : Theme.colors.outline.subtle
                 anchors.verticalCenter: parent.verticalCenter
 
                 TextInput {
@@ -151,8 +151,8 @@ Item {
                         margins: Theme.spacing.sm
                     }
                     text: root.hexValue
-                    color: Theme.colors.text.primary
-                    selectedTextColor: Theme.colors.text.inverse
+                    color: Theme.colors.content.primary
+                    selectedTextColor: Theme.colors.content.inverse
                     selectionColor: Theme.colors.action.primary.container
                     font.family: FoundationFonts.resolveFamily(Theme.typography.fontMono)
                     font.pixelSize: Theme.typography.sizeSmall
@@ -185,7 +185,7 @@ Item {
                 radius: Theme.radius.medium
                 color: Qt.hsva(root.hue, 1, 1, 1)
                 border.width: 1
-                border.color: Theme.colors.border.base
+                border.color: Theme.colors.outline.subtle
 
                 Rectangle {
                     anchors.fill: parent
@@ -214,7 +214,7 @@ Item {
                     y: Math.max(0, Math.min(parent.height - height, (1 - root.brightness) * parent.height - height / 2))
                     color: "transparent"
                     border.width: 2
-                    border.color: Theme.colors.text.inverse
+                    border.color: Theme.colors.content.inverse
                 }
 
                 MouseArea {
@@ -238,7 +238,7 @@ Item {
                 }
                 radius: Theme.radius.full
                 border.width: 1
-                border.color: Theme.colors.border.base
+                border.color: Theme.colors.outline.subtle
                 gradient: Gradient {
                     GradientStop { position: 0.00; color: "#FF0000" }
                     GradientStop { position: 0.17; color: "#FFFF00" }
@@ -255,9 +255,9 @@ Item {
                     width: parent.width + 6
                     height: 8
                     radius: 4
-                    color: Theme.colors.surface.base
+                    color: Theme.colors.surface.container
                     border.width: 1
-                    border.color: Theme.colors.border.strong
+                    border.color: Theme.colors.outline.strong
                 }
 
                 MouseArea {
@@ -287,7 +287,7 @@ Item {
                     radius: Theme.radius.small
                     color: modelData
                     border.width: 1
-                    border.color: Theme.colors.border.base
+                    border.color: Theme.colors.outline.subtle
 
                     MouseArea {
                         anchors.fill: parent

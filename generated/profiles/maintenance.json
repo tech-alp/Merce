@@ -86,6 +86,11 @@
       "hairline": 1,
       "strong": 2,
       "focus": 3
+    },
+    "dialog": {
+      "small": 400,
+      "medium": 560,
+      "large": 720
     }
   }
 }

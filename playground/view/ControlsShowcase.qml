@@ -17,7 +17,7 @@ Item {
 
     component SectionTitle: AppLabel {
         textType: AppLabel.H4
-        color: Theme.colors.text.primary
+        color: Theme.colors.content.primary
         wrapMode: Text.WordWrap
     }
 
@@ -205,7 +205,7 @@ Item {
                     }
                     name: "material:mail"
                     size: Theme.icons.medium
-                    color: Theme.colors.text.tertiary
+                    color: Theme.colors.content.tertiary
                 }
             }
 
@@ -225,7 +225,7 @@ Item {
                     }
                     name: "material:check_circle"
                     size: Theme.icons.medium
-                    color: Theme.colors.status.success.foreground
+                    color: Theme.colors.status.success.content
                 }
             }
 
@@ -245,7 +245,7 @@ Item {
                     }
                     name: "material:error"
                     size: Theme.icons.medium
-                    color: Theme.colors.status.error.foreground
+                    color: Theme.colors.status.error.content
                 }
             }
         }
@@ -262,19 +262,19 @@ Item {
             AppIcon {
                 name: "status:check"
                 size: Theme.icons.large
-                color: Theme.colors.status.success.foreground
+                color: Theme.colors.status.success.content
             }
 
             AppIcon {
                 name: "material:wallet"
                 size: Theme.icons.large
-                color: Theme.colors.text.primary
+                color: Theme.colors.content.primary
             }
 
             AppIcon {
                 name: "material:dark_mode"
                 size: Theme.icons.large
-                color: Theme.colors.text.primary
+                color: Theme.colors.content.primary
             }
         }
 

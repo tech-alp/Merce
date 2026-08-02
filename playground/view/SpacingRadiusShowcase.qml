@@ -20,19 +20,19 @@ Item {
 
     component SectionTitle: AppLabel {
         textType: AppLabel.H4
-        color: Theme.colors.text.primary
+        color: Theme.colors.content.primary
         wrapMode: Text.WordWrap
     }
 
     component BodyCopy: AppLabel {
         textType: AppLabel.BodySmall
-        color: Theme.colors.text.secondary
+        color: Theme.colors.content.secondary
         wrapMode: Text.WordWrap
     }
 
     component CaptionText: AppLabel {
         textType: AppLabel.Caption
-        color: Theme.colors.text.tertiary
+        color: Theme.colors.content.tertiary
         wrapMode: Text.WordWrap
     }
 
@@ -42,7 +42,7 @@ Item {
         implicitWidth: chipText.implicitWidth + Theme.spacing.sm
         implicitHeight: 24
         radius: Theme.radius.badge
-        color: Theme.colors.action.primarySubtle
+        color: Qt.alpha(Theme.colors.action.primary.container, 0.1)
         border.width: 1
         border.color: Theme.colors.action.primary.container
 
@@ -68,7 +68,7 @@ Item {
             anchors.centerIn: parent
             textType: AppLabel.Caption
             text: String(value)
-            color: Theme.colors.text.inverse
+            color: Theme.colors.content.inverse
             wrapMode: Text.NoWrap
         }
     }
@@ -90,9 +90,9 @@ Item {
                 width: 36
                 height: 36
                 radius: Theme.radius.medium
-                color: Theme.colors.surface.hover
+                color: Theme.colors.surface.containerTinted
                 border.width: 1
-                border.color: Theme.colors.border.base
+                border.color: Theme.colors.outline.subtle
 
                 AppIcon {
                     anchors.centerIn: parent
@@ -109,7 +109,7 @@ Item {
                 AppLabel {
                     textType: AppLabel.Caption
                     text: title
-                    color: Theme.colors.text.primary
+                    color: Theme.colors.content.primary
                     wrapMode: Text.NoWrap
                 }
 
@@ -209,7 +209,9 @@ Item {
                 bottomMargin: Theme.spacing.xs
             }
             radius: Theme.radius.small
-            color: Theme.colors.action.primaryHover
+            color: Qt.tint(Theme.colors.action.primary.container,
+                           Qt.alpha(Theme.colors.action.primary.content,
+                                    Theme.state.layer.hover))
         }
 
         Column {
@@ -224,7 +226,7 @@ Item {
                 width: parent.parent.width
                 textType: AppLabel.Caption
                 text: label
-                color: Theme.colors.text.primary
+                color: Theme.colors.content.primary
                 horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.NoWrap
             }
@@ -255,7 +257,7 @@ Item {
             radius: Math.min(value, 20)
             color: "transparent"
             border.width: 1
-            border.color: Theme.colors.border.strong
+            border.color: Theme.colors.outline.strong
         }
 
         Column {
@@ -269,7 +271,7 @@ Item {
                 width: parent.parent.width
                 textType: AppLabel.Caption
                 text: label
-                color: Theme.colors.text.primary
+                color: Theme.colors.content.primary
                 horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.NoWrap
             }
@@ -303,7 +305,7 @@ Item {
                 anchors.centerIn: parent
                 name: icon
                 size: Theme.icons.small
-                color: Theme.colors.text.inverse
+                color: Theme.colors.content.inverse
             }
         }
 
@@ -321,7 +323,7 @@ Item {
                 width: parent.width
                 textType: AppLabel.Caption
                 text: title
-                color: Theme.colors.text.primary
+                color: Theme.colors.content.primary
                 wrapMode: Text.NoWrap
                 maximumLineCount: 1
             }
@@ -343,7 +345,7 @@ Item {
             width: 72
             textType: AppLabel.Caption
             text: value
-            color: Theme.colors.text.secondary
+            color: Theme.colors.content.secondary
             horizontalAlignment: Text.AlignRight
             wrapMode: Text.NoWrap
         }
@@ -356,7 +358,7 @@ Item {
             }
             name: "material:check_circle"
             size: Theme.icons.small
-            color: Theme.colors.status.success.foreground
+            color: Theme.colors.status.success.content
         }
     }
 
@@ -396,7 +398,7 @@ Item {
                             anchors.centerIn: parent
                             name: "material:apps"
                             size: Theme.icons.large
-                            color: Theme.colors.text.inverse
+                            color: Theme.colors.content.inverse
                         }
                     }
 
@@ -452,9 +454,9 @@ Item {
                     }
                     height: Theme.spacing.touchTargetCompact + Theme.spacing.sm
                     radius: Theme.radius.input
-                    color: Theme.colors.surface.base
+                    color: Theme.colors.surface.container
                     border.width: 1
-                    border.color: Theme.colors.border.base
+                    border.color: Theme.colors.outline.subtle
 
                     Row {
                         anchors {
@@ -468,7 +470,7 @@ Item {
                             anchors.verticalCenter: parent.verticalCenter
                             name: "material:menu"
                             size: Theme.icons.small
-                            color: Theme.colors.text.secondary
+                            color: Theme.colors.content.secondary
                         }
 
                         AppLabel {
@@ -476,7 +478,7 @@ Item {
                             anchors.verticalCenter: parent.verticalCenter
                             textType: AppLabel.Body
                             text: "Page Title"
-                            color: Theme.colors.text.primary
+                            color: Theme.colors.content.primary
                             wrapMode: Text.NoWrap
                         }
 
@@ -495,7 +497,7 @@ Item {
                                 }
                                 name: "material:search"
                                 size: Theme.icons.small
-                                color: Theme.colors.text.secondary
+                                color: Theme.colors.content.secondary
                             }
                         }
 
@@ -503,7 +505,7 @@ Item {
                             anchors.verticalCenter: parent.verticalCenter
                             name: "material:notifications"
                             size: Theme.icons.small
-                            color: Theme.colors.text.secondary
+                            color: Theme.colors.content.secondary
                         }
                     }
                 }
@@ -535,7 +537,7 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
                         textType: AppLabel.Body
                         text: "Label"
-                        color: Theme.colors.text.primary
+                        color: Theme.colors.content.primary
                         wrapMode: Text.NoWrap
                     }
 
@@ -601,7 +603,7 @@ Item {
                                 width: parent.width - closeIcon.width
                                 textType: AppLabel.BodyLarge
                                 text: "Dialog Title"
-                                color: Theme.colors.text.primary
+                                color: Theme.colors.content.primary
                                 wrapMode: Text.NoWrap
                             }
 
@@ -609,7 +611,7 @@ Item {
                                 id: closeIcon
                                 name: "material:close"
                                 size: Theme.icons.small
-                                color: Theme.colors.text.secondary
+                                color: Theme.colors.content.secondary
                             }
                         }
 
@@ -661,9 +663,9 @@ Item {
                     }
                     height: Theme.spacing.touchTarget + Theme.spacing.lg
                     radius: Theme.radius.medium
-                    color: Theme.colors.surface.base
+                    color: Theme.colors.surface.container
                     border.width: 1
-                    border.color: Theme.colors.border.base
+                    border.color: Theme.colors.outline.subtle
 
                     Row {
                         anchors {
@@ -677,13 +679,15 @@ Item {
                             height: 44
                             radius: Theme.radius.medium
                             anchors.verticalCenter: parent.verticalCenter
-                            color: Theme.colors.action.primaryHover
+                            color: Qt.tint(Theme.colors.action.primary.container,
+                                           Qt.alpha(Theme.colors.action.primary.content,
+                                                    Theme.state.layer.hover))
 
                             AppLabel {
                                 anchors.centerIn: parent
                                 textType: AppLabel.BodyLarge
                                 text: "M"
-                                color: Theme.colors.text.primary
+                                color: Theme.colors.content.primary
                                 wrapMode: Text.NoWrap
                             }
                         }
@@ -697,7 +701,7 @@ Item {
                                 width: parent.width
                                 textType: AppLabel.Body
                                 text: "Primary text"
-                                color: Theme.colors.text.primary
+                                color: Theme.colors.content.primary
                                 wrapMode: Text.NoWrap
                             }
 
@@ -713,7 +717,7 @@ Item {
                             anchors.verticalCenter: parent.verticalCenter
                             name: "material:keyboard_arrow_down"
                             size: Theme.icons.small
-                            color: Theme.colors.text.secondary
+                            color: Theme.colors.content.secondary
                             rotation: -90
                         }
                     }
@@ -755,13 +759,13 @@ Item {
                             height: 58
                             radius: Theme.radius.small
                             anchors.verticalCenter: parent.verticalCenter
-                            color: Theme.colors.surface.hover
+                            color: Theme.colors.surface.containerTinted
 
                             AppIcon {
                                 anchors.centerIn: parent
                                 name: "material:palette"
                                 size: Theme.icons.medium
-                                color: Theme.colors.text.tertiary
+                                color: Theme.colors.content.tertiary
                             }
                         }
 
@@ -774,7 +778,7 @@ Item {
                                 width: parent.width
                                 textType: AppLabel.Body
                                 text: "Card Title"
-                                color: Theme.colors.text.primary
+                                color: Theme.colors.content.primary
                                 wrapMode: Text.NoWrap
                             }
 
@@ -877,7 +881,7 @@ Item {
                                 width: parent.width
                                 textType: AppLabel.Caption
                                 text: "Spacing scale (" + Theme.spacing.base + "px base)"
-                                color: Theme.colors.text.primary
+                                color: Theme.colors.content.primary
                                 wrapMode: Text.NoWrap
                             }
 
@@ -905,7 +909,7 @@ Item {
                                 width: parent.width
                                 textType: AppLabel.Caption
                                 text: "Radius scale"
-                                color: Theme.colors.text.primary
+                                color: Theme.colors.content.primary
                                 wrapMode: Text.NoWrap
                             }
 
@@ -927,7 +931,7 @@ Item {
                     Rectangle {
                         width: parent.width
                         height: 1
-                        color: Theme.colors.border.base
+                        color: Theme.colors.outline.subtle
                     }
 
                     Row {
@@ -938,7 +942,7 @@ Item {
                             anchors.verticalCenter: parent.verticalCenter
                             name: "material:check_circle"
                             size: Theme.icons.small
-                            color: Theme.colors.text.tertiary
+                            color: Theme.colors.content.tertiary
                         }
 
                         CaptionText {

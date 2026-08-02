@@ -10,29 +10,36 @@ T.Button {
     property bool current: false
 
     readonly property color contentColor: root.current ? Theme.colors.action.primary.container
-                                                       : Theme.colors.text.secondary
-    readonly property color transparentHoverBackground: Qt.rgba(Theme.colors.surface.hover.r,
-                                                                Theme.colors.surface.hover.g,
-                                                                Theme.colors.surface.hover.b,
-                                                                0)
-    readonly property color transparentFocusBorder: Qt.rgba(Theme.colors.border.focus.r,
-                                                            Theme.colors.border.focus.g,
-                                                            Theme.colors.border.focus.b,
+                                                       : Theme.colors.content.secondary
+    readonly property color transparentContainer: Qt.rgba(Theme.colors.surface.container.r,
+                                                          Theme.colors.surface.container.g,
+                                                          Theme.colors.surface.container.b,
+                                                          0)
+    readonly property color transparentFocusOutline: Qt.rgba(Theme.colors.outline.focus.r,
+                                                             Theme.colors.outline.focus.g,
+                                                             Theme.colors.outline.focus.b,
                                                             0)
     readonly property color containerColor: {
         if (!root.enabled)
-            return root.transparentHoverBackground
+            return root.transparentContainer
         if (root.current)
-            return Theme.colors.surface.hover
+            return root.stateLayer(Theme.state.layer.selected)
         if (root.pressed)
-            return Theme.colors.surface.pressed
-        if (root.hovered || root.visualFocus)
-            return Theme.colors.surface.hover
-        return root.transparentHoverBackground
+            return root.stateLayer(Theme.state.layer.pressed)
+        if (root.visualFocus)
+            return root.stateLayer(Theme.state.layer.focus)
+        if (root.hovered)
+            return root.stateLayer(Theme.state.layer.hover)
+        return root.transparentContainer
     }
-    readonly property color outlineColor: root.visualFocus ? Theme.colors.border.focus : root.transparentFocusBorder
+    readonly property color outlineColor: root.visualFocus ? Theme.colors.outline.focus : root.transparentFocusOutline
     readonly property int outlineWidth: root.visualFocus ? 2 : 0
     readonly property real iconSize: Theme.icons.small
+
+    function stateLayer(opacity) {
+        return Qt.tint(Theme.colors.surface.container,
+                       Qt.alpha(Theme.colors.content.primary, opacity))
+    }
 
     checkable: false
     implicitHeight: Theme.spacing.touchTargetCompact
@@ -52,7 +59,7 @@ T.Button {
         AppIcon {
             name: root.icon.name.length > 0 ? root.icon.name : "material:circle"
             size: root.iconSize
-            color: root.enabled ? root.contentColor : Theme.colors.text.disabled
+            color: root.enabled ? root.contentColor : Theme.colors.content.disabled
             Layout.preferredWidth: root.iconSize
             Layout.preferredHeight: root.iconSize
             Layout.alignment: Qt.AlignVCenter
@@ -61,7 +68,7 @@ T.Button {
         AppLabel {
             text: root.text
             textType: AppLabel.Button
-            color: root.enabled ? root.contentColor : Theme.colors.text.disabled
+            color: root.enabled ? root.contentColor : Theme.colors.content.disabled
             wrapMode: Text.NoWrap
             maximumLineCount: 1
             Layout.fillWidth: true

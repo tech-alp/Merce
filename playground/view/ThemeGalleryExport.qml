@@ -23,7 +23,7 @@ SK.ApplicationWindow {
         id: captureFrame
         width: root.width
         height: gallery.implicitHeight + Theme.spacing.xl2 * 2
-        color: Theme.colors.background.base
+        color: Theme.colors.surface.canvas
 
         ThemeGallery {
             id: gallery

@@ -20,12 +20,12 @@ Item {
     readonly property int tableCompactThreshold: 760
     readonly property int usageCardMinWidth: 156
     readonly property int usageCardPreferredWidth: 220
-    readonly property color dividerColor: Theme.colors.border.base
-    readonly property color cardColor: Theme.colors.surface.base
-    readonly property color mutedTextColor: Theme.colors.text.secondary
-    readonly property color faintTextColor: Theme.colors.text.tertiary
+    readonly property color dividerColor: Theme.colors.outline.subtle
+    readonly property color cardColor: Theme.colors.surface.container
+    readonly property color mutedTextColor: Theme.colors.content.secondary
+    readonly property color faintTextColor: Theme.colors.content.tertiary
     readonly property color accentColor: Theme.colors.action.primary.container
-    readonly property color darkPreviewTextColor: Theme.colors.text.inverse
+    readonly property color darkPreviewTextColor: Theme.colors.content.inverse
     readonly property color darkPreviewMutedColor: Qt.rgba(darkPreviewTextColor.r, darkPreviewTextColor.g, darkPreviewTextColor.b, 0.72)
 
     MerceToastifyStyleProvider {
@@ -78,7 +78,7 @@ Item {
         {
             "name": "Code",
             "type": "code",
-            "sample": "const theme = Theme.colors.background.base",
+            "sample": "const theme = Theme.colors.surface.canvas",
             "usage": "Code, technical values"
         },
         {
@@ -259,7 +259,7 @@ Item {
     }
 
     component SectionTitle: Text {
-        color: Theme.colors.text.primary
+        color: Theme.colors.content.primary
         font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
         font.pixelSize: Theme.typography.sizeMedium
         font.weight: Theme.typography.weightSemibold
@@ -305,7 +305,7 @@ Item {
             width: parent.styleWidth - x
             height: parent.compact ? parent.height - 22 : parent.height
             text: entry.name
-            color: Theme.colors.text.primary
+            color: Theme.colors.content.primary
         }
 
         Text {
@@ -315,7 +315,7 @@ Item {
             width: parent.previewWidth
             height: parent.compact ? parent.height - 28 : parent.height
             text: root.previewText(entry)
-            color: Theme.colors.text.primary
+            color: Theme.colors.content.primary
             font.family: root.resolvedFamily(entry.type)
             font.pixelSize: parent.sampleSize
             font.weight: root.typeWeight(entry.type)
@@ -449,7 +449,7 @@ Item {
                         width: 72
                         height: parent.height
                         text: parent.entry.name
-                        color: Theme.colors.text.primary
+                        color: Theme.colors.content.primary
                         font.pixelSize: Theme.typography.sizeXSmall
                     }
 
@@ -521,7 +521,7 @@ Item {
                     model: [
                         { "y": 18, "label": "Ascender", "color": root.faintTextColor },
                         { "y": 40, "label": "Cap Height", "color": root.accentColor },
-                        { "y": 66, "label": "X-Height", "color": Theme.colors.status.success.foreground },
+                        { "y": 66, "label": "X-Height", "color": Theme.colors.status.success.content },
                         { "y": 98, "label": "Baseline", "color": root.accentColor },
                         { "y": 120, "label": "Descender", "color": root.faintTextColor }
                     ]
@@ -542,7 +542,7 @@ Item {
                     x: 18
                     y: 18
                     text: "Ag"
-                    color: Theme.colors.text.primary
+                    color: Theme.colors.content.primary
                     font.family: FoundationFonts.resolveFamily(Theme.typography.fontDisplay)
                     font.pixelSize: 84
                     font.weight: Theme.typography.weightRegular
@@ -585,7 +585,7 @@ Item {
 
                 MetaText {
                     text: "Body - " + root.typeSize("body") + "px / " + root.typeLineHeight("body") + "px / " + Math.round(root.typeLeading("body") * 100) + "%"
-                    color: Theme.colors.text.primary
+                    color: Theme.colors.content.primary
                 }
             }
         }
@@ -622,7 +622,7 @@ Item {
                         width: 28
                         height: 28
                         radius: 14
-                        color: Theme.colors.background.base
+                        color: Theme.colors.surface.canvas
                         border.color: root.dividerColor
 
                         AppIcon {
@@ -637,7 +637,7 @@ Item {
                         width: 28
                         height: 28
                         radius: 14
-                        color: Theme.colors.background.base
+                        color: Theme.colors.surface.canvas
                         border.color: root.dividerColor
 
                         AppIcon {
@@ -682,8 +682,8 @@ Item {
 
         implicitHeight: previewPanelContent.implicitHeight + Theme.spacing.md * 2
         radius: Theme.radius.medium
-        color: dark ? Theme.colors.action.secondaryPressed : Theme.colors.surface.base
-        border.color: dark ? Theme.colors.action.secondaryHover : root.dividerColor
+        color: dark ? Theme.colors.surface.inverse : Theme.colors.surface.container
+        border.color: dark ? Theme.colors.outline.strong : root.dividerColor
 
         FlexboxLayout {
             id: previewPanelContent
@@ -701,7 +701,7 @@ Item {
             Text {
                 width: parent.width
                 text: "Product Title"
-                color: dark ? root.darkPreviewTextColor : Theme.colors.text.primary
+                color: dark ? root.darkPreviewTextColor : Theme.colors.content.primary
                 font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
                 font.pixelSize: Theme.typography.sizeMedium
                 font.weight: Theme.typography.weightSemibold
@@ -730,7 +730,7 @@ Item {
 
             Text {
                 text: "Email address"
-                color: dark ? root.darkPreviewTextColor : Theme.colors.text.primary
+                color: dark ? root.darkPreviewTextColor : Theme.colors.content.primary
                 font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
                 font.pixelSize: Theme.typography.sizeXSmall
                 font.weight: Theme.typography.weightMedium
@@ -790,7 +790,7 @@ Item {
             AppLabel {
                 text: title
                 textType: AppLabel.Button
-                color: Theme.colors.text.primary
+                color: Theme.colors.content.primary
                 elide: Text.ElideRight
                 Layout.fillWidth: true
                 Layout.preferredWidth: parent.width
@@ -835,7 +835,7 @@ Item {
             Text {
                 width: parent.width
                 text: "Typography"
-                color: Theme.colors.text.primary
+                color: Theme.colors.content.primary
                 font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
                 font.pixelSize: Theme.typography.size3XLarge
                 font.weight: Theme.typography.weightBold
@@ -879,6 +879,9 @@ Item {
                         width: parent.width
                         height: 32
                         spacing: 0
+                        Layout.fillWidth: true
+                        Layout.preferredWidth: parent.width
+                        Layout.maximumWidth: parent.width
 
                         readonly property bool compact: root.typeTableCompact(width)
                         readonly property int styleWidth: root.typeStyleColumnWidth(width)
@@ -1024,7 +1027,7 @@ Item {
                         width: parent.width < 150 ? 44 : 54
                         height: parent.width < 150 ? 64 : 74
                         radius: Theme.radius.small
-                        color: Theme.colors.surface.hover
+                        color: Theme.colors.surface.containerTinted
                         border.color: root.dividerColor
 
                         AppIcon {
@@ -1041,7 +1044,7 @@ Item {
                         width: parent.width - x
                         height: 32
                         text: "Urban Backpack"
-                        color: Theme.colors.text.primary
+                        color: Theme.colors.content.primary
                         font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
                         font.pixelSize: Theme.typography.sizeSmall
                         font.weight: Theme.typography.weightSemibold
@@ -1121,7 +1124,7 @@ Item {
                         AppLabel {
                             text: "Label"
                             textType: AppLabel.Caption
-                            color: Theme.colors.text.primary
+                            color: Theme.colors.content.primary
                         }
 
                         SK.TextField {
@@ -1141,14 +1144,14 @@ Item {
                                 }
                                 name: "material:error"
                                 size: Theme.icons.small
-                                color: Theme.colors.status.error.foreground
+                                color: Theme.colors.status.error.content
                             }
                         }
 
                         AppLabel {
                             text: "Error message"
                             textType: AppLabel.Caption
-                            color: Theme.colors.status.error.foreground
+                            color: Theme.colors.status.error.content
                             wrapMode: Text.WordWrap
                             Layout.fillWidth: true
                             Layout.preferredWidth: parent.width
@@ -1193,7 +1196,7 @@ Item {
                                 Text {
                                     id: valueText
                                     text: modelData.value
-                                    color: Theme.colors.text.primary
+                                    color: Theme.colors.content.primary
                                     font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
                                     font.pixelSize: Theme.typography.sizeXSmall
                                     font.weight: Theme.typography.weightMedium
@@ -1217,7 +1220,7 @@ Item {
                             Text {
                                 width: parent.width - totalText.width
                                 text: "Total"
-                                color: Theme.colors.text.primary
+                                color: Theme.colors.content.primary
                                 font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
                                 font.pixelSize: Theme.typography.sizeMedium
                                 font.weight: Theme.typography.weightSemibold

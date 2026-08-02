@@ -13,7 +13,7 @@ Rectangle {
     signal themeSelected(var value)
     signal modeSelected(var value)
 
-    color: Theme.colors.background.base
+    color: Theme.colors.surface.canvas
 
     AppLabel {
         id: titleText
@@ -25,7 +25,7 @@ Rectangle {
         width: Math.max(160, parent.width - selectorRow.width - Theme.spacing.xl * 3)
         textType: AppLabel.H3
         text: root.pageTitle
-        color: Theme.colors.text.primary
+        color: Theme.colors.content.primary
         wrapMode: Text.WordWrap
     }
 
@@ -73,6 +73,6 @@ Rectangle {
             bottom: parent.bottom
         }
         height: 1
-        color: Theme.colors.border.base
+        color: Theme.colors.outline.subtle
     }
 }

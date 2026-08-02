@@ -7,7 +7,7 @@ Item {
 
     property string name: ""
     property real size: Theme.icons.medium
-    property color color: Theme.colors.text.primary
+    property color color: Theme.colors.content.primary
     property bool filled: false
     property real fill: filled ? 1.0 : 0.0
     property int grade: 0

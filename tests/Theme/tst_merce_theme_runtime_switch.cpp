@@ -84,10 +84,6 @@ void tst_merce_theme_runtime_switch::defaultContextIsBundledAlGit()
     QCOMPARE(theme.activeProfile(), QStringLiteral("cart"));
     QCOMPARE(theme.generation(), quint64(1));
     QVERIFY(theme.colors()->action()->primary()->container().isValid());
-    QVERIFY(theme.colors()->action()->primaryHover().lightnessF()
-            < theme.colors()->action()->primary()->container().lightnessF());
-    QVERIFY(theme.colors()->action()->primaryPressed().lightnessF()
-            < theme.colors()->action()->primaryHover().lightnessF());
     QCOMPARE(theme.size()->control()->minimum(), 64);
     QCOMPARE(theme.state()->layer()->hover(), 0.08);
     QCOMPARE(theme.state()->layer()->focus(), 0.10);
@@ -181,10 +177,6 @@ void tst_merce_theme_runtime_switch::
              theme.colors()->action()->primary()->container());
     QCOMPARE(bindingObject->property("observedControlMinimum").toInt(), 40);
     QCOMPARE(bindingObject->property("observedHoverOpacity").toDouble(), 0.08);
-    QVERIFY(theme.colors()->action()->primaryHover().lightnessF()
-            > theme.colors()->action()->primary()->container().lightnessF());
-    QVERIFY(theme.colors()->action()->primaryPressed().lightnessF()
-            > theme.colors()->action()->primaryHover().lightnessF());
     QVERIFY(theme.colors() != oldColors);
     QVERIFY(theme.spacing() != oldSpacing);
     QVERIFY(theme.radius() != oldRadius);
@@ -201,7 +193,7 @@ void tst_merce_theme_runtime_switch::runtimeFailureKeepsLastKnownGoodContext()
     const QString profile = theme.activeProfile();
     const quint64 generation = theme.generation();
     MerceColors *colors = theme.colors();
-    const QColor background = colors->background()->base();
+    const QColor background = colors->surface()->canvas();
 
     QVERIFY(!theme.setContext(QStringLiteral("missing"),
                               QStringLiteral("dark"),
@@ -211,7 +203,7 @@ void tst_merce_theme_runtime_switch::runtimeFailureKeepsLastKnownGoodContext()
     QCOMPARE(theme.activeProfile(), profile);
     QCOMPARE(theme.generation(), generation);
     QCOMPARE(theme.colors(), colors);
-    QCOMPARE(theme.colors()->background()->base(), background);
+    QCOMPARE(theme.colors()->surface()->canvas(), background);
 }
 
 void tst_merce_theme_runtime_switch::invalidExternalStartupSourceKeepsBundledAlGit()
@@ -251,7 +243,7 @@ void tst_merce_theme_runtime_switch::failedActiveReloadKeepsSnapshot()
                              QStringLiteral("light"),
                              QStringLiteral("cart")));
     MerceColors *colors = theme.colors();
-    const QColor background = colors->background()->base();
+    const QColor background = colors->surface()->canvas();
     const quint64 generation = theme.generation();
 
     QVERIFY(writeRaw(tenantPath, QByteArrayLiteral("{ corrupt")));
@@ -260,7 +252,7 @@ void tst_merce_theme_runtime_switch::failedActiveReloadKeepsSnapshot()
     QCOMPARE(theme.activeMode(), QStringLiteral("light"));
     QCOMPARE(theme.activeProfile(), QStringLiteral("cart"));
     QCOMPARE(theme.colors(), colors);
-    QCOMPARE(theme.colors()->background()->base(), background);
+    QCOMPARE(theme.colors()->surface()->canvas(), background);
     QCOMPARE(theme.generation(), generation);
 }
 

@@ -35,13 +35,13 @@ T.Label {
     font.capitalization: typographyStyle.uppercase ? Font.AllUppercase : Font.MixedCase
     lineHeightMode: Text.FixedHeight
     lineHeight: (typographyStyle.leading || Theme.typography.leadingNormal) * root.font.pixelSize
-    color: Theme.colors.text.primary
+    color: Theme.colors.content.primary
     styleColor: "transparent"
     wrapMode: Text.NoWrap
     maximumLineCount: 0
     elide: root.maximumLineCount > 0 ? Text.ElideRight : Text.ElideNone
     textFormat: Text.RichText
-    linkColor: Theme.colors.text.link
+    linkColor: Theme.colors.content.link
 
     onLinkActivated: (link) => {
         Qt.openUrlExternally(link)

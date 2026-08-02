@@ -3,7 +3,7 @@ import QtQuick
 import Merce.Theme
 
 QtObject {
-    property color observedBackground: Theme.colors.background.base
+    property color observedBackground: Theme.colors.surface.canvas
 
     function fail(message, values) {
         console.error("theme-switch-probe failed", message, values)
@@ -20,10 +20,36 @@ QtObject {
         if (Theme.activeBrand !== "algit"
                 || Theme.activeMode !== "light"
                 || Theme.activeProfile !== "cart"
+                || Theme.availableThemes.length !== 7
                 || String(observedBackground).toLowerCase() !== "#f6f4ee") {
             fail("default state",
                  [Theme.activeBrand, Theme.activeMode, Theme.activeProfile,
-                  String(observedBackground)])
+                  Theme.availableThemes.length, String(observedBackground)])
+            return
+        }
+
+        const testThemes = [
+            ["merce", "light"],
+            ["merce", "dark"],
+            ["apple", "light"],
+            ["claude", "light"],
+            ["airbnb", "light"],
+            ["stripe", "light"],
+            ["linear", "dark"],
+            ["linear", "light"]
+        ]
+        for (let i = 0; i < testThemes.length; ++i) {
+            const brand = testThemes[i][0]
+            const mode = testThemes[i][1]
+            if (!Theme.setTheme(brand, mode)
+                    || Theme.activeBrand !== brand
+                    || Theme.activeMode !== mode) {
+                fail("reference theme switch", [brand, mode, Theme.activeBrand, Theme.activeMode])
+                return
+            }
+        }
+        if (!Theme.setTheme("algit", "light")) {
+            fail("default theme restore", [])
             return
         }
 
@@ -80,7 +106,7 @@ QtObject {
                     Theme.activeBrand,
                     Theme.activeMode,
                     Theme.activeProfile,
-                    Theme.colors.background.base)
+                    Theme.colors.surface.canvas)
         Qt.quit()
     }
 }

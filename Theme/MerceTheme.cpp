@@ -226,8 +226,7 @@ bool MerceTheme::applyLoadedTheme(const MerceThemeLoadResult &result)
     auto *nextState = new MerceState(this);
     auto *nextTypography = new MerceTypography(this);
 
-    nextColors->applyManifestSection(manifest.value(QStringLiteral("colors")).toObject(),
-                                     result.mode);
+    nextColors->applyManifestSection(manifest.value(QStringLiteral("colors")).toObject());
     nextSpacing->applyManifestSection(manifest.value(QStringLiteral("spacing")).toObject());
     nextRadius->applyManifestSection(manifest.value(QStringLiteral("radius")).toObject());
     nextSize->applyManifestSection(manifest.value(QStringLiteral("size")).toObject());

@@ -10,7 +10,7 @@ Rectangle {
     property string activeTheme: ""
     property int stackDepth: 0
 
-    color: Theme.colors.surface.base
+    color: Theme.colors.surface.container
 
     Rectangle {
         anchors {
@@ -19,7 +19,7 @@ Rectangle {
             top: parent.top
         }
         height: 1
-        color: Theme.colors.border.base
+        color: Theme.colors.outline.subtle
     }
 
     Row {
@@ -33,13 +33,13 @@ Rectangle {
         AppLabel {
             textType: AppLabel.Caption
             text: root.activePage
-            color: Theme.colors.text.primary
+            color: Theme.colors.content.primary
         }
 
         AppLabel {
             textType: AppLabel.Caption
             text: root.activeTheme
-            color: Theme.colors.text.secondary
+            color: Theme.colors.content.secondary
         }
     }
 
@@ -51,6 +51,6 @@ Rectangle {
         }
         textType: AppLabel.Caption
         text: "Stack " + root.stackDepth
-        color: Theme.colors.text.tertiary
+        color: Theme.colors.content.tertiary
     }
 }

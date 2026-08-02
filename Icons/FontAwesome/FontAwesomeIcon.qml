@@ -8,7 +8,7 @@ Item {
 
     property string name: ""
     property real size: Theme.icons.medium
-    property color color: Theme.colors.text.primary
+    property color color: Theme.colors.content.primary
 
     readonly property int roundedSize: Math.round(size)
     readonly property var iconSpec: FontAwesomeRegistry.resolve(name)

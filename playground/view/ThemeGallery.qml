@@ -88,13 +88,13 @@ Item {
 
     component SectionTitle: AppLabel {
         textType: AppLabel.H4
-        color: Theme.colors.text.primary
+        color: Theme.colors.content.primary
         wrapMode: Text.WordWrap
     }
 
     component FieldLabel: AppLabel {
         textType: AppLabel.Caption
-        color: Theme.colors.text.secondary
+        color: Theme.colors.content.secondary
         wrapMode: Text.WordWrap
     }
 
@@ -113,7 +113,7 @@ Item {
             radius: Theme.radius.medium
             color: swatchColor
             border.width: 1
-            border.color: Theme.colors.border.base
+            border.color: Theme.colors.outline.subtle
         }
 
         Column {
@@ -129,7 +129,7 @@ Item {
                 width: parent.width
                 textType: AppLabel.Caption
                 text: label
-                color: Theme.colors.text.primary
+                color: Theme.colors.content.primary
                 wrapMode: Text.WordWrap
             }
 
@@ -137,7 +137,7 @@ Item {
                 width: parent.width
                 textType: AppLabel.Caption
                 text: root.colorLabel(swatchColor)
-                color: Theme.colors.text.secondary
+                color: Theme.colors.content.secondary
                 wrapMode: Text.WordWrap
             }
         }
@@ -212,7 +212,7 @@ Item {
                             width: parent.width
                             textType: AppLabel.Body
                             text: Theme.activeBrand + " / " + root.displayMode
-                            color: Theme.colors.text.secondary
+                            color: Theme.colors.content.secondary
                             wrapMode: Text.WordWrap
                         }
                     }
@@ -302,17 +302,16 @@ Item {
                     width: parent.width
                     spacing: Theme.spacing.md
 
-                    TokenSwatch { label: "backgroundBase"; swatchColor: Theme.colors.background.base }
-                    TokenSwatch { label: "surfaceBase"; swatchColor: Theme.colors.surface.base }
-                    TokenSwatch { label: "textPrimary"; swatchColor: Theme.colors.text.primary }
-                    TokenSwatch { label: "actionPrimary"; swatchColor: Theme.colors.action.primary.container }
-                    TokenSwatch { label: "actionPrimaryDark"; swatchColor: Theme.colors.action.primaryPressed }
-                    TokenSwatch { label: "actionSecondary"; swatchColor: Theme.colors.action.secondary.container }
-                    TokenSwatch { label: "actionSecondaryDark"; swatchColor: Theme.colors.action.secondaryPressed }
-                    TokenSwatch { label: "borderBase"; swatchColor: Theme.colors.border.base }
-                    TokenSwatch { label: "borderFocus"; swatchColor: Theme.colors.border.focus }
-                    TokenSwatch { label: "statusError"; swatchColor: Theme.colors.status.error.foreground }
-                    TokenSwatch { label: "statusSuccess"; swatchColor: Theme.colors.status.success.foreground }
+                    TokenSwatch { label: "surface.canvas"; swatchColor: Theme.colors.surface.canvas }
+                    TokenSwatch { label: "surface.container"; swatchColor: Theme.colors.surface.container }
+                    TokenSwatch { label: "content.primary"; swatchColor: Theme.colors.content.primary }
+                    TokenSwatch { label: "action.primary.container"; swatchColor: Theme.colors.action.primary.container }
+                    TokenSwatch { label: "action.primary.content"; swatchColor: Theme.colors.action.primary.content }
+                    TokenSwatch { label: "action.secondary.container"; swatchColor: Theme.colors.action.secondary.container }
+                    TokenSwatch { label: "outline.subtle"; swatchColor: Theme.colors.outline.subtle }
+                    TokenSwatch { label: "outline.focus"; swatchColor: Theme.colors.outline.focus }
+                    TokenSwatch { label: "status.error.content"; swatchColor: Theme.colors.status.error.content }
+                    TokenSwatch { label: "status.success.content"; swatchColor: Theme.colors.status.success.content }
                 }
             }
         }
@@ -345,7 +344,7 @@ Item {
                     width: parent.width
                     textType: AppLabel.H2
                     text: "Başlık örneği"
-                    color: Theme.colors.text.primary
+                    color: Theme.colors.content.primary
                     wrapMode: Text.WordWrap
                 }
 
@@ -355,7 +354,7 @@ Item {
                     width: parent.width
                     textType: AppLabel.Body
                     text: "Body metni " + Theme.typography.fontBody + " / " + Theme.typography.sizeMedium + " px"
-                    color: Theme.colors.text.primary
+                    color: Theme.colors.content.primary
                     wrapMode: Text.WordWrap
                 }
 
@@ -363,7 +362,7 @@ Item {
                     width: parent.width
                     textType: AppLabel.Caption
                     text: "Label " + Theme.typography.sizeSmall + " px / " + Theme.typography.weightSemibold
-                    color: Theme.colors.text.secondary
+                    color: Theme.colors.content.secondary
                     wrapMode: Text.WordWrap
                 }
             }
@@ -403,27 +402,27 @@ Item {
                         width: 96
                         height: 54
                         radius: Theme.radius.button
-                        color: Theme.colors.surface.base
+                        color: Theme.colors.surface.container
                         border.width: 1
-                        border.color: Theme.colors.border.base
+                        border.color: Theme.colors.outline.subtle
                     }
 
                     Rectangle {
                         width: 96
                         height: 54
                         radius: Theme.radius.input
-                        color: Theme.colors.surface.base
+                        color: Theme.colors.surface.container
                         border.width: 1
-                        border.color: Theme.colors.border.focus
+                        border.color: Theme.colors.outline.focus
                     }
 
                     Rectangle {
                         width: 96
                         height: 54
                         radius: Theme.radius.dialog
-                        color: Theme.colors.surface.raised
+                        color: Theme.colors.surface.containerRaised
                         border.width: 1
-                        border.color: Theme.colors.border.base
+                        border.color: Theme.colors.outline.subtle
                     }
                 }
             }
@@ -485,7 +484,7 @@ Item {
                         objectName: "merce.playground.gallery.destructiveButton"
                         text: "Destructive"
                         SK.StyleVariation.variations: ["destructive"]
-                        onClicked: galleryDialog.isOpen = true
+                        onClicked: galleryDialog.request("gallery-destructive")
                     }
                 }
 
@@ -496,7 +495,7 @@ Item {
                     placeholderText: "Email"
                     inputMethodHints: Qt.ImhEmailCharactersOnly
                     text: "theme@merce.local"
-                    property color observedBorderColor: Theme.colors.border.base
+                    property color observedBorderColor: Theme.colors.outline.subtle
 
                     validator: RegularExpressionValidator {
                         regularExpression: /.+@.+\..+/
@@ -532,7 +531,7 @@ Item {
                     id: selectSample
                     objectName: "merce.playground.gallery.select"
                     width: 360
-                    property color observedPaletteColor: Theme.colors.text.primary
+                    property color observedPaletteColor: Theme.colors.content.primary
                     model: [
                         { "value": "runtime", "label": "Runtime theme" },
                         { "value": "gallery", "label": "Gallery proof" },
@@ -591,7 +590,7 @@ Item {
                     width: parent.width
                     textType: AppLabel.Body
                     text: "Galeri görselleri hazır"
-                    color: Theme.colors.text.secondary
+                    color: Theme.colors.content.secondary
                     wrapMode: Text.WordWrap
                 }
             }
@@ -615,7 +614,6 @@ Item {
         message: "Tema değerleri okunuyor."
         confirmText: "OK"
         showCancel: false
-        property color observedSurfaceColor: Theme.colors.surface.base
-        onConfirmed: isOpen = false
+        property color observedSurfaceColor: Theme.colors.surface.container
     }
 }

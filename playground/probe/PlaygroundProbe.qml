@@ -129,7 +129,7 @@ Main {
                 if (root.objectName !== "merce.playground.window"
                         || root.selectedPage !== "theme"
                         || root.pageTitle(root.selectedPage) !== "Overview"
-                        || Theme.availableThemes.length !== 1
+                        || Theme.availableThemes.length !== 7
                         || Theme.availableProfiles.length !== 3) {
                     root.fail("default shell state", [
                                   root.objectName,

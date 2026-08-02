@@ -278,6 +278,10 @@ QStringList validateProfile(const QJsonObject &profile,
          {QStringLiteral("hairline"),
           QStringLiteral("strong"),
           QStringLiteral("focus")}},
+        {QStringLiteral("dialog"),
+         {QStringLiteral("small"),
+          QStringLiteral("medium"),
+          QStringLiteral("large")}},
     };
     errors.append(unexpectedFields(size, QStringLiteral("size"), sizeFields.keys()));
     for (auto it = sizeFields.cbegin(); it != sizeFields.cend(); ++it) {

@@ -30,12 +30,12 @@ SK.ApplicationWindow {
 
     function assertSamples(label) {
         if (colorKey(gallery.observedButtonColor) !== colorKey(Theme.colors.action.primary.container)
-                || colorKey(gallery.observedTextColor) !== colorKey(Theme.colors.text.primary)
-                || colorKey(gallery.observedInputBorderColor) !== colorKey(Theme.colors.border.base)
+                || colorKey(gallery.observedTextColor) !== colorKey(Theme.colors.content.primary)
+                || colorKey(gallery.observedInputBorderColor) !== colorKey(Theme.colors.outline.subtle)
                 || colorKey(gallery.observedToggleColor) !== colorKey(Theme.colors.action.primary.container)
-                || colorKey(gallery.observedSelectColor) !== colorKey(Theme.colors.text.primary)
-                || colorKey(gallery.observedToastColor) !== colorKey(Theme.colors.status.success.foreground)
-                || colorKey(gallery.observedDialogColor) !== colorKey(Theme.colors.surface.base)) {
+                || colorKey(gallery.observedSelectColor) !== colorKey(Theme.colors.content.primary)
+                || colorKey(gallery.observedToastColor) !== colorKey(Theme.colors.status.success.content)
+                || colorKey(gallery.observedDialogColor) !== colorKey(Theme.colors.surface.container)) {
             fail(label + " sample observations",
                  [gallery.observedButtonColor,
                   gallery.observedTextColor,
@@ -45,10 +45,10 @@ SK.ApplicationWindow {
                   gallery.observedToastColor,
                   gallery.observedDialogColor,
                   Theme.colors.action.primary.container,
-                  Theme.colors.text.primary,
-                  Theme.colors.border.base,
-                  Theme.colors.status.success.foreground,
-                  Theme.colors.surface.base])
+                  Theme.colors.content.primary,
+                  Theme.colors.outline.subtle,
+                  Theme.colors.status.success.content,
+                  Theme.colors.surface.container])
             return false
         }
 
@@ -105,7 +105,7 @@ SK.ApplicationWindow {
                 console.log("theme-gallery-probe ok",
                             Theme.activeBrand,
                             Theme.activeMode,
-                            Theme.colors.background.base)
+                            Theme.colors.surface.canvas)
                 Qt.quit()
             }
         }

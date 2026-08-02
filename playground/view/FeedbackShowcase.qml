@@ -14,7 +14,7 @@ Item {
 
     component SectionTitle: AppLabel {
         textType: AppLabel.H4
-        color: Theme.colors.text.primary
+        color: Theme.colors.content.primary
         wrapMode: Text.WordWrap
     }
 
@@ -46,8 +46,6 @@ Item {
         confirmText: "Confirm"
         cancelText: "Cancel"
         showCancel: true
-        onConfirmed: isOpen = false
-        onCancelled: isOpen = false
     }
 
     Column {
@@ -142,7 +140,7 @@ Item {
                             dialog.variant = MDialog.Default
                             dialog.title = "Dialog sample"
                             dialog.message = "This dialog uses the active Merce theme tokens."
-                            dialog.isOpen = true
+                            dialog.request("feedback-default")
                         }
                     }
 
@@ -154,7 +152,7 @@ Item {
                             dialog.variant = MDialog.Warning
                             dialog.title = "Warning"
                             dialog.message = "Review the current theme state before continuing."
-                            dialog.isOpen = true
+                            dialog.request("feedback-warning")
                         }
                     }
 
@@ -166,7 +164,7 @@ Item {
                             dialog.variant = MDialog.Destructive
                             dialog.title = "Destructive action"
                             dialog.message = "This state uses the destructive semantic color."
-                            dialog.isOpen = true
+                            dialog.request("feedback-destructive")
                         }
                     }
                 }

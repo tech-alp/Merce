@@ -152,7 +152,7 @@ Item {
 
     component SectionTitle: AppLabel {
         textType: AppLabel.H4
-        color: Theme.colors.text.primary
+        color: Theme.colors.content.primary
         wrapMode: Text.WordWrap
     }
 
@@ -222,7 +222,7 @@ Item {
                             }
                             name: "material:search"
                             size: Theme.icons.small
-                            color: Theme.colors.text.secondary
+                            color: Theme.colors.content.secondary
                         }
 
                         onTextEdited: {
@@ -257,14 +257,18 @@ Item {
                             width: 52
                             height: 52
                             radius: Theme.radius.medium
-                            color: tileMouse.containsMouse ? Theme.colors.surface.hover : "transparent"
+                            color: tileMouse.containsMouse
+                                ? Qt.tint(Theme.colors.surface.container,
+                                          Qt.alpha(Theme.colors.content.primary,
+                                                   Theme.state.layer.hover))
+                                : "transparent"
 
                             AppIcon {
                                 anchors.centerIn: parent
                                 visible: root.selectedIconFont === "material"
                                 name: iconTile.iconValue
                                 size: Theme.icons.large
-                                color: Theme.colors.text.primary
+                                color: Theme.colors.content.primary
                             }
 
                             FontAwesomeIcon {
@@ -272,7 +276,7 @@ Item {
                                 visible: root.selectedIconFont !== "material"
                                 name: iconTile.iconValue
                                 size: Theme.icons.large
-                                color: Theme.colors.text.primary
+                                color: Theme.colors.content.primary
                             }
                         }
 
@@ -295,7 +299,7 @@ Item {
                     width: parent.width
                     textType: AppLabel.Caption
                     text: root.activeIconFontLabel + " / " + filteredIcons.count + " icons"
-                    color: Theme.colors.text.tertiary
+                    color: Theme.colors.content.tertiary
                     wrapMode: Text.WordWrap
                 }
             }
@@ -318,7 +322,7 @@ Item {
         radius: Theme.radius.tooltip
         color: Theme.colors.surface.inverse
         border.width: 1
-        border.color: Theme.colors.border.strong
+        border.color: Theme.colors.outline.strong
 
         AppLabel {
             id: tooltipLabel
@@ -326,7 +330,7 @@ Item {
             width: Math.min(260, implicitWidth)
             textType: AppLabel.Caption
             text: root.activeTooltip
-            color: Theme.colors.text.inverse
+            color: Theme.colors.content.inverse
             wrapMode: Text.NoWrap
             maximumLineCount: 1
         }

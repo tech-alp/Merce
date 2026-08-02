@@ -9,6 +9,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Qt configure/build paths never require Node or npm.
 option(MERCE_ENABLE_TOKEN_BUILD "Enable the design-token manifest build target" OFF)
 option(MERCE_ENABLE_FONTAWESOME "Build the optional Font Awesome SVG QML module" ON)
+option(MERCE_BUILD_NOTIFICATIONS "Build the notification and dialog QML module" ON)
+option(MERCE_BUILD_TESTS "Build Merce tests" ${PROJECT_IS_TOP_LEVEL})
+option(BUILD_MERCE_PLAYGROUND "Build Merce playground application" ${PROJECT_IS_TOP_LEVEL})
 
 if(MERCE_ENABLE_TOKEN_BUILD)
     find_program(NPM_EXECUTABLE npm)
@@ -28,20 +31,25 @@ endif()
 find_package(Qt6 6.11 REQUIRED COMPONENTS Core Gui Quick Qml QuickControls2 LabsStyleKit)
 
 qt_standard_project_setup(REQUIRES 6.11)
-include(CTest)
+qt_policy(SET QTP0005 NEW)
+if(MERCE_BUILD_TESTS)
+    include(CTest)
+endif()
 include(FetchContent)
 set(QT_QML_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/qml")
 
 # External QML modules
-set(MERCE_QTTOASTIFY_GIT_TAG "79348334ec24c46b5c4aad8b3d14265099612ffe" CACHE STRING "Pinned QtToastify revision")
-set(BUILD_PLAYGROUND OFF CACHE BOOL "Build QtToastify playground examples" FORCE)
-set(BUILD_TESTS OFF CACHE BOOL "Build QtToastify tests" FORCE)
+if(MERCE_BUILD_NOTIFICATIONS AND NOT TARGET Toastify)
+    set(MERCE_QTTOASTIFY_GIT_TAG "79348334ec24c46b5c4aad8b3d14265099612ffe" CACHE STRING "Pinned QtToastify revision")
+    set(BUILD_PLAYGROUND OFF CACHE BOOL "Build QtToastify playground examples" FORCE)
+    set(BUILD_TESTS OFF CACHE BOOL "Build QtToastify tests" FORCE)
 
-FetchContent_Declare(QtToastify
-    GIT_REPOSITORY https://github.com/tech-alp/QtToastify.git
-    GIT_TAG ${MERCE_QTTOASTIFY_GIT_TAG}
-)
-FetchContent_MakeAvailable(QtToastify)
+    FetchContent_Declare(QtToastify
+        GIT_REPOSITORY https://github.com/tech-alp/QtToastify.git
+        GIT_TAG ${MERCE_QTTOASTIFY_GIT_TAG}
+    )
+    FetchContent_MakeAvailable(QtToastify)
+endif()
 
 # ========================================================================
 # Merce Design System Modules
@@ -57,9 +65,11 @@ if(MERCE_ENABLE_FONTAWESOME)
     add_subdirectory(Icons/FontAwesome)
 endif()
 add_subdirectory(Controls)
-add_subdirectory(Notifications)
+if(MERCE_BUILD_NOTIFICATIONS)
+    add_subdirectory(Notifications)
+endif()
 
-if(BUILD_TESTING)
+if(MERCE_BUILD_TESTS AND BUILD_TESTING)
     find_package(Qt6 6.11 REQUIRED COMPONENTS Test)
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests/CMakeLists.txt")
         add_subdirectory(tests)
@@ -69,8 +79,6 @@ endif()
 # ========================================================================
 # Example Application (optional, for testing)
 # ========================================================================
-option(BUILD_MERCE_PLAYGROUND "Build Merce playground application" ON)
-
 if(BUILD_MERCE_PLAYGROUND)
     if(NOT MERCE_ENABLE_FONTAWESOME)
         message(FATAL_ERROR "BUILD_MERCE_PLAYGROUND=ON requires MERCE_ENABLE_FONTAWESOME=ON for the Icons gallery.")
@@ -93,8 +101,11 @@ set(MERCE_QML_MODULE_TARGETS
     MerceStyle
     MerceEffects
     MerceControls
-    MerceNotifications
 )
+
+if(MERCE_BUILD_NOTIFICATIONS)
+    list(APPEND MERCE_QML_MODULE_TARGETS MerceNotifications)
+endif()
 
 if(MERCE_ENABLE_FONTAWESOME)
     list(APPEND MERCE_QML_MODULE_TARGETS MerceIconsFontAwesome)
@@ -220,7 +231,9 @@ message(STATUS "    │               └── Merce.Theme")
 message(STATUS "    ├── Merce.Controls (optional)")
 message(STATUS "    │       ├── Merce.Foundation")
 message(STATUS "    │       └── Merce.Theme")
-message(STATUS "    └── Merce.Notifications")
-message(STATUS "            ├── Merce.Foundation")
-message(STATUS "            └── Merce.Theme")
+if(MERCE_BUILD_NOTIFICATIONS)
+    message(STATUS "    └── Merce.Notifications")
+    message(STATUS "            ├── Merce.Foundation")
+    message(STATUS "            └── Merce.Theme")
+endif()
 message(STATUS "")

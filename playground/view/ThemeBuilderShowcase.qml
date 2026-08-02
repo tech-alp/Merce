@@ -30,93 +30,80 @@ Item {
 
     readonly property var colorGroups: [
         {
-            "key": "text",
-            "title": qsTr("Text"),
-            "description": qsTr("Content, links, inverse text, and disabled text."),
+            "key": "surface",
+            "title": qsTr("Surface"),
+            "description": qsTr("Canvas, containers, floating layers, and effects."),
             "tokens": [
-                { "key": "primary", "usage": qsTr("Main content text") },
-                { "key": "secondary", "usage": qsTr("Secondary content text") },
-                { "key": "tertiary", "usage": qsTr("Low-emphasis supporting text") },
-                { "key": "inverse", "usage": qsTr("Text on dark or strong surfaces") },
-                { "key": "disabled", "usage": qsTr("Disabled and unavailable text") },
-                { "key": "link", "usage": qsTr("Links and inline actions") },
-                { "key": "linkHover", "usage": qsTr("Hovered links and inline actions") }
+                { "key": "canvas", "usage": qsTr("Application canvas") },
+                { "key": "container", "usage": qsTr("Default component container") },
+                { "key": "containerRaised", "usage": qsTr("Raised container") },
+                { "key": "containerSunken", "usage": qsTr("Sunken container") },
+                { "key": "containerTinted", "usage": qsTr("Tinted container") },
+                { "key": "floating", "usage": qsTr("Popup and dialog surface") },
+                { "key": "scrim", "usage": qsTr("Modal scrim") },
+                { "key": "inverse", "usage": qsTr("Inverse surface") },
+                { "key": "shadow", "usage": qsTr("Shadow color") }
             ]
         },
         {
-            "key": "background",
-            "title": qsTr("Background"),
-            "description": qsTr("Application backgrounds and modal overlays."),
+            "key": "content",
+            "title": qsTr("Content"),
+            "description": qsTr("Text, icons, links, and content hierarchy."),
             "tokens": [
-                { "key": "base", "usage": qsTr("Application background") },
-                { "key": "subtle", "usage": qsTr("Subtle page band") },
-                { "key": "overlay", "usage": qsTr("Modal and scrim overlays") }
-            ]
-        },
-        {
-            "key": "border",
-            "title": qsTr("Border"),
-            "description": qsTr("Dividers, outlines, focus rings, and semantic borders."),
-            "tokens": [
-                { "key": "base", "usage": qsTr("Default dividers and outlines") },
-                { "key": "strong", "usage": qsTr("Higher contrast outlines") },
-                { "key": "focus", "usage": qsTr("Focus ring and active outlines") },
-                { "key": "disabled", "usage": qsTr("Disabled outlines") }
+                { "key": "primary", "usage": qsTr("Primary content") },
+                { "key": "secondary", "usage": qsTr("Secondary content") },
+                { "key": "tertiary", "usage": qsTr("Low-emphasis content") },
+                { "key": "inverse", "usage": qsTr("Content on inverse surfaces") },
+                { "key": "disabled", "usage": qsTr("Disabled content") },
+                { "key": "link", "usage": qsTr("Links and inline actions") }
             ]
         },
         {
             "key": "action",
             "title": qsTr("Action"),
-            "description": qsTr("Interactive colors for primary, secondary, and disabled controls."),
+            "description": qsTr("Container, content, and outline roles for commands."),
             "tokens": [
-                { "key": "primary.container", "usage": qsTr("Primary actions and strong brand affordances") },
-                { "key": "primaryHover", "usage": qsTr("Primary action hover") },
-                { "key": "primaryPressed", "usage": qsTr("Primary action pressed") },
-                { "key": "primarySubtle", "usage": qsTr("Subtle primary backgrounds") },
-                { "key": "secondary.container", "usage": qsTr("Secondary action backgrounds") },
-                { "key": "secondaryHover", "usage": qsTr("Secondary action hover") },
-                { "key": "secondaryPressed", "usage": qsTr("Secondary action pressed") },
-                { "key": "disabled", "usage": qsTr("Disabled action background") }
+                { "key": "primary.container", "usage": qsTr("Primary action container") },
+                { "key": "primary.content", "usage": qsTr("Content on primary action") },
+                { "key": "primary.outline", "usage": qsTr("Primary action outline") },
+                { "key": "secondary.container", "usage": qsTr("Secondary action container") },
+                { "key": "secondary.content", "usage": qsTr("Content on secondary action") },
+                { "key": "secondary.outline", "usage": qsTr("Secondary action outline") },
+                { "key": "destructive.container", "usage": qsTr("Destructive action container") },
+                { "key": "destructive.content", "usage": qsTr("Content on destructive action") },
+                { "key": "destructive.outline", "usage": qsTr("Destructive action outline") }
             ]
         },
         {
             "key": "status",
             "title": qsTr("Status"),
-            "description": qsTr("Success, warning, error, and information states."),
+            "description": qsTr("Container, content, and outline roles for feedback."),
             "tokens": [
-                { "key": "success.foreground", "usage": qsTr("Success foreground and icon") },
-                { "key": "success.background", "usage": qsTr("Success soft background") },
-                { "key": "success.border", "usage": qsTr("Success outline") },
-                { "key": "success.strong", "usage": qsTr("Success solid fill") },
-                { "key": "success.onStrong", "usage": qsTr("Content on success solid fill") },
-                { "key": "warning.foreground", "usage": qsTr("Warning foreground and icon") },
-                { "key": "warning.background", "usage": qsTr("Warning soft background") },
-                { "key": "warning.border", "usage": qsTr("Warning outline") },
-                { "key": "warning.strong", "usage": qsTr("Warning solid fill") },
-                { "key": "warning.onStrong", "usage": qsTr("Content on warning solid fill") },
-                { "key": "error.foreground", "usage": qsTr("Error foreground and icon") },
-                { "key": "error.background", "usage": qsTr("Error soft background") },
-                { "key": "error.border", "usage": qsTr("Error outline") },
-                { "key": "error.strong", "usage": qsTr("Error solid fill") },
-                { "key": "error.onStrong", "usage": qsTr("Content on error solid fill") },
-                { "key": "info.foreground", "usage": qsTr("Information foreground and icon") },
-                { "key": "info.background", "usage": qsTr("Information soft background") },
-                { "key": "info.border", "usage": qsTr("Information outline") },
-                { "key": "info.strong", "usage": qsTr("Information solid fill") },
-                { "key": "info.onStrong", "usage": qsTr("Content on information solid fill") }
+                { "key": "success.container", "usage": qsTr("Success feedback container") },
+                { "key": "success.content", "usage": qsTr("Success feedback content") },
+                { "key": "success.outline", "usage": qsTr("Success feedback outline") },
+                { "key": "warning.container", "usage": qsTr("Warning feedback container") },
+                { "key": "warning.content", "usage": qsTr("Warning feedback content") },
+                { "key": "warning.outline", "usage": qsTr("Warning feedback outline") },
+                { "key": "error.container", "usage": qsTr("Error feedback container") },
+                { "key": "error.content", "usage": qsTr("Error feedback content") },
+                { "key": "error.outline", "usage": qsTr("Error feedback outline") },
+                { "key": "info.container", "usage": qsTr("Information feedback container") },
+                { "key": "info.content", "usage": qsTr("Information feedback content") },
+                { "key": "info.outline", "usage": qsTr("Information feedback outline") },
+                { "key": "neutral.container", "usage": qsTr("Neutral feedback container") },
+                { "key": "neutral.content", "usage": qsTr("Neutral feedback content") },
+                { "key": "neutral.outline", "usage": qsTr("Neutral feedback outline") }
             ]
         },
         {
-            "key": "surface",
-            "title": qsTr("Surface"),
-            "description": qsTr("Foundation surface aliases used by reusable surfaces."),
+            "key": "outline",
+            "title": qsTr("Outline"),
+            "description": qsTr("Dividers, emphasized boundaries, and focus rings."),
             "tokens": [
-                { "key": "base", "usage": qsTr("Default reusable surface") },
-                { "key": "tinted", "usage": qsTr("Tinted reusable surface") },
-                { "key": "raised", "usage": qsTr("Raised reusable surface") },
-                { "key": "hover", "usage": qsTr("Hovered surface state") },
-                { "key": "pressed", "usage": qsTr("Pressed surface state") },
-                { "key": "disabled", "usage": qsTr("Disabled surface state") }
+                { "key": "subtle", "usage": qsTr("Default divider and boundary") },
+                { "key": "strong", "usage": qsTr("Emphasized boundary") },
+                { "key": "focus", "usage": qsTr("Focus ring") }
             ]
         }
     ]
@@ -126,10 +113,12 @@ Item {
         if (/^#[0-9a-fA-F]{6}$/.test(text))
             return text.toUpperCase()
 
+        const alpha = Math.round(value.a * 255)
         const red = Math.round(value.r * 255)
         const green = Math.round(value.g * 255)
         const blue = Math.round(value.b * 255)
-        return "#" + hexByte(red) + hexByte(green) + hexByte(blue)
+        return "#" + (alpha < 255 ? hexByte(alpha) : "")
+                + hexByte(red) + hexByte(green) + hexByte(blue)
     }
 
     function colorPath(group, token) {
@@ -311,13 +300,13 @@ Item {
 
     component SectionTitle: AppLabel {
         textType: AppLabel.H4
-        color: Theme.colors.text.primary
+        color: Theme.colors.content.primary
         wrapMode: Text.WordWrap
     }
 
     component SectionCaption: AppLabel {
         textType: AppLabel.Caption
-        color: Theme.colors.text.secondary
+        color: Theme.colors.content.secondary
         wrapMode: Text.WordWrap
     }
 
@@ -380,13 +369,13 @@ Item {
                     width: parent.width
                     textType: AppLabel.H2
                     text: qsTr("Theme Inspector")
-                    color: Theme.colors.text.primary
+                    color: Theme.colors.content.primary
                     wrapMode: Text.WordWrap
                 }
 
                 SectionCaption {
                     width: parent.width
-                    text: qsTr("Read-only legacy inspector. tenant-brand v1 accepts one seed; direct semantic-role authoring is disabled.")
+                    text: qsTr("Read-only resolved-theme inspector. tenant-brand v1 accepts one seed; direct semantic-role authoring is disabled.")
                 }
             }
 
@@ -458,7 +447,7 @@ Item {
                                 width: parent.width
                                 textType: AppLabel.H4
                                 text: colorGroupDelegate.modelData.title
-                                color: Theme.colors.text.primary
+                                color: Theme.colors.content.primary
                                 wrapMode: Text.WordWrap
                             }
 
@@ -493,7 +482,7 @@ Item {
                         Rectangle {
                             width: parent.width
                             height: 1
-                            color: Theme.colors.border.base
+                            color: Theme.colors.outline.subtle
                             opacity: 0.7
                             visible: index < root.colorGroups.length - 1
                         }
@@ -569,9 +558,9 @@ Item {
                     width: 220
                     height: 132
                     radius: Theme.radius.large
-                    color: root.colorValue("surface.base", Theme.colors.surface.base)
+                    color: root.colorValue("surface.container", Theme.colors.surface.container)
                     border.width: 1
-                    border.color: root.colorValue("border.focus", Theme.colors.border.focus)
+                    border.color: root.colorValue("outline.focus", Theme.colors.outline.focus)
 
                     Column {
                         anchors {
@@ -585,7 +574,7 @@ Item {
                         Text {
                             width: parent.width
                             text: qsTr("Merce Preview")
-                            color: root.colorValue("text.primary", Theme.colors.text.primary)
+                            color: root.colorValue("content.primary", Theme.colors.content.primary)
                             font.family: FoundationFonts.resolveFamily(root.displayFont)
                             font.pixelSize: Theme.typography.sizeLarge
                             font.weight: Theme.typography.weightSemibold
@@ -595,7 +584,7 @@ Item {
                         Text {
                             width: parent.width
                             text: qsTr("Semantic colors and font roles.")
-                            color: root.colorValue("text.secondary", Theme.colors.text.secondary)
+                            color: root.colorValue("content.secondary", Theme.colors.content.secondary)
                             font.family: FoundationFonts.resolveFamily(root.bodyFont)
                             font.pixelSize: Theme.typography.sizeSmall
                             wrapMode: Text.WordWrap
@@ -610,7 +599,7 @@ Item {
                             Text {
                                 anchors.centerIn: parent
                                 text: qsTr("Primary")
-                                color: Theme.colors.text.inverse
+                                color: Theme.colors.action.primary.content
                                 font.family: FoundationFonts.resolveFamily(root.bodyFont)
                                 font.pixelSize: Theme.typography.sizeSmall
                                 font.weight: Theme.typography.weightSemibold
@@ -627,7 +616,7 @@ Item {
                         width: parent.width
                         textType: AppLabel.Body
                         text: qsTr("Current runtime: %1 / %2").arg(Theme.activeBrand).arg(Theme.activeMode === "" ? "default" : Theme.activeMode)
-                        color: Theme.colors.text.primary
+                        color: Theme.colors.content.primary
                         wrapMode: Text.WordWrap
                     }
 

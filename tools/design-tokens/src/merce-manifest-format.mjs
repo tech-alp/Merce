@@ -154,6 +154,9 @@ export const PROFILE_FIELD_MAP = {
     'outline.hairline',
     'outline.strong',
     'outline.focus',
+    'dialog.small',
+    'dialog.medium',
+    'dialog.large',
   ],
 };
 

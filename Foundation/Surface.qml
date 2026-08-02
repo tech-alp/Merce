@@ -24,8 +24,8 @@ Rectangle {
     required property int surfaceType
 
     // Customizable properties
-    virtual property color backgroundColor: Theme.colors.surface.base
-    virtual property color borderColor: Theme.colors.border.base
+    virtual property color backgroundColor: Theme.colors.surface.container
+    virtual property color borderColor: Theme.colors.outline.subtle
     virtual property int borderWidth: 1
     virtual property int radiusValue: Theme.radius.medium
 
@@ -52,8 +52,8 @@ Rectangle {
         id: visualStyle
 
         property color backgroundColor: {
-            if (root.surfaceType === Surface.Tinted) return Theme.colors.surface.tinted
-            if (root.surfaceType === Surface.Raised) return Theme.colors.surface.raised
+            if (root.surfaceType === Surface.Tinted) return Theme.colors.surface.containerTinted
+            if (root.surfaceType === Surface.Raised) return Theme.colors.surface.containerRaised
             return root.backgroundColor
         }
         property color borderColor: root.borderColor
@@ -65,13 +65,13 @@ Rectangle {
             State {
                 when: root.visualState === Surface.Hovered
                 PropertyChanges {
-                    visualStyle.borderColor: Theme.colors.border.focus
+                    visualStyle.borderColor: Theme.colors.outline.focus
                 }
             },
             State {
                 when: root.visualState === Surface.Pressed
                 PropertyChanges {
-                    visualStyle.borderColor: Theme.colors.border.strong
+                    visualStyle.borderColor: Theme.colors.outline.strong
                 }
             }
         ]

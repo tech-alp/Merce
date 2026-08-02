@@ -11,9 +11,9 @@ Rectangle {
 
     signal pageRequested(string key)
 
-    color: Theme.colors.surface.base
+    color: Theme.colors.surface.container
     border.width: 1
-    border.color: Theme.colors.border.base
+    border.color: Theme.colors.outline.subtle
     clip: true
 
     function pageAt(index) {
@@ -56,9 +56,9 @@ Rectangle {
                 height: 44
                 radius: Theme.radius.medium
                 anchors.verticalCenter: parent.verticalCenter
-                color: Theme.colors.background.base
+                color: Theme.colors.surface.canvas
                 border.width: 1
-                border.color: Theme.colors.border.base
+                border.color: Theme.colors.outline.subtle
 
                 MerceLogo {
                     objectName: "merce.playground.logo"
@@ -78,7 +78,7 @@ Rectangle {
                     width: parent.width
                     textType: AppLabel.BodyLarge
                     text: "Merce"
-                    color: Theme.colors.text.primary
+                    color: Theme.colors.content.primary
                     wrapMode: Text.WordWrap
                 }
 
@@ -86,7 +86,7 @@ Rectangle {
                     width: parent.width
                     textType: AppLabel.Caption
                     text: root.activeTheme
-                    color: Theme.colors.text.secondary
+                    color: Theme.colors.content.secondary
                     wrapMode: Text.WordWrap
                 }
             }
@@ -101,7 +101,7 @@ Rectangle {
                 topMargin: Theme.spacing.md
             }
             height: 1
-            color: Theme.colors.border.base
+            color: Theme.colors.outline.subtle
         }
 
         ListView {
@@ -142,7 +142,7 @@ Rectangle {
                         width: parent.width
                         text: category
                         textType: AppLabel.Caption
-                        color: Theme.colors.text.tertiary
+                        color: Theme.colors.content.tertiary
                         visible: showCategory
                         height: visible ? implicitHeight : 0
                         wrapMode: Text.WordWrap
