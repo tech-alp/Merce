@@ -20,11 +20,22 @@ QtObject {
         if (Theme.activeBrand !== "algit"
                 || Theme.activeMode !== "light"
                 || Theme.activeProfile !== "cart"
-                || Theme.availableThemes.length !== 7
+                || Theme.availableThemes.length !== 8
                 || String(observedBackground).toLowerCase() !== "#f6f4ee") {
             fail("default state",
                  [Theme.activeBrand, Theme.activeMode, Theme.activeProfile,
                   Theme.availableThemes.length, String(observedBackground)])
+            return
+        }
+
+        if (!Theme.setTheme("happy-center", "light")
+                || Theme.activeBrand !== "happy-center"
+                || Theme.activeMode !== "light"
+                || String(observedBackground).toLowerCase() !== "#f5f4ed"
+                || String(Theme.colors.action.primary.container).toLowerCase() !== "#c96442") {
+            fail("Happy Center theme switch",
+                 [Theme.activeBrand, Theme.activeMode, String(observedBackground),
+                  String(Theme.colors.action.primary.container)])
             return
         }
 

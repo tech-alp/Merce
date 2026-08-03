@@ -24,6 +24,20 @@
         }
       }
     },
+    "happy-center": {
+      "displayName": "Happy Center",
+      "defaultMode": "light",
+      "modes": {
+        "light": {
+          "displayName": "Light",
+          "path": "happy-center.light.json",
+          "source": [
+            "tokens/core/state.json",
+            "tokens/themes/happy-center/variants/light.json"
+          ]
+        }
+      }
+    },
     "merce": {
       "displayName": "Merce Reference",
       "defaultMode": "light",

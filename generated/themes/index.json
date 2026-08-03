@@ -10,6 +10,13 @@
         "dark": "algit.dark.json"
       }
     },
+    "happy-center": {
+      "displayName": "Happy Center",
+      "defaultMode": "light",
+      "modes": {
+        "light": "happy-center.light.json"
+      }
+    },
     "merce": {
       "displayName": "Merce Reference",
       "defaultMode": "light",
