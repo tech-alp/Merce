@@ -9,6 +9,48 @@
       "$value": 44
     }
   },
+  "radius": {
+    "small": {
+      "$type": "dimension",
+      "$value": 12
+    },
+    "medium": {
+      "$type": "dimension",
+      "$value": 20
+    },
+    "large": {
+      "$type": "dimension",
+      "$value": 32
+    },
+    "xlarge": {
+      "$type": "dimension",
+      "$value": 48
+    },
+    "xxlarge": {
+      "$type": "dimension",
+      "$value": 64
+    },
+    "button": {
+      "$type": "dimension",
+      "$value": 999
+    },
+    "input": {
+      "$type": "dimension",
+      "$value": 20
+    },
+    "card": {
+      "$type": "dimension",
+      "$value": 32
+    },
+    "dialog": {
+      "$type": "dimension",
+      "$value": 48
+    },
+    "tooltip": {
+      "$type": "dimension",
+      "$value": 12
+    }
+  },
   "typography": {
     "sizeXSmall": {
       "$type": "dimension",

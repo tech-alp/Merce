@@ -26,18 +26,18 @@
   },
   "radius": {
     "none": 0,
-    "small": 4,
-    "medium": 6,
-    "large": 10,
-    "xlarge": 16,
-    "xxlarge": 24,
+    "small": 12,
+    "medium": 20,
+    "large": 32,
+    "xlarge": 48,
+    "xxlarge": 64,
     "full": 999,
-    "button": 6,
-    "input": 6,
-    "card": 10,
+    "button": 999,
+    "input": 20,
+    "card": 32,
     "badge": 999,
-    "dialog": 16,
-    "tooltip": 4
+    "dialog": 48,
+    "tooltip": 12
   },
   "typography": {
     "displayFont": "Lexend",
