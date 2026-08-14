@@ -98,6 +98,7 @@ private:
     explicit MerceTheme(const QString &manifestIndexPath, QObject *parent = nullptr);
 
     bool reloadThemesInternal(bool emitAvailableThemesChanged);
+    bool registerManifestFonts(const QJsonObject &manifest);
     bool applyLoadedTheme(const MerceThemeLoadResult &result);
     bool updateActiveThemeState(const QString &brand,
                                 const QString &mode,

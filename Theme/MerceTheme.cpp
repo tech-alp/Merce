@@ -3,6 +3,8 @@
 #include "MerceThemeManifestLoader.h"
 
 #include <QFileInfo>
+#include <QFontDatabase>
+#include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QLoggingCategory>
@@ -213,12 +215,69 @@ bool MerceTheme::reloadThemesInternal(bool emitAvailableThemesChanged)
     return true;
 }
 
+// Registers the font files a theme ships, then checks that the families it
+// asks for actually arrived. Substituting silently is what let every manifest
+// claim Lexend while Inter was on screen, so a missing family fails the load
+// instead: a theme that cannot render in its own typeface is not applied.
+bool MerceTheme::registerManifestFonts(const QJsonObject &manifest)
+{
+    // Registration is process-wide and permanent, so the same file is only
+    // ever handed to the database once no matter how often themes switch.
+    static QSet<QString> registeredPaths;
+    static QSet<QString> availableFamilies;
+
+    const QJsonArray fonts = manifest.value(QStringLiteral("fonts")).toArray();
+    for (const QJsonValue &entry : fonts) {
+        const QString relativePath = entry.toString();
+        if (relativePath.isEmpty())
+            continue;
+        const QString path = QStringLiteral(":/merce/themes/") + relativePath;
+        if (registeredPaths.contains(path))
+            continue;
+
+        const int id = QFontDatabase::addApplicationFont(path);
+        if (id < 0) {
+            qCWarning(merceThemeLog) << "theme font failed to register:" << path;
+            return false;
+        }
+        const QStringList families = QFontDatabase::applicationFontFamilies(id);
+        if (families.isEmpty()) {
+            qCWarning(merceThemeLog) << "theme font registered without a family:" << path;
+            return false;
+        }
+        registeredPaths.insert(path);
+        for (const QString &family : families)
+            availableFamilies.insert(family);
+    }
+
+    const QJsonObject typography = manifest.value(QStringLiteral("typography")).toObject();
+    for (const QString &role : {QStringLiteral("displayFont"),
+                                QStringLiteral("bodyFont"),
+                                QStringLiteral("monoFont")}) {
+        const QString family = typography.value(role).toString();
+        if (family.isEmpty())
+            continue;
+        // Either the theme shipped it, or it was already on the system. Both
+        // are fine; neither being true is not.
+        if (availableFamilies.contains(family) || QFontDatabase::families().contains(family))
+            continue;
+        qCWarning(merceThemeLog) << "theme requires a font family it does not ship:"
+                                 << role << family;
+        return false;
+    }
+
+    return true;
+}
+
 bool MerceTheme::applyLoadedTheme(const MerceThemeLoadResult &result)
 {
     if (!result.ok)
         return false;
 
     const QJsonObject manifest = result.finalManifest;
+    if (!registerManifestFonts(manifest))
+        return false;
+
     auto *nextColors = new MerceColors(this);
     auto *nextSpacing = new MerceSpacing(this);
     auto *nextRadius = new MerceRadius(this);
