@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Effects
+import Merce.Theme as MerceRuntime
 
 /**
  * MShadow - renders a Theme.shadows.* token as real elevation.
@@ -33,6 +34,12 @@ Item {
     /** Corner radius of the surface being shadowed. */
     property real surfaceRadius: 0
 
+    /**
+     * Shadow hue. Layers carry geometry and opacity only, so the colour comes
+     * from the theme and follows a light/dark switch on its own.
+     */
+    property color shadowColor: MerceRuntime.Theme.colors.surface.shadow
+
     // Behind the surface it belongs to, whatever the declaration order is.
     z: -1
 
@@ -44,9 +51,10 @@ Item {
 
             anchors.fill: parent
             blur: modelData.blur
+            spread: modelData.spread
             offset.x: modelData.xOffset
             offset.y: modelData.yOffset
-            color: modelData.color
+            color: Qt.alpha(root.shadowColor, modelData.opacity)
             radius: root.surfaceRadius
         }
     }

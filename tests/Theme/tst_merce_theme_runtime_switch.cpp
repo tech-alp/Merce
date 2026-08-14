@@ -73,7 +73,38 @@ private slots:
     void missingBundledThemeFailsLoudly();
     void reentrantContextSwitchIsRejectedWithoutTearingSnapshot();
     void metaObjectContractUsesPointerNotifySignals();
+    void shadowLayersCarryGeometryAndOpacityOnly();
 };
+
+// A shadow layer must stay colourless. Baking a colour back in would pin every
+// theme to one hue again, and the breakage is invisible until someone opens a
+// dark mode screenshot. spread has the same problem in reverse: it is easy to
+// drop when transcribing a scale, and its absence just looks "a bit heavy".
+void tst_merce_theme_runtime_switch::shadowLayersCarryGeometryAndOpacityOnly()
+{
+    MerceTheme theme;
+
+    const QVariantList dialog = theme.shadows()->dialog();
+    QCOMPARE(dialog.size(), 1);
+
+    const QVariantMap layer = dialog.first().toMap();
+    QVERIFY2(!layer.contains(QStringLiteral("color")),
+             "shadow layers must not carry a colour; the hue is colors.surface.shadow");
+    QCOMPARE(layer.value(QStringLiteral("yOffset")).toInt(), 25);
+    QCOMPARE(layer.value(QStringLiteral("blur")).toInt(), 50);
+    QCOMPARE(layer.value(QStringLiteral("spread")).toInt(), -12);
+    QCOMPARE(layer.value(QStringLiteral("opacity")).toReal(), 0.25);
+
+    // Two layers is the point of the scale: the wide one floats the surface,
+    // the tight one draws its contact edge.
+    const QVariantList dropdown = theme.shadows()->dropdown();
+    QCOMPARE(dropdown.size(), 2);
+    QCOMPARE(dropdown.at(0).toMap().value(QStringLiteral("spread")).toInt(), -5);
+    QCOMPARE(dropdown.at(1).toMap().value(QStringLiteral("spread")).toInt(), -6);
+
+    // The hue the layers deliberately leave out has to exist and be theme-owned.
+    QVERIFY(theme.colors()->surface()->shadow().isValid());
+}
 
 void tst_merce_theme_runtime_switch::defaultContextIsBundledAlGit()
 {
