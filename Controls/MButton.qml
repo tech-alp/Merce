@@ -90,15 +90,15 @@ Button {
     }
 
     // Kiosk guidance puts button labels with headings and instructions: at least
-    // 4mm tall on screen. The cart panel is 800x1280 on 10.1", which is 5.88
-    // px/mm, so 4mm is 24px and Large has to reach sizeXLarge to clear it.
-    // Small and Medium sit below that bar and belong on secondary actions only.
+    // 4mm tall on screen. On the cart profile sizeMedium is the first step that
+    // clears that, so Medium and Large both do; Small sits one step below and is
+    // for secondary actions where the label is not the thing being aimed at.
     function fontSizeFor(value) {
         switch (value) {
         case MButton.Small:
             return Theme.typography.sizeSmall
         case MButton.Large:
-            return Theme.typography.sizeXLarge
+            return Theme.typography.sizeLarge
         default:
             return Theme.typography.sizeMedium
         }

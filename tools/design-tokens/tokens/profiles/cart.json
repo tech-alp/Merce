@@ -12,35 +12,35 @@
   "typography": {
     "sizeXSmall": {
       "$type": "dimension",
-      "$value": 14
+      "$value": 18
     },
     "sizeSmall": {
       "$type": "dimension",
-      "$value": 16
+      "$value": 20
     },
     "sizeMedium": {
       "$type": "dimension",
-      "$value": 20
+      "$value": 24
     },
     "sizeLarge": {
       "$type": "dimension",
-      "$value": 22
+      "$value": 28
     },
     "sizeXLarge": {
       "$type": "dimension",
-      "$value": 24
+      "$value": 32
     },
     "size2XLarge": {
       "$type": "dimension",
-      "$value": 28
+      "$value": 40
     },
     "size3XLarge": {
       "$type": "dimension",
-      "$value": 40
+      "$value": 48
     },
     "size4XLarge": {
       "$type": "dimension",
-      "$value": 48
+      "$value": 56
     },
     "size5XLarge": {
       "$type": "dimension",
@@ -48,11 +48,11 @@
     },
     "size6XLarge": {
       "$type": "dimension",
-      "$value": 64
+      "$value": 72
     },
     "size7XLarge": {
       "$type": "dimension",
-      "$value": 64
+      "$value": 80
     }
   },
   "size": {
