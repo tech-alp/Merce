@@ -72,7 +72,7 @@ const QStringList typographyIntegerFields()
         QStringLiteral("size5XLarge"), QStringLiteral("size6XLarge"),
         QStringLiteral("size7XLarge"), QStringLiteral("weightRegular"),
         QStringLiteral("weightMedium"), QStringLiteral("weightSemibold"),
-        QStringLiteral("weightBold"),
+        QStringLiteral("weightBold"), QStringLiteral("weightExtraBold"),
     };
 }
 

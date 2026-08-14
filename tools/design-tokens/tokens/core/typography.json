@@ -80,6 +80,10 @@
       "$type": "fontWeight",
       "$value": 700
     },
+    "weightExtraBold": {
+      "$type": "fontWeight",
+      "$value": 800
+    },
     "leadingTight": {
       "$type": "number",
       "$value": 1.2

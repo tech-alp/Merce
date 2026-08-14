@@ -133,6 +133,7 @@ export const PROFILE_FIELD_MAP = {
     'weightMedium',
     'weightSemibold',
     'weightBold',
+    'weightExtraBold',
     'leadingTight',
     'leadingSnug',
     'leadingNormal',

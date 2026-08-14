@@ -28,6 +28,7 @@ class MerceTypography : public QObject
     Q_PROPERTY(int weightMedium READ weightMedium NOTIFY changed FINAL)
     Q_PROPERTY(int weightSemibold READ weightSemibold NOTIFY changed FINAL)
     Q_PROPERTY(int weightBold READ weightBold NOTIFY changed FINAL)
+    Q_PROPERTY(int weightExtraBold READ weightExtraBold NOTIFY changed FINAL)
     Q_PROPERTY(qreal leadingTight READ leadingTight NOTIFY changed FINAL)
     Q_PROPERTY(qreal leadingSnug READ leadingSnug NOTIFY changed FINAL)
     Q_PROPERTY(qreal leadingNormal READ leadingNormal NOTIFY changed FINAL)
@@ -74,6 +75,7 @@ public:
     int weightMedium() const { return m_weightMedium; }
     int weightSemibold() const { return m_weightSemibold; }
     int weightBold() const { return m_weightBold; }
+    int weightExtraBold() const { return m_weightExtraBold; }
     qreal leadingTight() const { return m_leadingTight; }
     qreal leadingSnug() const { return m_leadingSnug; }
     qreal leadingNormal() const { return m_leadingNormal; }
@@ -119,6 +121,7 @@ public:
         m_weightMedium = section.value(QStringLiteral("weightMedium")).toInt();
         m_weightSemibold = section.value(QStringLiteral("weightSemibold")).toInt();
         m_weightBold = section.value(QStringLiteral("weightBold")).toInt();
+        m_weightExtraBold = section.value(QStringLiteral("weightExtraBold")).toInt();
         m_leadingTight = section.value(QStringLiteral("leadingTight")).toDouble();
         m_leadingSnug = section.value(QStringLiteral("leadingSnug")).toDouble();
         m_leadingNormal = section.value(QStringLiteral("leadingNormal")).toDouble();
@@ -168,6 +171,7 @@ private:
     int m_weightMedium = 500;
     int m_weightSemibold = 600;
     int m_weightBold = 700;
+    int m_weightExtraBold = 800;
     qreal m_leadingTight = 1.2;
     qreal m_leadingSnug = 1.35;
     qreal m_leadingNormal = 1.5;

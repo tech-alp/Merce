@@ -60,6 +60,7 @@
     "weightMedium": 500,
     "weightSemibold": 600,
     "weightBold": 700,
+    "weightExtraBold": 800,
     "leadingTight": 1.2,
     "leadingSnug": 1.35,
     "leadingNormal": 1.5,
