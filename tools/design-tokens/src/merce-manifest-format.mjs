@@ -157,6 +157,7 @@ export const PROFILE_FIELD_MAP = {
     'dialog.small',
     'dialog.medium',
     'dialog.large',
+    'content.maxWidth',
   ],
 };
 
