@@ -180,7 +180,6 @@
       "displayName": "Cart",
       "path": "cart.json",
       "source": [
-        "tokens/core/font-families.json",
         "tokens/core/spacing.json",
         "tokens/core/radius.json",
         "tokens/core/typography.json",
@@ -191,7 +190,6 @@
       "displayName": "Maintenance",
       "path": "maintenance.json",
       "source": [
-        "tokens/core/font-families.json",
         "tokens/core/spacing.json",
         "tokens/core/radius.json",
         "tokens/core/typography.json",
@@ -202,7 +200,6 @@
       "displayName": "Operations",
       "path": "ops.json",
       "source": [
-        "tokens/core/font-families.json",
         "tokens/core/spacing.json",
         "tokens/core/radius.json",
         "tokens/core/typography.json",

@@ -1,5 +1,5 @@
 {
-  "profileSchemaVersion": 1,
+  "profileSchemaVersion": 2,
   "profileId": "cart",
   "spacing": {
     "base": 8,
@@ -40,11 +40,6 @@
     "tooltip": 4
   },
   "typography": {
-    "displayFont": "Lexend",
-    "bodyFont": "Lexend",
-    "monoFont": "JetBrains Mono",
-    "displayFontFallback": "Lexend",
-    "bodyFontFallback": "Lexend",
     "sizeXSmall": 18,
     "sizeSmall": 20,
     "sizeMedium": 24,

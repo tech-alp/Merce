@@ -108,7 +108,7 @@ export function validateResolvedTheme(manifest, context = {}) {
 export function validateProfile(profile, context = {}) {
   const errors = [];
 
-  requireExactVersion(profile, 'profileSchemaVersion', errors);
+  requireExactVersion(profile, 'profileSchemaVersion', errors, 2);
   requireString(profile, 'profileId', errors);
   if (context.profileId && profile.profileId !== context.profileId) {
     errors.push(`profileId must be '${context.profileId}'`);
@@ -287,9 +287,9 @@ function validateIndexPath(value, label, errors) {
   }
 }
 
-function requireExactVersion(value, field, errors) {
-  if (value[field] !== 1) {
-    errors.push(`${field} must be exactly 1`);
+function requireExactVersion(value, field, errors, expected = 1) {
+  if (value[field] !== expected) {
+    errors.push(`${field} must be exactly ${expected}`);
   }
 }
 

@@ -113,11 +113,6 @@ export const PROFILE_FIELD_MAP = {
     'tooltip',
   ],
   typography: [
-    'displayFont',
-    'bodyFont',
-    'monoFont',
-    'displayFontFallback',
-    'bodyFontFallback',
     'sizeXSmall',
     'sizeSmall',
     'sizeMedium',
@@ -232,7 +227,7 @@ export function formatResolvedTheme(dictionary, options) {
 export function formatProfile(dictionary, options) {
   const values = tokenValues(dictionary);
   const profile = {
-    profileSchemaVersion: 1,
+    profileSchemaVersion: 2,
     profileId: options.profileId,
   };
 

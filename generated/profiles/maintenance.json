@@ -1,5 +1,5 @@
 {
-  "profileSchemaVersion": 1,
+  "profileSchemaVersion": 2,
   "profileId": "maintenance",
   "spacing": {
     "base": 8,
@@ -40,11 +40,6 @@
     "tooltip": 12
   },
   "typography": {
-    "displayFont": "Lexend",
-    "bodyFont": "Lexend",
-    "monoFont": "JetBrains Mono",
-    "displayFontFallback": "Lexend",
-    "bodyFontFallback": "Lexend",
     "sizeXSmall": 12,
     "sizeSmall": 13,
     "sizeMedium": 16,
