@@ -20,7 +20,7 @@ QtObject {
         if (Theme.activeBrand !== "algit"
                 || Theme.activeMode !== "light"
                 || Theme.activeProfile !== "cart"
-                || Theme.availableThemes.length !== 8
+                || Theme.availableThemes.length !== 9
                 || String(observedBackground).toLowerCase() !== "#f6f4ee") {
             fail("default state",
                  [Theme.activeBrand, Theme.activeMode, Theme.activeProfile,
@@ -36,6 +36,25 @@ QtObject {
             fail("Happy Center theme switch",
                  [Theme.activeBrand, Theme.activeMode, String(observedBackground),
                   String(Theme.colors.action.primary.container)])
+            return
+        }
+
+        if (!Theme.setTheme("migros", "light")
+                || Theme.activeBrand !== "migros"
+                || Theme.activeMode !== "light"
+                || String(observedBackground).toLowerCase() !== "#ffffff"
+                || String(Theme.colors.action.primary.container).toLowerCase() !== "#ee7624"
+                || String(Theme.colors.action.primary.content).toLowerCase() !== "#ffffff"
+                || String(Theme.colors.status.success.container).toLowerCase() !== "#e7f8ea"
+                || String(Theme.colors.status.success.content).toLowerCase() !== "#006e18"
+                || String(Theme.colors.status.success.outline).toLowerCase() !== "#006e18") {
+            fail("Migros theme switch",
+                 [Theme.activeBrand, Theme.activeMode, String(observedBackground),
+                  String(Theme.colors.action.primary.container),
+                  String(Theme.colors.action.primary.content),
+                  String(Theme.colors.status.success.container),
+                  String(Theme.colors.status.success.content),
+                  String(Theme.colors.status.success.outline)])
             return
         }
 

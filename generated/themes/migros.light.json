@@ -1,0 +1,91 @@
+{
+  "kind": "resolved-theme",
+  "resolvedThemeSchemaVersion": 1,
+  "brandId": "migros",
+  "mode": "light",
+  "identity": {
+    "mark": "#EE7624"
+  },
+  "colors": {
+    "surface": {
+      "canvas": "#FFFFFF",
+      "container": "#FFFFFF",
+      "containerRaised": "#FFFFFF",
+      "containerSunken": "#F1F2F5",
+      "containerTinted": "#FFF3EB",
+      "floating": "#FFFFFF",
+      "scrim": "#99000000",
+      "inverse": "#292A2C",
+      "shadow": "#292A2C"
+    },
+    "content": {
+      "primary": "#292A2C",
+      "secondary": "#5F6063",
+      "tertiary": "#7F8083",
+      "inverse": "#FFFFFF",
+      "disabled": "#7F8083",
+      "link": "#A84400"
+    },
+    "action": {
+      "primary": {
+        "container": "#EE7624",
+        "content": "#FFFFFF",
+        "outline": "#EE7624"
+      },
+      "secondary": {
+        "container": "#185DAC",
+        "content": "#FFFFFF",
+        "outline": "#185DAC"
+      },
+      "destructive": {
+        "container": "#B3261E",
+        "content": "#FFFFFF",
+        "outline": "#B3261E"
+      }
+    },
+    "status": {
+      "success": {
+        "container": "#E7F8EA",
+        "content": "#006E18",
+        "outline": "#006E18"
+      },
+      "warning": {
+        "container": "#FFFBEB",
+        "content": "#8A4B00",
+        "outline": "#8A4B00"
+      },
+      "error": {
+        "container": "#FEF2F2",
+        "content": "#B3261E",
+        "outline": "#B3261E"
+      },
+      "info": {
+        "container": "#EFF4FC",
+        "content": "#245EA8",
+        "outline": "#245EA8"
+      },
+      "neutral": {
+        "container": "#EFF1F0",
+        "content": "#4E5B58",
+        "outline": "#65716D"
+      }
+    },
+    "outline": {
+      "subtle": "#C7C8CB",
+      "strong": "#7F8083",
+      "focus": "#A84400"
+    }
+  },
+  "state": {
+    "layer": {
+      "hover": 0.08,
+      "focus": 0.1,
+      "pressed": 0.1,
+      "selected": 0.12
+    },
+    "disabled": {
+      "containerOpacity": 0.12,
+      "contentOpacity": 0.38
+    }
+  }
+}

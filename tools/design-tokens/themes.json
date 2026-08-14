@@ -38,6 +38,21 @@
         }
       }
     },
+    "migros": {
+      "displayName": "Migros",
+      "defaultMode": "light",
+      "modes": {
+        "light": {
+          "displayName": "Light",
+          "path": "migros.light.json",
+          "source": [
+            "tokens/core/state.json",
+            "tokens/themes/algit/variants/light.json",
+            "tokens/themes/migros/resolved.json"
+          ]
+        }
+      }
+    },
     "merce": {
       "displayName": "Merce Reference",
       "defaultMode": "light",
