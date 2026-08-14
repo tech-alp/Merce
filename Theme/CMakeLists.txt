@@ -62,6 +62,14 @@ foreach(PROFILE_INDEX RANGE 0 ${MERCE_PROFILE_LAST})
         "${MERCE_GENERATED_DIR}/profiles/${PROFILE_FILE}")
 endforeach()
 
+# Font files the generator copied next to the manifests. They have to travel in
+# the same resource bundle as the manifest that names them, or a device gets a
+# theme asking for a typeface that is not on it.
+file(GLOB_RECURSE MERCE_THEME_FONT_FILES CONFIGURE_DEPENDS
+    "${MERCE_GENERATED_DIR}/themes/fonts/*.ttf"
+    "${MERCE_GENERATED_DIR}/themes/fonts/*.otf")
+list(APPEND MERCE_THEME_MANIFEST_FILES ${MERCE_THEME_FONT_FILES})
+
 qt_add_qml_module(MerceTheme
     URI "Merce.Theme"
     VERSION 1.0

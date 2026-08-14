@@ -1,4 +1,4 @@
-import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import {
   formatProfile,
@@ -47,6 +47,7 @@ for (const entry of themeEntries(registry)) {
     options: {
       brandId: entry.brandId,
       mode: entry.mode,
+      fonts: await copyBrandFonts(entry.brandId),
     },
   });
   await validateResolvedThemeFile(path.join(GENERATED_THEME_DIR, entry.path), entry);
@@ -62,6 +63,48 @@ for (const entry of profileEntries(registry)) {
     },
   });
   await validateProfileFile(path.join(GENERATED_PROFILE_DIR, entry.path), entry);
+}
+
+// A brand ships its typeface next to its tokens. Everything in the brand's
+// fonts/ directory is copied out and listed in the resolved manifest, so the
+// runtime can register the files the theme actually asks for instead of
+// carrying one hardcoded family for every brand.
+//
+// The family name is deliberately not declared here: it lives inside the font
+// file, and the loader reads it back from the font database. A hand-written
+// name would only be a second source of truth to drift from.
+async function copyBrandFonts(brandId) {
+  // Core first: the families every brand declares live once, not once per
+  // brand. A brand's own directory adds to that rather than replacing it.
+  return [
+    ...await copyFontDir(path.resolve(TOOL_ROOT, 'tokens/core/fonts'), 'core'),
+    ...await copyFontDir(path.resolve(TOOL_ROOT, 'tokens/themes', brandId, 'fonts'), brandId),
+  ];
+}
+
+async function copyFontDir(sourceDir, outputName) {
+  let names;
+  try {
+    names = await readdir(sourceDir);
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      return [];
+    }
+    throw error;
+  }
+
+  const fontNames = names.filter((name) => /\.(ttf|otf)$/i.test(name)).sort();
+  if (fontNames.length === 0) {
+    return [];
+  }
+
+  const outputDir = path.join(GENERATED_THEME_DIR, 'fonts', outputName);
+  await mkdir(outputDir, { recursive: true });
+  for (const name of fontNames) {
+    await copyFile(path.join(sourceDir, name), path.join(outputDir, name));
+  }
+
+  return fontNames.map((name) => `fonts/${outputName}/${name}`);
 }
 
 async function writeDocument({

@@ -6,6 +6,15 @@
   "identity": {
     "mark": "#C96442"
   },
+  "typography": {
+    "displayFont": "Lexend",
+    "bodyFont": "Lexend",
+    "monoFont": "JetBrains Mono"
+  },
+  "fonts": [
+    "fonts/core/JetBrainsMono[wght].ttf",
+    "fonts/core/Lexend[wght].ttf"
+  ],
   "colors": {
     "surface": {
       "canvas": "#F6F4EE",

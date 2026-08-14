@@ -14,6 +14,8 @@ const RESOLVED_THEME_FIELDS = new Set([
   'brandId',
   'mode',
   'identity',
+  'typography',
+  'fonts',
   'colors',
   'state',
 ]);

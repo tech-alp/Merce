@@ -213,6 +213,17 @@ export function formatResolvedTheme(dictionary, options) {
     identity: {
       mark: requiredValue(values, 'identity.mark'),
     },
+    // The typeface belongs to the brand, not the device: a tenant swaps it,
+    // a panel size does not. Sizes, weights and tracking stay on the profile,
+    // which is where the viewing distance lives.
+    typography: {
+      displayFont: requiredValue(values, 'typography.displayFont'),
+      bodyFont: requiredValue(values, 'typography.bodyFont'),
+      monoFont: requiredValue(values, 'typography.monoFont'),
+    },
+    // Paths are relative to the generated theme directory. Empty when the brand
+    // ships no font of its own and relies on what is already registered.
+    fonts: options.fonts ?? [],
     colors,
     state,
   };
