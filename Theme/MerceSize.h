@@ -136,6 +136,36 @@ private:
     int m_large = 640;
 };
 
+// Upper bound for a content column or an inline control, so neither stretches
+// the full width of a wide surface. Distinct from dialog widths: a dialog is
+// sized to its own chrome, this is a reading measure inside an existing one.
+class MerceContentSize : public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY(int maxWidth READ maxWidth NOTIFY changed FINAL)
+    QML_ANONYMOUS
+
+public:
+    explicit MerceContentSize(QObject *parent = nullptr) : QObject(parent) {}
+
+    int maxWidth() const { return m_maxWidth; }
+
+    void applyManifestSection(const QJsonObject &section)
+    {
+        m_maxWidth = section.value(QStringLiteral("maxWidth")).toInt();
+        emit changed();
+    }
+
+signals:
+    void changed();
+
+private:
+    // Deliberately 0, not a plausible width: the loader requires size.content,
+    // so any value here means the manifest was never applied. A real-looking
+    // default would hide that from the tests.
+    int m_maxWidth = 0;
+};
+
 class MerceSize : public QObject
 {
     Q_OBJECT
@@ -143,6 +173,7 @@ class MerceSize : public QObject
     Q_PROPERTY(MerceIconSize *icon READ icon CONSTANT FINAL)
     Q_PROPERTY(MerceOutlineSize *outline READ outline CONSTANT FINAL)
     Q_PROPERTY(MerceDialogSize *dialog READ dialog CONSTANT FINAL)
+    Q_PROPERTY(MerceContentSize *content READ content CONSTANT FINAL)
     QML_ANONYMOUS
 
 public:
@@ -151,7 +182,8 @@ public:
           m_control(new MerceControlSize(this)),
           m_icon(new MerceIconSize(this)),
           m_outline(new MerceOutlineSize(this)),
-          m_dialog(new MerceDialogSize(this))
+          m_dialog(new MerceDialogSize(this)),
+          m_content(new MerceContentSize(this))
     {
     }
 
@@ -159,6 +191,7 @@ public:
     MerceIconSize *icon() const { return m_icon; }
     MerceOutlineSize *outline() const { return m_outline; }
     MerceDialogSize *dialog() const { return m_dialog; }
+    MerceContentSize *content() const { return m_content; }
 
     void applyManifestSection(const QJsonObject &section)
     {
@@ -166,6 +199,7 @@ public:
         m_icon->applyManifestSection(section.value(QStringLiteral("icon")).toObject());
         m_outline->applyManifestSection(section.value(QStringLiteral("outline")).toObject());
         m_dialog->applyManifestSection(section.value(QStringLiteral("dialog")).toObject());
+        m_content->applyManifestSection(section.value(QStringLiteral("content")).toObject());
         emit changed();
     }
 
@@ -177,4 +211,5 @@ private:
     MerceIconSize *m_icon = nullptr;
     MerceOutlineSize *m_outline = nullptr;
     MerceDialogSize *m_dialog = nullptr;
+    MerceContentSize *m_content = nullptr;
 };

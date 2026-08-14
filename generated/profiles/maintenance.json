@@ -91,6 +91,9 @@
       "small": 400,
       "medium": 560,
       "large": 720
+    },
+    "content": {
+      "maxWidth": 560
     }
   }
 }

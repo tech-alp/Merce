@@ -282,6 +282,7 @@ QStringList validateProfile(const QJsonObject &profile,
          {QStringLiteral("small"),
           QStringLiteral("medium"),
           QStringLiteral("large")}},
+        {QStringLiteral("content"), {QStringLiteral("maxWidth")}},
     };
     errors.append(unexpectedFields(size, QStringLiteral("size"), sizeFields.keys()));
     for (auto it = sizeFields.cbegin(); it != sizeFields.cend(); ++it) {

@@ -28,7 +28,7 @@ if(MERCE_ENABLE_TOKEN_BUILD)
 endif()
 
 # Qt 6.11+ / Qt.labs.StyleKit baseline required
-find_package(Qt6 6.11 REQUIRED COMPONENTS Core Gui Quick Qml QuickControls2 LabsStyleKit)
+find_package(Qt6 6.11 REQUIRED COMPONENTS Core Gui Quick Qml QuickControls2 LabsStyleKit QuickEffects)
 
 qt_standard_project_setup(REQUIRES 6.11)
 qt_policy(SET QTP0005 NEW)

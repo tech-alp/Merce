@@ -157,6 +157,12 @@
         "$type": "dimension",
         "$value": 720
       }
+    },
+    "content": {
+      "maxWidth": {
+        "$type": "dimension",
+        "$value": 560
+      }
     }
   }
 }

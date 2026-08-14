@@ -85,6 +85,9 @@ void tst_merce_theme_runtime_switch::defaultContextIsBundledAlGit()
     QCOMPARE(theme.generation(), quint64(1));
     QVERIFY(theme.colors()->action()->primary()->container().isValid());
     QCOMPARE(theme.size()->control()->minimum(), 64);
+    // Fails if size.content is dropped from the profile manifest or the loader,
+    // which would silently fall back to the C++ default instead of erroring.
+    QCOMPARE(theme.size()->content()->maxWidth(), 480);
     QCOMPARE(theme.state()->layer()->hover(), 0.08);
     QCOMPARE(theme.state()->layer()->focus(), 0.10);
     QCOMPARE(theme.state()->layer()->pressed(), 0.10);
