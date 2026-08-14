@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import Qt.labs.StyleKit
+import Merce.Theme
 
 Button {
     id: root
@@ -43,6 +44,11 @@ Button {
     icon.source: root.iconSource
     display: displayFor(root.iconPosition)
 
+    // Type scales with the box. This belongs in the size StyleVariation next to
+    // the height it pairs with, but StyleKit variations expose no font group at
+    // all, so the size property that already exists here drives it instead.
+    font.pixelSize: root.fontSizeFor(root.size)
+
     Layout.fillWidth: root.fullWidth
     LayoutMirroring.enabled: root.iconPosition === MButton.IconRight
     StyleVariation.variations: root.styleVariations
@@ -80,6 +86,21 @@ Button {
             return "destructive"
         default:
             return ""
+        }
+    }
+
+    // Kiosk guidance puts button labels with headings and instructions: at least
+    // 4mm tall on screen. The cart panel is 800x1280 on 10.1", which is 5.88
+    // px/mm, so 4mm is 24px and Large has to reach sizeXLarge to clear it.
+    // Small and Medium sit below that bar and belong on secondary actions only.
+    function fontSizeFor(value) {
+        switch (value) {
+        case MButton.Small:
+            return Theme.typography.sizeSmall
+        case MButton.Large:
+            return Theme.typography.sizeXLarge
+        default:
+            return Theme.typography.sizeMedium
         }
     }
 
