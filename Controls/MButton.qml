@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import Qt.labs.StyleKit
+import Merce.Foundation
 import Merce.Theme
 
 Button {
@@ -112,6 +113,92 @@ Button {
             return "large"
         default:
             return ""
+        }
+    }
+
+    // StyleKit's own contentItem is an IconLabel, and IconLabel resolves an icon
+    // through Qt's icon theme. Merce icons are glyphs in a bundled font that
+    // that lookup knows nothing about, so iconName silently produced no icon at
+    // all — the reason the one MButton in the playground asks for IconNone.
+    //
+    // The plate, the padding and every state colour still come from the style;
+    // only the content is ours. The colour is read back through a StyleReader
+    // rather than recomputed, so hover, press, focus and disabled stay in one
+    // place instead of being reimplemented here as they were before StyleKit.
+    contentItem: Item {
+        implicitWidth: contentRow.implicitWidth
+        implicitHeight: contentRow.implicitHeight
+
+        // Same lookup StyleKit runs for the label it would have built itself:
+        // same control type, same variations, same interaction state. Whatever
+        // the outline/ghost/destructive variation says the label should be, the
+        // icon and the text both get.
+        StyleReader {
+            id: contentStyle
+
+            controlType: StyleReader.Button
+            StyleVariation.variations: root.styleVariations
+            enabled: root.enabled
+            focused: root.visualFocus
+            hovered: root.hovered
+            pressed: root.down
+            checked: root.checked
+            highlighted: root.highlighted
+        }
+
+        GridLayout {
+            id: contentRow
+
+            readonly property bool stacked: root.iconPosition === MButton.IconTop
+            readonly property bool showIcon: root.iconPosition !== MButton.IconNone
+                                             && root.iconName.length > 0
+            readonly property bool showText: root.iconPosition !== MButton.IconOnly
+                                             && root.text.length > 0
+
+            // Centred at its natural width, clamped to the plate. Without the
+            // clamp the row keeps its implicit width and a button narrower than
+            // its label spills content outside the background instead of eliding.
+            anchors.centerIn: parent
+            width: Math.min(implicitWidth, parent.width)
+            flow: stacked ? GridLayout.TopToBottom : GridLayout.LeftToRight
+            rowSpacing: root.spacing
+            columnSpacing: root.spacing
+
+            AppIcon {
+                visible: contentRow.showIcon
+                Layout.alignment: Qt.AlignCenter
+                Layout.preferredWidth: root.iconSizeFor(root.size)
+                Layout.preferredHeight: root.iconSizeFor(root.size)
+                name: root.iconName
+                size: root.iconSizeFor(root.size)
+                color: contentStyle.text.color
+            }
+
+            Text {
+                visible: contentRow.showText
+                Layout.alignment: Qt.AlignCenter
+                Layout.fillWidth: true
+                text: root.text
+                color: contentStyle.text.color
+                font: root.font
+                elide: Text.ElideRight
+                textFormat: Text.PlainText
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
+        }
+    }
+
+    // The glyph tracks the label: both scale with size, so a large button does
+    // not end up with a small-button icon beside big type.
+    function iconSizeFor(value) {
+        switch (value) {
+        case MButton.Small:
+            return Theme.icons.small
+        case MButton.Large:
+            return Theme.icons.large
+        default:
+            return Theme.icons.medium
         }
     }
 
