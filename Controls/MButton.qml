@@ -32,18 +32,14 @@ Button {
     property int variant: MButton.Primary
     property int size: MButton.Medium
     property int iconPosition: MButton.IconLeft
+    /** Material Symbols name, for example "material:save". */
     property string iconName: ""
-    property url iconSource: ""
     property bool loading: false
     property bool isLoading: root.loading
     property bool fullWidth: false
     property var extraVariations: []
 
     readonly property var styleVariations: variationNames()
-
-    icon.name: root.iconName
-    icon.source: root.iconSource
-    display: displayFor(root.iconPosition)
 
     // Type scales with the box. This belongs in the size StyleVariation next to
     // the height it pairs with, but StyleKit variations expose no font group at
@@ -116,10 +112,9 @@ Button {
         }
     }
 
-    // StyleKit's own contentItem is an IconLabel, and IconLabel resolves an icon
-    // through Qt's icon theme. Merce icons are glyphs in a bundled font that
-    // that lookup knows nothing about, so iconName silently produced no icon at
-    // all — the reason the one MButton in the playground asks for IconNone.
+    // StyleKit's own contentItem resolves icons through Qt's icon theme. MButton
+    // deliberately bypasses that path: iconName is a bundled Material Symbol
+    // consumed by AppIcon, so rendering does not depend on platform icon themes.
     //
     // The plate, the padding and every state colour still come from the style;
     // only the content is ours. The colour is read back through a StyleReader
@@ -202,16 +197,4 @@ Button {
         }
     }
 
-    function displayFor(value) {
-        switch (value) {
-        case MButton.IconNone:
-            return AbstractButton.TextOnly
-        case MButton.IconTop:
-            return AbstractButton.TextUnderIcon
-        case MButton.IconOnly:
-            return AbstractButton.IconOnly
-        default:
-            return AbstractButton.TextBesideIcon
-        }
-    }
 }

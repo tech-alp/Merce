@@ -815,20 +815,20 @@ Item {
                     MButton {
                         text: "Action"
                         variant: MButton.Outline
-                        iconName: "go-home"
+                        iconName: "material:home"
                         iconPosition: MButton.IconLeft
                     }
 
                     MButton {
                         text: "Primary"
-                        iconName: "dialog-ok"
+                        iconName: "material:check_circle"
                         iconPosition: MButton.IconLeft
                     }
 
                     MButton {
                         text: "More"
                         variant: MButton.Outline
-                        iconName: "open-menu-symbolic"
+                        iconName: "material:more_horiz"
                         iconPosition: MButton.IconLeft
                     }
                 }
