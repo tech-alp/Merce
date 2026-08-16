@@ -219,5 +219,6 @@ Item {
         id: toastify
 
         anchors.fill: parent
+        style: MToastStyle {}
     }
 }

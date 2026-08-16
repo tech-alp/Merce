@@ -21,6 +21,9 @@ Item {
     readonly property color observedToggleColor: switchSample.observedTrackColor
     readonly property color observedSelectColor: selectSample.observedPaletteColor
     readonly property color observedToastColor: toastStyle.colors.success
+    readonly property color observedToastSurfaceColor: toastStyle.backgroundColor
+    readonly property color observedToastTextColor: toastStyle.textColors.color
+    readonly property color observedToastCloseColor: toastStyle.closeButtonStyle.color
     readonly property color observedDialogColor: galleryDialog.observedSurfaceColor
     readonly property bool hasRequiredAnchors: activeThemeSection.objectName === "merce.playground.gallery.activeTheme"
                                             && paletteSection.objectName === "merce.playground.gallery.palette"

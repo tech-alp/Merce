@@ -218,12 +218,26 @@ Item {
                 visible: root.title !== "" || root.variant !== MDialog.Default || !root.blocking
 
                 AppIcon {
+                    readonly property real responsiveSize: Math.min(
+                                                               Theme.icons.xLarge,
+                                                               Math.max(Theme.icons.large,
+                                                                        Theme.typography.h3.size
+                                                                        + Theme.spacing.xs))
+
                     visible: root.variant !== MDialog.Default
                     name: root.variant === MDialog.Destructive ? "material:error" : "material:warning"
-                    size: Theme.icons.large
+                    size: responsiveSize
+                    weight: Theme.typography.weightMedium
                     color: root.variant === MDialog.Destructive
                         ? Theme.colors.status.error.content
                         : Theme.colors.status.warning.content
+                    Layout.preferredWidth: responsiveSize
+                    Layout.preferredHeight: responsiveSize
+                    Layout.alignment: Qt.AlignVCenter
+
+                    transform: Translate {
+                        y: Theme.spacing.xxs
+                    }
                 }
 
                 AppLabel {
@@ -241,8 +255,22 @@ Item {
                     visible: !root.blocking
                     Layout.preferredWidth: Theme.spacing.touchTargetCompact
                     Layout.preferredHeight: Theme.spacing.touchTargetCompact
-                    text: "×"
+                    padding: 0
                     Accessible.name: qsTr("Close")
+
+                    contentItem: Item {
+                        AppIcon {
+                            anchors.centerIn: parent
+                            anchors.verticalCenterOffset: Theme.spacing.xxs
+                            name: "material:close"
+                            size: Theme.spacing.touchTargetCompact >= Theme.spacing.xl4
+                                ? Theme.icons.large
+                                : Theme.icons.medium
+                            weight: Theme.typography.weightMedium
+                            color: Theme.colors.content.primary
+                        }
+                    }
+
                     onClicked: root.dismiss()
                 }
             }
