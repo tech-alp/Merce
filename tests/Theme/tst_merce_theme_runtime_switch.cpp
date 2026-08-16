@@ -100,7 +100,15 @@ void tst_merce_theme_runtime_switch::shadowLayersCarryGeometryAndOpacityOnly()
     const QVariantList dropdown = theme.shadows()->dropdown();
     QCOMPARE(dropdown.size(), 2);
     QCOMPARE(dropdown.at(0).toMap().value(QStringLiteral("spread")).toInt(), -5);
+    QCOMPARE(dropdown.at(0).toMap().value(QStringLiteral("opacity")).toReal(), 0.16);
     QCOMPARE(dropdown.at(1).toMap().value(QStringLiteral("spread")).toInt(), -6);
+
+    QCOMPARE(theme.shadows()->small().first().toMap()
+                 .value(QStringLiteral("opacity")).toReal(), 0.10);
+    QCOMPARE(theme.shadows()->medium().first().toMap()
+                 .value(QStringLiteral("opacity")).toReal(), 0.12);
+    QCOMPARE(theme.shadows()->large().first().toMap()
+                 .value(QStringLiteral("opacity")).toReal(), 0.14);
 
     // The hue the layers deliberately leave out has to exist and be theme-owned.
     QVERIFY(theme.colors()->surface()->shadow().isValid());

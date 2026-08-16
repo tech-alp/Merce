@@ -28,8 +28,9 @@ class MerceShadows : public QObject
 public:
     explicit MerceShadows(QObject *parent = nullptr) : QObject(parent) {}
 
-    // Each step is one Tailwind shadow, spread included. The wide layer carries the
-    // float, the tight one the contact edge; dropping either flattens the step.
+    // Geometry follows the Tailwind scale, spread included. Opacity increases
+    // with elevation so adjacent steps stay legible on tokenized surfaces. The
+    // wide layer carries the float, the tight one the contact edge.
     QVariantList none() const { return {}; }
     QVariantList small() const
     {
@@ -41,22 +42,22 @@ public:
     QVariantList medium() const
     {
         return {
-            shadow(0, 4, 6, -1, 0.10),
-            shadow(0, 2, 4, -2, 0.10),
+            shadow(0, 4, 6, -1, 0.12),
+            shadow(0, 2, 4, -2, 0.12),
         };
     }
     QVariantList large() const
     {
         return {
-            shadow(0, 10, 15, -3, 0.10),
-            shadow(0, 4, 6, -4, 0.10),
+            shadow(0, 10, 15, -3, 0.14),
+            shadow(0, 4, 6, -4, 0.14),
         };
     }
     QVariantList xlarge() const
     {
         return {
-            shadow(0, 20, 25, -5, 0.10),
-            shadow(0, 8, 10, -6, 0.10),
+            shadow(0, 20, 25, -5, 0.16),
+            shadow(0, 8, 10, -6, 0.16),
         };
     }
     QVariantList xxlarge() const
