@@ -35,6 +35,7 @@ Item {
         property color previewBackground: Theme.colors.surface.containerSunken
         property color labelColor: Theme.colors.content.primary
         property color surfaceColor: Theme.colors.surface.containerRaised
+        property bool darkSurfaceTreatmentEnabled: Theme.activeMode === "dark"
 
         implicitHeight: 148
 
@@ -68,6 +69,8 @@ Item {
                     anchors.fill: card
                     layers: preview.shadows
                     surfaceRadius: card.radius
+                    surfaceColor: preview.surfaceColor
+                    darkSurfaceTreatmentEnabled: preview.darkSurfaceTreatmentEnabled
                 }
 
                 Rectangle {
@@ -291,6 +294,7 @@ Item {
                             label: modelData.name.replace("shadow.", "")
                             shadows: modelData.layers
                             surfaceColor: Theme.colors.surface.inverse
+                            darkSurfaceTreatmentEnabled: false
                         }
                     }
                 }
