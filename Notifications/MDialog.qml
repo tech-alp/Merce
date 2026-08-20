@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import Qt.labs.StyleKit as SK
+import Merce.Controls
 import Merce.Foundation
 import Merce.Theme
 
@@ -86,7 +87,7 @@ Item {
     anchors.fill: parent
     visible: false
     // Above application content; the host owns the only instance on screen.
-    z: 1000
+    z: Theme.zIndex.modal
 
     // Guards the contract: exactly one result per request, never zero, never two.
     property bool _settled: true
@@ -167,7 +168,6 @@ Item {
     Rectangle {
         id: surface
 
-        objectName: root.objectName + ".surface"
         anchors.centerIn: parent
         width: Math.min(root.dialogWidth(root.size),
                         root.width - Theme.spacing.xl2)
@@ -203,7 +203,6 @@ Item {
         ColumnLayout {
             id: dialogContent
 
-            objectName: root.objectName + ".content"
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
@@ -250,7 +249,6 @@ Item {
                 }
 
                 SK.ToolButton {
-                    objectName: root.objectName + ".close"
                     // A blocking dialog offers no way out but the actions.
                     visible: !root.blocking
                     Layout.preferredWidth: Theme.spacing.touchTargetCompact
@@ -261,7 +259,6 @@ Item {
                     contentItem: Item {
                         AppIcon {
                             anchors.centerIn: parent
-                            anchors.verticalCenterOffset: Theme.spacing.xxs
                             name: "material:close"
                             size: Theme.spacing.touchTargetCompact >= Theme.spacing.xl4
                                 ? Theme.icons.large
@@ -294,7 +291,6 @@ Item {
             ColumnLayout {
                 id: bodySlot
 
-                objectName: root.objectName + ".body"
                 Layout.fillWidth: true
                 spacing: Theme.spacing.md
                 // An empty slot must not add a gap between message and actions.
@@ -320,21 +316,19 @@ Item {
                     Layout.fillWidth: true
                 }
 
-                SK.Button {
-                    objectName: root.objectName + ".cancel"
+                MButton {
                     visible: root.showCancel
                     text: root.cancelText
-                    SK.StyleVariation.variations: ["outline"]
+                    variant: MButton.Outline
                     onClicked: root.cancel()
                 }
 
-                SK.Button {
-                    objectName: root.objectName + ".confirm"
+                MButton {
                     visible: root.showConfirm
                     text: root.confirmText
-                    SK.StyleVariation.variations: root.variant === MDialog.Destructive
-                        ? ["destructive"]
-                        : []
+                    variant: root.variant === MDialog.Destructive
+                        ? MButton.Destructive
+                        : MButton.Primary
                     onClicked: root.confirm()
                 }
             }

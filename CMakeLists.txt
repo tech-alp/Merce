@@ -40,12 +40,16 @@ set(QT_QML_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/qml")
 
 # External QML modules
 if(MERCE_BUILD_NOTIFICATIONS AND NOT TARGET Toastify)
+    set(MERCE_QTTOASTIFY_GIT_REVISION
+        "b0a3b5f28870bbe76781579c0ba208b3ae384297"
+        CACHE STRING "Pinned QtToastify revision"
+    )
     set(BUILD_PLAYGROUND OFF CACHE BOOL "Build QtToastify playground examples" FORCE)
     set(BUILD_TESTS OFF CACHE BOOL "Build QtToastify tests" FORCE)
 
     FetchContent_Declare(QtToastify
         GIT_REPOSITORY https://github.com/tech-alp/QtToastify.git
-        GIT_TAG main
+        GIT_TAG ${MERCE_QTTOASTIFY_GIT_REVISION}
     )
     FetchContent_MakeAvailable(QtToastify)
 endif()
@@ -232,6 +236,7 @@ message(STATUS "    │       ├── Merce.Foundation")
 message(STATUS "    │       └── Merce.Theme")
 if(MERCE_BUILD_NOTIFICATIONS)
     message(STATUS "    └── Merce.Notifications")
+    message(STATUS "            ├── Merce.Controls")
     message(STATUS "            ├── Merce.Foundation")
     message(STATUS "            └── Merce.Theme")
 endif()

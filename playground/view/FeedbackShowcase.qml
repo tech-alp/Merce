@@ -3,12 +3,13 @@ import Qt.labs.StyleKit as SK
 import Merce.Theme
 import Merce.Foundation
 import Merce.Notifications
-import Toastify
 
 Item {
     id: root
-    objectName: "merce.playground.showcase.feedback"
 
+    property string dialogStateText: qsTr("No dialog action yet")
+
+    objectName: "merce.playground.showcase.feedback"
     implicitHeight: page.implicitHeight
     height: implicitHeight
 
@@ -18,34 +19,26 @@ Item {
         wrapMode: Text.WordWrap
     }
 
-    MerceToastifyStyleProvider {
-        id: toastStyle
-    }
-
-    Toastify {
-        id: toastify
-        objectName: "merce.playground.feedback.toastify"
-        style: toastStyle
-    }
-
-    function showToast(type, message) {
-        toastify.createMessage(message, {
-            type: type,
-            position: Toastify.BottomRightCorner,
-            autoClose: 4000,
-            closeOnClick: true,
-            hideProgressBar: false
+    function showDialog(requestId, variant, title, message) {
+        return NotificationCenter.ask({
+            owner: root,
+            requestId: requestId,
+            title: title,
+            message: message,
+            confirmText: qsTr("Confirm"),
+            cancelText: qsTr("Cancel"),
+            showCancel: true,
+            variant: variant,
+            onAccepted: function() {
+                root.dialogStateText = qsTr("%1: confirmed").arg(title)
+            },
+            onCancelled: function() {
+                root.dialogStateText = qsTr("%1: cancelled").arg(title)
+            },
+            onRefused: function(activeRequestId) {
+                root.dialogStateText = qsTr("Dialog is busy: %1").arg(activeRequestId)
+            }
         })
-    }
-
-    MDialog {
-        id: dialog
-        objectName: "merce.playground.feedback.dialog"
-        title: "Dialog sample"
-        message: "This dialog uses the active Merce theme tokens."
-        confirmText: "Confirm"
-        cancelText: "Cancel"
-        showCancel: true
     }
 
     Column {
@@ -80,29 +73,37 @@ Item {
 
                     SK.Button {
                         objectName: "merce.playground.feedback.toast.info"
-                        text: "Info"
+                        text: qsTr("Info")
                         SK.StyleVariation.variations: ["outline"]
-                        onClicked: root.showToast(Toastify.Info, "Informational toast")
+                        onClicked: NotificationCenter.notify(
+                                       NotificationCenter.Info,
+                                       qsTr("Informational toast"), "", 4000)
                     }
 
                     SK.Button {
                         objectName: "merce.playground.feedback.toast.success"
-                        text: "Success"
-                        onClicked: root.showToast(Toastify.Success, "Success toast")
+                        text: qsTr("Success")
+                        onClicked: NotificationCenter.notify(
+                                       NotificationCenter.Success,
+                                       qsTr("Success toast"), "", 4000)
                     }
 
                     SK.Button {
                         objectName: "merce.playground.feedback.toast.warning"
-                        text: "Warning"
+                        text: qsTr("Warning")
                         SK.StyleVariation.variations: ["secondary"]
-                        onClicked: root.showToast(Toastify.Warning, "Warning toast")
+                        onClicked: NotificationCenter.notify(
+                                       NotificationCenter.Warning,
+                                       qsTr("Warning toast"), "", 4000)
                     }
 
                     SK.Button {
                         objectName: "merce.playground.feedback.toast.error"
-                        text: "Error"
+                        text: qsTr("Error")
                         SK.StyleVariation.variations: ["destructive"]
-                        onClicked: root.showToast(Toastify.Error, "Error toast")
+                        onClicked: NotificationCenter.notify(
+                                       NotificationCenter.Error,
+                                       qsTr("Error toast"), "", 4000)
                     }
                 }
             }
@@ -136,37 +137,43 @@ Item {
                     SK.Button {
                         objectName: "merce.playground.feedback.dialog.default"
                         text: "Default dialog"
-                        onClicked: {
-                            dialog.variant = MDialog.Default
-                            dialog.title = "Dialog sample"
-                            dialog.message = "This dialog uses the active Merce theme tokens."
-                            dialog.request("feedback-default")
-                        }
+                        onClicked: root.showDialog(
+                                       "feedback-default",
+                                       MDialog.Default,
+                                       qsTr("Dialog sample"),
+                                       qsTr("This dialog uses the active Merce theme tokens."))
                     }
 
                     SK.Button {
                         objectName: "merce.playground.feedback.dialog.warning"
                         text: "Warning dialog"
                         SK.StyleVariation.variations: ["secondary"]
-                        onClicked: {
-                            dialog.variant = MDialog.Warning
-                            dialog.title = "Warning"
-                            dialog.message = "Review the current theme state before continuing."
-                            dialog.request("feedback-warning")
-                        }
+                        onClicked: root.showDialog(
+                                       "feedback-warning",
+                                       MDialog.Warning,
+                                       qsTr("Warning"),
+                                       qsTr("Review the current theme state before continuing."))
                     }
 
                     SK.Button {
                         objectName: "merce.playground.feedback.dialog.destructive"
                         text: "Destructive dialog"
                         SK.StyleVariation.variations: ["destructive"]
-                        onClicked: {
-                            dialog.variant = MDialog.Destructive
-                            dialog.title = "Destructive action"
-                            dialog.message = "This state uses the destructive semantic color."
-                            dialog.request("feedback-destructive")
-                        }
+                        onClicked: root.showDialog(
+                                       "feedback-destructive",
+                                       MDialog.Destructive,
+                                       qsTr("Destructive action"),
+                                       qsTr("This state uses the destructive semantic color."))
                     }
+                }
+
+                AppLabel {
+                    objectName: "merce.playground.feedback.dialog.state"
+                    width: parent.width
+                    text: root.dialogStateText
+                    textType: AppLabel.Body
+                    color: Theme.colors.content.secondary
+                    wrapMode: Text.WordWrap
                 }
             }
         }

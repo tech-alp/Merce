@@ -3,7 +3,6 @@ import Qt.labs.StyleKit as SK
 import Merce.Theme
 import Merce.Foundation
 import Merce.Notifications
-import Toastify
 
 Item {
     id: root
@@ -24,7 +23,7 @@ Item {
     readonly property color observedToastSurfaceColor: toastStyle.backgroundColor
     readonly property color observedToastTextColor: toastStyle.textColors.color
     readonly property color observedToastCloseColor: toastStyle.closeButtonStyle.color
-    readonly property color observedDialogColor: galleryDialog.observedSurfaceColor
+    readonly property color observedDialogColor: Theme.colors.surface.container
     readonly property bool hasRequiredAnchors: activeThemeSection.objectName === "merce.playground.gallery.activeTheme"
                                             && paletteSection.objectName === "merce.playground.gallery.palette"
                                             && typographySection.objectName === "merce.playground.gallery.typography"
@@ -87,6 +86,24 @@ Item {
 
     function colorLabel(value) {
         return String(value).toUpperCase()
+    }
+
+    function showDestructiveDialog() {
+        return NotificationCenter.ask({
+            owner: root,
+            requestId: "gallery-destructive",
+            title: qsTr("Galeri örneği"),
+            message: qsTr("Tema değerleri okunuyor."),
+            confirmText: qsTr("OK"),
+            showCancel: false,
+            variant: MDialog.Destructive,
+            onAccepted: function() {
+                exportState.text = qsTr("Yıkıcı işlem onaylandı")
+            },
+            onRefused: function(activeRequestId) {
+                exportState.text = qsTr("Dialog meşgul: %1").arg(activeRequestId)
+            }
+        })
     }
 
     component SectionTitle: AppLabel {
@@ -463,12 +480,7 @@ Item {
                         objectName: "merce.playground.gallery.primaryButton"
                         text: "Primary"
                         property color observedContainerColor: Theme.colors.action.primary.container
-                        onClicked: galleryToast.success("Galeri örneği yüklendi.", {
-                            position: Toastify.BottomRightCorner,
-                            autoClose: 4000,
-                            closeOnClick: true,
-                            hideProgressBar: false
-                        })
+                        onClicked: NotificationCenter.success("Galeri örneği yüklendi.", "", 4000)
                     }
 
                     SK.Button {
@@ -487,7 +499,7 @@ Item {
                         objectName: "merce.playground.gallery.destructiveButton"
                         text: "Destructive"
                         SK.StyleVariation.variations: ["destructive"]
-                        onClicked: galleryDialog.request("gallery-destructive")
+                        onClicked: root.showDestructiveDialog()
                     }
                 }
 
@@ -602,21 +614,5 @@ Item {
 
     MerceToastifyStyleProvider {
         id: toastStyle
-    }
-
-    Toastify {
-        id: galleryToast
-        objectName: "merce.playground.gallery.toastify"
-        style: toastStyle
-    }
-
-    MDialog {
-        id: galleryDialog
-        objectName: "merce.playground.gallery.dialog"
-        title: "Galeri örneği"
-        message: "Tema değerleri okunuyor."
-        confirmText: "OK"
-        showCancel: false
-        property color observedSurfaceColor: Theme.colors.surface.container
     }
 }
