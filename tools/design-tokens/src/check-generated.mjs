@@ -37,14 +37,15 @@ async function snapshotDirectories(directoryPaths) {
 }
 
 async function snapshotDirectory(directoryPath) {
-  const files = await listJsonFiles(directoryPath);
-  const entries = await Promise.all(
-    files.map(async (file) => [path.relative(directoryPath, file), await readFile(file, 'utf8')]),
-  );
+  const files = await listFiles(directoryPath);
+  const entries = await Promise.all(files.map(async (file) => {
+    const content = await readFile(file);
+    return [path.relative(directoryPath, file), content.toString('base64')];
+  }));
   return new Map(entries);
 }
 
-async function listJsonFiles(directoryPath) {
+async function listFiles(directoryPath) {
   let entries;
   try {
     entries = await readdir(directoryPath, { withFileTypes: true });
@@ -55,9 +56,9 @@ async function listJsonFiles(directoryPath) {
   const files = await Promise.all(entries.map(async (entry) => {
     const fullPath = path.join(directoryPath, entry.name);
     if (entry.isDirectory()) {
-      return listJsonFiles(fullPath);
+      return listFiles(fullPath);
     }
-    return entry.isFile() && entry.name.endsWith('.json') ? [fullPath] : [];
+    return entry.isFile() ? [fullPath] : [];
   }));
 
   return files.flat().sort();

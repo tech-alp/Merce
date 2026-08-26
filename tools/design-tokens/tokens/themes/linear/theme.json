@@ -150,7 +150,7 @@
     },
     "monoFont": {
       "$type": "fontFamily",
-      "$value": "IoskeleyMono Nerd Font"
+      "$value": "JetBrains Mono"
     },
     "displayFontFallback": {
       "$type": "fontFamily",

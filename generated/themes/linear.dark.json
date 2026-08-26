@@ -13,10 +13,7 @@
   },
   "fonts": [
     "fonts/core/JetBrainsMono[wght].ttf",
-    "fonts/core/Lexend[wght].ttf",
-    "fonts/linear/IoskeleyMonoNerdFont-Bold.ttf",
-    "fonts/linear/IoskeleyMonoNerdFont-Medium.ttf",
-    "fonts/linear/IoskeleyMonoNerdFont-Regular.ttf"
+    "fonts/core/Lexend[wght].ttf"
   ],
   "colors": {
     "surface": {
