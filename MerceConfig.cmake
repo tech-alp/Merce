@@ -44,6 +44,10 @@ if(NOT TARGET Merce::Controls)
     add_library(Merce::Controls ALIAS MerceControls)
 endif()
 
+if(TARGET MerceIconsFontAwesome AND NOT TARGET Merce::IconsFontAwesome)
+    add_library(Merce::IconsFontAwesome ALIAS MerceIconsFontAwesome)
+endif()
+
 if(TARGET MerceNotifications AND NOT TARGET Merce::Notifications)
     add_library(Merce::Notifications ALIAS MerceNotifications)
 endif()

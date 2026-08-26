@@ -9,9 +9,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Qt configure/build paths never require Node or npm.
 option(MERCE_ENABLE_TOKEN_BUILD "Enable the design-token manifest build target" OFF)
 option(MERCE_ENABLE_FONTAWESOME "Build the optional Font Awesome SVG QML module" ON)
-option(MERCE_BUILD_NOTIFICATIONS "Build the notification and dialog QML module" ON)
+option(MERCE_BUILD_NOTIFICATIONS "Build the notification and dialog QML module" OFF)
 option(MERCE_BUILD_TESTS "Build Merce tests" ${PROJECT_IS_TOP_LEVEL})
-option(BUILD_MERCE_PLAYGROUND "Build Merce playground application" ${PROJECT_IS_TOP_LEVEL})
+option(BUILD_MERCE_PLAYGROUND "Build Merce playground application" OFF)
 
 if(MERCE_ENABLE_TOKEN_BUILD)
     find_program(NPM_EXECUTABLE npm)
@@ -48,14 +48,18 @@ if(MERCE_BUILD_NOTIFICATIONS AND NOT TARGET Toastify)
         "b0a3b5f28870bbe76781579c0ba208b3ae384297"
         CACHE STRING "Pinned QtToastify revision"
     )
-    set(BUILD_PLAYGROUND OFF CACHE BOOL "Build QtToastify playground examples" FORCE)
-    set(BUILD_TESTS OFF CACHE BOOL "Build QtToastify tests" FORCE)
-
     FetchContent_Declare(QtToastify
         GIT_REPOSITORY https://github.com/tech-alp/QtToastify.git
         GIT_TAG ${MERCE_QTTOASTIFY_GIT_REVISION}
     )
-    FetchContent_MakeAvailable(QtToastify)
+
+    # QtToastify currently uses generic option names. Keep the overrides local
+    # so embedding Merce does not mutate the parent project's cache options.
+    block(SCOPE_FOR VARIABLES)
+        set(BUILD_PLAYGROUND OFF)
+        set(BUILD_TESTS OFF)
+        FetchContent_MakeAvailable(QtToastify)
+    endblock()
 endif()
 
 # ========================================================================
@@ -76,6 +80,22 @@ if(MERCE_BUILD_NOTIFICATIONS)
     add_subdirectory(Notifications)
 endif()
 
+# Keep the public target names identical for FetchContent/add_subdirectory and
+# installed find_package consumers.
+add_library(Merce::Core ALIAS MerceCore)
+add_library(Merce::Platform ALIAS MercePlatform)
+add_library(Merce::Theme ALIAS MerceTheme)
+add_library(Merce::Foundation ALIAS MerceFoundation)
+add_library(Merce::Style ALIAS MerceStyle)
+add_library(Merce::Effects ALIAS MerceEffects)
+add_library(Merce::Controls ALIAS MerceControls)
+if(MERCE_ENABLE_FONTAWESOME)
+    add_library(Merce::IconsFontAwesome ALIAS MerceIconsFontAwesome)
+endif()
+if(MERCE_BUILD_NOTIFICATIONS)
+    add_library(Merce::Notifications ALIAS MerceNotifications)
+endif()
+
 if(MERCE_BUILD_TESTS AND BUILD_TESTING)
     find_package(Qt6 6.11 REQUIRED COMPONENTS Test)
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests/CMakeLists.txt")
@@ -90,6 +110,9 @@ if(BUILD_MERCE_PLAYGROUND)
     if(NOT MERCE_ENABLE_FONTAWESOME)
         message(FATAL_ERROR "BUILD_MERCE_PLAYGROUND=ON requires MERCE_ENABLE_FONTAWESOME=ON for the Icons gallery.")
     endif()
+    if(NOT MERCE_BUILD_NOTIFICATIONS)
+        message(FATAL_ERROR "BUILD_MERCE_PLAYGROUND=ON requires MERCE_BUILD_NOTIFICATIONS=ON for the Feedback gallery.")
+    endif()
     add_subdirectory(playground)
 endif()
 
@@ -99,6 +122,35 @@ endif()
 
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
+
+install(FILES
+    LICENSE
+    README.md
+    CHANGELOG.md
+    DESTINATION "${CMAKE_INSTALL_DOCDIR}"
+)
+install(FILES third_party/material-color-utilities/LICENSE
+    DESTINATION "${CMAKE_INSTALL_DOCDIR}/licenses"
+    RENAME material-color-utilities-Apache-2.0.txt
+)
+install(FILES Foundation/fonts/MaterialSymbolsRounded/LICENSE
+    DESTINATION "${CMAKE_INSTALL_DOCDIR}/licenses"
+    RENAME material-symbols-Apache-2.0.txt
+)
+if(MERCE_ENABLE_FONTAWESOME)
+    install(FILES Icons/FontAwesome/LICENSE.txt
+        DESTINATION "${CMAKE_INSTALL_DOCDIR}/licenses"
+        RENAME font-awesome-free.txt
+    )
+endif()
+install(FILES tools/design-tokens/tokens/core/fonts/OFL-JetBrainsMono.txt
+    DESTINATION "${CMAKE_INSTALL_DOCDIR}/licenses"
+    RENAME jetbrains-mono-OFL-1.1.txt
+)
+install(FILES tools/design-tokens/tokens/core/fonts/OFL-Lexend.txt
+    DESTINATION "${CMAKE_INSTALL_DOCDIR}/licenses"
+    RENAME lexend-OFL-1.1.txt
+)
 
 set(MERCE_QML_MODULE_TARGETS
     MerceCore
@@ -110,13 +162,14 @@ set(MERCE_QML_MODULE_TARGETS
     MerceControls
 )
 
-if(MERCE_BUILD_NOTIFICATIONS)
-    list(APPEND MERCE_QML_MODULE_TARGETS MerceNotifications)
-endif()
-
 if(MERCE_ENABLE_FONTAWESOME)
     list(APPEND MERCE_QML_MODULE_TARGETS MerceIconsFontAwesome)
 endif()
+
+# Merce.Notifications imports the source-integrated static Toastify modules.
+# Until QtToastify provides an installable QML package, keep Notifications out
+# of the installed Merce package rather than publishing a target that fails at
+# runtime with "module Toastify is not installed".
 
 function(merce_install_qml_module_files module_dir files deploy_paths)
     list(LENGTH files file_count)
