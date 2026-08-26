@@ -30,6 +30,10 @@ endif()
 # Qt 6.11+ / Qt.labs.StyleKit baseline required
 find_package(Qt6 6.11 REQUIRED COMPONENTS Core Gui Quick Qml QuickControls2 LabsStyleKit QuickEffects)
 
+if(MERCE_BUILD_NOTIFICATIONS)
+    find_package(Qt6 6.11 REQUIRED COMPONENTS QuickVectorImage QuickVectorImageHelpers)
+endif()
+
 qt_standard_project_setup(REQUIRES 6.11)
 qt_policy(SET QTP0005 NEW)
 if(MERCE_BUILD_TESTS)

@@ -1,4 +1,6 @@
 add_subdirectory(Core)
 add_subdirectory(Theme)
 add_subdirectory(Style)
-add_subdirectory(Notifications)
+if(MERCE_BUILD_NOTIFICATIONS)
+    add_subdirectory(Notifications)
+endif()
