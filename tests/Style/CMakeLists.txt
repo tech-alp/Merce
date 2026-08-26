@@ -32,5 +32,5 @@ add_test(NAME tst_merce_style_runtime_switch
 )
 
 set_tests_properties(tst_merce_style_runtime_switch PROPERTIES
-    ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QUICK_BACKEND=software"
+    ENVIRONMENT "${MERCE_TEST_ENVIRONMENT}"
 )

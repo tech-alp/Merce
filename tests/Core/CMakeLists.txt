@@ -18,3 +18,7 @@ target_include_directories(tst_merce_core_runtime
 add_test(NAME tst_merce_core_runtime
     COMMAND tst_merce_core_runtime
 )
+
+set_tests_properties(tst_merce_core_runtime PROPERTIES
+    ENVIRONMENT "${MERCE_TEST_ENVIRONMENT}"
+)
