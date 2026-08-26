@@ -15,11 +15,20 @@ if [[ ! -d "${build_dir}" ]]; then
     exit 2
 fi
 
+build_dir="$(cd -- "${build_dir}" && pwd)"
 playground="${build_dir}/playground/MercePlayground"
+qml_import_path="${build_dir}/qml"
 
 run() {
     printf '\n==> %s\n' "$*"
     "$@"
+}
+
+run_playground() {
+    run env \
+        QT_QPA_PLATFORM=offscreen \
+        QML_IMPORT_PATH="${qml_import_path}" \
+        "${playground}" "$@"
 }
 
 run cmake --build "${build_dir}" --target MercePlayground
@@ -32,12 +41,12 @@ if [[ ! -x "${playground}" ]]; then
     exit 2
 fi
 
-run env QT_QPA_PLATFORM=offscreen "${playground}" --theme-probe
-run env QT_QPA_PLATFORM=offscreen "${playground}" --theme-switch-probe
-run env QT_QPA_PLATFORM=offscreen "${playground}" --smoke-test
-run env QT_QPA_PLATFORM=offscreen "${playground}" --theme-gallery-probe
-run env QT_QPA_PLATFORM=offscreen "${playground}" --playground-probe
-run env QT_QPA_PLATFORM=offscreen "${playground}" --export-theme-gallery "${gallery_dir}"
+run_playground --theme-probe
+run_playground --theme-switch-probe
+run_playground --smoke-test
+run_playground --theme-gallery-probe
+run_playground --playground-probe
+run_playground --export-theme-gallery "${gallery_dir}"
 
 for image in merce-light merce-dark stripe-reference; do
     path="${gallery_dir}/${image}.png"
