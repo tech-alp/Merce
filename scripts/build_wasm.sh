@@ -50,6 +50,7 @@ cmake_args=(
     -B "${build_dir}"
     -G Ninja
     -DCMAKE_BUILD_TYPE="${BUILD_TYPE:-MinSizeRel}"
+    -DCMAKE_SKIP_INSTALL_RULES=ON
     -DQT_HOST_PATH="${qt_host_path}"
     -DMERCE_BUILD_NOTIFICATIONS=ON
     -DMERCE_ENABLE_FONTAWESOME=ON

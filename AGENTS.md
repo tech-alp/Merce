@@ -28,7 +28,7 @@ For token changes, run `npm --prefix tools/design-tokens ci`, then `build`, `val
 
 ## CI and WebAssembly
 
-Keep GitHub Actions pinned to immutable SHAs with version comments. `scripts/build_wasm.sh` builds the actual `MercePlayground`, validates required static QML plugins, and assembles `build-wasm/site/`; do not commit generated WASM output. Pages publishes only after the WASM artifact passes. Express QML dependencies through CMake targets and module metadata, not manual import-path workarounds.
+Keep GitHub Actions pinned to immutable SHAs with version comments. `scripts/build_wasm.sh` builds the actual `MercePlayground`, disables install generation with standard `CMAKE_SKIP_INSTALL_RULES`, validates required static QML plugins, and assembles `build-wasm/site/`; do not commit generated WASM output. Pages publishes only after the WASM artifact passes. Express QML dependencies through CMake targets and module metadata, not manual import-path workarounds.
 
 ## Git and Reviews
 
