@@ -7,6 +7,22 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## [Unreleased]
 
+### Added
+
+- Merce StyleKit mappings for `SpinBox` and `TextArea`, including token-driven
+  interaction states and runtime theme switching
+
+### Changed
+
+- Widened the StyleKit `Switch` track using the medium control-size token
+- Filled checked `outline` buttons with the primary action colors while keeping
+  the selected appearance during keyboard focus
+
+### Fixed
+
+- Removed duplicated horizontal content padding from StyleKit `SpinBox`
+  layouts so compact values remain visible between the indicators
+
 ## [1.0.0] - 2026-08-26
 
 ### Added
