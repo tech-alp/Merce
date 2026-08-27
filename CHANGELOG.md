@@ -11,8 +11,8 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 - WebAssembly playground build and GitHub Pages deployment at the public live
   demo URL
-- Cross-platform core CI coverage for Ubuntu, macOS, and Windows, plus QML lint
-  validation for the full playground build
+- Core CI coverage for Ubuntu and macOS, plus QML lint validation for the full
+  playground build
 
 ### Changed
 

@@ -36,11 +36,6 @@ jobs:
             notifications: "OFF"
             fontawesome: "OFF"
             playground: "OFF"
-          - name: Windows / Core
-            os: windows-2022
-            notifications: "OFF"
-            fontawesome: "OFF"
-            playground: "OFF"
           - name: Ubuntu / Full playground
             os: ubuntu-24.04
             notifications: "ON"
