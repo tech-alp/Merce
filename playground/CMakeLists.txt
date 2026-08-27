@@ -97,5 +97,5 @@ target_link_libraries(MercePlayground
 
 target_compile_definitions(MercePlayground
     PRIVATE
-        QT_QML_DEBUG
+        $<$<CONFIG:Debug>:QT_QML_DEBUG>
 )

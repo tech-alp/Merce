@@ -18,6 +18,7 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 - Pinned GitHub Actions to immutable revisions and updated the optional
   QtToastify source dependency to its v2.0.0 release commit
+- Limited QML debugging to Debug builds instead of public Pages artifacts
 
 ## [1.1.0] - 2026-08-27
 
