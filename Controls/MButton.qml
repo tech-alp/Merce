@@ -45,6 +45,7 @@ Button {
     // the height it pairs with, but StyleKit variations expose no font group at
     // all, so the size property that already exists here drives it instead.
     font.pixelSize: root.fontSizeFor(root.size)
+    focusPolicy: Qt.TabFocus
 
     Layout.fillWidth: root.fullWidth
     LayoutMirroring.enabled: root.iconPosition === MButton.IconRight

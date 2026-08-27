@@ -34,3 +34,34 @@ add_test(NAME tst_merce_style_runtime_switch
 set_tests_properties(tst_merce_style_runtime_switch PROPERTIES
     ENVIRONMENT "${MERCE_TEST_ENVIRONMENT}"
 )
+
+qt_add_executable(tst_merce_button_focus
+    tst_merce_button_focus.cpp
+)
+
+qt_add_qml_module(tst_merce_button_focus
+    URI "Merce.Tests.ButtonFocus"
+    VERSION 1.0
+    QML_FILES
+        ButtonFocusProbe.qml
+)
+
+target_link_libraries(tst_merce_button_focus
+    PRIVATE
+        MerceStyle
+        MerceControls
+        Qt6::Core
+        Qt6::Gui
+        Qt6::LabsStyleKit
+        Qt6::Qml
+        Qt6::Quick
+        Qt6::Test
+)
+
+add_test(NAME tst_merce_button_focus
+    COMMAND tst_merce_button_focus
+)
+
+set_tests_properties(tst_merce_button_focus PROPERTIES
+    ENVIRONMENT "${MERCE_TEST_ENVIRONMENT}"
+)
