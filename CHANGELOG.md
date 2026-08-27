@@ -7,6 +7,18 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## [Unreleased]
 
+### Added
+
+- WebAssembly playground build and GitHub Pages deployment at the public live
+  demo URL
+- Cross-platform core CI coverage for Ubuntu, macOS, and Windows, plus QML lint
+  validation for the full playground build
+
+### Changed
+
+- Pinned GitHub Actions to immutable revisions and updated the optional
+  QtToastify source dependency to its v2.0.0 release commit
+
 ## [1.1.0] - 2026-08-27
 
 ### Added

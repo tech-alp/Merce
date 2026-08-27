@@ -2,6 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![CI](https://github.com/tech-alp/Merce/actions/workflows/ci.yml/badge.svg)](https://github.com/tech-alp/Merce/actions/workflows/ci.yml)
+[![Live Demo](https://img.shields.io/badge/live_demo-WebAssembly-654FF0?logo=webassembly)](https://tech-alp.github.io/Merce/wasm/)
 [![Release](https://img.shields.io/github/v/release/tech-alp/Merce)](https://github.com/tech-alp/Merce/releases)
 
 Merce is a Qt 6.11+ design-system runtime for QML applications. It provides
@@ -12,6 +13,13 @@ Qt.labs.StyleKit mapping, and reusable QML primitives.
 > Merce depends on Qt.labs.StyleKit, which is a Technology Preview in Qt 6.11.
 > Its API and behavior may change between Qt releases. See the
 > [Qt StyleKit documentation](https://doc.qt.io/qt-6/qtlabsstylekit-index.html).
+
+## Live Demo
+
+Run the complete Merce playground in a browser through the
+[WebAssembly demo](https://tech-alp.github.io/Merce/wasm/). The demo is built
+from the real `MercePlayground` target and deployed from `main` after its WASM
+build succeeds.
 
 ## Features
 
@@ -158,6 +166,16 @@ cmake -S . -B build-full -G Ninja \
 
 cmake --build build-full --parallel
 ctest --test-dir build-full --output-on-failure
+~~~
+
+Build the WebAssembly site with a matching Qt host kit, Qt for WebAssembly, and
+Emscripten environment:
+
+~~~sh
+QT_HOST_PATH=/path/to/Qt/6.11.1/host \
+QT_WASM_PATH=/path/to/Qt/6.11.1/wasm_singlethread \
+EMSDK_ROOT=/path/to/emsdk \
+./scripts/build_wasm.sh
 ~~~
 
 ## Install

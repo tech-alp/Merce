@@ -45,7 +45,7 @@ set(QT_QML_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/qml")
 # External QML modules
 if(MERCE_BUILD_NOTIFICATIONS AND NOT TARGET Toastify)
     set(MERCE_QTTOASTIFY_GIT_REVISION
-        "b0a3b5f28870bbe76781579c0ba208b3ae384297"
+        "6c2ae1422b6ad96999101120899bef6e9f25d66b"
         CACHE STRING "Pinned QtToastify revision"
     )
     FetchContent_Declare(QtToastify
