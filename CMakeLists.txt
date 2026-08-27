@@ -12,6 +12,7 @@ option(MERCE_ENABLE_FONTAWESOME "Build the optional Font Awesome SVG QML module"
 option(MERCE_BUILD_NOTIFICATIONS "Build the notification and dialog QML module" OFF)
 option(MERCE_BUILD_TESTS "Build Merce tests" ${PROJECT_IS_TOP_LEVEL})
 option(BUILD_MERCE_PLAYGROUND "Build Merce playground application" OFF)
+option(MERCE_INSTALL "Generate Merce installation and package export rules" ${PROJECT_IS_TOP_LEVEL})
 
 if(MERCE_ENABLE_TOKEN_BUILD)
     find_program(NPM_EXECUTABLE npm)
@@ -119,6 +120,10 @@ endif()
 # ========================================================================
 # Installation
 # ========================================================================
+
+if(NOT MERCE_INSTALL)
+    return()
+endif()
 
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
