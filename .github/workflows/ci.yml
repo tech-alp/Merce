@@ -19,46 +19,76 @@ env:
 
 jobs:
   source-build:
-    name: Source build (${{ matrix.name }})
-    runs-on: ubuntu-24.04
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
         include:
-          - name: core
+          - name: Ubuntu / Core
+            os: ubuntu-24.04
             notifications: "OFF"
             fontawesome: "OFF"
             playground: "OFF"
-          - name: full
+          - name: macOS / Core
+            os: macos-15
+            notifications: "OFF"
+            fontawesome: "OFF"
+            playground: "OFF"
+          - name: Windows / Core
+            os: windows-2022
+            notifications: "OFF"
+            fontawesome: "OFF"
+            playground: "OFF"
+          - name: Ubuntu / Full playground
+            os: ubuntu-24.04
             notifications: "ON"
             fontawesome: "ON"
             playground: "ON"
 
+    env:
+      QT_QPA_PLATFORM: offscreen
+      QT_QUICK_BACKEND: software
+      QSG_RHI_BACKEND: software
+
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Install Qt
-        uses: jurplel/install-qt-action@v4
+        uses: jurplel/install-qt-action@48d3ad6db93f3627c8ee7a0454bc6f3744f7e730 # v4.3.1
         with:
           version: ${{ env.QT_VERSION }}
           cache: true
 
       - name: Configure
-        run: |
-          cmake -S . -B build -G Ninja \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DMERCE_BUILD_NOTIFICATIONS=${{ matrix.notifications }} \
-            -DMERCE_ENABLE_FONTAWESOME=${{ matrix.fontawesome }} \
-            -DMERCE_BUILD_TESTS=ON \
-            -DBUILD_TESTING=ON \
-            -DBUILD_MERCE_PLAYGROUND=${{ matrix.playground }} \
-            -DMERCE_ENABLE_TOKEN_BUILD=OFF
+        run: >-
+          cmake -S . -B build -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
+          -DMERCE_BUILD_NOTIFICATIONS=${{ matrix.notifications }}
+          -DMERCE_ENABLE_FONTAWESOME=${{ matrix.fontawesome }}
+          -DMERCE_BUILD_TESTS=ON
+          -DBUILD_TESTING=ON
+          -DBUILD_MERCE_PLAYGROUND=${{ matrix.playground }}
+          -DMERCE_ENABLE_TOKEN_BUILD=OFF
 
       - name: Build
-        run: cmake --build build --parallel
+        run: cmake --build build --config Release --parallel 2
+
+      - name: Lint playground
+        if: matrix.playground == 'ON'
+        run: >-
+          cmake --build build
+          --config Release
+          --target MercePlayground_qmllint
 
       - name: Test
-        run: ctest --test-dir build --output-on-failure
+        run: >-
+          ctest --test-dir build
+          -C Release
+          --output-on-failure
+          --no-tests=error
+          --timeout 180
 
       - name: Run playground verification gates
         if: matrix.playground == 'ON'
@@ -70,12 +100,13 @@ jobs:
   package:
     name: Installed package
     runs-on: ubuntu-24.04
+    timeout-minutes: 30
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Install Qt
-        uses: jurplel/install-qt-action@v4
+        uses: jurplel/install-qt-action@48d3ad6db93f3627c8ee7a0454bc6f3744f7e730 # v4.3.1
         with:
           version: ${{ env.QT_VERSION }}
           cache: true
@@ -118,11 +149,12 @@ jobs:
   design-tokens:
     name: Design tokens
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22
           cache: npm
