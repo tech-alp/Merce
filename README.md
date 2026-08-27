@@ -213,7 +213,8 @@ target_link_libraries(MyApp PRIVATE
 
 | Option | Default | Description |
 |---|---:|---|
-| MERCE_BUILD_NOTIFICATIONS | OFF | Builds Merce.Notifications and fetches pinned QtToastify sources |
+| MERCE_BUILD_NOTIFICATIONS | OFF | Builds Merce.Notifications and fetches the pinned QtToastify release |
+| MERCE_QTTOASTIFY_GIT_TAG | v2.0.0 | QtToastify release tag used by the notifications module |
 | MERCE_ENABLE_FONTAWESOME | ON | Builds Merce.Icons.FontAwesome |
 | MERCE_BUILD_TESTS | Top-level only | Builds the test suite |
 | BUILD_MERCE_PLAYGROUND | OFF | Builds the playground; requires notifications and Font Awesome |

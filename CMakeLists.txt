@@ -44,13 +44,14 @@ set(QT_QML_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/qml")
 
 # External QML modules
 if(MERCE_BUILD_NOTIFICATIONS AND NOT TARGET Toastify)
-    set(MERCE_QTTOASTIFY_GIT_REVISION
-        "6c2ae1422b6ad96999101120899bef6e9f25d66b"
-        CACHE STRING "Pinned QtToastify revision"
+    set(MERCE_QTTOASTIFY_GIT_TAG
+        "v2.0.0"
+        CACHE STRING "QtToastify release tag"
     )
     FetchContent_Declare(QtToastify
         GIT_REPOSITORY https://github.com/tech-alp/QtToastify.git
-        GIT_TAG ${MERCE_QTTOASTIFY_GIT_REVISION}
+        GIT_TAG ${MERCE_QTTOASTIFY_GIT_TAG}
+        GIT_SHALLOW TRUE
     )
 
     # QtToastify currently uses generic option names. Keep the overrides local
