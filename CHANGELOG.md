@@ -7,6 +7,8 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-08-27
+
 ### Added
 
 - Merce StyleKit mappings for `SpinBox` and `TextArea`, including token-driven
@@ -17,11 +19,16 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - Widened the StyleKit `Switch` track using the medium control-size token
 - Filled checked `outline` buttons with the primary action colors while keeping
   the selected appearance during keyboard focus
+- Updated the bundled Material Symbols Rounded font and codepoint metadata
+- Limited install/package rules to standalone Merce builds so FetchContent
+  consumers do not inherit Merce installation targets
 
 ### Fixed
 
 - Removed duplicated horizontal content padding from StyleKit `SpinBox`
   layouts so compact values remain visible between the indicators
+- Kept button focus keyboard-only so pointer activation does not leave a stale
+  focus outline
 
 ## [1.0.0] - 2026-08-26
 
@@ -41,5 +48,6 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
   surface minimal
 - Linear reference theme uses the bundled OFL-licensed JetBrains Mono font
 
-[Unreleased]: https://github.com/tech-alp/Merce/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/tech-alp/Merce/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/tech-alp/Merce/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/tech-alp/Merce/releases/tag/v1.0.0

@@ -1,6 +1,8 @@
 # Merce
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![CI](https://github.com/tech-alp/Merce/actions/workflows/ci.yml/badge.svg)](https://github.com/tech-alp/Merce/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/tech-alp/Merce)](https://github.com/tech-alp/Merce/releases)
 
 Merce is a Qt 6.11+ design-system runtime for QML applications. It provides
 semantic design tokens, runtime brand/mode/profile switching, a centralized
@@ -56,17 +58,18 @@ source builds and installed packages. Merce.Notifications remains source-only:
 ~~~cmake
 include(FetchContent)
 
-set(MERCE_BUILD_NOTIFICATIONS OFF CACHE BOOL "" FORCE)
-set(MERCE_ENABLE_FONTAWESOME OFF CACHE BOOL "" FORCE)
-set(MERCE_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(BUILD_MERCE_PLAYGROUND OFF CACHE BOOL "" FORCE)
+block(SCOPE_FOR VARIABLES)
+    set(MERCE_BUILD_NOTIFICATIONS OFF)
+    set(MERCE_ENABLE_FONTAWESOME OFF)
 
-FetchContent_Declare(Merce
-    GIT_REPOSITORY https://github.com/tech-alp/Merce.git
-    GIT_TAG v1.0.0
-    GIT_SHALLOW TRUE
-)
-FetchContent_MakeAvailable(Merce)
+    FetchContent_Declare(Merce
+        GIT_REPOSITORY https://github.com/tech-alp/Merce.git
+        GIT_TAG v1.1.0
+        GIT_SHALLOW TRUE
+        EXCLUDE_FROM_ALL
+    )
+    FetchContent_MakeAvailable(Merce)
+endblock()
 
 target_link_libraries(MyApp PRIVATE
     Merce::Theme
@@ -159,7 +162,7 @@ ctest --test-dir build-full --output-on-failure
 
 ## Install
 
-The v1.0 installed package contains the core design-system modules and optional
+The v1.1 installed package contains the core design-system modules and optional
 Font Awesome module. Merce.Notifications is source-integration only because
 QtToastify currently ships as static QML modules.
 
