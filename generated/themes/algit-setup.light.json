@@ -7,13 +7,15 @@
     "mark": "#CC785C"
   },
   "typography": {
-    "displayFont": "Lexend",
-    "bodyFont": "Lexend",
+    "displayFont": "Source Serif 4",
+    "bodyFont": "Inter",
     "monoFont": "JetBrains Mono"
   },
   "fonts": [
     "fonts/core/JetBrainsMono[wght].ttf",
-    "fonts/core/Lexend[wght].ttf"
+    "fonts/core/Lexend[wght].ttf",
+    "fonts/algit-setup/Inter[opsz,wght].ttf",
+    "fonts/algit-setup/SourceSerif4[opsz,wght].ttf"
   ],
   "colors": {
     "surface": {

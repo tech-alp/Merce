@@ -35,6 +35,7 @@
           "path": "algit-setup.light.json",
           "source": [
             "tokens/core/font-families.json",
+            "tokens/themes/algit-setup/typography.json",
             "tokens/core/state.json",
             "tokens/themes/algit-setup/variants/light.json"
           ]
