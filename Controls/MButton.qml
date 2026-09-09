@@ -37,6 +37,7 @@ Button {
     property bool fullWidth: false
     property var extraVariations: []
 
+    readonly property bool effectiveLoading: root.loading || root.isLoading
     readonly property var styleVariations: variationNames()
 
     icon.name: root.iconName
@@ -44,8 +45,26 @@ Button {
     display: displayFor(root.iconPosition)
 
     Layout.fillWidth: root.fullWidth
-    LayoutMirroring.enabled: root.iconPosition === MButton.IconRight
     StyleVariation.variations: root.styleVariations
+
+    Binding {
+        target: root.contentItem
+        property: "mirrored"
+        value: root.iconPosition === MButton.IconRight
+    }
+
+    LoadingIndicator {
+        objectName: "loadingIndicator"
+        anchors.left: root.iconPosition === MButton.IconOnly ? undefined : parent.left
+        anchors.leftMargin: root.leftPadding
+        anchors.horizontalCenter: root.iconPosition === MButton.IconOnly
+                                  ? parent.horizontalCenter
+                                  : undefined
+        anchors.verticalCenter: parent.verticalCenter
+        color: root.icon.color
+        running: root.effectiveLoading && root.visible
+        visible: root.effectiveLoading
+    }
 
     function variationNames() {
         const names = []
@@ -56,7 +75,7 @@ Button {
             names.push(variantName)
         if (sizeName.length > 0)
             names.push(sizeName)
-        if (root.loading || root.isLoading)
+        if (root.effectiveLoading)
             names.push("loading")
 
         for (let i = 0; i < root.extraVariations.length; ++i) {

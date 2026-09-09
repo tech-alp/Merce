@@ -86,6 +86,8 @@ void tst_merce_style_runtime_switch::existingStyleKitControlsRepaintAfterContext
     QQuickItem *disabledCheckedSwitch = nullptr;
     QQuickItem *disabledCheckedItemDelegate = nullptr;
     QQuickItem *merceButton = nullptr;
+    QQuickItem *rightIconButton = nullptr;
+    QQuickItem *loadingButton = nullptr;
     QTRY_VERIFY(button = window->findChild<QQuickItem *>(QStringLiteral("styleButton")));
     QTRY_VERIFY(textField = window->findChild<QQuickItem *>(QStringLiteral("styleTextField")));
     QTRY_VERIFY(switchControl =
@@ -104,6 +106,10 @@ void tst_merce_style_runtime_switch::existingStyleKitControlsRepaintAfterContext
                     window->findChild<QQuickItem *>(
                         QStringLiteral("disabledCheckedItemDelegate")));
     QTRY_VERIFY(merceButton = window->findChild<QQuickItem *>(QStringLiteral("merceButton")));
+    QTRY_VERIFY(rightIconButton =
+                    window->findChild<QQuickItem *>(QStringLiteral("rightIconButton")));
+    QTRY_VERIFY(loadingButton =
+                    window->findChild<QQuickItem *>(QStringLiteral("loadingButton")));
     auto *theme = engine.singletonInstance<MerceTheme *>("Merce.Theme", "Theme");
     QVERIFY(theme);
     QCOMPARE(theme->activeBrand(), QStringLiteral("algit"));
@@ -122,6 +128,18 @@ void tst_merce_style_runtime_switch::existingStyleKitControlsRepaintAfterContext
     QCOMPARE(window->property("merceButtonVariations").toStringList(),
              QStringList({QStringLiteral("secondary"), QStringLiteral("small")}));
     QTRY_COMPARE(qRound(merceButton->implicitHeight()), theme->size()->control()->small());
+    auto *rightIconContent =
+        rightIconButton->property("contentItem").value<QObject *>();
+    QVERIFY(rightIconContent);
+    QVERIFY(rightIconContent->property("mirrored").toBool());
+    auto *loadingIndicator =
+        loadingButton->findChild<QQuickItem *>(QStringLiteral("loadingIndicator"));
+    QVERIFY(loadingIndicator);
+    QVERIFY(loadingIndicator->isVisible());
+    QVERIFY(loadingIndicator->property("running").toBool());
+    QVERIFY(loadingButton->property("styleVariations")
+                .toStringList()
+                .contains(QStringLiteral("loading")));
 
     const QColor lightButton = renderedCenter(window, button);
     const QColor lightField = renderedCenter(window, textField);
