@@ -12,8 +12,9 @@ set(MERCE_PLAYGROUND_VIEW_QML
     view/IconsShowcase.qml
     view/MotionShowcase.qml
     view/PaletteShowcase.qml
+    view/PlaygroundPagesExport.qml
     view/ShadowsShowcase.qml
-    view/SpacingRadiusShowcase.qml
+    view/SpacingRadiusPage.qml
     view/StatesShowcase.qml
     view/ThemeGalleryExport.qml
     view/ThemeGallery.qml

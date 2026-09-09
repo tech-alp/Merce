@@ -38,7 +38,10 @@ Rectangle {
         id: contentItem
         anchors {
             fill: parent
-            margins: Theme.spacing.lg
+            leftMargin: Theme.spacing.md
+            rightMargin: Theme.spacing.md
+            topMargin: Theme.spacing.lg
+            bottomMargin: Theme.spacing.lg
         }
 
         Row {

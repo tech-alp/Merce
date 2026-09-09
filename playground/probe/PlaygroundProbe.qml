@@ -68,6 +68,20 @@ Main {
         return item.styleVariations.indexOf(name) >= 0
     }
 
+    function fitsHorizontally(item, container) {
+        if (!item || !container)
+            return false
+        const point = item.mapToItem(container, 0, 0)
+        return point.x >= -1 && point.x + item.width <= container.width + 1
+    }
+
+    function fitsVertically(item, container) {
+        if (!item || !container)
+            return false
+        const point = item.mapToItem(container, 0, 0)
+        return point.y >= -1 && point.y + item.height <= container.height + 1
+    }
+
     function verifyShowcasePage(key, title, objectName, anchorObjectName) {
         const showcase = root.findNamed(objectName)
         const anchor = root.findNamed(anchorObjectName)
@@ -128,19 +142,33 @@ Main {
 
             if (step === 2) {
                 const galleryPrimaryButton = root.findNamed("merce.playground.gallery.primaryButton")
+                const activeLayout = root.findNamed("merce.playground.gallery.activeThemeLayout")
+                const paletteLayout = root.findNamed("merce.playground.gallery.paletteLayout")
+                const themeSelect = root.findNamed("merce.playground.gallery.selector.theme")
+                const modeSelect = root.findNamed("merce.playground.gallery.selector.mode")
+                const lastSwatch = root.findNamed(
+                                     "merce.playground.gallery.swatchItem.status.success.content")
                 if (root.objectName !== "merce.playground.window"
                         || root.selectedPage !== "theme"
                         || root.pageTitle(root.selectedPage) !== "Overview"
                         || Theme.availableThemes.length !== 9
                         || Theme.availableProfiles.length !== 3
-                        || !galleryPrimaryButton) {
+                        || !galleryPrimaryButton
+                        || !root.fitsVertically(themeSelect, activeLayout)
+                        || !root.fitsVertically(modeSelect, activeLayout)
+                        || !root.fitsVertically(lastSwatch, paletteLayout)) {
                     root.fail("default shell state", [
                                   root.objectName,
                                   root.selectedPage,
                                   root.pageTitle(root.selectedPage),
                                   Theme.availableThemes.length,
                                   Theme.availableProfiles.length,
-                                  galleryPrimaryButton !== null
+                                  galleryPrimaryButton !== null,
+                                  themeSelect ? root.rectInContent(themeSelect) : null,
+                                  modeSelect ? root.rectInContent(modeSelect) : null,
+                                  activeLayout ? root.rectInContent(activeLayout) : null,
+                                  lastSwatch ? root.rectInContent(lastSwatch) : null,
+                                  paletteLayout ? root.rectInContent(paletteLayout) : null
                               ])
                     return
                 }
@@ -216,9 +244,50 @@ Main {
                     return
                 }
 
+                root.width = 1024
+                step = 23
+                interval = 160
+                restart()
+                return
+            }
+
+            if (step === 23) {
+                const activeLayout = root.findNamed("merce.playground.gallery.activeThemeLayout")
+                const paletteLayout = root.findNamed("merce.playground.gallery.paletteLayout")
+                const themeSelect = root.findNamed("merce.playground.gallery.selector.theme")
+                const modeSelect = root.findNamed("merce.playground.gallery.selector.mode")
+                const navigationList = root.findNamed("merce.playground.nav.list")
+                const spacingNavigation = root.findNamed("merce.playground.nav.spacing")
+                const longSwatch = root.findNamed(
+                                     "merce.playground.gallery.swatchItem.action.primary.container")
+                if (!root.fitsHorizontally(themeSelect, activeLayout)
+                        || !root.fitsHorizontally(modeSelect, activeLayout)
+                        || !root.fitsVertically(themeSelect, activeLayout)
+                        || !root.fitsVertically(modeSelect, activeLayout)
+                        || !root.fitsHorizontally(longSwatch, paletteLayout)
+                        || !root.fitsHorizontally(spacingNavigation, navigationList)
+                        || !spacingNavigation.contentFits) {
+                    root.fail("overview responsive bounds", [
+                                  activeLayout ? activeLayout.width : null,
+                                  themeSelect ? themeSelect.width : null,
+                                  themeSelect ? root.rectInContent(themeSelect) : null,
+                                  modeSelect ? modeSelect.width : null,
+                                  modeSelect ? root.rectInContent(modeSelect) : null,
+                                  activeLayout ? root.rectInContent(activeLayout) : null,
+                                  paletteLayout ? paletteLayout.width : null,
+                                  longSwatch ? longSwatch.width : null,
+                                  navigationList ? navigationList.width : null,
+                                  spacingNavigation ? spacingNavigation.width : null,
+                                  spacingNavigation ? spacingNavigation.implicitWidth : null,
+                                  spacingNavigation ? spacingNavigation.contentFits : null
+                              ])
+                    return
+                }
+
+                root.width = 1180
                 root.selectedPage = "palette"
                 step = 3
-                interval = 80
+                interval = 120
                 restart()
                 return
             }
@@ -240,18 +309,54 @@ Main {
             if (step === 4) {
                 const typographyShowcase = root.findNamed("merce.playground.typographyShowcase")
                 const typographyScale = root.findNamed("merce.playground.typography.scale")
+                const darkPreviewLoader = root.findNamed(
+                                            "merce.playground.typography.darkPreviewLoader")
                 if (root.selectedPage !== "typography"
                         || root.pageTitle(root.selectedPage) !== "Typography"
                         || !typographyShowcase
-                        || typographyShowcase.specimenCount !== 10
+                        || typographyShowcase.specimenCount !== 9
                         || !typographyScale
+                        || !darkPreviewLoader
+                        || darkPreviewLoader.active !== typographyShowcase.darkPreviewAvailable
                         || !typographyShowcase.typeTableFits(typographyScale.width)) {
                     root.fail("typography page switch", [
                                   root.selectedPage,
                                   root.pageTitle(root.selectedPage),
                                   typographyShowcase ? typographyShowcase.specimenCount : null,
+                                  typographyShowcase ? typographyShowcase.width : null,
+                                  typographyScale ? typographyScale.width : null,
                                   typographyScale !== null,
+                                  darkPreviewLoader ? darkPreviewLoader.active : null,
+                                  typographyShowcase ? typographyShowcase.darkPreviewAvailable : null,
                                   typographyShowcase && typographyScale ? typographyShowcase.typeTableFits(typographyScale.width) : null
+                              ])
+                    return
+                }
+
+                root.width = 1024
+                root.height = 760
+                step = 41
+                interval = 160
+                restart()
+                return
+            }
+
+            if (step === 41) {
+                const bodyRow = root.findNamed("merce.playground.typography.row.body")
+                const usageCards = root.findNamed("merce.playground.typography.usageCards")
+                const usageNames = ["product-card", "navigation", "form-example",
+                                    "checkout-summary", "toast-message"]
+                let usageFits = usageCards !== null
+                for (let i = 0; usageFits && i < usageNames.length; ++i) {
+                    const card = root.findNamed("merce.playground.typography.usage." + usageNames[i])
+                    usageFits = root.fitsHorizontally(card, usageCards)
+                }
+                if (!bodyRow || !bodyRow.contentFits || !usageFits) {
+                    root.fail("typography content bounds", [
+                                  bodyRow ? bodyRow.contentFits : null,
+                                  bodyRow ? bodyRow.height : null,
+                                  usageCards ? usageCards.width : null,
+                                  usageFits
                               ])
                     return
                 }
@@ -292,17 +397,19 @@ Main {
 
             if (step === 5) {
                 const spacingShowcase = root.findNamed("merce.playground.spacingRadiusShowcase")
-                const spacingPatterns = root.findNamed("merce.playground.spacingRadius.patterns")
                 const tokenReference = root.findNamed("merce.playground.spacingRadius.tokenReference")
+                const spacingScale = root.findNamed("merce.playground.spacingRadius.spacingScale")
+                const radiusScale = root.findNamed("merce.playground.spacingRadius.radiusScale")
                 const touchChecklist = root.findNamed("merce.playground.spacingRadius.touchChecklist")
                 if (root.selectedPage !== "spacing"
                         || root.pageTitle(root.selectedPage) !== "Spacing & Radius"
                         || !spacingShowcase
-                        || spacingShowcase.patternCount !== 6
+                        || spacingShowcase.patternCount !== 0
                         || !spacingShowcase.tokenReferenceReady
                         || !spacingShowcase.touchTargetReady
-                        || !spacingPatterns
                         || !tokenReference
+                        || !spacingScale
+                        || !radiusScale
                         || !touchChecklist) {
                     root.fail("spacing showcase page switch", [
                                   root.selectedPage,
@@ -310,16 +417,42 @@ Main {
                                   spacingShowcase ? spacingShowcase.patternCount : null,
                                   spacingShowcase ? spacingShowcase.tokenReferenceReady : null,
                                   spacingShowcase ? spacingShowcase.touchTargetReady : null,
-                                  spacingPatterns !== null,
                                   tokenReference !== null,
+                                  spacingScale !== null,
+                                  radiusScale !== null,
                                   touchChecklist !== null
                               ])
                     return
                 }
 
+                root.width = 1024
+                step = 50
+                interval = 160
+                restart()
+                return
+            }
+
+            if (step === 50) {
+                const spacingShowcase = root.findNamed("merce.playground.spacingRadiusShowcase")
+                const spacingScale = root.findNamed("merce.playground.spacingRadius.spacingScale")
+                const radiusScale = root.findNamed("merce.playground.spacingRadius.radiusScale")
+                const touchChecklist = root.findNamed("merce.playground.spacingRadius.touchChecklist")
+                if (!root.fitsHorizontally(spacingScale, spacingShowcase)
+                        || !root.fitsHorizontally(radiusScale, spacingShowcase)
+                        || !root.fitsHorizontally(touchChecklist, spacingShowcase)) {
+                    root.fail("spacing responsive bounds", [
+                                  spacingShowcase ? spacingShowcase.width : null,
+                                  spacingScale ? spacingScale.width : null,
+                                  radiusScale ? radiusScale.width : null,
+                                  touchChecklist ? touchChecklist.width : null
+                              ])
+                    return
+                }
+
+                root.width = 1180
                 root.selectedPage = "shadows"
                 step = 6
-                interval = 120
+                interval = 160
                 restart()
                 return
             }
@@ -343,6 +476,32 @@ Main {
                                              "merce.playground.motion.easingPreview"))
                     return
 
+                root.width = 760
+                step = 70
+                interval = 160
+                restart()
+                return
+            }
+
+            if (step === 70) {
+                const headerLayout = root.findNamed("merce.playground.motion.headerLayout")
+                const reducedMotionSwitch = root.findNamed("merce.playground.motion.reducedMotion")
+                const standardTrack = root.findNamed("merce.playground.motion.track.standard")
+                const switchRect = root.rectInContent(reducedMotionSwitch)
+                const trackRect = root.rectInContent(standardTrack)
+                if (!root.fitsVertically(reducedMotionSwitch, headerLayout)
+                        || !switchRect
+                        || !trackRect
+                        || switchRect.y + switchRect.height > trackRect.y + 1) {
+                    root.fail("motion header responsive bounds", [
+                                  root.rectInContent(headerLayout),
+                                  switchRect,
+                                  trackRect
+                              ])
+                    return
+                }
+
+                root.width = 1180
                 root.selectedPage = "theme-builder"
                 step = 8
                 interval = 160
@@ -352,13 +511,27 @@ Main {
 
             if (step === 8) {
                 const themeBuilder = root.findNamed("merce.playground.themeBuilderShowcase")
+                const colorCard = root.findNamed(
+                                  "merce.playground.colorTokenCard.surface.canvas")
                 if (root.selectedPage !== "theme-builder"
                         || root.pageTitle(root.selectedPage) !== "Theme Builder"
-                        || !themeBuilder) {
+                        || !themeBuilder
+                        || !colorCard) {
                     root.fail("theme builder page switch", [
                                   root.selectedPage,
                                   root.pageTitle(root.selectedPage),
-                                  themeBuilder !== null
+                                  themeBuilder !== null,
+                                  colorCard !== null
+                              ])
+                    return
+                }
+
+                colorCard.openEditor()
+                if (colorCard.editable || !colorCard.compact || colorCard.editorOpen) {
+                    root.fail("theme builder color picker is read-only", [
+                                  colorCard.editable,
+                                  colorCard.compact,
+                                  colorCard.editorOpen
                               ])
                     return
                 }
@@ -464,9 +637,40 @@ Main {
                 }
                 iconsShowcase.selectedIconFont = "material"
 
+                root.width = 1024
+                step = 110
+                interval = 160
+                restart()
+                return
+            }
+
+            if (step === 110) {
+                const headerLayout = root.findNamed("merce.playground.icons.headerLayout")
+                const iconsGrid = root.findNamed("merce.playground.icons.grid")
+                const iconsSearch = root.findNamed("merce.playground.icons.search")
+                const iconsFontSelect = root.findNamed("merce.playground.icons.fontSelect")
+                const searchRect = root.rectInContent(iconsSearch)
+                const gridRect = root.rectInContent(iconsGrid)
+                if (!root.fitsHorizontally(iconsSearch, headerLayout)
+                        || !root.fitsHorizontally(iconsFontSelect, headerLayout)
+                        || !root.fitsVertically(iconsSearch, headerLayout)
+                        || !root.fitsVertically(iconsFontSelect, headerLayout)
+                        || !searchRect
+                        || !gridRect
+                        || searchRect.y + searchRect.height > gridRect.y + 1) {
+                    root.fail("icons header responsive bounds", [
+                                  root.rectInContent(headerLayout),
+                                  searchRect,
+                                  root.rectInContent(iconsFontSelect),
+                                  gridRect
+                              ])
+                    return
+                }
+
+                root.width = 1180
                 root.selectedPage = "controls"
                 step = 12
-                interval = 80
+                interval = 120
                 restart()
                 return
             }

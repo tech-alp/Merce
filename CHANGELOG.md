@@ -13,12 +13,20 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
   demo URL
 - Core CI coverage for Ubuntu and macOS, plus QML lint validation for the full
   playground build
+- Deterministic playground page exports at desktop and compact audit widths
 
 ### Changed
 
 - Pinned GitHub Actions to immutable revisions and updated the optional
   QtToastify source dependency to the v2.0.0 release tag
 - Limited QML debugging to Debug builds instead of public Pages artifacts
+
+### Fixed
+
+- Prevented responsive playground headers from overlapping content and kept
+  read-only Theme Builder color cards visible in page exports
+- Captured playground pages on the semantic canvas color instead of a
+  transparent black background
 
 ## [1.1.0] - 2026-08-27
 

@@ -177,23 +177,22 @@ Item {
                 }
                 spacing: Theme.spacing.lg
 
-                Row {
+                Flow {
+                    objectName: "merce.playground.icons.headerLayout"
                     width: parent.width
-                    height: Math.max(titleText.implicitHeight, searchField.implicitHeight, fontSelect.implicitHeight)
+                    height: childrenRect.height
                     spacing: Theme.spacing.lg
 
                     SectionTitle {
                         id: titleText
-                        width: Math.max(160, parent.width - fontSelect.width - searchField.width - parent.spacing * 2)
-                        anchors.verticalCenter: parent.verticalCenter
+                        width: Math.min(160, parent.width)
                         text: "Icons"
                     }
 
                     SK.ComboBox {
                         id: fontSelect
                         objectName: "merce.playground.icons.fontSelect"
-                        width: 260
-                        anchors.verticalCenter: parent.verticalCenter
+                        width: Math.min(260, parent.width)
                         SK.StyleVariation.variations: ["small"]
                         model: root.iconFontOptions
                         textRole: "label"
@@ -208,8 +207,7 @@ Item {
                     SK.TextField {
                         id: searchField
                         objectName: "merce.playground.icons.search"
-                        width: 320
-                        anchors.verticalCenter: parent.verticalCenter
+                        width: Math.min(320, parent.width)
                         placeholderText: qsTr("Search icons")
                         text: root.searchQuery
                         leftPadding: Theme.spacing.xl2

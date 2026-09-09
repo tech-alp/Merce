@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
+import QtQuick.Layouts
 import Qt.labs.StyleKit as SK
 import Merce.Theme
 import Merce.Foundation
@@ -33,6 +34,7 @@ Item {
     component SectionTitle: AppLabel {
         textType: AppLabel.H4
         color: Theme.colors.content.primary
+        wrapMode: Text.WordWrap
     }
 
     component MotionTrack: Item {
@@ -170,7 +172,10 @@ Item {
                 }
                 spacing: Theme.spacing.lg
 
-                SectionTitle { text: "Duration tokens" }
+                SectionTitle {
+                    width: parent.width
+                    text: "Duration tokens"
+                }
 
                 Flow {
                     id: durationFlow
@@ -244,25 +249,25 @@ Item {
                 }
                 spacing: Theme.spacing.sm
 
-                Item {
+                GridLayout {
+                    objectName: "merce.playground.motion.headerLayout"
                     width: parent.width
-                    height: Math.max(sectionHeading.implicitHeight, reducedMotionSwitch.implicitHeight)
+                    height: implicitHeight
+                    columns: root.compactLayout ? 1 : 2
+                    columnSpacing: Theme.spacing.md
+                    rowSpacing: Theme.spacing.sm
 
                     SectionTitle {
                         id: sectionHeading
-                        anchors {
-                            left: parent.left
-                            verticalCenter: parent.verticalCenter
-                        }
+                        Layout.fillWidth: true
                         text: "Easing preview"
                     }
                     SK.Switch {
                         id: reducedMotionSwitch
                         objectName: "merce.playground.motion.reducedMotion"
-                        anchors {
-                            right: parent.right
-                            verticalCenter: parent.verticalCenter
-                        }
+                        Layout.alignment: root.compactLayout
+                                          ? Qt.AlignLeft
+                                          : Qt.AlignRight | Qt.AlignVCenter
                         text: "Reduced motion"
                         checked: root.reducedMotion
                         onToggled: root.reducedMotion = checked
@@ -328,7 +333,7 @@ Item {
                         required property var modelData
 
                         width: presetColumn.width
-                        height: 44
+                        height: root.compactLayout ? 68 : 44
 
                         Rectangle {
                             anchors {
@@ -340,29 +345,34 @@ Item {
                             color: Theme.colors.outline.subtle
                         }
                         AppLabel {
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: parent.width * 0.28
+                            x: 0
+                            y: root.compactLayout ? Theme.spacing.xs : 0
+                            width: root.compactLayout ? Math.max(0, parent.width - 88)
+                                                      : parent.width * 0.28
+                            height: root.compactLayout ? 28 : parent.height
+                            verticalAlignment: Text.AlignVCenter
                             textType: AppLabel.BodySmall
                             text: "motion." + presetRow.modelData.name
                             color: Theme.colors.content.primary
+                            elide: Text.ElideRight
                         }
                         AppLabel {
-                            anchors {
-                                left: parent.left
-                                leftMargin: parent.width * 0.28
-                                verticalCenter: parent.verticalCenter
-                            }
-                            width: parent.width * 0.5
+                            x: root.compactLayout ? 0 : parent.width * 0.28
+                            y: root.compactLayout ? 36 : 0
+                            width: root.compactLayout ? parent.width : parent.width * 0.5
+                            height: root.compactLayout ? 28 : parent.height
+                            verticalAlignment: Text.AlignVCenter
                             textType: AppLabel.BodySmall
                             text: presetRow.modelData.usage
                             color: Theme.colors.content.secondary
+                            elide: Text.ElideRight
                         }
                         AppLabel {
-                            anchors {
-                                right: parent.right
-                                verticalCenter: parent.verticalCenter
-                            }
+                            anchors.right: parent.right
+                            y: root.compactLayout ? Theme.spacing.xs : 0
                             width: parent.width * 0.22
+                            height: root.compactLayout ? 28 : parent.height
+                            verticalAlignment: Text.AlignVCenter
                             horizontalAlignment: Text.AlignRight
                             textType: AppLabel.BodySmall
                             text: presetRow.modelData.value.duration + " ms"

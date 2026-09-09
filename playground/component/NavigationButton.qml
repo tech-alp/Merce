@@ -35,6 +35,7 @@ T.Button {
     readonly property color outlineColor: root.visualFocus ? Theme.colors.outline.focus : root.transparentFocusOutline
     readonly property int outlineWidth: root.visualFocus ? 2 : 0
     readonly property real iconSize: Theme.icons.small
+    readonly property bool contentFits: contentItem.implicitWidth + leftPadding + rightPadding <= width + 1
 
     function stateLayer(opacity) {
         return Qt.tint(Theme.colors.surface.container,
@@ -71,6 +72,7 @@ T.Button {
             color: root.enabled ? root.contentColor : Theme.colors.content.disabled
             wrapMode: Text.NoWrap
             maximumLineCount: 1
+            Layout.minimumWidth: 0
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignVCenter
         }

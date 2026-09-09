@@ -12,21 +12,19 @@ Item {
     implicitHeight: page.implicitHeight
     height: implicitHeight
 
-    readonly property int specimenCount: 10
+    readonly property int specimenCount: typeRows.length
     readonly property bool compactLayout: width < 760
     readonly property int panelSpacing: Theme.spacing.md
     readonly property int rightPanelWidth: compactLayout ? width : Math.min(320, Math.max(240, Math.round(width * 0.28)))
     readonly property int leftPanelWidth: compactLayout ? width : Math.max(0, width - rightPanelWidth - panelSpacing)
-    readonly property int tableCompactThreshold: 760
-    readonly property int usageCardMinWidth: 156
+    readonly property int tableCompactThreshold: 620
     readonly property int usageCardPreferredWidth: 220
     readonly property color dividerColor: Theme.colors.outline.subtle
     readonly property color cardColor: Theme.colors.surface.container
     readonly property color mutedTextColor: Theme.colors.content.secondary
     readonly property color faintTextColor: Theme.colors.content.tertiary
     readonly property color accentColor: Theme.colors.action.primary.container
-    readonly property color darkPreviewTextColor: Theme.colors.content.inverse
-    readonly property color darkPreviewMutedColor: Qt.rgba(darkPreviewTextColor.r, darkPreviewTextColor.g, darkPreviewTextColor.b, 0.72)
+    readonly property bool darkPreviewAvailable: root.themeHasMode(Theme.activeBrand, "dark")
 
     MerceToastifyStyleProvider {
         id: toastStyle
@@ -76,28 +74,16 @@ Item {
             "usage": "Secondary text, helper copy"
         },
         {
-            "name": "Code",
-            "type": "code",
-            "sample": "const theme = Theme.colors.surface.canvas",
-            "usage": "Code, technical values"
+            "name": "Label",
+            "type": "overline",
+            "sample": "Label text example",
+            "usage": "Labels, badges"
         },
         {
             "name": "Caption",
             "type": "caption",
-            "sample": "Orders are usually delivered within 2-4 business days.",
+            "sample": "Brief notes and secondary details.",
             "usage": "Captions, footnotes"
-        },
-        {
-            "name": "Overline",
-            "type": "overline",
-            "sample": "New collection",
-            "usage": "Labels, badges"
-        },
-        {
-            "name": "Price",
-            "type": "price",
-            "sample": "$129.99",
-            "usage": "Prices, key numbers"
         }
     ]
 
@@ -174,32 +160,65 @@ Item {
         return typeSpec(entry.type).uppercase ? value.toUpperCase() : value
     }
 
+    function themeHasMode(brand, mode) {
+        for (let i = 0; i < Theme.availableThemes.length; ++i) {
+            const option = Theme.availableThemes[i]
+            if (String(option.value) !== String(brand) || !option.modes)
+                continue
+            for (let j = 0; j < option.modes.length; ++j) {
+                if (String(option.modes[j].value) === mode)
+                    return true
+            }
+        }
+        return false
+    }
+
+    function wrappedRowHeight(availableWidth, itemGap, widths, heights) {
+        let totalHeight = 0
+        let rowWidth = 0
+        let rowHeight = 0
+
+        for (let i = 0; i < widths.length; ++i) {
+            const itemWidth = Math.min(availableWidth, Number(widths[i] || 0))
+            const itemHeight = Number(heights[i] || 0)
+            if (rowWidth > 0 && rowWidth + itemGap + itemWidth > availableWidth + 1) {
+                totalHeight += rowHeight + itemGap
+                rowWidth = 0
+                rowHeight = 0
+            }
+            rowWidth += (rowWidth > 0 ? itemGap : 0) + itemWidth
+            rowHeight = Math.max(rowHeight, itemHeight)
+        }
+
+        return totalHeight + rowHeight
+    }
+
     function typeTableCompact(tableWidth) {
         return tableWidth < tableCompactThreshold
     }
 
     function typeStyleColumnWidth(tableWidth) {
-        return typeTableCompact(tableWidth) ? Math.max(80, Math.min(96, Math.round(tableWidth * 0.28))) : 96
+        return typeTableCompact(tableWidth) ? Math.min(80, tableWidth * 0.24) : 96
     }
 
     function typeFamilyColumnWidth(tableWidth) {
-        return typeTableCompact(tableWidth) ? 0 : 58
+        return 0
     }
 
     function typeSizeColumnWidth(tableWidth) {
-        return typeTableCompact(tableWidth) ? 0 : 48
+        return typeTableCompact(tableWidth) ? 0 : 124
     }
 
     function typeWeightColumnWidth(tableWidth) {
-        return typeTableCompact(tableWidth) ? 0 : 58
+        return typeTableCompact(tableWidth) ? 0 : 92
     }
 
     function typeLineColumnWidth(tableWidth) {
-        return typeTableCompact(tableWidth) ? 0 : 58
+        return 0
     }
 
     function typeUsageColumnWidth(tableWidth) {
-        return typeTableCompact(tableWidth) ? 0 : (tableWidth < 680 ? 92 : 108)
+        return 0
     }
 
     function typeFixedColumnWidth(tableWidth) {
@@ -266,9 +285,66 @@ Item {
         elide: Text.ElideRight
     }
 
+    component OverviewMetric: Item {
+        required property string iconName
+        required property string label
+        required property string value
+
+        implicitWidth: 190
+        implicitHeight: 54
+
+        Row {
+            anchors.fill: parent
+            spacing: Theme.spacing.md
+
+            Rectangle {
+                width: 38
+                height: 38
+                anchors.verticalCenter: parent.verticalCenter
+                radius: Theme.radius.medium
+                color: Theme.colors.surface.containerTinted
+                border.width: 1
+                border.color: root.dividerColor
+
+                AppIcon {
+                    anchors.centerIn: parent
+                    name: iconName
+                    size: Theme.icons.small
+                    color: root.accentColor
+                }
+            }
+
+            Column {
+                width: Math.max(0, parent.width - 38 - parent.spacing)
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: Theme.spacing.xxs
+
+                MetaText {
+                    width: parent.width
+                    text: label
+                    font.pixelSize: Theme.typography.sizeXSmall
+                    wrapMode: Text.NoWrap
+                    elide: Text.ElideRight
+                }
+
+                AppLabel {
+                    width: parent.width
+                    textType: AppLabel.Body
+                    text: value
+                    color: Theme.colors.content.primary
+                    wrapMode: Text.NoWrap
+                    maximumLineCount: 1
+                    elide: Text.ElideRight
+                }
+            }
+        }
+    }
+
     component TypeRow: Item {
         property var entry: ({})
         property int rowIndex: 0
+
+        objectName: "merce.playground.typography.row." + String(entry.type || "unknown")
 
         readonly property bool compact: root.typeTableCompact(width)
         readonly property int styleWidth: root.typeStyleColumnWidth(width)
@@ -280,9 +356,15 @@ Item {
         readonly property int fixedWidth: styleWidth + familyWidth + sizeWidth + weightWidth + lineWidth + usageWidth
         readonly property int previewWidth: root.typePreviewColumnWidth(width)
         readonly property int sampleSize: Math.min(root.typeSize(entry.type), entry.type === "display" ? (compact ? 30 : 34) : (compact ? 22 : 24))
+        readonly property bool contentFits: preview.paintedHeight <= preview.height + 1
 
-        width: parent ? parent.width : 0
-        height: compact ? (entry.type === "body" ? 90 : (entry.type === "display" ? 72 : 62)) : (entry.type === "body" ? 76 : (entry.type === "display" ? 62 : 50))
+        readonly property int baseHeight: compact
+                                                  ? (entry.type === "body" ? 90 : (entry.type === "display" ? 72 : 62))
+                                                  : (entry.type === "body" ? 76 : (entry.type === "display" ? 62 : 50))
+
+        implicitHeight: Math.max(baseHeight,
+                                 Math.ceil(preview.implicitHeight)
+                                 + (compact ? 28 : 0))
 
         Rectangle {
             anchors.fill: parent
@@ -332,7 +414,7 @@ Item {
             width: parent.familyWidth
             height: parent.height
             text: root.fontFamilyLabel(entry.type)
-            visible: !parent.compact
+            visible: false
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.NoWrap
             elide: Text.ElideRight
@@ -342,7 +424,7 @@ Item {
             x: parent.styleWidth + parent.previewWidth + parent.familyWidth
             width: parent.sizeWidth
             height: parent.height
-            text: root.typeSize(entry.type) + "px"
+            text: root.typeSize(entry.type) + "px / " + root.typeLineHeight(entry.type) + "px"
             visible: !parent.compact
             horizontalAlignment: Text.AlignHCenter
         }
@@ -351,7 +433,7 @@ Item {
             x: parent.styleWidth + parent.previewWidth + parent.familyWidth + parent.sizeWidth
             width: parent.weightWidth
             height: parent.height
-            text: root.typeWeight(entry.type) + "\n" + root.weightName(root.typeWeight(entry.type))
+            text: root.weightName(root.typeWeight(entry.type))
             visible: !parent.compact
             horizontalAlignment: Text.AlignHCenter
         }
@@ -361,7 +443,7 @@ Item {
             width: parent.lineWidth
             height: parent.height
             text: root.typeLineHeight(entry.type) + "px\n" + Math.round(root.typeLeading(entry.type) * 100) + "%"
-            visible: !parent.compact
+            visible: false
             horizontalAlignment: Text.AlignHCenter
         }
 
@@ -370,7 +452,7 @@ Item {
             width: parent.usageWidth - Theme.spacing.md
             height: parent.height
             text: entry.usage
-            visible: !parent.compact
+            visible: false
             font.pixelSize: Theme.typography.sizeXSmall
         }
 
@@ -391,11 +473,7 @@ Item {
         Repeater {
             model: parent.compact ? [] : [
                 parent.styleWidth,
-                parent.styleWidth + parent.previewWidth,
-                parent.styleWidth + parent.previewWidth + parent.familyWidth,
-                parent.styleWidth + parent.previewWidth + parent.familyWidth + parent.sizeWidth,
-                parent.styleWidth + parent.previewWidth + parent.familyWidth + parent.sizeWidth + parent.weightWidth,
-                parent.styleWidth + parent.previewWidth + parent.familyWidth + parent.sizeWidth + parent.weightWidth + parent.lineWidth
+                parent.styleWidth + parent.previewWidth
             ]
 
             Rectangle {
@@ -591,101 +669,62 @@ Item {
         }
     }
 
-    component PreviewCard: Card {
-        FlexboxLayout {
+    component PreviewCard: Item {
+        implicitHeight: previewPanels.implicitHeight
+
+        GridLayout {
+            id: previewPanels
+
             width: parent.width
             height: implicitHeight
-            direction: FlexboxLayout.Column
-            gap: Theme.spacing.md
-            alignItems: FlexboxLayout.AlignStart
+            columns: root.darkPreviewAvailable && width >= 560 ? 2 : 1
+            columnSpacing: Theme.spacing.sm
+            rowSpacing: Theme.spacing.sm
 
-            FlexboxLayout {
-                width: parent.width
-                height: implicitHeight
-                direction: FlexboxLayout.Row
-                gap: Theme.spacing.sm
-                alignItems: FlexboxLayout.AlignCenter
-
-                SectionTitle {
-                    width: Math.max(0, parent.width - modeButtons.width)
-                    text: "Light / Dark Preview"
-                }
-
-                FlexboxLayout {
-                    id: modeButtons
-                    height: implicitHeight
-                    direction: FlexboxLayout.Row
-                    gap: Theme.spacing.xs
-                    alignItems: FlexboxLayout.AlignCenter
-
-                    Rectangle {
-                        width: 28
-                        height: 28
-                        radius: 14
-                        color: Theme.colors.surface.canvas
-                        border.color: root.dividerColor
-
-                        AppIcon {
-                            anchors.centerIn: parent
-                            name: "material:light_mode"
-                            size: Theme.icons.small
-                            color: root.mutedTextColor
-                        }
-                    }
-
-                    Rectangle {
-                        width: 28
-                        height: 28
-                        radius: 14
-                        color: Theme.colors.surface.canvas
-                        border.color: root.dividerColor
-
-                        AppIcon {
-                            anchors.centerIn: parent
-                            name: "material:dark_mode"
-                            size: Theme.icons.small
-                            color: root.mutedTextColor
-                        }
-                    }
-                }
+            PreviewPanel {
+                id: lightPreview
+                Layout.fillWidth: true
+                dark: false
             }
 
-            FlexboxLayout {
-                id: previewPanels
+            Loader {
+                id: darkPreviewLoader
+                objectName: "merce.playground.typography.darkPreviewLoader"
 
-                width: parent.width
-                height: implicitHeight
-                direction: FlexboxLayout.Row
-                wrap: FlexboxLayout.Wrap
-                gap: Theme.spacing.sm
-                alignItems: FlexboxLayout.AlignStart
+                active: root.darkPreviewAvailable
+                visible: active
+                Layout.fillWidth: active
+                Layout.preferredHeight: active ? lightPreview.implicitHeight : 0
 
-                PreviewPanel {
-                    Layout.minimumWidth: Math.min(240, previewPanels.width)
-                    Layout.preferredWidth: previewPanels.width < 560 ? previewPanels.width : (previewPanels.width - Theme.spacing.sm) / 2
-                    Layout.maximumWidth: previewPanels.width
-                    dark: false
-                }
-
-                PreviewPanel {
-                    Layout.minimumWidth: Math.min(240, previewPanels.width)
-                    Layout.preferredWidth: previewPanels.width < 560 ? previewPanels.width : (previewPanels.width - Theme.spacing.sm) / 2
-                    Layout.maximumWidth: previewPanels.width
-                    dark: true
+                sourceComponent: Component {
+                    PreviewPanel {
+                        width: darkPreviewLoader.width
+                        dark: true
+                    }
                 }
             }
         }
     }
 
     component PreviewPanel: Rectangle {
+        id: previewPanel
+
         required property bool dark
+        readonly property bool matchesActiveMode: dark === (Theme.activeMode === "dark")
+        readonly property color panelTextColor: matchesActiveMode
+                                                     ? Theme.colors.content.primary
+                                                     : Theme.colors.content.inverse
+        readonly property color panelMutedColor: matchesActiveMode
+                                                      ? Theme.colors.content.secondary
+                                                      : Qt.alpha(panelTextColor, 0.72)
 
         implicitHeight: previewPanelContent.implicitHeight + Theme.spacing.md * 2
         radius: Theme.radius.medium
-        color: dark ? Theme.colors.surface.inverse : Theme.colors.surface.container
-        border.color: dark ? Theme.colors.outline.strong : root.dividerColor
+        color: matchesActiveMode ? Theme.colors.surface.container : Theme.colors.surface.inverse
+        border.width: 1
+        border.color: matchesActiveMode ? root.dividerColor : Qt.alpha(panelTextColor, 0.18)
 
-        FlexboxLayout {
+        Column {
             id: previewPanelContent
             anchors {
                 left: parent.left
@@ -693,64 +732,54 @@ Item {
                 top: parent.top
                 margins: Theme.spacing.md
             }
-            height: implicitHeight
-            direction: FlexboxLayout.Column
-            gap: Theme.spacing.sm
-            alignItems: FlexboxLayout.AlignStart
+            spacing: Theme.spacing.sm
 
             Text {
                 width: parent.width
-                text: "Product Title"
-                color: dark ? root.darkPreviewTextColor : Theme.colors.content.primary
+                text: previewPanel.dark ? "Dark preview" : "Light preview"
+                color: previewPanel.panelTextColor
                 font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
-                font.pixelSize: Theme.typography.sizeMedium
+                font.pixelSize: Theme.typography.sizeXSmall
+                font.weight: Theme.typography.weightSemibold
+            }
+
+            Text {
+                width: parent.width
+                text: "H2 Heading Example"
+                color: previewPanel.panelTextColor
+                font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
+                font.pixelSize: Math.min(root.typeSize("h2"), 24)
                 font.weight: Theme.typography.weightSemibold
                 elide: Text.ElideRight
             }
 
             Text {
                 width: parent.width
-                text: "$129.99"
-                color: root.accentColor
+                text: previewPanel.dark
+                      ? "Body text example to show how type looks in the dark theme."
+                      : "Body text example to show how type looks in the light theme."
+                color: previewPanel.panelMutedColor
                 font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
-                font.pixelSize: Theme.typography.sizeMedium
-                font.weight: Theme.typography.weightBold
+                font.pixelSize: Theme.typography.sizeSmall
+                wrapMode: Text.WordWrap
             }
 
             Text {
                 width: parent.width
-                text: "Short description of the product that explains the key benefits."
-                color: dark ? root.darkPreviewMutedColor : root.mutedTextColor
+                text: "LABEL EXAMPLE"
+                color: root.accentColor
                 font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
                 font.pixelSize: Theme.typography.sizeXSmall
-                wrapMode: Text.WordWrap
+                font.weight: Theme.typography.weightSemibold
+                font.capitalization: Font.AllUppercase
             }
-
-            Item { width: 1; height: 4 }
 
             Text {
-                text: "Email address"
-                color: dark ? root.darkPreviewTextColor : Theme.colors.content.primary
+                width: parent.width
+                text: "Caption example"
+                color: previewPanel.panelMutedColor
                 font.family: FoundationFonts.resolveFamily(Theme.typography.fontBody)
                 font.pixelSize: Theme.typography.sizeXSmall
-                font.weight: Theme.typography.weightMedium
-            }
-
-            SK.TextField {
-                text: "user@example.com"
-                inputMethodHints: Qt.ImhEmailCharactersOnly
-                readOnly: true
-                Layout.fillWidth: true
-                Layout.preferredWidth: parent.width
-                Layout.maximumWidth: parent.width
-            }
-
-            SK.Button {
-                text: "Checkout"
-                SK.StyleVariation.variations: ["small"]
-                Layout.fillWidth: true
-                Layout.preferredWidth: parent.width
-                Layout.maximumWidth: parent.width
             }
         }
     }
@@ -762,15 +791,18 @@ Item {
         property int contentHeight: 112
         default property alias contentData: usageSlot.data
 
+        objectName: "merce.playground.typography.usage." + title.toLowerCase().replace(/\s+/g, "-")
+
         surfaceType: Surface.Default
         backgroundColor: root.cardColor
         borderColor: root.dividerColor
         radiusValue: Theme.radius.medium
         implicitWidth: root.usageCardPreferredWidth
         implicitHeight: usageCardContent.implicitHeight + Theme.spacing.md * 2
-        Layout.minimumWidth: Math.min(root.usageCardMinWidth, parent ? parent.width : root.usageCardMinWidth)
-        Layout.preferredWidth: Math.min(root.usageCardPreferredWidth, parent ? parent.width : root.usageCardPreferredWidth)
-        Layout.maximumWidth: parent ? parent.width : root.usageCardPreferredWidth
+        Layout.minimumWidth: Math.min(root.usageCardPreferredWidth, root.width)
+        Layout.preferredWidth: Math.min(root.usageCardPreferredWidth, root.width)
+        Layout.maximumWidth: root.width
+        Layout.fillWidth: true
         Layout.preferredHeight: implicitHeight
 
         FlexboxLayout {
@@ -848,6 +880,47 @@ Item {
             }
         }
 
+        Card {
+            width: parent.width
+
+            GridLayout {
+                width: parent.width
+                height: implicitHeight
+                columns: root.width < 560 ? 1 : root.width < 900 ? 2 : 4
+                columnSpacing: Theme.spacing.xl
+                rowSpacing: Theme.spacing.md
+
+                OverviewMetric {
+                    Layout.fillWidth: true
+                    iconName: "material:text_fields"
+                    label: "Font family"
+                    value: root.fontFamilyLabel("body")
+                }
+
+                OverviewMetric {
+                    Layout.fillWidth: true
+                    iconName: "material:format_align_left"
+                    label: "Weight range"
+                    value: "Regular – Bold"
+                }
+
+                OverviewMetric {
+                    Layout.fillWidth: true
+                    iconName: "material:format_size"
+                    label: "Base size"
+                    value: Theme.typography.sizeMedium + "px"
+                }
+
+                OverviewMetric {
+                    Layout.fillWidth: true
+                    iconName: "material:format_line_spacing"
+                    label: "Base line-height"
+                    value: root.typeLeading("body").toFixed(1) + " ("
+                           + root.typeLineHeight("body") + "px)"
+                }
+            }
+        }
+
         FlexboxLayout {
             id: panelLayout
 
@@ -856,17 +929,24 @@ Item {
             Layout.fillWidth: true
             Layout.preferredWidth: root.width
             Layout.maximumWidth: root.width
+            Layout.preferredHeight: implicitHeight
             height: implicitHeight
-            direction: FlexboxLayout.Row
-            wrap: FlexboxLayout.Wrap
+            direction: FlexboxLayout.Column
             gap: root.panelSpacing
             alignItems: FlexboxLayout.AlignStart
+
+            SectionTitle {
+                Layout.minimumWidth: root.width
+                Layout.preferredWidth: root.width
+                Layout.maximumWidth: root.width
+                text: "Type Scale"
+            }
 
             Card {
                 id: typeTable
                 objectName: "merce.playground.typography.scale"
-                Layout.minimumWidth: root.compactLayout ? root.width : Math.min(root.tableCompactThreshold, root.width)
-                Layout.preferredWidth: root.compactLayout ? root.width : root.leftPanelWidth
+                Layout.minimumWidth: root.width
+                Layout.preferredWidth: root.width
                 Layout.maximumWidth: root.width
                 FlexboxLayout {
                     width: parent.width
@@ -895,7 +975,7 @@ Item {
                         HeaderText {
                             width: parent.styleWidth
                             height: parent.height
-                            text: "Style"
+                            text: "Token"
                         }
 
                         HeaderText {
@@ -908,14 +988,14 @@ Item {
                             width: parent.familyWidth
                             height: parent.height
                             text: "Family"
-                            visible: !parent.compact
+                            visible: false
                             horizontalAlignment: Text.AlignHCenter
                         }
 
                         HeaderText {
                             width: parent.sizeWidth
                             height: parent.height
-                            text: "Size"
+                            text: "Size / Line height"
                             visible: !parent.compact
                             horizontalAlignment: Text.AlignHCenter
                         }
@@ -932,7 +1012,7 @@ Item {
                             width: parent.lineWidth
                             height: parent.height
                             text: "Line"
-                            visible: !parent.compact
+                            visible: false
                             horizontalAlignment: Text.AlignHCenter
                         }
 
@@ -940,7 +1020,7 @@ Item {
                             width: parent.usageWidth
                             height: parent.height
                             text: "Usage"
-                            visible: !parent.compact
+                            visible: false
                         }
                     }
 
@@ -957,7 +1037,7 @@ Item {
                             required property var modelData
                             required property int index
 
-                            width: parent.width
+                            Layout.fillWidth: true
                             Layout.preferredWidth: parent.width
                             Layout.maximumWidth: parent.width
                             entry: modelData
@@ -967,27 +1047,11 @@ Item {
                 }
             }
 
-            FlexboxLayout {
-                Layout.minimumWidth: Math.min(240, root.width)
-                Layout.preferredWidth: root.compactLayout ? root.width : root.rightPanelWidth
+            PreviewCard {
+                Layout.minimumWidth: root.width
+                Layout.preferredWidth: root.width
                 Layout.maximumWidth: root.width
                 Layout.preferredHeight: implicitHeight
-                height: implicitHeight
-                direction: FlexboxLayout.Column
-                gap: root.panelSpacing
-                alignItems: FlexboxLayout.AlignStart
-
-                TypeScaleCard {
-                    width: parent.width
-                }
-
-                BaselineCard {
-                    width: parent.width
-                }
-
-                PreviewCard {
-                    width: parent.width
-                }
             }
         }
 
@@ -1010,14 +1074,27 @@ Item {
             FlexboxLayout {
                 id: usageCards
 
-                width: parent.width
-                height: implicitHeight
+                objectName: "merce.playground.typography.usageCards"
+                Layout.minimumWidth: root.width
+                Layout.preferredWidth: root.width
+                Layout.maximumWidth: root.width
+                readonly property real cardWidth: Math.min(root.usageCardPreferredWidth,
+                                                           width)
+                height: root.wrappedRowHeight(width, gap,
+                                              [cardWidth, cardWidth, cardWidth,
+                                               cardWidth, cardWidth],
+                                              [productUsage.implicitHeight,
+                                               navigationUsage.implicitHeight,
+                                               formUsage.implicitHeight,
+                                               checkoutUsage.implicitHeight,
+                                               toastUsage.implicitHeight])
                 direction: FlexboxLayout.Row
                 wrap: FlexboxLayout.Wrap
                 gap: Theme.spacing.md
                 alignItems: FlexboxLayout.AlignStart
 
                 UsageCard {
+                    id: productUsage
                     title: "Product Card"
 
                     Rectangle {
@@ -1080,6 +1157,7 @@ Item {
                 }
 
                 UsageCard {
+                    id: navigationUsage
                     title: "Navigation"
                     contentHeight: Theme.spacing.touchTargetCompact * 4 + Theme.spacing.xxs * 3
 
@@ -1112,6 +1190,7 @@ Item {
                 }
 
                 UsageCard {
+                    id: formUsage
                     title: "Form Example"
                     contentHeight: 128
 
@@ -1160,6 +1239,7 @@ Item {
                 }
 
                 UsageCard {
+                    id: checkoutUsage
                     title: "Checkout Summary"
 
                     FlexboxLayout {
@@ -1239,6 +1319,7 @@ Item {
                 }
 
                 UsageCard {
+                    id: toastUsage
                     title: "Toast Message"
                     contentHeight: 92
 

@@ -25,6 +25,7 @@ Item {
     component SectionTitle: AppLabel {
         textType: AppLabel.H4
         color: Theme.colors.content.primary
+        wrapMode: Text.WordWrap
     }
 
     component ShadowPreview: Item {
@@ -119,7 +120,10 @@ Item {
                 }
                 spacing: Theme.spacing.lg
 
-                SectionTitle { text: "Elevation scale" }
+            SectionTitle {
+                width: parent.width
+                text: "Elevation scale"
+            }
 
                 Flow {
                     id: scaleFlow
@@ -168,11 +172,12 @@ Item {
 
                 Item {
                     width: parent.width
-                    height: Theme.spacing.xl2
+                    height: root.compactLayout ? 40 : Theme.spacing.xl2
 
                     AppLabel {
                         anchors.verticalCenter: parent.verticalCenter
-                        width: parent.width * 0.34
+                        width: root.compactLayout ? parent.width * 0.74
+                                                  : parent.width * 0.34
                         textType: AppLabel.Caption
                         text: "Token"
                         color: Theme.colors.content.secondary
@@ -187,6 +192,7 @@ Item {
                         textType: AppLabel.Caption
                         text: "Usage"
                         color: Theme.colors.content.secondary
+                        visible: !root.compactLayout
                     }
                     AppLabel {
                         anchors {
@@ -210,7 +216,7 @@ Item {
                         required property var modelData
 
                         width: referenceColumn.width
-                        height: Theme.spacing.xl2
+                        height: root.compactLayout ? 64 : Theme.spacing.xl2
 
                         Rectangle {
                             anchors {
@@ -222,29 +228,35 @@ Item {
                             color: Theme.colors.outline.subtle
                         }
                         AppLabel {
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: parent.width * 0.34
+                            x: 0
+                            y: root.compactLayout ? Theme.spacing.xs : 0
+                            width: root.compactLayout ? parent.width * 0.74
+                                                      : parent.width * 0.34
+                            height: root.compactLayout ? 28 : parent.height
+                            verticalAlignment: Text.AlignVCenter
                             textType: AppLabel.BodySmall
                             text: tokenRow.modelData.name
                             color: Theme.colors.content.primary
+                            elide: Text.ElideRight
                         }
                         AppLabel {
-                            anchors {
-                                left: parent.left
-                                leftMargin: parent.width * 0.34
-                                verticalCenter: parent.verticalCenter
-                            }
-                            width: parent.width * 0.46
+                            x: root.compactLayout ? 0 : parent.width * 0.34
+                            y: root.compactLayout ? 34 : 0
+                            width: root.compactLayout ? parent.width * 0.8
+                                                      : parent.width * 0.46
+                            height: root.compactLayout ? 28 : parent.height
+                            verticalAlignment: Text.AlignVCenter
                             textType: AppLabel.BodySmall
                             text: tokenRow.modelData.usage
                             color: Theme.colors.content.secondary
+                            elide: Text.ElideRight
                         }
                         AppLabel {
-                            anchors {
-                                right: parent.right
-                                verticalCenter: parent.verticalCenter
-                            }
+                            anchors.right: parent.right
+                            y: root.compactLayout ? Theme.spacing.xs : 0
                             width: parent.width * 0.2
+                            height: root.compactLayout ? 28 : parent.height
+                            verticalAlignment: Text.AlignVCenter
                             horizontalAlignment: Text.AlignRight
                             textType: AppLabel.BodySmall
                             text: String(tokenRow.modelData.layers.length)
@@ -274,6 +286,7 @@ Item {
                 spacing: Theme.spacing.lg
 
                 SectionTitle {
+                    width: parent.width
                     text: qsTr("Inverse surface elevation")
                 }
 
