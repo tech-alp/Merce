@@ -1,6 +1,5 @@
 #pragma once
 
-#include <QColor>
 #include <QObject>
 #include <QVariantList>
 #include <QVariantMap>
@@ -29,39 +28,42 @@ class MerceShadows : public QObject
 public:
     explicit MerceShadows(QObject *parent = nullptr) : QObject(parent) {}
 
+    // Geometry follows the Tailwind scale, spread included. Opacity increases
+    // with elevation so adjacent steps stay legible on tokenized surfaces. The
+    // wide layer carries the float, the tight one the contact edge.
     QVariantList none() const { return {}; }
     QVariantList small() const
     {
         return {
-            shadow(0, 1, 2, QColor::fromRgbF(31.0 / 255.0, 21.0 / 255.0, 16.0 / 255.0, 0.04)),
-            shadow(0, 1, 3, QColor::fromRgbF(31.0 / 255.0, 21.0 / 255.0, 16.0 / 255.0, 0.08)),
+            shadow(0, 1, 3, 0, 0.10),
+            shadow(0, 1, 2, -1, 0.10),
         };
     }
     QVariantList medium() const
     {
         return {
-            shadow(0, 4, 6, QColor::fromRgbF(31.0 / 255.0, 21.0 / 255.0, 16.0 / 255.0, 0.08)),
-            shadow(0, 2, 4, QColor::fromRgbF(31.0 / 255.0, 21.0 / 255.0, 16.0 / 255.0, 0.04)),
+            shadow(0, 4, 6, -1, 0.12),
+            shadow(0, 2, 4, -2, 0.12),
         };
     }
     QVariantList large() const
     {
         return {
-            shadow(0, 10, 15, QColor::fromRgbF(31.0 / 255.0, 21.0 / 255.0, 16.0 / 255.0, 0.08)),
-            shadow(0, 4, 6, QColor::fromRgbF(31.0 / 255.0, 21.0 / 255.0, 16.0 / 255.0, 0.04)),
+            shadow(0, 10, 15, -3, 0.14),
+            shadow(0, 4, 6, -4, 0.14),
         };
     }
     QVariantList xlarge() const
     {
         return {
-            shadow(0, 20, 25, QColor::fromRgbF(31.0 / 255.0, 21.0 / 255.0, 16.0 / 255.0, 0.08)),
-            shadow(0, 10, 10, QColor::fromRgbF(31.0 / 255.0, 21.0 / 255.0, 16.0 / 255.0, 0.04)),
+            shadow(0, 20, 25, -5, 0.16),
+            shadow(0, 8, 10, -6, 0.16),
         };
     }
     QVariantList xxlarge() const
     {
         return {
-            shadow(0, 25, 50, QColor::fromRgbF(31.0 / 255.0, 21.0 / 255.0, 16.0 / 255.0, 0.15)),
+            shadow(0, 25, 50, -12, 0.25),
         };
     }
 
@@ -79,13 +81,21 @@ signals:
     void changed();
 
 private:
-    static QVariantMap shadow(int xOffset, int yOffset, int blur, const QColor &color)
+    // A layer carries geometry and opacity only. The hue is colors.surface.shadow,
+    // which varies per theme (near-black in light modes, pure black in dark ones);
+    // baking a colour in here made every theme share one warm brown shadow.
+    //
+    // spread insets the shadow rect before the blur, which is what keeps a shadow
+    // tucked under its surface instead of bleeding out the sides. The scale below
+    // comes from Tailwind, whose every step depends on it.
+    static QVariantMap shadow(int xOffset, int yOffset, int blur, int spread, qreal opacity)
     {
         QVariantMap map;
         map.insert(QStringLiteral("xOffset"), xOffset);
         map.insert(QStringLiteral("yOffset"), yOffset);
         map.insert(QStringLiteral("blur"), blur);
-        map.insert(QStringLiteral("color"), color);
+        map.insert(QStringLiteral("spread"), spread);
+        map.insert(QStringLiteral("opacity"), opacity);
         return map;
     }
 };

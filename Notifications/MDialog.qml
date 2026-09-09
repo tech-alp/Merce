@@ -14,8 +14,15 @@ import Merce.Theme
  *
  * The request/result contract is uniform. Callers pass a requestId and receive
  * exactly one result() for it, whether the user confirmed, cancelled or dismissed.
+ *
+ * Deliberately an Item and not a Popup. Popup gives stacking, close policies and
+ * exit transitions; a cart flow needs none of them — one flow is open at a time
+ * and it ends only on a decision or its timeout. What Popup did give us was two
+ * lifecycle bugs: a reused instance had the next request swallowed by the
+ * previous exit transition, and a per-request instance crashed on destruction.
+ * Opening is `visible = true`.
  */
-SK.Popup {
+Item {
     id: root
 
     enum Variant {
@@ -64,38 +71,36 @@ SK.Popup {
     /** Payload echoed back in result(), so callers need no side channel. */
     property var payload: null
 
-    /** Emitted exactly once per open(), whatever the outcome. */
+    /** True between request() and the outcome. */
+    readonly property bool opened: root.visible
+
+    /** Emitted exactly once per request(), whatever the outcome. */
     signal result(string requestId, bool accepted, var data)
 
     /** Emitted before result() when the flow ended on its timeout. */
     signal timedOut(string requestId)
 
-    // No `parent: Overlay.overlay` and so no QtQuick.Controls import: Overlay is
-    // not a StyleKit type. Qt draws the modal scrim on the window overlay
-    // regardless; parent only decides what this centres on.
-    anchors.centerIn: parent
-    width: Math.min(root.dialogWidth(root.size),
-                    parent ? parent.width - Theme.spacing.xl2 : root.dialogWidth(root.size))
-    modal: true
-    dim: true
-    focus: true
-    padding: Theme.spacing.xl
-    closePolicy: root.blocking
-        ? SK.Popup.NoAutoClose
-        : SK.Popup.CloseOnEscape | SK.Popup.CloseOnPressOutside
+    /** Emitted after the dialog leaves the screen. */
+    signal closed()
 
-    // Guards the contract: exactly one result per open, never zero, never two.
+    anchors.fill: parent
+    visible: false
+    // Above application content; the host owns the only instance on screen.
+    z: 1000
+
+    // Guards the contract: exactly one result per request, never zero, never two.
     property bool _settled: true
 
-    // Not named open(): SK.Popup already has one, and shadowing it would break
-    // any internal caller that expects the no-argument form.
     function request(id, data) {
         if (id !== undefined)
             root.requestId = id
         if (data !== undefined)
             root.payload = data
         root._settled = false
-        root.open()
+        root.visible = true
+        surface.forceActiveFocus()
+        if (root.autoDismissMs > 0)
+            autoDismissTimer.restart()
     }
 
     function confirm() {
@@ -114,8 +119,10 @@ SK.Popup {
         if (root._settled)
             return
         root._settled = true
+        autoDismissTimer.stop()
         root.result(root.requestId, accepted, root.payload)
-        root.close()
+        root.visible = false
+        root.closed()
     }
 
     function dialogWidth(value) {
@@ -126,24 +133,6 @@ SK.Popup {
             return Theme.size.dialog.large
         default:
             return Theme.size.dialog.medium
-        }
-    }
-
-    // Not `onOpened:`/`onClosed:` at the root: a use-site handler of the same
-    // name replaces the one written here, which would silently drop the
-    // settle-on-dismiss guarantee. Connections adds a handler instead.
-    Connections {
-        target: root
-
-        function onOpened() {
-            if (root.autoDismissMs > 0)
-                autoDismissTimer.restart()
-        }
-
-        function onClosed() {
-            autoDismissTimer.stop()
-            // Closed by escape or click-outside rather than by an action.
-            root._settle(false)
         }
     }
 
@@ -161,116 +150,193 @@ SK.Popup {
         }
     }
 
-    Shortcut {
-        sequences: [StandardKey.InsertParagraphSeparator, StandardKey.InsertLineSeparator]
-        enabled: root.opened && root.showConfirm
-        onActivated: root.confirm()
+    // Scrim. Also swallows every press, which is what makes this modal.
+    Rectangle {
+        anchors.fill: parent
+        color: Theme.colors.surface.scrim
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                if (!root.blocking)
+                    root.dismiss()
+            }
+        }
     }
 
-    contentItem: ColumnLayout {
-        id: dialogContent
+    Rectangle {
+        id: surface
 
-        objectName: root.objectName + ".content"
-        spacing: Theme.spacing.lg
-        Accessible.role: Accessible.Dialog
-        Accessible.name: root.title + (root.title !== "" && root.message !== "" ? ": " : "") + root.message
+        objectName: root.objectName + ".surface"
+        anchors.centerIn: parent
+        width: Math.min(root.dialogWidth(root.size),
+                        root.width - Theme.spacing.xl2)
+        implicitHeight: dialogContent.implicitHeight + Theme.spacing.xl * 2
+        height: Math.min(implicitHeight, root.height - Theme.spacing.xl2)
+        color: Theme.colors.surface.floating
+        radius: Theme.radius.dialog
+        focus: root.visible
 
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: Theme.spacing.md
-            visible: root.title !== "" || root.variant !== MDialog.Default || !root.blocking
+        Keys.onEscapePressed: (event) => {
+            if (root.blocking) {
+                event.accepted = false
+                return
+            }
+            root.dismiss()
+            event.accepted = true
+        }
 
-            AppIcon {
-                visible: root.variant !== MDialog.Default
-                name: root.variant === MDialog.Destructive ? "material:error" : "material:warning"
-                size: Theme.icons.large
-                color: root.variant === MDialog.Destructive
-                    ? Theme.colors.status.error.content
-                    : Theme.colors.status.warning.content
+        Keys.onReturnPressed: (event) => {
+            if (!root.showConfirm) {
+                event.accepted = false
+                return
+            }
+            root.confirm()
+            event.accepted = true
+        }
+
+        // Presses on the surface must not reach the scrim below it.
+        MouseArea {
+            anchors.fill: parent
+        }
+
+        ColumnLayout {
+            id: dialogContent
+
+            objectName: root.objectName + ".content"
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.margins: Theme.spacing.xl
+            spacing: Theme.spacing.lg
+            Accessible.role: Accessible.Dialog
+            Accessible.name: root.title + (root.title !== "" && root.message !== "" ? ": " : "") + root.message
+
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: Theme.spacing.md
+                visible: root.title !== "" || root.variant !== MDialog.Default || !root.blocking
+
+                AppIcon {
+                    readonly property real responsiveSize: Math.min(
+                                                               Theme.icons.xLarge,
+                                                               Math.max(Theme.icons.large,
+                                                                        Theme.typography.h3.size
+                                                                        + Theme.spacing.xs))
+
+                    visible: root.variant !== MDialog.Default
+                    name: root.variant === MDialog.Destructive ? "material:error" : "material:warning"
+                    size: responsiveSize
+                    weight: Theme.typography.weightMedium
+                    color: root.variant === MDialog.Destructive
+                        ? Theme.colors.status.error.content
+                        : Theme.colors.status.warning.content
+                    Layout.preferredWidth: responsiveSize
+                    Layout.preferredHeight: responsiveSize
+                    Layout.alignment: Qt.AlignVCenter
+
+                    transform: Translate {
+                        y: Theme.spacing.xxs
+                    }
+                }
+
+                AppLabel {
+                    Layout.fillWidth: true
+                    visible: root.title !== ""
+                    text: root.title
+                    textType: AppLabel.H3
+                    wrapMode: Text.WordWrap
+                    color: Theme.colors.content.primary
+                }
+
+                SK.ToolButton {
+                    objectName: root.objectName + ".close"
+                    // A blocking dialog offers no way out but the actions.
+                    visible: !root.blocking
+                    Layout.preferredWidth: Theme.spacing.touchTargetCompact
+                    Layout.preferredHeight: Theme.spacing.touchTargetCompact
+                    padding: 0
+                    Accessible.name: qsTr("Close")
+
+                    contentItem: Item {
+                        AppIcon {
+                            anchors.centerIn: parent
+                            anchors.verticalCenterOffset: Theme.spacing.xxs
+                            name: "material:close"
+                            size: Theme.spacing.touchTargetCompact >= Theme.spacing.xl4
+                                ? Theme.icons.large
+                                : Theme.icons.medium
+                            weight: Theme.typography.weightMedium
+                            color: Theme.colors.content.primary
+                        }
+                    }
+
+                    onClicked: root.dismiss()
+                }
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
+                visible: root.title !== ""
+                implicitHeight: Theme.size.outline.hairline
+                color: Theme.colors.outline.subtle
             }
 
             AppLabel {
                 Layout.fillWidth: true
-                visible: root.title !== ""
-                text: root.title
-                textType: AppLabel.H3
+                visible: root.message !== ""
+                text: root.message
+                textType: AppLabel.Body
                 wrapMode: Text.WordWrap
-                color: Theme.colors.content.primary
+                color: Theme.colors.content.secondary
             }
 
-            SK.ToolButton {
-                objectName: root.objectName + ".close"
-                // A blocking dialog offers no way out but the actions.
-                visible: !root.blocking
-                Layout.preferredWidth: Theme.spacing.touchTargetCompact
-                Layout.preferredHeight: Theme.spacing.touchTargetCompact
-                text: "×"
-                Accessible.name: qsTr("Close")
-                onClicked: root.dismiss()
-            }
-        }
+            ColumnLayout {
+                id: bodySlot
 
-        Rectangle {
-            Layout.fillWidth: true
-            visible: root.title !== ""
-            implicitHeight: Theme.size.outline.hairline
-            color: Theme.colors.outline.subtle
-        }
-
-        AppLabel {
-            Layout.fillWidth: true
-            visible: root.message !== ""
-            text: root.message
-            textType: AppLabel.Body
-            wrapMode: Text.WordWrap
-            color: Theme.colors.content.secondary
-        }
-
-        ColumnLayout {
-            id: bodySlot
-
-            objectName: root.objectName + ".body"
-            Layout.fillWidth: true
-            spacing: Theme.spacing.md
-            // An empty slot must not add a gap between message and actions.
-            visible: bodySlot.children.length > 0
-
-            Loader {
+                objectName: root.objectName + ".body"
                 Layout.fillWidth: true
-                active: root.bodyComponent !== null
-                sourceComponent: root.bodyComponent
-                onLoaded: {
-                    if (item && "payload" in item)
-                        item["payload"] = root.payload
+                spacing: Theme.spacing.md
+                // An empty slot must not add a gap between message and actions.
+                visible: bodySlot.children.length > 0
+
+                Loader {
+                    Layout.fillWidth: true
+                    active: root.bodyComponent !== null
+                    sourceComponent: root.bodyComponent
+                    onLoaded: {
+                        if (item && "payload" in item)
+                            item["payload"] = root.payload
+                    }
                 }
             }
-        }
 
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: Theme.spacing.sm
-            visible: root.showConfirm || root.showCancel
-
-            Item {
+            RowLayout {
                 Layout.fillWidth: true
-            }
+                spacing: Theme.spacing.sm
+                visible: root.showConfirm || root.showCancel
 
-            SK.Button {
-                objectName: root.objectName + ".cancel"
-                visible: root.showCancel
-                text: root.cancelText
-                SK.StyleVariation.variations: ["outline"]
-                onClicked: root.cancel()
-            }
+                Item {
+                    Layout.fillWidth: true
+                }
 
-            SK.Button {
-                objectName: root.objectName + ".confirm"
-                visible: root.showConfirm
-                text: root.confirmText
-                SK.StyleVariation.variations: root.variant === MDialog.Destructive
-                    ? ["destructive"]
-                    : []
-                onClicked: root.confirm()
+                SK.Button {
+                    objectName: root.objectName + ".cancel"
+                    visible: root.showCancel
+                    text: root.cancelText
+                    SK.StyleVariation.variations: ["outline"]
+                    onClicked: root.cancel()
+                }
+
+                SK.Button {
+                    objectName: root.objectName + ".confirm"
+                    visible: root.showConfirm
+                    text: root.confirmText
+                    SK.StyleVariation.variations: root.variant === MDialog.Destructive
+                        ? ["destructive"]
+                        : []
+                    onClicked: root.confirm()
+                }
             }
         }
     }

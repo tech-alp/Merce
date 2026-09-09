@@ -1,8 +1,10 @@
 #include "MerceThemeManifestLoader.h"
 #include "MerceThemeRegistry.h"
+#include "ThemeValidator.h"
 
 #include <QDir>
 #include <QFile>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QTemporaryDir>
@@ -71,6 +73,7 @@ class tst_merce_theme_manifest_loader : public QObject
 
 private slots:
     void generatedResourceComposesColorAndProfileRegistries();
+    void modeMissingFromABrandFallsBackToItsDefault();
     void bareTenantBrandSourceIsDiscoverable();
     void tenantSchemaVersionRejectsOlderAndNewer_data();
     void tenantSchemaVersionRejectsOlderAndNewer();
@@ -81,7 +84,54 @@ private slots:
     void invalidUnselectedResolvedThemeIsRejected();
     void oversizedDocumentIsRejected();
     void malformedJsonReportsMachineReadableError();
+    void bundledThemesDeclareTheirTypefacesAndShipThem();
+    void fontPathEscapingTheThemeDirectoryIsRejected();
 };
+
+// The bundled themes are the ones a device actually runs. If a brand names a
+// family it does not ship, the runtime silently falls back and the product
+// renders in the wrong typeface for as long as nobody looks closely — which is
+// how Lexend went missing while every manifest claimed it.
+void tst_merce_theme_manifest_loader::bundledThemesDeclareTheirTypefacesAndShipThem()
+{
+    const MerceThemeLoadResult result = MerceThemeManifestLoader().loadDefault();
+    QVERIFY2(result.ok, qPrintable(result.errors.join(QStringLiteral("; "))));
+
+    const QJsonObject typography =
+        result.finalManifest.value(QStringLiteral("typography")).toObject();
+    QVERIFY(!typography.value(QStringLiteral("bodyFont")).toString().trimmed().isEmpty());
+    QVERIFY(!typography.value(QStringLiteral("displayFont")).toString().trimmed().isEmpty());
+    QVERIFY(!typography.value(QStringLiteral("monoFont")).toString().trimmed().isEmpty());
+
+    const QJsonArray fonts = result.finalManifest.value(QStringLiteral("fonts")).toArray();
+    QVERIFY2(!fonts.isEmpty(), "a bundled theme must ship the font files it names");
+    for (const QJsonValue &entry : fonts) {
+        const QString relativePath = entry.toString();
+        QVERIFY(!relativePath.isEmpty());
+        QVERIFY2(QFile::exists(QStringLiteral(":/merce/themes/") + relativePath),
+                 qPrintable(QStringLiteral("declared font is not bundled: ") + relativePath));
+    }
+}
+
+// A manifest is data. It must not be able to point the font loader at a file
+// outside the theme directory.
+void tst_merce_theme_manifest_loader::fontPathEscapingTheThemeDirectoryIsRejected()
+{
+    for (const QString &path : {QStringLiteral("/etc/passwd"),
+                                QStringLiteral("../../../etc/passwd"),
+                                QStringLiteral("qrc:/elsewhere.ttf"),
+                                QStringLiteral("  ")}) {
+        QJsonObject document{
+            {QStringLiteral("typography"),
+             QJsonObject{{QStringLiteral("displayFont"), QStringLiteral("Lexend")},
+                         {QStringLiteral("bodyFont"), QStringLiteral("Lexend")},
+                         {QStringLiteral("monoFont"), QStringLiteral("JetBrains Mono")}}},
+            {QStringLiteral("fonts"), QJsonArray{path}},
+        };
+        const ThemeValidationResult validation = ThemeValidator::validateResolvedTheme(document);
+        QVERIFY2(!validation.ok, qPrintable(QStringLiteral("accepted unsafe path: ") + path));
+    }
+}
 
 void tst_merce_theme_manifest_loader::
     generatedResourceComposesColorAndProfileRegistries()
@@ -108,6 +158,31 @@ void tst_merce_theme_manifest_loader::
     QCOMPARE(ops.profile, QStringLiteral("ops"));
     QVERIFY(ops.finalManifest.value(QStringLiteral("colors")).toObject()
                 != QJsonObject{});
+}
+
+void tst_merce_theme_manifest_loader::modeMissingFromABrandFallsBackToItsDefault()
+{
+    // Migros ships light only, and a config that asks it for dark is a
+    // plausible mistake. Refusing would drop the device profile with the
+    // colours, leaving a kiosk with desktop-sized touch targets, so the brand's
+    // own default answers instead and the resolved mode says what happened.
+    const MerceThemeLoadResult result =
+        MerceThemeManifestLoader().load(QStringLiteral("migros"),
+                                        QStringLiteral("dark"),
+                                        QStringLiteral("cart"));
+
+    QVERIFY2(result.ok, qPrintable(result.errors.join(QLatin1Char('\n'))));
+    QCOMPARE(result.brandId, QStringLiteral("migros"));
+    QCOMPARE(result.mode, QStringLiteral("light"));
+    QCOMPARE(result.profile, QStringLiteral("cart"));
+
+    // An unregistered brand is still a failure: there is nothing to fall back to
+    // that would not be another tenant's colours.
+    const MerceThemeLoadResult unknown =
+        MerceThemeManifestLoader().load(QStringLiteral("no-such-brand"),
+                                        QStringLiteral("light"),
+                                        QStringLiteral("cart"));
+    QVERIFY(!unknown.ok);
 }
 
 void tst_merce_theme_manifest_loader::bareTenantBrandSourceIsDiscoverable()

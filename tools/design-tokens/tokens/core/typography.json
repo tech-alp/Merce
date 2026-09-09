@@ -1,25 +1,5 @@
 {
   "typography": {
-    "displayFont": {
-      "$type": "fontFamily",
-      "$value": "Lexend"
-    },
-    "bodyFont": {
-      "$type": "fontFamily",
-      "$value": "Lexend"
-    },
-    "monoFont": {
-      "$type": "fontFamily",
-      "$value": "JetBrains Mono"
-    },
-    "displayFontFallback": {
-      "$type": "fontFamily",
-      "$value": "Lexend"
-    },
-    "bodyFontFallback": {
-      "$type": "fontFamily",
-      "$value": "Lexend"
-    },
     "sizeXSmall": {
       "$type": "dimension",
       "$value": 12
@@ -79,6 +59,10 @@
     "weightBold": {
       "$type": "fontWeight",
       "$value": 700
+    },
+    "weightExtraBold": {
+      "$type": "fontWeight",
+      "$value": 800
     },
     "leadingTight": {
       "$type": "number",

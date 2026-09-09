@@ -35,6 +35,10 @@ SK.ApplicationWindow {
                 || colorKey(gallery.observedToggleColor) !== colorKey(Theme.colors.action.primary.container)
                 || colorKey(gallery.observedSelectColor) !== colorKey(Theme.colors.content.primary)
                 || colorKey(gallery.observedToastColor) !== colorKey(Theme.colors.status.success.content)
+                || colorKey(gallery.observedToastSurfaceColor) !== colorKey(Theme.colors.surface.floating)
+                || colorKey(gallery.observedToastTextColor) !== colorKey(Theme.colors.content.primary)
+                || colorKey(gallery.observedToastCloseColor) !== colorKey(Theme.colors.content.primary)
+                || colorKey(gallery.observedToastTextColor) === colorKey(gallery.observedToastSurfaceColor)
                 || colorKey(gallery.observedDialogColor) !== colorKey(Theme.colors.surface.container)) {
             fail(label + " sample observations",
                  [gallery.observedButtonColor,
@@ -43,11 +47,16 @@ SK.ApplicationWindow {
                   gallery.observedToggleColor,
                   gallery.observedSelectColor,
                   gallery.observedToastColor,
+                  gallery.observedToastSurfaceColor,
+                  gallery.observedToastTextColor,
+                  gallery.observedToastCloseColor,
                   gallery.observedDialogColor,
                   Theme.colors.action.primary.container,
                   Theme.colors.content.primary,
                   Theme.colors.outline.subtle,
                   Theme.colors.status.success.content,
+                  Theme.colors.surface.floating,
+                  Theme.colors.content.primary,
                   Theme.colors.surface.container])
             return false
         }

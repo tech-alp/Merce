@@ -17,6 +17,10 @@ Style {
     readonly property var sizeTokens: Theme.size
     readonly property var stateTokens: Theme.state
     readonly property var typographyTokens: Theme.typography
+    // StyleKit's shadow group is a single layer with no spread, so a Controls
+    // shadow can only ever approximate the token: the second, tighter layer and
+    // every spread inset are dropped. Qt 6.12 does not change this. Merce's own
+    // surfaces go through MShadow instead and render the token in full.
     readonly property var dropdownShadow: Theme.shadows.dropdown[0]
 
     function stateLayer(container, content, opacity) {
@@ -274,7 +278,7 @@ Style {
             shadow {
                 visible: true
                 color: style.colors.surface.shadow
-                opacity: style.dropdownShadow.color.a
+                opacity: style.dropdownShadow.opacity
                 blur: style.dropdownShadow.blur
                 horizontalOffset: style.dropdownShadow.xOffset
                 verticalOffset: style.dropdownShadow.yOffset

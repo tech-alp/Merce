@@ -1,10 +1,10 @@
 {
   "kind": "resolved-theme",
   "resolvedThemeSchemaVersion": 1,
-  "brandId": "happy-center",
+  "brandId": "migros",
   "mode": "light",
   "identity": {
-    "mark": "#C96442"
+    "mark": "#EE7624"
   },
   "typography": {
     "displayFont": "Lexend",
@@ -17,56 +17,56 @@
   ],
   "colors": {
     "surface": {
-      "canvas": "#F5F4ED",
-      "container": "#FAF9F5",
+      "canvas": "#FFFFFF",
+      "container": "#FFFFFF",
       "containerRaised": "#FFFFFF",
-      "containerSunken": "#F0EEE6",
-      "containerTinted": "#F0EEE6",
+      "containerSunken": "#F1F2F5",
+      "containerTinted": "#FFF3EB",
       "floating": "#FFFFFF",
       "scrim": "#99000000",
-      "inverse": "#30302E",
-      "shadow": "#141413"
+      "inverse": "#292A2C",
+      "shadow": "#292A2C"
     },
     "content": {
-      "primary": "#141413",
-      "secondary": "#5E5D59",
-      "tertiary": "#87867F",
+      "primary": "#292A2C",
+      "secondary": "#5F6063",
+      "tertiary": "#7F8083",
       "inverse": "#FFFFFF",
-      "disabled": "#87867F",
-      "link": "#A84426"
+      "disabled": "#7F8083",
+      "link": "#A84400"
     },
     "action": {
       "primary": {
-        "container": "#C96442",
-        "content": "#141413",
-        "outline": "#C96442"
+        "container": "#EE7624",
+        "content": "#FFFFFF",
+        "outline": "#EE7624"
       },
       "secondary": {
-        "container": "#4D4C48",
+        "container": "#185DAC",
         "content": "#FFFFFF",
-        "outline": "#4D4C48"
+        "outline": "#185DAC"
       },
       "destructive": {
-        "container": "#DC2626",
+        "container": "#B3261E",
         "content": "#FFFFFF",
-        "outline": "#DC2626"
+        "outline": "#B3261E"
       }
     },
     "status": {
       "success": {
-        "container": "#ECFDF3",
-        "content": "#166B3B",
-        "outline": "#16A34A"
+        "container": "#E7F8EA",
+        "content": "#006E18",
+        "outline": "#006E18"
       },
       "warning": {
         "container": "#FFFBEB",
         "content": "#8A4B00",
-        "outline": "#F59E0B"
+        "outline": "#8A4B00"
       },
       "error": {
         "container": "#FEF2F2",
         "content": "#B3261E",
-        "outline": "#DC2626"
+        "outline": "#B3261E"
       },
       "info": {
         "container": "#EFF4FC",
@@ -74,15 +74,15 @@
         "outline": "#245EA8"
       },
       "neutral": {
-        "container": "#F0EEE6",
-        "content": "#5E5D59",
-        "outline": "#87867F"
+        "container": "#EFF1F0",
+        "content": "#4E5B58",
+        "outline": "#65716D"
       }
     },
     "outline": {
-      "subtle": "#E8E6DC",
-      "strong": "#DDD9CE",
-      "focus": "#C96442"
+      "subtle": "#C7C8CB",
+      "strong": "#7F8083",
+      "focus": "#A84400"
     }
   },
   "state": {

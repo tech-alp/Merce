@@ -10,6 +10,7 @@
           "displayName": "Light",
           "path": "algit.light.json",
           "source": [
+            "tokens/core/font-families.json",
             "tokens/core/state.json",
             "tokens/themes/algit/variants/light.json"
           ]
@@ -18,6 +19,7 @@
           "displayName": "Dark",
           "path": "algit.dark.json",
           "source": [
+            "tokens/core/font-families.json",
             "tokens/core/state.json",
             "tokens/themes/algit/variants/dark.json"
           ]
@@ -32,8 +34,25 @@
           "displayName": "Light",
           "path": "happy-center.light.json",
           "source": [
+            "tokens/core/font-families.json",
             "tokens/core/state.json",
             "tokens/themes/happy-center/variants/light.json"
+          ]
+        }
+      }
+    },
+    "migros": {
+      "displayName": "Migros",
+      "defaultMode": "light",
+      "modes": {
+        "light": {
+          "displayName": "Light",
+          "path": "migros.light.json",
+          "source": [
+            "tokens/core/font-families.json",
+            "tokens/core/state.json",
+            "tokens/themes/algit/variants/light.json",
+            "tokens/themes/migros/resolved.json"
           ]
         }
       }
@@ -46,6 +65,7 @@
           "displayName": "Light",
           "path": "merce.light.json",
           "source": [
+            "tokens/core/font-families.json",
             "tokens/core/state.json",
             "tokens/themes/algit/variants/light.json",
             "tokens/themes/merce/resolved.json"
@@ -55,6 +75,7 @@
           "displayName": "Dark",
           "path": "merce.dark.json",
           "source": [
+            "tokens/core/font-families.json",
             "tokens/core/state.json",
             "tokens/themes/algit/variants/dark.json",
             "tokens/themes/merce/resolved.json"
@@ -70,6 +91,7 @@
           "displayName": "Light",
           "path": "apple.json",
           "source": [
+            "tokens/core/font-families.json",
             "tokens/core/state.json",
             "tokens/themes/algit/variants/light.json",
             "tokens/themes/apple/resolved.json"
@@ -85,6 +107,7 @@
           "displayName": "Light",
           "path": "claude.json",
           "source": [
+            "tokens/core/font-families.json",
             "tokens/core/state.json",
             "tokens/themes/algit/variants/light.json",
             "tokens/themes/claude/resolved.json"
@@ -100,6 +123,7 @@
           "displayName": "Light",
           "path": "airbnb.json",
           "source": [
+            "tokens/core/font-families.json",
             "tokens/core/state.json",
             "tokens/themes/algit/variants/light.json",
             "tokens/themes/airbnb/resolved.json"
@@ -115,6 +139,7 @@
           "displayName": "Light",
           "path": "stripe.json",
           "source": [
+            "tokens/core/font-families.json",
             "tokens/core/state.json",
             "tokens/themes/algit/variants/light.json",
             "tokens/themes/stripe/resolved.json"
@@ -130,6 +155,7 @@
           "displayName": "Dark",
           "path": "linear.dark.json",
           "source": [
+            "tokens/core/font-families.json",
             "tokens/core/state.json",
             "tokens/themes/algit/variants/dark.json",
             "tokens/themes/linear/resolved.json"
@@ -139,6 +165,7 @@
           "displayName": "Light",
           "path": "linear.light.json",
           "source": [
+            "tokens/core/font-families.json",
             "tokens/core/state.json",
             "tokens/themes/algit/variants/light.json",
             "tokens/themes/linear/resolved.json"

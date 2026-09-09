@@ -17,6 +17,13 @@
         "light": "happy-center.light.json"
       }
     },
+    "migros": {
+      "displayName": "Migros",
+      "defaultMode": "light",
+      "modes": {
+        "light": "migros.light.json"
+      }
+    },
     "merce": {
       "displayName": "Merce Reference",
       "defaultMode": "light",

@@ -4,7 +4,7 @@ import Merce.Foundation
 import Toastify.Style
 
 /**
- * MToastStyle - binds Toastify to the AlGit token vocabulary.
+ * MToastStyle - binds Toastify to the Merce semantic token vocabulary.
  *
  * Moved out of the playground so applications can consume it. Toast styling is
  * design-system policy: which status role a toast kind maps to, how long it
@@ -22,6 +22,8 @@ ToastifyStyleProvider {
         error: Theme.colors.status.error.content
     })
 
+    backgroundColor: Theme.colors.surface.floating
+
     fonts: ({
         family: FoundationFonts.resolveFamily(Theme.typography.fontBody),
         size: Theme.typography.sizeSmall,
@@ -35,13 +37,15 @@ ToastifyStyleProvider {
         container: Theme.spacing.md,
         closeButton: {
             padding: Theme.spacing.xs,
-            size: Theme.icons.small
+            size: Theme.icons.xSmall,
+            width: Theme.icons.xSmall,
+            height: Theme.icons.xSmall
         },
         totalHorizontal: function() {
             return Theme.spacing.md + Theme.spacing.md * 2
         },
         closeButtonTotal: function() {
-            return Theme.icons.small
+            return Theme.icons.xSmall
         }
     })
 
@@ -50,11 +54,14 @@ ToastifyStyleProvider {
     containerSizes: ({
         minimum: 280,
         preferred: 400,
-        maximum: 520
+        maximum: 520,
+        minimumHeight: 64
     })
 
     cornerRadius: Theme.radius.large
     iconSize: Theme.icons.medium
+    toastOffset: Theme.spacing.md
+    toastSpacing: Theme.spacing.md
 
     // Colour is themed; the geometry is component tier because Theme.shadows.*
     // is not manifest-driven yet and still carries its C++ defaults.
@@ -67,16 +74,24 @@ ToastifyStyleProvider {
     })
 
     animation: ({
-        enterDuration: Theme.motion.durationNormal,
-        exitDuration: Theme.motion.durationNormal
+        enterDuration: Theme.motion.enter.duration,
+        exitDuration: Theme.motion.exit.duration
     })
 
     textColors: ({
-        color: Theme.colors.content.inverse
+        color: Theme.colors.content.primary
+    })
+
+    closeButtonStyle: ({
+        color: Theme.colors.content.primary,
+        opacity: 0.3,
+        hoveredOpacity: 1.0
     })
 
     progressBar: ({
         height: 4,
-        radius: Theme.radius.full
+        radius: Theme.radius.large,
+        opacity: 0.7,
+        backgroundOpacity: 0.2
     })
 }

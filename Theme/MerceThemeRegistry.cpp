@@ -178,10 +178,26 @@ MerceThemeRegistryLookupResult MerceThemeRegistry::lookup(const QString &brandId
 
     if (!foundBrand) {
         result.errors.append(QStringLiteral("brand '%1' is not registered").arg(brandId));
-    } else {
-        result.errors.append(QStringLiteral("mode '%1' is not registered for brand '%2'")
-                                 .arg(effectiveMode, brandId));
+        return result;
     }
+
+    // A brand that ships only one mode is normal — most tenant brands do — so
+    // asking a light-only brand for dark is a request the registry can honour
+    // rather than refuse. Refusing costs more than the wrong mode does: the
+    // caller loads theme and device profile together, so a rejected lookup
+    // takes the touch-target sizes down with the colours. The resolved mode is
+    // reported back in the entry, which is how a caller notices the fallback.
+    const QString brandDefault = defaultModeForBrand(brandId);
+    for (const auto &entry : m_entries) {
+        if (entry.brandId == brandId && entry.mode == brandDefault) {
+            result.ok = true;
+            result.entry = entry;
+            return result;
+        }
+    }
+
+    result.errors.append(QStringLiteral("mode '%1' is not registered for brand '%2'")
+                             .arg(effectiveMode, brandId));
     return result;
 }
 

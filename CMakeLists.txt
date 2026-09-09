@@ -28,7 +28,7 @@ if(MERCE_ENABLE_TOKEN_BUILD)
 endif()
 
 # Qt 6.11+ / Qt.labs.StyleKit baseline required
-find_package(Qt6 6.11 REQUIRED COMPONENTS Core Gui Quick Qml QuickControls2 LabsStyleKit)
+find_package(Qt6 6.11 REQUIRED COMPONENTS Core Gui Quick Qml QuickControls2 LabsStyleKit QuickEffects)
 
 qt_standard_project_setup(REQUIRES 6.11)
 qt_policy(SET QTP0005 NEW)
@@ -40,13 +40,12 @@ set(QT_QML_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/qml")
 
 # External QML modules
 if(MERCE_BUILD_NOTIFICATIONS AND NOT TARGET Toastify)
-    set(MERCE_QTTOASTIFY_GIT_TAG "79348334ec24c46b5c4aad8b3d14265099612ffe" CACHE STRING "Pinned QtToastify revision")
     set(BUILD_PLAYGROUND OFF CACHE BOOL "Build QtToastify playground examples" FORCE)
     set(BUILD_TESTS OFF CACHE BOOL "Build QtToastify tests" FORCE)
 
     FetchContent_Declare(QtToastify
         GIT_REPOSITORY https://github.com/tech-alp/QtToastify.git
-        GIT_TAG ${MERCE_QTTOASTIFY_GIT_TAG}
+        GIT_TAG main
     )
     FetchContent_MakeAvailable(QtToastify)
 endif()

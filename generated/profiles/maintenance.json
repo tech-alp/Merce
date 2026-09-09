@@ -1,5 +1,5 @@
 {
-  "profileSchemaVersion": 1,
+  "profileSchemaVersion": 2,
   "profileId": "maintenance",
   "spacing": {
     "base": 8,
@@ -40,11 +40,6 @@
     "tooltip": 12
   },
   "typography": {
-    "displayFont": "Lexend",
-    "bodyFont": "Lexend",
-    "monoFont": "JetBrains Mono",
-    "displayFontFallback": "Lexend",
-    "bodyFontFallback": "Lexend",
     "sizeXSmall": 12,
     "sizeSmall": 13,
     "sizeMedium": 16,
@@ -60,6 +55,7 @@
     "weightMedium": 500,
     "weightSemibold": 600,
     "weightBold": 700,
+    "weightExtraBold": 800,
     "leadingTight": 1.2,
     "leadingSnug": 1.35,
     "leadingNormal": 1.5,
@@ -91,6 +87,9 @@
       "small": 400,
       "medium": 560,
       "large": 720
+    },
+    "content": {
+      "maxWidth": 560
     }
   }
 }

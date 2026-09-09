@@ -6,6 +6,18 @@
   "identity": {
     "mark": "#5E6AD2"
   },
+  "typography": {
+    "displayFont": "Lexend",
+    "bodyFont": "Lexend",
+    "monoFont": "JetBrains Mono"
+  },
+  "fonts": [
+    "fonts/core/JetBrainsMono[wght].ttf",
+    "fonts/core/Lexend[wght].ttf",
+    "fonts/linear/IoskeleyMonoNerdFont-Bold.ttf",
+    "fonts/linear/IoskeleyMonoNerdFont-Medium.ttf",
+    "fonts/linear/IoskeleyMonoNerdFont-Regular.ttf"
+  ],
   "colors": {
     "surface": {
       "canvas": "#0E1514",

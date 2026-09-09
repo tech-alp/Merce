@@ -97,21 +97,21 @@ Item {
                 enabled: false
             }
             MButton {
-                objectName: "merce.playground.controls.button.nativeIcon"
-                text: "Native icon"
-                iconName: "document-save"
+                objectName: "merce.playground.controls.button.materialIcon"
+                text: "Material icon"
+                iconName: "material:save"
                 iconPosition: MButton.IconLeft
             }
             MButton {
                 objectName: "merce.playground.controls.button.topIcon"
                 text: "Top icon"
-                iconName: "go-up"
+                iconName: "material:arrow_upward"
                 iconPosition: MButton.IconTop
             }
             MButton {
                 objectName: "merce.playground.controls.button.rightIcon"
                 text: "Right icon"
-                iconName: "go-next"
+                iconName: "material:arrow_forward"
                 iconPosition: MButton.IconRight
             }
         }

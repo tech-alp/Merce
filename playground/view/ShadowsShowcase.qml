@@ -1,7 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import QtQuick
-import QtQuick.Effects
+import Merce.Effects
 import Merce.Theme
 import Merce.Foundation
 
@@ -34,6 +34,7 @@ Item {
         required property var shadows
         property color previewBackground: Theme.colors.surface.containerSunken
         property color labelColor: Theme.colors.content.primary
+        property color surfaceColor: Theme.colors.surface.containerRaised
 
         implicitHeight: 148
 
@@ -63,36 +64,19 @@ Item {
                 width: Math.min(92, parent.width - Theme.spacing.xl)
                 height: 64
 
-                Repeater {
-                    model: preview.shadows
-
-                    Rectangle {
-                        required property var modelData
-                        required property int index
-
-                        objectName: "merce.playground.shadows.preview." + preview.label + ".layer." + index
-                        anchors.fill: parent
-                        radius: Theme.radius.medium
-                        color: Theme.colors.surface.containerRaised
-
-                        layer.enabled: true
-                        layer.effect: MultiEffect {
-                            shadowEnabled: true
-                            shadowBlur: Math.min(1, Number(modelData.blur) / 32)
-                            shadowHorizontalOffset: Number(modelData.xOffset)
-                            shadowVerticalOffset: Number(modelData.yOffset)
-                            shadowColor: modelData.color
-                            shadowOpacity: 1
-                        }
-                    }
+                MShadow {
+                    anchors.fill: card
+                    layers: preview.shadows
+                    surfaceRadius: card.radius
                 }
 
                 Rectangle {
+                    id: card
+
+                    objectName: "merce.playground.shadows.preview." + preview.label
                     anchors.fill: parent
                     radius: Theme.radius.medium
-                    color: Theme.colors.surface.containerRaised
-                    border.width: Theme.size.outline.hairline
-                    border.color: Theme.colors.outline.subtle
+                    color: preview.surfaceColor
                 }
             }
         }
@@ -269,17 +253,15 @@ Item {
         }
 
         Surface {
-            objectName: "merce.playground.shadows.darkComparison"
+            objectName: "merce.playground.shadows.inverseElevation"
             width: page.width
-            implicitHeight: darkColumn.implicitHeight + Theme.spacing.xl2
+            implicitHeight: inverseColumn.implicitHeight + Theme.spacing.xl2
             height: implicitHeight
             surfaceType: Surface.Default
             radiusValue: Theme.radius.large
-            backgroundColor: Theme.colors.surface.inverse
-            borderColor: Theme.colors.outline.strong
 
             Column {
-                id: darkColumn
+                id: inverseColumn
                 anchors {
                     left: parent.left
                     right: parent.right
@@ -289,12 +271,11 @@ Item {
                 spacing: Theme.spacing.lg
 
                 SectionTitle {
-                    text: "On inverse surface"
-                    color: Theme.colors.content.inverse
+                    text: qsTr("Inverse surface elevation")
                 }
 
                 Flow {
-                    id: darkFlow
+                    id: inverseFlow
                     width: parent.width
                     spacing: Theme.spacing.md
 
@@ -305,12 +286,11 @@ Item {
                             required property var modelData
 
                             width: root.compactLayout
-                                   ? (darkFlow.width - darkFlow.spacing) / 2
-                                   : (darkFlow.width - darkFlow.spacing * 3) / 4
+                                   ? (inverseFlow.width - inverseFlow.spacing) / 2
+                                   : (inverseFlow.width - inverseFlow.spacing * 3) / 4
                             label: modelData.name.replace("shadow.", "")
                             shadows: modelData.layers
-                            previewBackground: Theme.colors.surface.inverse
-                            labelColor: Theme.colors.content.inverse
+                            surfaceColor: Theme.colors.surface.inverse
                         }
                     }
                 }

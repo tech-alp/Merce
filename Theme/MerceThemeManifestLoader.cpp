@@ -53,15 +53,6 @@ const QStringList radiusFields()
     };
 }
 
-const QStringList typographyStringFields()
-{
-    return {
-        QStringLiteral("displayFont"), QStringLiteral("bodyFont"),
-        QStringLiteral("monoFont"), QStringLiteral("displayFontFallback"),
-        QStringLiteral("bodyFontFallback"),
-    };
-}
-
 const QStringList typographyIntegerFields()
 {
     return {
@@ -72,7 +63,7 @@ const QStringList typographyIntegerFields()
         QStringLiteral("size5XLarge"), QStringLiteral("size6XLarge"),
         QStringLiteral("size7XLarge"), QStringLiteral("weightRegular"),
         QStringLiteral("weightMedium"), QStringLiteral("weightSemibold"),
-        QStringLiteral("weightBold"),
+        QStringLiteral("weightBold"), QStringLiteral("weightExtraBold"),
     };
 }
 
@@ -192,9 +183,9 @@ QStringList validateProfile(const QJsonObject &profile,
          QStringLiteral("radius"),
          QStringLiteral("typography"),
          QStringLiteral("size")}));
-    if (profile.value(QStringLiteral("profileSchemaVersion")).toInt(-1) != 1) {
+    if (profile.value(QStringLiteral("profileSchemaVersion")).toInt(-1) != 2) {
         errors.append(QStringLiteral(
-            "profile.unsupported_version|profileSchemaVersion|expected exactly 1"));
+            "profile.unsupported_version|profileSchemaVersion|expected exactly 2"));
     }
     if (profile.value(QStringLiteral("profileId")).toString() != entry.profileId) {
         errors.append(QStringLiteral("profile.id_mismatch|profileId|expected '%1'")
@@ -229,8 +220,7 @@ QStringList validateProfile(const QJsonObject &profile,
     if (typography.isEmpty()) {
         errors.append(QStringLiteral("profile.missing_section|typography|required section"));
     } else {
-        QStringList typographyFields = typographyStringFields();
-        typographyFields.append(typographyIntegerFields());
+        QStringList typographyFields = typographyIntegerFields();
         typographyFields.append(typographyLeadingFields());
         typographyFields.append(typographyTrackingFields());
         errors.append(unexpectedFields(typography,
@@ -254,13 +244,8 @@ QStringList validateProfile(const QJsonObject &profile,
                                            -(std::numeric_limits<double>::max)(),
                                            (std::numeric_limits<double>::max)(),
                                            false));
-        for (const QString &field : typographyStringFields()) {
-            const QJsonValue value = typography.value(field);
-            if (!value.isString() || value.toString().trimmed().isEmpty()) {
-                errors.append(QStringLiteral(
-                    "profile.invalid_string|typography.%1|non-empty string required").arg(field));
-            }
-        }
+        // Nothing string-valued is left here: the font families this used to
+        // check moved to the theme, which owns the typeface.
     }
 
     const QJsonObject size = profile.value(QStringLiteral("size")).toObject();
@@ -282,6 +267,7 @@ QStringList validateProfile(const QJsonObject &profile,
          {QStringLiteral("small"),
           QStringLiteral("medium"),
           QStringLiteral("large")}},
+        {QStringLiteral("content"), {QStringLiteral("maxWidth")}},
     };
     errors.append(unexpectedFields(size, QStringLiteral("size"), sizeFields.keys()));
     for (auto it = sizeFields.cbegin(); it != sizeFields.cend(); ++it) {
@@ -609,10 +595,20 @@ MerceThemeLoadResult MerceThemeManifestLoader::loadFromRegistries(
     result.finalManifest = loadedColor.finalManifest;
     for (const QString &section : {QStringLiteral("spacing"),
                                    QStringLiteral("radius"),
-                                   QStringLiteral("typography"),
                                    QStringLiteral("size")}) {
         result.finalManifest.insert(section, loadedProfile.object.value(section));
     }
+
+    // Typography is the one section both layers speak to, so it is merged
+    // rather than replaced: the profile brings the metrics that follow the
+    // panel, the theme brings the families that follow the brand. Overwriting
+    // wholesale would drop whichever half was written second.
+    QJsonObject typography = loadedProfile.object.value(QStringLiteral("typography")).toObject();
+    const QJsonObject themeTypography =
+        result.finalManifest.value(QStringLiteral("typography")).toObject();
+    for (auto it = themeTypography.constBegin(); it != themeTypography.constEnd(); ++it)
+        typography.insert(it.key(), it.value());
+    result.finalManifest.insert(QStringLiteral("typography"), typography);
     result.ok = true;
     return result;
 }

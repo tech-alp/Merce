@@ -104,6 +104,7 @@ private slots:
     void rejectsUnsupportedSchemaVersions_data();
     void rejectsUnsupportedSchemaVersions();
     void rejectsInvisibleAdjacentOutline();
+    void permitsExactMigrosPrimaryWithoutWeakeningColorValidation();
     void rejectsInvalidStateOpacity();
 };
 
@@ -429,6 +430,32 @@ void MerceBrandDerivationTest::rejectsInvisibleAdjacentOutline()
     QVERIFY(hasError(ThemeValidator::validateColors(nearInvisible),
                      QStringLiteral("outline.invisible_adjacent"),
                      QStringLiteral("colors.action.primary.outline")));
+}
+
+void MerceBrandDerivationTest::permitsExactMigrosPrimaryWithoutWeakeningColorValidation()
+{
+    const BrandDerivationResult result =
+        BrandDerivation::derive(QColor(QStringLiteral("#8A2BE2")), BrandMode::Light);
+    QVERIFY(result.ok);
+
+    QJsonObject colors =
+        withColorAtPath(result.colors, QStringLiteral("surface.canvas"), QStringLiteral("#FFFFFF"));
+    colors =
+        withColorAtPath(colors,
+                        QStringLiteral("action.primary.container"),
+                        QStringLiteral("#EE7624"));
+    colors = withColorAtPath(colors,
+                             QStringLiteral("action.primary.content"),
+                             QStringLiteral("#FFFFFF"));
+    colors = withColorAtPath(colors,
+                             QStringLiteral("action.primary.outline"),
+                             QStringLiteral("#EE7624"));
+
+    QVERIFY(!ThemeValidator::validateColors(colors).ok);
+
+    QJsonObject document = resolvedDocument(colors, result.state);
+    document.insert(QStringLiteral("brandId"), QStringLiteral("migros"));
+    QVERIFY(ThemeValidator::validateResolvedTheme(document).ok);
 }
 
 void MerceBrandDerivationTest::rejectsInvalidStateOpacity()
