@@ -1,0 +1,20 @@
+{
+  "typography": {
+    "displayFont": {
+      "$type": "fontFamily",
+      "$value": "Source Serif 4"
+    },
+    "bodyFont": {
+      "$type": "fontFamily",
+      "$value": "Inter"
+    },
+    "displayFontFallback": {
+      "$type": "fontFamily",
+      "$value": "Source Serif 4"
+    },
+    "bodyFontFallback": {
+      "$type": "fontFamily",
+      "$value": "Inter"
+    }
+  }
+}
