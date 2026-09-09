@@ -20,11 +20,11 @@
     },
     "large": {
       "$type": "dimension",
-      "$value": 32
+      "$value": 24
     },
     "xlarge": {
       "$type": "dimension",
-      "$value": 48
+      "$value": 28
     },
     "xxlarge": {
       "$type": "dimension",
@@ -32,15 +32,15 @@
     },
     "button": {
       "$type": "dimension",
-      "$value": 999
+      "$value": 14
     },
     "input": {
       "$type": "dimension",
-      "$value": 20
+      "$value": 14
     },
     "card": {
       "$type": "dimension",
-      "$value": 32
+      "$value": 24
     },
     "dialog": {
       "$type": "dimension",
