@@ -1,0 +1,67 @@
+name: Mirror to GitLab
+
+# Development, CI and releases live here, but cart-app and Maintenance resolve
+# this repository as a submodule from GitLab. Anything pushed here has to reach
+# there or a fresh clone of either application cannot resolve its pin.
+
+on:
+  push:
+    branches:
+      - '**'
+    tags:
+      - '**'
+
+permissions:
+  contents: read
+
+# Serialised: two pushes racing on the same ref would have one reject the other
+# and report a divergence that does not exist.
+concurrency:
+  group: mirror-gitlab
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    name: Push to GitLab
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    # A deletion has nothing to check out. Removing a branch here is left as a
+    # deliberate act on each remote rather than something a mirror does quietly.
+    if: ${{ !github.event.deleted }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The mirror push has to carry history GitLab does not have yet, so a
+          # shallow clone would be rejected as unrelated.
+          fetch-depth: 0
+
+      - name: Push the pushed ref
+        env:
+          GITLAB_TOKEN: ${{ secrets.GITLAB_MIRROR_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ -z "${GITLAB_TOKEN}" ]]; then
+            echo "GITLAB_MIRROR_TOKEN is not set; add it under Settings > Secrets" >&2
+            exit 1
+          fi
+
+          # Only the ref this run was triggered by. A --mirror push would delete
+          # every GitLab branch that has no counterpart here, and the two remotes
+          # legitimately carry branches the other does not.
+          git remote add gitlab \
+            "https://oauth2:${GITLAB_TOKEN}@gitlab.com/scs-labs/merce.git"
+
+          # No --force. If GitLab holds commits this repository does not, the
+          # push is refused and the job fails, which is the signal we want: the
+          # remotes have diverged and someone pushed to GitLab directly.
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            # Push the tag object itself: HEAD:refs/tags/x would recreate an
+            # annotated tag as a lightweight one and drop its message.
+            git push gitlab "${GITHUB_REF}:${GITHUB_REF}"
+          else
+            git push gitlab "HEAD:${GITHUB_REF}"
+          fi
