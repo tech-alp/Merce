@@ -26,6 +26,33 @@ Full playground changes require notifications, Font Awesome, and `BUILD_MERCE_PL
 
 For token changes, run `npm --prefix tools/design-tokens ci`, then `build`, `validate`, and `check`. Never hand-edit generated manifests.
 
+## Agent Tooling
+
+`qmlagent` gives an agent structured evidence about a running Qt Quick
+application instead of screenshots. It is optional: nothing in the build, the
+tests or CI refers to it, and Merce builds without it.
+
+It installs at machine level rather than into this repository. From a checkout
+of https://github.com/penk/qmlagent:
+
+```bash
+qt-cmake -S . -B build && cmake --build build -j && cmake --install build
+cp -R skills/qmlagent-runtime ~/.claude/skills/    # or ~/.codex/skills/
+```
+
+That puts the plugin in `<Qt prefix>/plugins/qmltooling/` and the tools in
+`<Qt prefix>/bin/`, so `cmake --install` needs write access to the Qt prefix.
+Restart the agent session afterwards so the MCP server and skill load.
+
+Keep the checkout outside this repository, or ignored inside it. It is not a
+submodule and should not become one: it is installed, not vendored, and adding
+it would put a second repository in every clone for tooling most of them never
+run. `.gitignore` already covers `external/qmlagent/`, `.qmlagent/` and the
+generated `qmlagent-runtime` skill directories. A stray `.gitmodules` declaring
+it makes every submodule walk fail with `pathspec 'external/qmlagent' did not
+match any file(s) known to git`, because Git reads that file whether or not it
+is tracked.
+
 ## CI and WebAssembly
 
 Keep GitHub Actions pinned to immutable SHAs with version comments. `scripts/build_wasm.sh` builds the actual `MercePlayground`, disables install generation with standard `CMAKE_SKIP_INSTALL_RULES`, validates required static QML plugins, and assembles `build-wasm/site/`; do not commit generated WASM output. Pages publishes only after the WASM artifact passes. Keep `QT_QML_DEBUG` Debug-only. Express QML dependencies through CMake targets and module metadata, not manual import-path workarounds.
