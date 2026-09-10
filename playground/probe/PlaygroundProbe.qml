@@ -549,19 +549,6 @@ Main {
                                              "merce.playground.forms.fieldStates"))
                     return
 
-                root.selectedPage = "states"
-                step = 10
-                interval = 120
-                restart()
-                return
-            }
-
-            if (step === 10) {
-                if (!root.verifyShowcasePage("states", "States",
-                                             "merce.playground.statesShowcase",
-                                             "merce.playground.states.matrix"))
-                    return
-
                 root.selectedPage = "icons"
                 step = 11
                 interval = 160

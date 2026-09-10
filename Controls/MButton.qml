@@ -36,6 +36,13 @@ Button {
     property string iconName: ""
     property bool loading: false
     property bool isLoading: root.loading
+    /**
+     * Keeps the label beside the spinner while loading. Set false for a button
+     * that should shrink to the spinner alone. iconPosition would do this too,
+     * but it describes what the button is rather than what it is doing, so
+     * flipping it for the duration of a request loses the button's own shape.
+     */
+    property bool loadingLabelVisible: true
     property bool fullWidth: false
     property var extraVariations: []
 
@@ -51,18 +58,6 @@ Button {
     Layout.fillWidth: root.fullWidth
     StyleVariation.variations: root.styleVariations
 
-    LoadingIndicator {
-        objectName: "loadingIndicator"
-        anchors.left: root.iconPosition === MButton.IconOnly ? undefined : parent.left
-        anchors.leftMargin: root.leftPadding
-        anchors.horizontalCenter: root.iconPosition === MButton.IconOnly
-                                  ? parent.horizontalCenter
-                                  : undefined
-        anchors.verticalCenter: parent.verticalCenter
-        color: root.icon.color
-        running: root.effectiveLoading && root.visible
-        visible: root.effectiveLoading
-    }
 
     function variationNames() {
         const names = []
@@ -171,6 +166,8 @@ Button {
                                              && root.iconName.length > 0
             readonly property bool showText: root.iconPosition !== MButton.IconOnly
                                              && root.text.length > 0
+                                             && (root.loadingLabelVisible
+                                                 || !root.effectiveLoading)
 
             // Centred at its natural width, clamped to the plate. Without the
             // clamp the row keeps its implicit width and a button narrower than
@@ -181,9 +178,23 @@ Button {
             rowSpacing: root.spacing
             columnSpacing: root.spacing
 
+            // The spinner takes the leading icon's place rather than being
+            // anchored to the button: the row reserves its width, so the label
+            // moves aside instead of being drawn under it.
+            LoadingIndicator {
+                objectName: "loadingIndicator"
+                visible: root.effectiveLoading
+                Layout.alignment: Qt.AlignCenter
+                Layout.preferredWidth: root.iconSizeFor(root.size)
+                Layout.preferredHeight: root.iconSizeFor(root.size)
+                size: root.iconSizeFor(root.size)
+                color: root.icon.color
+                running: root.effectiveLoading && root.visible
+            }
+
             AppIcon {
                 objectName: "buttonIcon"
-                visible: contentRow.showIcon
+                visible: contentRow.showIcon && !root.effectiveLoading
                 Layout.alignment: Qt.AlignCenter
                 Layout.preferredWidth: root.iconSizeFor(root.size)
                 Layout.preferredHeight: root.iconSizeFor(root.size)

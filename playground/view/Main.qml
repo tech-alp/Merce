@@ -97,12 +97,6 @@ ApplicationWindow {
             category: "Patterns"
             icon: "material:check_circle"
         }
-        ListElement {
-            key: "states"
-            label: "States"
-            category: "Patterns"
-            icon: "material:error"
-        }
     }
 
     function pageTitle(key) {
@@ -135,8 +129,6 @@ ApplicationWindow {
             return feedbackPage
         if (key === "forms")
             return formsPage
-        if (key === "states")
-            return statesPage
         return themePage
     }
 
@@ -364,14 +356,6 @@ ApplicationWindow {
     }
 
     Component {
-        id: statesPage
-        PlaygroundPage {
-            objectName: "merce.playground.stack.states"
-            sourceComponent: statesShowcase
-        }
-    }
-
-    Component {
         id: themeShowcase
         ThemeGallery {
             objectName: "merce.playground.themeGallery"
@@ -446,13 +430,6 @@ ApplicationWindow {
         id: formsShowcase
         FormsShowcase {
             objectName: "merce.playground.formsShowcase"
-        }
-    }
-
-    Component {
-        id: statesShowcase
-        StatesShowcase {
-            objectName: "merce.playground.statesShowcase"
         }
     }
 }
