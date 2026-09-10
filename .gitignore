@@ -48,9 +48,7 @@ temp/
 *.tmp
 .qtcreator/
 
-# local agent tooling
-external/qmlagent/
+# Generated agent runtime. The qmlagent source itself is a submodule.
 .qmlagent/
-.gitmodules
 .agents/skills/qmlagent-runtime
 .claude/skills/qmlagent-runtime

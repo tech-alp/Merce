@@ -1,0 +1,3 @@
+[submodule "external/qmlagent"]
+	path = external/qmlagent
+	url = https://github.com/penk/qmlagent.git
