@@ -2,13 +2,19 @@ import QtQuick
 import QtQuick.Controls.Basic as Basic
 import Qt.labs.StyleKit
 import QtQml.Models
+import Merce.Notifications
 import Merce.Style
 import Merce.Theme
 
 ApplicationWindow {
     id: root
-    objectName: "merce.playground.window"
 
+    property string selectedPage: "theme"
+    readonly property var materialIcons: playgroundMaterialIcons
+    readonly property var themeSourcePaths: playgroundThemeSourcePaths
+    readonly property Item notificationLayer: Basic.Overlay.overlay
+
+    objectName: "merce.playground.window"
     width: 1180
     height: 760
     visible: true
@@ -16,9 +22,11 @@ ApplicationWindow {
 
     StyleKit.style: MerceStyle {}
 
-    property string selectedPage: "theme"
-    readonly property var materialIcons: playgroundMaterialIcons
-    readonly property var themeSourcePaths: playgroundThemeSourcePaths
+    NotificationHost {
+        parent: root.notificationLayer
+        objectName: "merce.playground.notifications"
+        z: Theme.zIndex.notification
+    }
 
     ListModel {
         id: pageModel

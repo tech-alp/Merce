@@ -10,6 +10,15 @@ SK.ApplicationWindow {
     readonly property real styleButtonHeight: merceStyle.button.background.implicitHeight
     readonly property color styleButtonColor: merceStyle.button.background.color
     readonly property real styleSwitchHeight: merceStyle.switchControl.background.implicitHeight
+    readonly property real styleSwitchWidth: merceStyle.switchControl.indicator.implicitWidth
+    readonly property real styleSpinBoxHeight: merceStyle.spinBox.background.implicitHeight
+    readonly property color styleSpinBoxColor: merceStyle.spinBox.background.color
+    readonly property real styleSpinBoxIndicatorSize:
+        merceStyle.spinBox.indicator.foreground.implicitWidth
+    readonly property color styleSpinBoxIndicatorColor:
+        merceStyle.spinBox.indicator.foreground.image.color
+    readonly property real styleTextAreaHeight: merceStyle.textArea.background.implicitHeight
+    readonly property color styleTextAreaColor: merceStyle.textArea.background.color
     readonly property color disabledCheckedButtonColor:
         merceStyle.button.disabled.checked.background.color
     readonly property color disabledCheckedCheckBoxColor:
@@ -34,7 +43,7 @@ SK.ApplicationWindow {
     readonly property var merceButtonVariations: merceButton.styleVariations
 
     width: 640
-    height: 530
+    height: 620
     visible: true
 
     SK.StyleKit.style: MerceStyle { id: merceStyle }
@@ -76,10 +85,45 @@ SK.ApplicationWindow {
         focusPolicy: Qt.NoFocus
     }
 
+    SK.SpinBox {
+        objectName: "styleSpinBox"
+        x: 24
+        y: 200
+        width: 150
+        height: implicitHeight
+        from: 0
+        to: 10000
+        value: 5000
+        editable: true
+        locale: Qt.locale("tr_TR")
+    }
+
+    SK.SpinBox {
+        objectName: "compactStyleSpinBox"
+        x: 480
+        y: 200
+        width: 136
+        height: implicitHeight
+        from: 1
+        to: 10
+        value: 3
+        editable: true
+    }
+
+    SK.TextArea {
+        objectName: "styleTextArea"
+        x: 260
+        y: 200
+        width: 200
+        height: implicitHeight
+        text: ""
+        placeholderText: ""
+    }
+
     SK.Button {
         objectName: "disabledCheckedButton"
         x: 24
-        y: 260
+        y: 330
         width: 200
         text: ""
         checkable: true
@@ -90,7 +134,7 @@ SK.ApplicationWindow {
     SK.CheckBox {
         objectName: "disabledCheckedCheckBox"
         x: 260
-        y: 260
+        y: 330
         text: ""
         checked: true
         enabled: false
@@ -99,7 +143,7 @@ SK.ApplicationWindow {
     SK.RadioButton {
         objectName: "disabledCheckedRadio"
         x: 420
-        y: 260
+        y: 330
         text: ""
         checked: true
         enabled: false
@@ -108,7 +152,7 @@ SK.ApplicationWindow {
     SK.Switch {
         objectName: "disabledCheckedSwitch"
         x: 260
-        y: 350
+        y: 420
         width: 160
         text: ""
         checked: true
@@ -118,7 +162,7 @@ SK.ApplicationWindow {
     SK.ItemDelegate {
         objectName: "disabledCheckedItemDelegate"
         x: 420
-        y: 350
+        y: 420
         width: 180
         text: ""
         checkable: true
@@ -131,7 +175,7 @@ SK.ApplicationWindow {
 
         objectName: "merceButton"
         x: 24
-        y: 440
+        y: 510
         width: 200
         text: ""
         variant: MButton.Secondary
@@ -159,5 +203,16 @@ SK.ApplicationWindow {
         width: 200
         text: "Loading"
         loading: true
+    }
+
+    MButton {
+        objectName: "checkedOutlineButton"
+        x: 260
+        y: 510
+        width: 200
+        text: ""
+        variant: MButton.Outline
+        checkable: true
+        checked: true
     }
 }

@@ -10,7 +10,7 @@ cmake_install.cmake
 Makefile
 *.cmake
 !cmake/
-!cmake/McuSubset.cmake
+!cmake/*.cmake
 !CMakeLists.txt
 !MerceConfig.cmake
 

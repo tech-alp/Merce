@@ -476,6 +476,44 @@ Style {
         }
     }
 
+    textArea {
+        leftPadding: style.spacingTokens.sm
+        rightPadding: style.spacingTokens.sm
+        topPadding: style.spacingTokens.sm
+        bottomPadding: style.spacingTokens.sm
+        background {
+            implicitWidth: style.sizeTokens.control.large * 3
+            implicitHeight: style.sizeTokens.control.medium * 2
+            radius: style.radiusTokens.input
+            border.width: style.sizeTokens.outline.hairline
+            border.color: style.colors.outline.subtle
+            color: style.colors.surface.container
+        }
+        text {
+            color: style.colors.content.primary
+            alignment: Qt.AlignLeft | Qt.AlignTop
+        }
+        hovered.background.color: style.stateLayer(
+                                      style.colors.surface.container,
+                                      style.colors.content.primary,
+                                      style.stateTokens.layer.hover)
+        focused {
+            background {
+                color: style.stateLayer(style.colors.surface.container,
+                                        style.colors.content.primary,
+                                        style.stateTokens.layer.focus)
+                border.color: style.colors.outline.focus
+                border.width: style.sizeTokens.outline.focus
+            }
+        }
+        disabled {
+            background.color: style.disabledContainer(style.colors.surface.container,
+                                                      style.colors.content.primary)
+            text.color: style.disabledContent(style.colors.surface.container,
+                                              style.colors.content.primary)
+        }
+    }
+
     checkBox {
         background {
             visible: false
@@ -604,7 +642,7 @@ Style {
             implicitHeight: style.sizeTokens.control.medium
         }
         indicator {
-            implicitWidth: style.sizeTokens.control.small
+            implicitWidth: style.sizeTokens.control.medium
             implicitHeight: style.sizeTokens.icon.medium
             radius: style.radiusTokens.full
             border.width: style.sizeTokens.outline.hairline
@@ -748,6 +786,71 @@ Style {
         }
     }
 
+    spinBox {
+        leftPadding: 0
+        rightPadding: 0
+        background {
+            implicitWidth: style.sizeTokens.control.large * 3
+            implicitHeight: style.sizeTokens.control.medium
+            radius: style.radiusTokens.input
+            border.width: style.sizeTokens.outline.hairline
+            border.color: style.colors.outline.subtle
+            color: style.colors.surface.container
+        }
+        text {
+            color: style.colors.content.primary
+            alignment: Qt.AlignHCenter | Qt.AlignVCenter
+        }
+        indicator {
+            implicitWidth: style.sizeTokens.control.small
+            implicitHeight: Style.Stretch
+            margins: 0
+            border.width: 0
+            color: Qt.alpha(style.colors.surface.container, 0)
+            foreground {
+                implicitWidth: style.sizeTokens.icon.small
+                implicitHeight: style.sizeTokens.icon.small
+                alignment: Qt.AlignCenter
+                color: Qt.alpha(style.colors.surface.container, 0)
+                image.color: style.colors.content.secondary
+            }
+            down.alignment: Qt.AlignLeft | Qt.AlignVCenter
+            up.alignment: Qt.AlignRight | Qt.AlignVCenter
+        }
+        hovered {
+            background.color: style.stateLayer(
+                                  style.colors.surface.container,
+                                  style.colors.content.primary,
+                                  style.stateTokens.layer.hover)
+            indicator.foreground.image.color: style.colors.content.primary
+        }
+        focused {
+            background {
+                color: style.stateLayer(style.colors.surface.container,
+                                        style.colors.content.primary,
+                                        style.stateTokens.layer.focus)
+                border.color: style.colors.outline.focus
+                border.width: style.sizeTokens.outline.focus
+            }
+        }
+        pressed {
+            background.color: style.stateLayer(
+                                  style.colors.surface.container,
+                                  style.colors.content.primary,
+                                  style.stateTokens.layer.pressed)
+            indicator.foreground.image.color: style.colors.action.primary.container
+        }
+        disabled {
+            background.color: style.disabledContainer(style.colors.surface.container,
+                                                      style.colors.content.primary)
+            text.color: style.disabledContent(style.colors.surface.container,
+                                              style.colors.content.primary)
+            indicator.foreground.image.color: style.disabledContent(
+                                                  style.colors.surface.container,
+                                                  style.colors.content.secondary)
+        }
+    }
+
     label {
         background {
             visible: false
@@ -885,10 +988,29 @@ Style {
                                           style.colors.surface.container,
                                           style.colors.action.primary.container,
                                           style.stateTokens.layer.pressed)
-            checked.background.color: style.stateLayer(
-                                          style.colors.surface.container,
-                                          style.colors.action.primary.container,
-                                          style.stateTokens.layer.selected)
+            checked {
+                background {
+                    color: style.colors.action.primary.container
+                    border.color: style.colors.action.primary.outline
+                }
+                text.color: style.colors.action.primary.content
+                hovered.background.color: style.stateLayer(
+                                              style.colors.action.primary.container,
+                                              style.colors.action.primary.content,
+                                              style.stateTokens.layer.hover)
+                focused {
+                    background {
+                        color: style.colors.action.primary.container
+                        border.color: style.colors.outline.focus
+                        border.width: style.sizeTokens.outline.focus
+                    }
+                    text.color: style.colors.action.primary.content
+                }
+                pressed.background.color: style.stateLayer(
+                                              style.colors.action.primary.container,
+                                              style.colors.action.primary.content,
+                                              style.stateTokens.layer.pressed)
+            }
             highlighted.background.color: style.stateLayer(
                                               style.colors.surface.container,
                                               style.colors.action.primary.container,

@@ -1,0 +1,166 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  QT_VERSION: 6.11.1
+
+jobs:
+  source-build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Ubuntu / Core
+            os: ubuntu-24.04
+            notifications: "OFF"
+            fontawesome: "OFF"
+            playground: "OFF"
+          - name: macOS / Core
+            os: macos-15
+            notifications: "OFF"
+            fontawesome: "OFF"
+            playground: "OFF"
+          - name: Ubuntu / Full playground
+            os: ubuntu-24.04
+            notifications: "ON"
+            fontawesome: "ON"
+            playground: "ON"
+
+    env:
+      QT_QPA_PLATFORM: offscreen
+      QT_QUICK_BACKEND: software
+      QSG_RHI_BACKEND: software
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@48d3ad6db93f3627c8ee7a0454bc6f3744f7e730 # v4.3.1
+        with:
+          version: ${{ env.QT_VERSION }}
+          cache: true
+
+      - name: Configure
+        run: >-
+          cmake -S . -B build -G Ninja
+          -DCMAKE_BUILD_TYPE=Release
+          -DMERCE_BUILD_NOTIFICATIONS=${{ matrix.notifications }}
+          -DMERCE_ENABLE_FONTAWESOME=${{ matrix.fontawesome }}
+          -DMERCE_BUILD_TESTS=ON
+          -DBUILD_TESTING=ON
+          -DBUILD_MERCE_PLAYGROUND=${{ matrix.playground }}
+          -DMERCE_ENABLE_TOKEN_BUILD=OFF
+
+      - name: Build
+        run: cmake --build build --config Release --parallel 2
+
+      - name: Lint playground
+        if: matrix.playground == 'ON'
+        run: >-
+          cmake --build build
+          --config Release
+          --target MercePlayground_qmllint
+
+      - name: Test
+        run: >-
+          ctest --test-dir build
+          -C Release
+          --output-on-failure
+          --no-tests=error
+          --timeout 180
+
+      - name: Run playground verification gates
+        if: matrix.playground == 'ON'
+        env:
+          MERCE_BUILD_DIR: build
+          MERCE_GALLERY_DIR: ${{ runner.temp }}/merce-gallery
+        run: skills/merce-playground-verification/scripts/run-gates.sh
+
+  package:
+    name: Installed package
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@48d3ad6db93f3627c8ee7a0454bc6f3744f7e730 # v4.3.1
+        with:
+          version: ${{ env.QT_VERSION }}
+          cache: true
+
+      - name: Verify source-tree targets
+        run: |
+          cmake -S tests/source-consumer -B build-source-consumer -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build and install Merce
+        run: |
+          cmake -S . -B build-install -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DMERCE_BUILD_NOTIFICATIONS=OFF \
+            -DMERCE_ENABLE_FONTAWESOME=ON \
+            -DMERCE_BUILD_TESTS=OFF \
+            -DBUILD_MERCE_PLAYGROUND=OFF
+          cmake --build build-install --parallel
+          cmake --install build-install --prefix "$RUNNER_TEMP/merce-install"
+
+      - name: Verify installed notices
+        run: |
+          test -s "$RUNNER_TEMP/merce-install/share/doc/Merce/LICENSE"
+          test -s "$RUNNER_TEMP/merce-install/share/doc/Merce/licenses/jetbrains-mono-OFL-1.1.txt"
+
+      - name: Build package consumer
+        run: |
+          cmake -S tests/package-consumer -B build-package-consumer -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_PREFIX_PATH="$QT_ROOT_DIR;$RUNNER_TEMP/merce-install"
+          cmake --build build-package-consumer --parallel
+
+      - name: Run package consumer
+        env:
+          QT_QPA_PLATFORM: offscreen
+          QML_IMPORT_PATH: ${{ runner.temp }}/merce-install/lib/qml
+          LD_LIBRARY_PATH: ${{ runner.temp }}/merce-install/lib
+        run: build-package-consumer/merce_package_consumer
+
+  design-tokens:
+    name: Design tokens
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tools/design-tokens/package-lock.json
+
+      - name: Install token tooling
+        run: npm --prefix tools/design-tokens ci
+
+      - name: Generate and validate
+        run: |
+          npm --prefix tools/design-tokens run build
+          npm --prefix tools/design-tokens run validate
+          npm --prefix tools/design-tokens run check
+          git diff --exit-code -- generated tools/design-tokens

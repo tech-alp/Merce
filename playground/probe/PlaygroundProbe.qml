@@ -43,6 +43,7 @@ Main {
                 || root.findObject(root.header, name, 0)
                 || root.findObject(root.footer, name, 0)
                 || root.findObject(root.contentItem, name, 0)
+                || root.findObject(root.notificationLayer, name, 0)
     }
 
     function activateComboValue(comboBox, value) {
@@ -126,23 +127,98 @@ Main {
             }
 
             if (step === 2) {
+                const galleryPrimaryButton = root.findNamed("merce.playground.gallery.primaryButton")
                 if (root.objectName !== "merce.playground.window"
                         || root.selectedPage !== "theme"
                         || root.pageTitle(root.selectedPage) !== "Overview"
-                        || Theme.availableThemes.length !== 9
-                        || Theme.availableProfiles.length !== 3) {
+                        || Theme.availableThemes.length !== 10
+                        || Theme.availableProfiles.length !== 3
+                        || !galleryPrimaryButton) {
                     root.fail("default shell state", [
                                   root.objectName,
                                   root.selectedPage,
                                   root.pageTitle(root.selectedPage),
                                   Theme.availableThemes.length,
-                                  Theme.availableProfiles.length
+                                  Theme.availableProfiles.length,
+                                  galleryPrimaryButton !== null
+                              ])
+                    return
+                }
+
+                galleryPrimaryButton.clicked()
+                step = 20
+                interval = 100
+                restart()
+                return
+            }
+
+            if (step === 20) {
+                const notificationHost = root.findNamed("merce.playground.notifications")
+                const destructiveButton = root.findNamed(
+                                            "merce.playground.gallery.destructiveButton")
+                const toastIds = notificationHost
+                    ? Object.keys(notificationHost.m_toasts)
+                    : []
+                if (!notificationHost
+                        || notificationHost.parent !== root.notificationLayer
+                        || toastIds.length !== 1 || !destructiveButton) {
+                    root.fail("theme gallery toast routing", [
+                                  notificationHost !== null,
+                                  notificationHost
+                                      ? notificationHost.parent === root.notificationLayer
+                                      : false,
+                                  toastIds,
+                                  destructiveButton !== null
+                              ])
+                    return
+                }
+
+                notificationHost.dismissAllToasts()
+                destructiveButton.clicked()
+                step = 21
+                interval = 80
+                restart()
+                return
+            }
+
+            if (step === 21) {
+                const notificationHost = root.findNamed("merce.playground.notifications")
+                const localDialog = root.findNamed("merce.playground.gallery.dialog")
+                const hostedDialog = root.findNamed("notificationHost.dialog")
+                if (!notificationHost || !notificationHost.busy || localDialog
+                        || !hostedDialog) {
+                    root.fail("theme gallery dialog routing", [
+                                  notificationHost !== null,
+                                  notificationHost ? notificationHost.busy : null,
+                                  localDialog !== null,
+                                  hostedDialog !== null
+                              ])
+                    return
+                }
+
+                hostedDialog.confirm()
+                step = 22
+                interval = 80
+                restart()
+                return
+            }
+
+            if (step === 22) {
+                const notificationHost = root.findNamed("merce.playground.notifications")
+                const exportState = root.findNamed("merce.playground.gallery.exportStateText")
+                if (!notificationHost || notificationHost.busy || !exportState
+                        || exportState.text !== "Yıkıcı işlem onaylandı") {
+                    root.fail("theme gallery dialog callback", [
+                                  notificationHost !== null,
+                                  notificationHost ? notificationHost.busy : null,
+                                  exportState ? exportState.text : null
                               ])
                     return
                 }
 
                 root.selectedPage = "palette"
                 step = 3
+                interval = 80
                 restart()
                 return
             }
@@ -395,6 +471,103 @@ Main {
                 return
             }
 
+            if (step === 13) {
+                const feedbackShowcase = root.findNamed("merce.playground.feedbackShowcase")
+                const notificationHost = root.findNamed("merce.playground.notifications")
+                const nestedHost = root.findNamed("merce.playground.feedback.notifications")
+                const infoButton = root.findNamed("merce.playground.feedback.toast.info")
+                if (root.selectedPage !== "feedback"
+                        || root.pageTitle(root.selectedPage) !== "Feedback"
+                        || !feedbackShowcase
+                        || !notificationHost
+                        || nestedHost
+                        || !infoButton) {
+                    root.fail("feedback notification host", [
+                                  root.selectedPage,
+                                  root.pageTitle(root.selectedPage),
+                                  feedbackShowcase !== null,
+                                  notificationHost !== null,
+                                  nestedHost !== null,
+                                  infoButton !== null
+                              ])
+                    return
+                }
+
+                infoButton.clicked()
+                step = 14
+                interval = 100
+                restart()
+                return
+            }
+
+            if (step === 14) {
+                const notificationHost = root.findNamed("merce.playground.notifications")
+                const dialogButton = root.findNamed(
+                                         "merce.playground.feedback.dialog.default")
+                const toastIds = notificationHost
+                    ? Object.keys(notificationHost.m_toasts)
+                    : []
+                if (!notificationHost
+                        || toastIds.length !== 1
+                        || !toastIds[0].startsWith("toast-")
+                        || !dialogButton) {
+                    root.fail("feedback toast routing", [
+                                  notificationHost !== null,
+                                  toastIds,
+                                  dialogButton !== null
+                              ])
+                    return
+                }
+
+                notificationHost.dismissAllToasts()
+                dialogButton.clicked()
+                step = 15
+                interval = 80
+                restart()
+                return
+            }
+
+            if (step === 15) {
+                const notificationHost = root.findNamed("merce.playground.notifications")
+                const localDialog = root.findNamed("merce.playground.feedback.dialog")
+                const hostedDialog = root.findNamed("notificationHost.dialog")
+                if (!notificationHost || !notificationHost.busy || localDialog
+                        || !hostedDialog) {
+                    root.fail("feedback dialog routing", [
+                                  notificationHost !== null,
+                                  notificationHost ? notificationHost.busy : null,
+                                  localDialog !== null,
+                                  hostedDialog !== null
+                              ])
+                    return
+                }
+
+                hostedDialog.confirm()
+                step = 16
+                interval = 80
+                restart()
+                return
+            }
+
+            if (step === 16) {
+                const notificationHost = root.findNamed("merce.playground.notifications")
+                const dialogState = root.findNamed("merce.playground.feedback.dialog.state")
+                if (!notificationHost || notificationHost.busy || !dialogState
+                        || dialogState.text !== "Dialog sample: confirmed") {
+                    root.fail("feedback dialog callback", [
+                                  notificationHost !== null,
+                                  notificationHost ? notificationHost.busy : null,
+                                  dialogState ? dialogState.text : null
+                              ])
+                    return
+                }
+
+                console.log("playground-probe ok", root.selectedPage,
+                            Theme.activeBrand, Theme.activeMode)
+                Qt.quit()
+                return
+            }
+
             const header = root.findNamed("merce.playground.header")
             const footer = root.findNamed("merce.playground.footer")
             const content = root.findNamed("merce.playground.content")
@@ -450,8 +623,10 @@ Main {
                 return
             }
 
-            console.log("playground-probe ok", root.selectedPage, Theme.activeBrand, Theme.activeMode)
-            Qt.quit()
+            root.selectedPage = "feedback"
+            step = 13
+            interval = 120
+            restart()
         }
     }
 }

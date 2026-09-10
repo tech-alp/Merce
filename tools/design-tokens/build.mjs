@@ -83,6 +83,9 @@ async function copyBrandFonts(brandId) {
 }
 
 async function copyFontDir(sourceDir, outputName) {
+  const outputDir = path.join(GENERATED_THEME_DIR, 'fonts', outputName);
+  await rm(outputDir, { recursive: true, force: true });
+
   let names;
   try {
     names = await readdir(sourceDir);
@@ -98,7 +101,6 @@ async function copyFontDir(sourceDir, outputName) {
     return [];
   }
 
-  const outputDir = path.join(GENERATED_THEME_DIR, 'fonts', outputName);
   await mkdir(outputDir, { recursive: true });
   for (const name of fontNames) {
     await copyFile(path.join(sourceDir, name), path.join(outputDir, name));

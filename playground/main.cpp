@@ -110,7 +110,8 @@ int main(int argc, char *argv[])
 
     engine.rootContext()->setContextProperty(
         QStringLiteral("playgroundMaterialIcons"),
-        loadIconCodepoints(QStringLiteral(":/qt/qml/Merce/Foundation/fonts/MaterialSymbolsRounded/MaterialSymbolsRounded.codepoints")));
+        loadIconCodepoints(
+            QStringLiteral(":/merce/playground/MaterialSymbolsRounded.codepoints")));
     engine.rootContext()->setContextProperty(
         QStringLiteral("playgroundThemeSourcePaths"),
         parser.values(themeSourceOption));
