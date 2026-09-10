@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Layouts
 import Qt.labs.StyleKit as SK
 import Merce.Theme
 import Merce.Foundation
@@ -88,6 +89,34 @@ Item {
         return String(value).toUpperCase()
     }
 
+    function wrappedRowHeight(availableWidth, itemGap, widths, heights) {
+        let totalHeight = 0
+        let rowWidth = 0
+        let rowHeight = 0
+
+        for (let i = 0; i < widths.length; ++i) {
+            const itemWidth = Math.min(availableWidth, Number(widths[i] || 0))
+            const itemHeight = Number(heights[i] || 0)
+            if (itemWidth <= 0 || itemHeight <= 0)
+                continue
+            if (rowWidth > 0 && rowWidth + itemGap + itemWidth > availableWidth + 1) {
+                totalHeight += rowHeight + itemGap
+                rowWidth = 0
+                rowHeight = 0
+            }
+            rowWidth += (rowWidth > 0 ? itemGap : 0) + itemWidth
+            rowHeight = Math.max(rowHeight, itemHeight)
+        }
+
+        return totalHeight + rowHeight
+    }
+
+    function uniformWrappedHeight(availableWidth, itemGap, itemCount, itemWidth, itemHeight) {
+        const columns = Math.max(1, Math.floor((availableWidth + itemGap) / (itemWidth + itemGap)))
+        const rows = Math.ceil(itemCount / columns)
+        return rows * itemHeight + Math.max(0, rows - 1) * itemGap
+    }
+
     function showDestructiveDialog() {
         return NotificationCenter.ask({
             owner: root,
@@ -122,8 +151,13 @@ Item {
         required property string label
         required property color swatchColor
 
-        width: 180
-        height: 76
+        objectName: "merce.playground.gallery.swatchItem." + label
+        implicitWidth: 220
+        implicitHeight: 84
+        Layout.minimumWidth: Math.min(220, root.width)
+        Layout.preferredWidth: Math.min(260, root.width)
+        Layout.maximumWidth: root.width
+        Layout.fillWidth: true
 
         Rectangle {
             id: swatch
@@ -215,12 +249,23 @@ Item {
                 }
                 spacing: Theme.spacing.md
 
-                Row {
+                FlexboxLayout {
+                    objectName: "merce.playground.gallery.activeThemeLayout"
                     width: parent.width
-                    spacing: Theme.spacing.md
+                    height: root.wrappedRowHeight(width, gap,
+                                                  [Math.min(320, width), Math.min(472, width)],
+                                                  [activeTitleColumn.implicitHeight, selectorRow.height])
+                    direction: FlexboxLayout.Row
+                    wrap: FlexboxLayout.Wrap
+                    gap: Theme.spacing.md
+                    alignItems: FlexboxLayout.AlignCenter
 
                     Column {
-                        width: Math.max(260, parent.width - selectorRow.width - parent.spacing)
+                        id: activeTitleColumn
+                        Layout.minimumWidth: Math.min(260, parent.width)
+                        Layout.preferredWidth: 320
+                        Layout.maximumWidth: parent.width
+                        Layout.fillWidth: true
                         spacing: Theme.spacing.xxs
 
                         SectionTitle {
@@ -237,15 +282,19 @@ Item {
                         }
                     }
 
-                    Row {
+                    Flow {
                         id: selectorRow
-                        width: implicitWidth
+                        Layout.minimumWidth: Math.min(400, parent.width)
+                        Layout.preferredWidth: 472
+                        Layout.maximumWidth: parent.width
+                        Layout.fillWidth: true
                         spacing: Theme.spacing.sm
-                        anchors.verticalCenter: parent.verticalCenter
 
                         Column {
                             id: themeSelectorField
-                            width: 280
+                            width: !modeSelectorField.visible || selectorRow.width < 412
+                                   ? selectorRow.width
+                                   : Math.max(240, selectorRow.width - 180 - selectorRow.spacing)
                             spacing: Theme.spacing.xxs
 
                             FieldLabel {
@@ -269,7 +318,7 @@ Item {
 
                         Column {
                             id: modeSelectorField
-                            width: 180
+                            width: selectorRow.width < 412 ? selectorRow.width : 180
                             spacing: Theme.spacing.xxs
                             visible: root.modeOptions.length > 0
 
@@ -318,9 +367,15 @@ Item {
                     text: "Palette"
                 }
 
-                Flow {
+                FlexboxLayout {
+                    objectName: "merce.playground.gallery.paletteLayout"
                     width: parent.width
-                    spacing: Theme.spacing.md
+                    height: root.uniformWrappedHeight(width, gap, 10,
+                                                      Math.min(260, width), 84)
+                    direction: FlexboxLayout.Row
+                    wrap: FlexboxLayout.Wrap
+                    gap: Theme.spacing.md
+                    alignItems: FlexboxLayout.AlignStart
 
                     TokenSwatch { label: "surface.canvas"; swatchColor: Theme.colors.surface.canvas }
                     TokenSwatch { label: "surface.container"; swatchColor: Theme.colors.surface.container }
@@ -415,7 +470,8 @@ Item {
                 ScaleSample { label: "md"; tokenValue: Theme.spacing.md }
                 ScaleSample { label: "xl"; tokenValue: Theme.spacing.xl }
 
-                Row {
+                Flow {
+                    width: parent.width
                     spacing: Theme.spacing.lg
 
                     Rectangle {
@@ -506,7 +562,7 @@ Item {
                 SK.TextField {
                     id: emailInput
                     objectName: "merce.playground.gallery.input"
-                    width: 360
+                    width: Math.min(360, parent.width)
                     placeholderText: "Email"
                     inputMethodHints: Qt.ImhEmailCharactersOnly
                     text: "theme@merce.local"
@@ -545,7 +601,7 @@ Item {
                 SK.ComboBox {
                     id: selectSample
                     objectName: "merce.playground.gallery.select"
-                    width: 360
+                    width: Math.min(360, parent.width)
                     property color observedPaletteColor: Theme.colors.content.primary
                     model: [
                         { "value": "runtime", "label": "Runtime theme" },
@@ -582,7 +638,8 @@ Item {
                     text: "Evidence"
                 }
 
-                Row {
+                Flow {
+                    width: parent.width
                     spacing: Theme.spacing.md
 
                     SK.Button {

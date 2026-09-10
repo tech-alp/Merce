@@ -234,9 +234,10 @@ ApplicationWindow {
         stackDepth: pageStack.depth
     }
 
-    Item {
+    Rectangle {
         id: contentShell
         objectName: "merce.playground.content"
+        color: Theme.colors.surface.canvas
         anchors {
             fill: parent
             topMargin: root.header ? root.header.height : 0
@@ -251,7 +252,7 @@ ApplicationWindow {
                 top: parent.top
                 bottom: parent.bottom
             }
-            width: 260
+            width: 280
             pages: pageModel
             selectedPage: root.selectedPage
             activeTheme: Theme.activeBrand + " / " + (Theme.activeMode === "" ? "default" : Theme.activeMode)
@@ -393,7 +394,7 @@ ApplicationWindow {
 
     Component {
         id: spacingShowcase
-        SpacingRadiusShowcase {
+        SpacingRadiusPage {
             objectName: "merce.playground.spacingRadiusShowcase"
         }
     }

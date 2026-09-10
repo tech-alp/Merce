@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Layouts
 import Qt.labs.StyleKit as SK
 import Merce.Theme
 import Merce.Foundation
@@ -119,6 +120,11 @@ Item {
         const blue = Math.round(value.b * 255)
         return "#" + (alpha < 255 ? hexByte(alpha) : "")
                 + hexByte(red) + hexByte(green) + hexByte(blue)
+    }
+
+    function tokenCardWidth(availableWidth) {
+        const columns = availableWidth >= 440 ? 2 : 1
+        return Math.floor((availableWidth - Theme.spacing.lg * (columns - 1)) / columns)
     }
 
     function colorPath(group, token) {
@@ -349,6 +355,8 @@ Item {
             textRole: "label"
             valueRole: "value"
             currentValue: parent.selectedValue
+            displayText: currentIndex >= 0 ? currentText : parent.selectedValue
+            enabled: root.authoringEnabled
             onActivated: {
                 parent.selected(String(currentValue))
             }
@@ -379,14 +387,26 @@ Item {
                 }
             }
 
-            Row {
+            FlexboxLayout {
                 width: parent.width
-                spacing: Theme.spacing.md
+                readonly property bool compact: width < 520
+                height: compact
+                        ? themeNameField.implicitHeight + gap + applyButton.implicitHeight
+                        : Math.max(themeNameField.implicitHeight, applyButton.implicitHeight)
+                direction: FlexboxLayout.Row
+                wrap: FlexboxLayout.Wrap
+                gap: Theme.spacing.md
+                alignItems: FlexboxLayout.AlignCenter
 
                 SK.TextField {
-                    width: Math.min(360, parent.width - applyButton.width - parent.spacing)
+                    id: themeNameField
+                    Layout.minimumWidth: Math.min(240, parent.width)
+                    Layout.preferredWidth: 360
+                    Layout.maximumWidth: parent.width
+                    Layout.fillWidth: true
                     text: root.themeName
                     placeholderText: qsTr("Theme name")
+                    enabled: root.authoringEnabled
                     onTextEdited: {
                         root.themeName = text
                     }
@@ -394,6 +414,10 @@ Item {
 
                 MButton {
                     id: applyButton
+                    Layout.minimumWidth: Math.min(180, parent.width)
+                    Layout.preferredWidth: 220
+                    Layout.maximumWidth: parent.width
+                    Layout.fillWidth: parent.compact
                     text: qsTr("Save & Apply")
                     enabled: root.authoringEnabled
                     onClicked: root.saveAndApply()
@@ -419,7 +443,7 @@ Item {
 
                 SectionCaption {
                     width: parent.width
-                    text: qsTr("Edit the MerceColors semantic groups. The generated manifest uses the same text, background, border, action, status, and surface contract.")
+                    text: qsTr("Inspect the MerceColors semantic groups. The generated manifest uses the same text, background, border, action, status, and surface contract.")
                 }
             }
 
@@ -469,8 +493,9 @@ Item {
 
                                     readonly property string resolvedTokenPath: root.colorPath(colorGroupDelegate.modelData.key, modelData.key)
 
-                                    width: Math.min(280, parent.width)
-                                    enabled: root.authoringEnabled
+                                    width: root.tokenCardWidth(parent.width)
+                                    editable: root.authoringEnabled
+                                    compact: !root.authoringEnabled
                                     tokenPath: resolvedTokenPath
                                     usage: modelData.usage
                                     selectedColor: root.colorValue(resolvedTokenPath, root.currentColor(colorGroupDelegate.modelData.key, modelData.key))
@@ -546,23 +571,35 @@ Item {
 
                 SectionCaption {
                     width: parent.width
-                    text: qsTr("Save and apply the custom theme to refresh the full playground runtime.")
+                    text: qsTr("Preview the active resolved theme across semantic colors and font roles.")
                 }
             }
 
-            Row {
+            FlexboxLayout {
                 width: parent.width
-                spacing: Theme.spacing.md
+                readonly property bool compact: width < 520
+                height: compact
+                        ? 184 + gap + previewDetails.implicitHeight
+                        : Math.max(184, previewDetails.implicitHeight)
+                direction: FlexboxLayout.Row
+                wrap: FlexboxLayout.Wrap
+                gap: Theme.spacing.md
+                alignItems: FlexboxLayout.AlignStart
 
                 Rectangle {
-                    width: 220
-                    height: 132
+                    id: previewCard
+                    Layout.minimumWidth: Math.min(260, parent.width)
+                    Layout.preferredWidth: 260
+                    Layout.maximumWidth: parent.width
+                    Layout.fillWidth: parent.compact
+                    height: 184
                     radius: Theme.radius.large
                     color: root.colorValue("surface.container", Theme.colors.surface.container)
                     border.width: 1
                     border.color: root.colorValue("outline.focus", Theme.colors.outline.focus)
 
                     Column {
+                        id: previewCardColumn
                         anchors {
                             left: parent.left
                             right: parent.right
@@ -609,7 +646,11 @@ Item {
                 }
 
                 Column {
-                    width: Math.max(220, parent.width - 220 - Theme.spacing.md)
+                    id: previewDetails
+                    Layout.minimumWidth: Math.min(220, parent.width)
+                    Layout.preferredWidth: 280
+                    Layout.maximumWidth: parent.width
+                    Layout.fillWidth: true
                     spacing: Theme.spacing.sm
 
                     AppLabel {

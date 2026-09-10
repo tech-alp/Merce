@@ -24,6 +24,10 @@ Item {
                 + hexByte(red) + hexByte(green) + hexByte(blue)
     }
 
+    function breakableTokenLabel(value) {
+        return String(value).split(".").join(".\u200B")
+    }
+
     function contrastRatio(foreground, background) {
         const foregroundLuminance = relativeLuminance(foreground)
         const backgroundLuminance = relativeLuminance(background)
@@ -48,19 +52,19 @@ Item {
         return "Fail"
     }
 
-    function categoryCardWidth() {
-        const columns = root.width >= root.wideBreakpoint ? 3 : root.width >= root.mediumBreakpoint ? 2 : 1
-        return Math.floor((page.width - root.cardGap * (columns - 1)) / columns)
+    function categoryCardWidth(availableWidth) {
+        const columns = availableWidth >= root.wideBreakpoint ? 3 : availableWidth >= root.mediumBreakpoint ? 2 : 1
+        return Math.floor((availableWidth - root.cardGap * (columns - 1)) / columns)
     }
 
-    function metricCardWidth() {
-        const columns = root.width >= root.wideBreakpoint ? 4 : root.width >= root.mediumBreakpoint ? 2 : 1
-        return Math.floor((page.width - root.cardGap * (columns - 1)) / columns)
+    function metricCardWidth(availableWidth) {
+        const columns = availableWidth >= root.wideBreakpoint ? 4 : availableWidth >= root.mediumBreakpoint ? 2 : 1
+        return Math.floor((availableWidth - root.cardGap * (columns - 1)) / columns)
     }
 
-    function previewCardWidth() {
-        const columns = root.width >= root.wideBreakpoint ? 4 : root.width >= root.mediumBreakpoint ? 2 : 1
-        return Math.floor((page.width - root.cardGap * (columns - 1)) / columns)
+    function previewCardWidth(availableWidth) {
+        const columns = availableWidth >= root.wideBreakpoint ? 4 : availableWidth >= root.mediumBreakpoint ? 2 : 1
+        return Math.floor((availableWidth - root.cardGap * (columns - 1)) / columns)
     }
 
     function hexByte(value) {
@@ -160,9 +164,10 @@ Item {
                 AppLabel {
                     width: parent.width
                     textType: AppLabel.Caption
-                    text: label
+                    text: root.breakableTokenLabel(label)
                     color: Theme.colors.content.primary
                     wrapMode: Text.WordWrap
+                    textFormat: Text.PlainText
                 }
 
                 SectionCaption {
@@ -205,7 +210,7 @@ Item {
         property string subtitle: ""
         default property alias content: tokenColumn.data
 
-        width: root.categoryCardWidth()
+        width: root.categoryCardWidth(parent ? parent.width : root.width)
         height: tokenColumn.implicitHeight + Theme.spacing.xl2
         surfaceType: Surface.Default
         radiusValue: Theme.radius.large
@@ -244,7 +249,7 @@ Item {
         required property color sampleBackgroundColor
         property string kind: "text"
 
-        width: root.metricCardWidth()
+        width: root.metricCardWidth(parent ? parent.width : root.width)
         height: metricColumn.implicitHeight + Theme.spacing.lg
         surfaceType: Surface.Default
         radiusValue: Theme.radius.large
@@ -348,7 +353,7 @@ Item {
         required property string title
         default property alias content: previewContent.data
 
-        width: root.previewCardWidth()
+        width: root.previewCardWidth(parent ? parent.width : root.width)
         height: previewContent.implicitHeight + Theme.spacing.xl2
         surfaceType: Surface.Default
         radiusValue: Theme.radius.large

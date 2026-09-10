@@ -11,6 +11,8 @@ FocusScope {
     property string tokenPath: ""
     property string usage: ""
     property color selectedColor: "#E4572E"
+    property bool editable: true
+    property bool compact: false
 
     signal colorEdited(color value)
 
@@ -22,7 +24,7 @@ FocusScope {
     width: parent ? parent.width : 280
     implicitWidth: 280
     implicitHeight: card.height
-    activeFocusOnTab: true
+    activeFocusOnTab: editable
 
     Accessible.role: Accessible.Button
     Accessible.name: qsTr("Edit %1").arg(tokenPath)
@@ -46,6 +48,8 @@ FocusScope {
     }
 
     function openEditor() {
+        if (!editable)
+            return
         pickerPopup.open()
     }
 
@@ -57,20 +61,20 @@ FocusScope {
         id: card
 
         width: parent.width
-        height: 184
+        height: root.compact ? 136 : 184
         surfaceType: Surface.Default
         radiusValue: Theme.radius.large
         backgroundColor: Theme.colors.surface.container
         borderWidth: root.activeFocus ? 2 : 1
         borderColor: root.activeFocus ? Theme.colors.outline.focus
-                                      : cardHover.hovered ? Theme.colors.outline.strong : Theme.colors.outline.subtle
+                                      : root.editable && cardHover.hovered ? Theme.colors.outline.strong : Theme.colors.outline.subtle
 
-        layer.enabled: true
+        layer.enabled: root.editable
         layer.effect: MultiEffect {
             shadowEnabled: true
             shadowColor: Theme.colors.surface.shadow
             shadowBlur: 0.7
-            shadowOpacity: cardHover.hovered || pickerPopup.visible ? 0.35 : 0.22
+            shadowOpacity: root.editable && (cardHover.hovered || pickerPopup.visible) ? 0.35 : 0.22
         }
 
         Rectangle {
@@ -78,13 +82,15 @@ FocusScope {
 
             anchors {
                 left: parent.left
-                right: parent.right
+                right: root.compact ? undefined : parent.right
                 top: parent.top
+                bottom: root.compact ? parent.bottom : undefined
             }
-            height: 92
+            width: root.compact ? 80 : parent.width
+            height: root.compact ? parent.height : 92
             topLeftRadius: parent.radius - 1
-            topRightRadius: parent.radius - 1
-            bottomLeftRadius: 0
+            topRightRadius: root.compact ? 0 : parent.radius - 1
+            bottomLeftRadius: root.compact ? parent.radius - 1 : 0
             bottomRightRadius: 0
             color: root.selectedColor
 
@@ -100,6 +106,7 @@ FocusScope {
                 color: "#CCFFFFFF"
                 border.width: 1
                 border.color: "#66FFFFFF"
+                visible: root.editable
 
                 AppIcon {
                     anchors.centerIn: parent
@@ -114,18 +121,22 @@ FocusScope {
             anchors {
                 left: parent.left
                 right: parent.right
-                top: swatch.bottom
+                top: root.compact ? parent.top : swatch.bottom
                 bottom: parent.bottom
                 margins: Theme.spacing.md
             }
+            anchors.leftMargin: root.compact ? swatch.width + Theme.spacing.md : Theme.spacing.md
             spacing: Theme.spacing.xxs
 
             AppLabel {
                 width: parent.width
-                textType: AppLabel.Body
+                textType: AppLabel.Caption
                 text: root.tokenPath
                 color: Theme.colors.content.primary
-                wrapMode: Text.WordWrap
+                wrapMode: Text.WrapAnywhere
+                maximumLineCount: 2
+                elide: Text.ElideRight
+                textFormat: Text.PlainText
             }
 
             AppLabel {
@@ -134,8 +145,9 @@ FocusScope {
                 text: root.usage
                 color: Theme.colors.content.secondary
                 wrapMode: Text.WordWrap
-                maximumLineCount: root.narrow ? 1 : 2
+                maximumLineCount: root.compact || root.narrow ? 1 : 2
                 elide: Text.ElideRight
+                textFormat: Text.PlainText
             }
 
             AppLabel {
@@ -145,14 +157,17 @@ FocusScope {
                 color: Theme.colors.content.secondary
                 font.family: FoundationFonts.resolveFamily(Theme.typography.fontMono)
                 elide: Text.ElideRight
+                textFormat: Text.PlainText
             }
         }
 
         HoverHandler {
             id: cardHover
+            enabled: root.editable
         }
 
         TapHandler {
+            enabled: root.editable
             onTapped: root.openEditor()
         }
     }

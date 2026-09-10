@@ -43,6 +43,7 @@ Item {
     component SectionTitle: AppLabel {
         textType: AppLabel.H4
         color: Theme.colors.content.primary
+        wrapMode: Text.WordWrap
     }
 
     component StateSample: Item {
@@ -396,7 +397,10 @@ Item {
                 }
                 spacing: Theme.spacing.lg
 
-                SectionTitle { text: "Live StyleKit states" }
+                SectionTitle {
+                    width: parent.width
+                    text: "Live StyleKit states"
+                }
 
                 Flow {
                     width: parent.width
@@ -453,7 +457,10 @@ Item {
                 }
                 spacing: Theme.spacing.lg
 
-                SectionTitle { text: "Semantic interaction tokens" }
+                SectionTitle {
+                    width: parent.width
+                    text: "Semantic interaction tokens"
+                }
 
                 Flow {
                     id: legendFlow
@@ -462,7 +469,7 @@ Item {
 
                     TokenLegend {
                         width: root.compactLayout
-                               ? (legendFlow.width - legendFlow.spacing) / 2
+                               ? legendFlow.width
                                : (legendFlow.width - legendFlow.spacing * 2) / 3
                         token: "action.primary"
                         usage: "Primary actions"
@@ -470,7 +477,7 @@ Item {
                     }
                     TokenLegend {
                         width: root.compactLayout
-                               ? (legendFlow.width - legendFlow.spacing) / 2
+                               ? legendFlow.width
                                : (legendFlow.width - legendFlow.spacing * 2) / 3
                         token: "action.destructive"
                         usage: "Destructive actions"
@@ -478,7 +485,7 @@ Item {
                     }
                     TokenLegend {
                         width: root.compactLayout
-                               ? (legendFlow.width - legendFlow.spacing) / 2
+                               ? legendFlow.width
                                : (legendFlow.width - legendFlow.spacing * 2) / 3
                         token: "status.success"
                         usage: "Positive status"
@@ -486,7 +493,7 @@ Item {
                     }
                     TokenLegend {
                         width: root.compactLayout
-                               ? (legendFlow.width - legendFlow.spacing) / 2
+                               ? legendFlow.width
                                : (legendFlow.width - legendFlow.spacing * 2) / 3
                         token: "status.warning"
                         usage: "Warning status"
@@ -494,7 +501,7 @@ Item {
                     }
                     TokenLegend {
                         width: root.compactLayout
-                               ? (legendFlow.width - legendFlow.spacing) / 2
+                               ? legendFlow.width
                                : (legendFlow.width - legendFlow.spacing * 2) / 3
                         token: "outline.focus"
                         usage: "Keyboard focus"
@@ -502,7 +509,7 @@ Item {
                     }
                     TokenLegend {
                         width: root.compactLayout
-                               ? (legendFlow.width - legendFlow.spacing) / 2
+                               ? legendFlow.width
                                : (legendFlow.width - legendFlow.spacing * 2) / 3
                         token: "surface.container"
                         usage: "Control surfaces"

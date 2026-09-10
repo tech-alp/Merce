@@ -71,6 +71,9 @@ int main(int argc, char *argv[])
     const QCommandLineOption exportThemeGalleryOption(QStringLiteral("export-theme-gallery"),
                                                       QStringLiteral("Export the theme gallery to a directory."),
                                                       QStringLiteral("output-dir"));
+    const QCommandLineOption exportPlaygroundPagesOption(QStringLiteral("export-playground-pages"),
+                                                         QStringLiteral("Export every playground page at audit widths."),
+                                                         QStringLiteral("output-dir"));
     const QCommandLineOption themeSourceOption(QStringLiteral("theme-source"),
                                                QStringLiteral("Load an external theme index.json source."),
                                                QStringLiteral("index.json"));
@@ -85,6 +88,7 @@ int main(int argc, char *argv[])
         themeBuilderProbeOption,
         smokeTestOption,
         exportThemeGalleryOption,
+        exportPlaygroundPagesOption,
         themeSourceOption,
     });
     parser.process(app);
@@ -106,6 +110,7 @@ int main(int argc, char *argv[])
     const bool themeGalleryProbe = parser.isSet(themeGalleryProbeOption);
     const bool themeBuilderProbe = parser.isSet(themeBuilderProbeOption);
     const bool exportThemeGallery = parser.isSet(exportThemeGalleryOption);
+    const bool exportPlaygroundPages = parser.isSet(exportPlaygroundPagesOption);
     const bool smokeTest = parser.isSet(smokeTestOption);
 
     engine.rootContext()->setContextProperty(
@@ -132,17 +137,39 @@ int main(int argc, char *argv[])
         engine.rootContext()->setContextProperty(QStringLiteral("themeGalleryOutputDir"), outputDir.absolutePath());
     }
 
-    const char *component = exportThemeGallery ? "ThemeGalleryExport"
+    if (exportPlaygroundPages) {
+        if (parser.value(exportPlaygroundPagesOption).trimmed().isEmpty()) {
+            qCritical().noquote() << "--export-playground-pages requires an output directory";
+            return 2;
+        }
+
+        QDir outputDir(QDir::current().absoluteFilePath(parser.value(exportPlaygroundPagesOption)));
+        if (!outputDir.exists() && !outputDir.mkpath(QStringLiteral("."))) {
+            qCritical().noquote() << "Could not create playground page output directory:" << outputDir.absolutePath();
+            return 2;
+        }
+
+        engine.rootContext()->setContextProperty(QStringLiteral("playgroundPagesOutputDir"),
+                                                 outputDir.absolutePath());
+    }
+
+    const char *component = exportPlaygroundPages ? "PlaygroundPagesExport"
+                                                 : (exportThemeGallery ? "ThemeGalleryExport"
                                                : (themeBuilderProbe ? "ThemeBuilderProbe"
                                                                     : (themeGalleryProbe ? "ThemeGalleryProbe"
                                                                                          : (fontAwesomeGridProbe ? "FontAwesomeGridProbe"
                                                                                                                  : (fontAwesomeIconProbe ? "FontAwesomeIconProbe"
                                                                                                                                          : (playgroundProbe ? "PlaygroundProbe"
                                                                                                                                                             : (themeSwitchProbe ? "ThemeSwitchProbe"
-                                                                                                                                                                                : (themeProbe ? "ThemeProbe" : "Main")))))));
+                                                                                                                                                                                : (themeProbe ? "ThemeProbe" : "Main"))))))));
     engine.loadFromModule("Merce.Playground", component);
 
-    if (exportThemeGallery) {
+    if (exportPlaygroundPages) {
+        QTimer::singleShot(120000, &app, []() {
+            qCritical().noquote() << "Playground page export timed out";
+            QCoreApplication::exit(3);
+        });
+    } else if (exportThemeGallery) {
         QTimer::singleShot(6000, &app, []() {
             qCritical().noquote() << "Theme gallery export timed out";
             QCoreApplication::exit(3);
