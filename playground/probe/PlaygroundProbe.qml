@@ -6,6 +6,20 @@ import Merce.Icons.FontAwesome
 Main {
     id: root
 
+
+    // Counting brands fails on the number every time one is added, which says
+    // nothing about whether the brands a probe needs are present. Name them.
+    function hasBrands(names) {
+        for (let i = 0; i < names.length; ++i) {
+            let found = false
+            for (let j = 0; j < Theme.availableThemes.length; ++j) {
+                if (Theme.availableThemes[j].value === names[i]) { found = true; break }
+            }
+            if (!found) return false
+        }
+        return true
+    }
+
     function fail(message, values) {
         console.error("playground-probe failed", message, values)
         Qt.exit(1)
@@ -151,7 +165,7 @@ Main {
                 if (root.objectName !== "merce.playground.window"
                         || root.selectedPage !== "theme"
                         || root.pageTitle(root.selectedPage) !== "Overview"
-                        || Theme.availableThemes.length !== 10
+                        || !root.hasBrands(["algit", "merce", "apple", "linear"])
                         || Theme.availableProfiles.length !== 3
                         || !galleryPrimaryButton
                         || !root.fitsVertically(themeSelect, activeLayout)

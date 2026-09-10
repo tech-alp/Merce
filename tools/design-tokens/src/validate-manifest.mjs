@@ -153,7 +153,10 @@ export async function validateGeneratedDirectory(themeDirectory) {
     throw new Error(`${indexPath}\n- ${indexErrors.join('\n- ')}`);
   }
 
-  const expectedThemeFiles = new Set(['index.json']);
+  // reference-index.json lists the playground-only brands. It is an index like
+  // index.json, not a resolved theme, so it is expected here but not validated
+  // as one.
+  const expectedThemeFiles = new Set(['index.json', 'reference-index.json']);
   const validations = [];
   for (const [brandId, brand] of Object.entries(index.brands)) {
     for (const [mode, fileName] of Object.entries(brand.modes)) {

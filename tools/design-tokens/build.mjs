@@ -6,6 +6,7 @@ import {
 } from './src/merce-manifest-format.mjs';
 import {
   generatedIndex,
+  isRuntimeBrand,
   loadThemeRegistry,
   profileEntries,
   resolveRegistryPath,
@@ -38,6 +39,16 @@ await writeFile(
   path.join(GENERATED_THEME_DIR, 'index.json'),
   `${JSON.stringify(generatedIndex(registry), null, 2)}\n`,
 );
+
+// The playground loads this through --theme-source, so reference palettes stay
+// demonstrable without an application being able to resolve one.
+const referenceBrands = Object.entries(registry.brands).filter((e) => !isRuntimeBrand(e));
+if (referenceBrands.length > 0) {
+  await writeFile(
+    path.join(GENERATED_THEME_DIR, 'reference-index.json'),
+    `${JSON.stringify(generatedIndex(registry, (e) => !isRuntimeBrand(e), false), null, 2)}\n`,
+  );
+}
 
 for (const entry of themeEntries(registry)) {
   await writeDocument({

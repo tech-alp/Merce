@@ -117,9 +117,17 @@ int main(int argc, char *argv[])
         QStringLiteral("playgroundMaterialIcons"),
         loadIconCodepoints(
             QStringLiteral(":/merce/playground/MaterialSymbolsRounded.codepoints")));
+    // The reference palettes are compiled in rather than requested, so every
+    // invocation shows them: probes and CI run the playground with no arguments
+    // beyond the one they are testing.
+    QStringList themeSources = parser.values(themeSourceOption);
+    const QString referenceIndex = QCoreApplication::applicationDirPath()
+        + QStringLiteral("/themes/reference-index.json");
+    if (QFile::exists(referenceIndex) && !themeSources.contains(referenceIndex)) {
+        themeSources.prepend(referenceIndex);
+    }
     engine.rootContext()->setContextProperty(
-        QStringLiteral("playgroundThemeSourcePaths"),
-        parser.values(themeSourceOption));
+        QStringLiteral("playgroundThemeSourcePaths"), themeSources);
     engine.rootContext()->setContextProperty(QStringLiteral("playgroundThemeBuilder"), &themeBuilder);
 
     if (exportThemeGallery) {

@@ -232,6 +232,57 @@ npm --prefix tools/design-tokens run check
 Generated manifests and font resources under generated/ are committed. The
 check command fails when they are stale.
 
+## Brands and typefaces
+
+The generated index the applications read carries only product brands: `merce`,
+`algit`, and the tenant brands `migros` and `happy-center`. A brand marked
+`runtime: false` in `tools/design-tokens/themes.json` is still generated, but it
+is listed in `reference-index.json` instead and only the playground loads it.
+An application cannot resolve one, which is the point: a cart should not be
+configurable onto Apple's palette.
+
+### Adding a brand
+
+A brand is a seed colour, not a hand-written palette. `BrandDerivation` produces
+all 42 colour roles and the state layers from one seed, for light and dark, and
+rejects a seed it cannot correct into contrast rather than shipping a theme that
+fails it. Author the token source under
+`tools/design-tokens/tokens/themes/<brand>/variants/<mode>.json`, register the
+brand in `themes.json`, and regenerate.
+
+Two things bite when authoring by hand. Colours in a token source are
+`#RRGGBBAA`, while a resolved manifest under `generated/` is Qt's `#AARRGGBB`:
+copying a resolved value back into a source rotates it a second time, and a
+scrim silently becomes transparent. And the family names in `typography` must
+match the `name` table inside the font file, because the loader resolves
+families through the font database rather than through anything written here.
+
+### Shipping a typeface
+
+Every brand inherits `tokens/core/fonts`, currently Lexend and JetBrains Mono.
+A brand that needs its own faces puts them in
+`tools/design-tokens/tokens/themes/<brand>/fonts/` with their licence text, and
+overrides the families in a layer listed after `tokens/core/font-families.json`
+in that brand's `source` array:
+
+~~~json
+{
+  "typography": {
+    "displayFont": { "$type": "fontFamily", "$value": "Source Serif 4" },
+    "bodyFont":    { "$type": "fontFamily", "$value": "Inter" }
+  }
+}
+~~~
+
+The build copies the files out and lists them in the brand's manifest, so the
+runtime registers exactly the faces that brand asks for. Keep them under the
+brand rather than in `tokens/core/fonts`: core is copied into every brand, so a
+typeface placed there is carried by every application that ships any brand.
+
+Variable fonts are worth preferring. A static Regular against a profile that
+asks for 500, 600 and 700 does not fail; Qt synthesises the missing weights, and
+the result is a heading that looks subtly wrong with nothing reporting an error.
+
 ## Reference themes and trademarks
 
 Some bundled themes are unofficial reference fixtures derived from publicly

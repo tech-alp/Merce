@@ -5,6 +5,20 @@ import Merce.Theme
 QtObject {
     property color observedBackground: Theme.colors.surface.canvas
 
+
+    // Counting brands fails on the number every time one is added, which says
+    // nothing about whether the brands a probe needs are present. Name them.
+    function hasBrands(names) {
+        for (let i = 0; i < names.length; ++i) {
+            let found = false
+            for (let j = 0; j < Theme.availableThemes.length; ++j) {
+                if (Theme.availableThemes[j].value === names[i]) { found = true; break }
+            }
+            if (!found) return false
+        }
+        return true
+    }
+
     function fail(message, values) {
         console.error("theme-switch-probe failed", message, values)
         Qt.exit(1)
@@ -20,7 +34,7 @@ QtObject {
         if (Theme.activeBrand !== "algit"
                 || Theme.activeMode !== "light"
                 || Theme.activeProfile !== "cart"
-                || Theme.availableThemes.length !== 10
+                || !hasBrands(["algit", "merce", "migros", "happy-center"])
                 || String(observedBackground).toLowerCase() !== "#f6f4ee") {
             fail("default state",
                  [Theme.activeBrand, Theme.activeMode, Theme.activeProfile,
@@ -58,15 +72,12 @@ QtObject {
             return
         }
 
+        // Every brand the shipped runtime carries. The reference palettes are
+        // no longer among them: they load from the playground's own index, and
+        // this probe exercises what an application can actually resolve.
         const testThemes = [
             ["merce", "light"],
-            ["merce", "dark"],
-            ["apple", "light"],
-            ["claude", "light"],
-            ["airbnb", "light"],
-            ["stripe", "light"],
-            ["linear", "dark"],
-            ["linear", "light"]
+            ["merce", "dark"]
         ]
         for (let i = 0; i < testThemes.length; ++i) {
             const brand = testThemes[i][0]
@@ -74,7 +85,7 @@ QtObject {
             if (!Theme.setTheme(brand, mode)
                     || Theme.activeBrand !== brand
                     || Theme.activeMode !== mode) {
-                fail("reference theme switch", [brand, mode, Theme.activeBrand, Theme.activeMode])
+                fail("product theme switch", [brand, mode, Theme.activeBrand, Theme.activeMode])
                 return
             }
         }

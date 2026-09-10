@@ -23,7 +23,7 @@
       "containerSunken": "#F1F2F5",
       "containerTinted": "#FFF3EB",
       "floating": "#FFFFFF",
-      "scrim": "#99000000",
+      "scrim": "#A3000000",
       "inverse": "#292A2C",
       "shadow": "#292A2C"
     },
@@ -60,13 +60,13 @@
       },
       "warning": {
         "container": "#FFFBEB",
-        "content": "#8A4B00",
-        "outline": "#8A4B00"
+        "content": "#7A4200",
+        "outline": "#7A4200"
       },
       "error": {
         "container": "#FEF2F2",
-        "content": "#B3261E",
-        "outline": "#B3261E"
+        "content": "#A61B14",
+        "outline": "#A61B14"
       },
       "info": {
         "container": "#EFF4FC",
@@ -74,9 +74,9 @@
         "outline": "#245EA8"
       },
       "neutral": {
-        "container": "#EFF1F0",
-        "content": "#4E5B58",
-        "outline": "#65716D"
+        "container": "#F1F3F2",
+        "content": "#39413F",
+        "outline": "#39413F"
       }
     },
     "outline": {
