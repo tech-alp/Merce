@@ -63,6 +63,16 @@ qt_add_qml_module(MercePlayground
         ${MERCE_PLAYGROUND_QML_FILES}
 )
 
+set(MERCE_MATERIAL_SYMBOLS_DIR
+    "${CMAKE_CURRENT_SOURCE_DIR}/../Foundation/fonts/MaterialSymbolsRounded"
+)
+qt_add_resources(MercePlayground merce_playground_icon_data
+    PREFIX "/merce/playground"
+    BASE "${MERCE_MATERIAL_SYMBOLS_DIR}"
+    FILES
+        "${MERCE_MATERIAL_SYMBOLS_DIR}/MaterialSymbolsRounded.codepoints"
+)
+
 target_link_libraries(MercePlayground
     PRIVATE
         Qt6::Core
@@ -87,5 +97,5 @@ target_link_libraries(MercePlayground
 
 target_compile_definitions(MercePlayground
     PRIVATE
-        QT_QML_DEBUG
+        $<$<CONFIG:Debug>:QT_QML_DEBUG>
 )

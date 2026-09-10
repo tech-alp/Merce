@@ -66,6 +66,7 @@ class tst_merce_style_runtime_switch : public QObject
 
 private slots:
     void existingStyleKitControlsRepaintAfterContextSwitch();
+    void spinBoxValuesFitOpsProfile();
 };
 
 void tst_merce_style_runtime_switch::existingStyleKitControlsRepaintAfterContextSwitch()
@@ -80,18 +81,25 @@ void tst_merce_style_runtime_switch::existingStyleKitControlsRepaintAfterContext
     QQuickItem *textField = nullptr;
     QQuickItem *switchControl = nullptr;
     QQuickItem *comboBox = nullptr;
+    QQuickItem *spinBox = nullptr;
+    QQuickItem *textArea = nullptr;
     QQuickItem *disabledCheckedButton = nullptr;
     QQuickItem *disabledCheckedCheckBox = nullptr;
     QQuickItem *disabledCheckedRadio = nullptr;
     QQuickItem *disabledCheckedSwitch = nullptr;
     QQuickItem *disabledCheckedItemDelegate = nullptr;
     QQuickItem *merceButton = nullptr;
+    QQuickItem *checkedOutlineButton = nullptr;
     QTRY_VERIFY(button = window->findChild<QQuickItem *>(QStringLiteral("styleButton")));
     QTRY_VERIFY(textField = window->findChild<QQuickItem *>(QStringLiteral("styleTextField")));
     QTRY_VERIFY(switchControl =
                     window->findChild<QQuickItem *>(QStringLiteral("styleSwitch")));
     QTRY_VERIFY(comboBox =
                     window->findChild<QQuickItem *>(QStringLiteral("styleComboBox")));
+    QTRY_VERIFY(spinBox =
+                    window->findChild<QQuickItem *>(QStringLiteral("styleSpinBox")));
+    QTRY_VERIFY(textArea =
+                    window->findChild<QQuickItem *>(QStringLiteral("styleTextArea")));
     QTRY_VERIFY(disabledCheckedButton =
                     window->findChild<QQuickItem *>(QStringLiteral("disabledCheckedButton")));
     QTRY_VERIFY(disabledCheckedCheckBox =
@@ -104,6 +112,8 @@ void tst_merce_style_runtime_switch::existingStyleKitControlsRepaintAfterContext
                     window->findChild<QQuickItem *>(
                         QStringLiteral("disabledCheckedItemDelegate")));
     QTRY_VERIFY(merceButton = window->findChild<QQuickItem *>(QStringLiteral("merceButton")));
+    QTRY_VERIFY(checkedOutlineButton =
+                    window->findChild<QQuickItem *>(QStringLiteral("checkedOutlineButton")));
     auto *theme = engine.singletonInstance<MerceTheme *>("Merce.Theme", "Theme");
     QVERIFY(theme);
     QCOMPARE(theme->activeBrand(), QStringLiteral("algit"));
@@ -116,9 +126,27 @@ void tst_merce_style_runtime_switch::existingStyleKitControlsRepaintAfterContext
              theme->size()->control()->medium());
     QCOMPARE(window->property("styleButtonColor").value<QColor>(),
              theme->colors()->action()->primary()->container());
+    QCOMPARE(qRound(window->property("styleSwitchWidth").toReal()),
+             theme->size()->control()->medium());
     QTRY_COMPARE(qRound(button->implicitHeight()), theme->size()->control()->medium());
     QTRY_COMPARE(qRound(switchControl->implicitHeight()), theme->size()->control()->medium());
+    QTRY_COMPARE(qRound(switchControl->property("implicitIndicatorWidth").toReal()),
+                 theme->size()->control()->medium());
     QTRY_COMPARE(qRound(comboBox->implicitHeight()), theme->size()->control()->medium());
+    QCOMPARE(qRound(window->property("styleSpinBoxHeight").toReal()),
+             theme->size()->control()->medium());
+    QCOMPARE(window->property("styleSpinBoxColor").value<QColor>(),
+             theme->colors()->surface()->container());
+    QCOMPARE(qRound(window->property("styleSpinBoxIndicatorSize").toReal()),
+             theme->size()->icon()->small());
+    QCOMPARE(window->property("styleSpinBoxIndicatorColor").value<QColor>(),
+             theme->colors()->content()->secondary());
+    QCOMPARE(qRound(window->property("styleTextAreaHeight").toReal()),
+             theme->size()->control()->medium() * 2);
+    QCOMPARE(window->property("styleTextAreaColor").value<QColor>(),
+             theme->colors()->surface()->container());
+    QTRY_COMPARE(qRound(spinBox->implicitHeight()), theme->size()->control()->medium());
+    QTRY_COMPARE(qRound(textArea->implicitHeight()), theme->size()->control()->medium() * 2);
     QCOMPARE(window->property("merceButtonVariations").toStringList(),
              QStringList({QStringLiteral("secondary"), QStringLiteral("small")}));
     QTRY_COMPARE(qRound(merceButton->implicitHeight()), theme->size()->control()->small());
@@ -129,6 +157,9 @@ void tst_merce_style_runtime_switch::existingStyleKitControlsRepaintAfterContext
         window, switchControl, theme->colors()->surface()->containerSunken());
     const QColor lightComboStyle = window->property("styleComboBoxColor").value<QColor>();
     const QColor lightCombo = renderedColorMatch(window, comboBox, lightComboStyle);
+    const QColor lightSpinBox = renderedColorMatch(
+        window, spinBox, window->property("styleSpinBoxColor").value<QColor>());
+    const QColor lightTextArea = renderedCenter(window, textArea);
     const QColor lightMerceButton = renderedCenter(window, merceButton);
     const QColor lightDisabledButtonStyle =
         window->property("disabledCheckedButtonColor").value<QColor>();
@@ -154,10 +185,32 @@ void tst_merce_style_runtime_switch::existingStyleKitControlsRepaintAfterContext
     QVERIFY2(colorsNear(lightCombo, lightComboStyle),
              qPrintable(QStringLiteral("combo rendered %1, expected %2")
                             .arg(lightCombo.name(), lightComboStyle.name())));
+    QVERIFY(colorsNear(lightSpinBox,
+                       window->property("styleSpinBoxColor").value<QColor>()));
+    const QColor lightTextAreaStyle =
+        window->property("styleTextAreaColor").value<QColor>();
+    QVERIFY2(colorsNear(lightTextArea, lightTextAreaStyle),
+             qPrintable(QStringLiteral("text area rendered %1, expected %2")
+                            .arg(lightTextArea.name(), lightTextAreaStyle.name())));
     QVERIFY2(colorsNear(lightMerceButton, theme->colors()->action()->secondary()->container()),
              qPrintable(QStringLiteral("MButton rendered %1, expected %2")
                             .arg(lightMerceButton.name(),
                                  theme->colors()->action()->secondary()->container().name())));
+    const QColor lightCheckedOutline = renderedCenter(window, checkedOutlineButton);
+    QVERIFY2(colorsNear(lightCheckedOutline,
+                        theme->colors()->action()->primary()->container()),
+             qPrintable(QStringLiteral("checked outline MButton rendered %1, expected %2")
+                            .arg(lightCheckedOutline.name(),
+                                 theme->colors()->action()->primary()->container().name())));
+    checkedOutlineButton->forceActiveFocus(Qt::TabFocusReason);
+    QTRY_VERIFY(checkedOutlineButton->hasActiveFocus());
+    const QColor lightFocusedCheckedOutline = renderedCenter(window, checkedOutlineButton);
+    QVERIFY2(colorsNear(lightFocusedCheckedOutline,
+                        theme->colors()->action()->primary()->container()),
+             qPrintable(QStringLiteral(
+                            "focused checked outline MButton rendered %1, expected %2")
+                            .arg(lightFocusedCheckedOutline.name(),
+                                 theme->colors()->action()->primary()->container().name())));
     QVERIFY(colorsNear(renderedColorMatch(window,
                                           disabledCheckedButton,
                                           lightDisabledButtonStyle),
@@ -190,11 +243,15 @@ void tst_merce_style_runtime_switch::existingStyleKitControlsRepaintAfterContext
     QTRY_COMPARE(qRound(button->implicitHeight()), theme->size()->control()->medium());
     QTRY_COMPARE(qRound(switchControl->implicitHeight()), theme->size()->control()->medium());
     QTRY_COMPARE(qRound(comboBox->implicitHeight()), theme->size()->control()->medium());
+    QTRY_COMPARE(qRound(spinBox->implicitHeight()), theme->size()->control()->medium());
+    QTRY_COMPARE(qRound(textArea->implicitHeight()), theme->size()->control()->medium() * 2);
 
     QColor darkButton;
     QColor darkField;
     QColor darkSwitch;
     QColor darkCombo;
+    QColor darkSpinBox;
+    QColor darkTextArea;
     QColor darkMerceButton;
     QTRY_VERIFY_WITH_TIMEOUT(
         colorsNear(darkButton = renderedCenter(window, button),
@@ -215,6 +272,17 @@ void tst_merce_style_runtime_switch::existingStyleKitControlsRepaintAfterContext
                        comboBox,
                        window->property("styleComboBoxColor").value<QColor>()),
                    window->property("styleComboBoxColor").value<QColor>()),
+        2000);
+    QTRY_VERIFY_WITH_TIMEOUT(
+        colorsNear(darkSpinBox = renderedColorMatch(
+                       window,
+                       spinBox,
+                       window->property("styleSpinBoxColor").value<QColor>()),
+                   window->property("styleSpinBoxColor").value<QColor>()),
+        2000);
+    QTRY_VERIFY_WITH_TIMEOUT(
+        colorsNear(darkTextArea = renderedCenter(window, textArea),
+                   window->property("styleTextAreaColor").value<QColor>()),
         2000);
     QTRY_COMPARE(qRound(merceButton->implicitHeight()), theme->size()->control()->small());
     QTRY_VERIFY_WITH_TIMEOUT(
@@ -260,6 +328,8 @@ void tst_merce_style_runtime_switch::existingStyleKitControlsRepaintAfterContext
     QVERIFY(lightField != darkField);
     QVERIFY(lightSwitch != darkSwitch);
     QVERIFY(lightCombo != darkCombo);
+    QVERIFY(lightSpinBox != darkSpinBox);
+    QVERIFY(lightTextArea != darkTextArea);
     QVERIFY(lightMerceButton != darkMerceButton);
 
     QVERIFY(theme->setContext(QStringLiteral("algit"),
@@ -272,6 +342,48 @@ void tst_merce_style_runtime_switch::existingStyleKitControlsRepaintAfterContext
                  "implicitBackgroundHeight at its construction-time profile",
                  Continue);
     QCOMPARE(qRound(switchControl->implicitHeight()), theme->size()->control()->medium());
+}
+
+void tst_merce_style_runtime_switch::spinBoxValuesFitOpsProfile()
+{
+    QQmlApplicationEngine engine;
+    auto *theme = engine.singletonInstance<MerceTheme *>("Merce.Theme", "Theme");
+    QVERIFY(theme);
+    QVERIFY(theme->setContext(QStringLiteral("algit"),
+                              QStringLiteral("light"),
+                              QStringLiteral("ops")));
+
+    engine.loadFromModule("Merce.Tests.StyleKit", "StyleRuntimeProbe");
+    QCOMPARE(engine.rootObjects().size(), 1);
+
+    auto *window = qobject_cast<QQuickWindow *>(engine.rootObjects().constFirst());
+    QVERIFY(window);
+    QQuickItem *spinBox = nullptr;
+    QQuickItem *compactSpinBox = nullptr;
+    QTRY_VERIFY(spinBox =
+                    window->findChild<QQuickItem *>(QStringLiteral("styleSpinBox")));
+    QTRY_VERIFY(compactSpinBox =
+                    window->findChild<QQuickItem *>(QStringLiteral("compactStyleSpinBox")));
+
+    renderedCenter(window, spinBox);
+    renderedCenter(window, compactSpinBox);
+
+    auto *spinBoxContent = qobject_cast<QQuickItem *>(
+        spinBox->property("contentItem").value<QObject *>());
+    auto *compactSpinBoxContent = qobject_cast<QQuickItem *>(
+        compactSpinBox->property("contentItem").value<QObject *>());
+    QVERIFY(spinBoxContent);
+    QVERIFY(compactSpinBoxContent);
+    QTRY_VERIFY(spinBoxContent->implicitWidth() > 0);
+    QTRY_VERIFY(compactSpinBoxContent->implicitWidth() > 0);
+    QVERIFY2(spinBoxContent->width() >= spinBoxContent->implicitWidth(),
+             qPrintable(QStringLiteral("spin box content width %1, required %2")
+                            .arg(spinBoxContent->width())
+                            .arg(spinBoxContent->implicitWidth())));
+    QVERIFY2(compactSpinBoxContent->width() >= compactSpinBoxContent->implicitWidth(),
+             qPrintable(QStringLiteral("compact spin box content width %1, required %2")
+                            .arg(compactSpinBoxContent->width())
+                            .arg(compactSpinBoxContent->implicitWidth())));
 }
 
 QTEST_MAIN(tst_merce_style_runtime_switch)

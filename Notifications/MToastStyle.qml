@@ -62,11 +62,15 @@ ToastifyStyleProvider {
     iconSize: Theme.icons.medium
     toastOffset: Theme.spacing.md
     toastSpacing: Theme.spacing.md
+    collapsedToastOffset: Theme.spacing.md
+    collapsedToastScaleStep: 0.05
+    stackTransitionDuration: Theme.motion.enter.duration
 
     // Colour is themed; the geometry is component tier because Theme.shadows.*
     // is not manifest-driven yet and still carries its C++ defaults.
     shadow: ({
-        blur: 0.5,
+        blurRadius: 16,
+        spread: 0,
         color: Theme.colors.surface.shadow,
         opacity: 0.16,
         horizontalOffset: 0,

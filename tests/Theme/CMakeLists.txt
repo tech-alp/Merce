@@ -20,6 +20,10 @@ function(merce_add_theme_qtest target source)
     add_test(NAME ${target}
         COMMAND ${target}
     )
+
+    set_tests_properties(${target} PROPERTIES
+        ENVIRONMENT "${MERCE_TEST_ENVIRONMENT}"
+    )
 endfunction()
 
 merce_add_theme_qtest(tst_merce_theme_manifest_loader tst_merce_theme_manifest_loader.cpp)
