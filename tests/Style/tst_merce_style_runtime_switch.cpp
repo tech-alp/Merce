@@ -172,6 +172,16 @@ void tst_merce_style_runtime_switch::existingStyleKitControlsRepaintAfterContext
     QVERIFY(loadingIndicator);
     QVERIFY(loadingIndicator->isVisible());
     QVERIFY(loadingIndicator->property("running").toBool());
+    // A spinner drawn over the label still reports visible and running, so
+    // assert the two occupy different space rather than merely both existing.
+    auto *loadingLabel = loadingButton->findChild<QQuickItem *>(QStringLiteral("buttonLabel"));
+    QVERIFY(loadingLabel);
+    QVERIFY2(!loadingIndicator
+                  ->mapRectToItem(loadingButton,
+                                  QRectF(0, 0, loadingIndicator->width(), loadingIndicator->height()))
+                  .intersects(loadingLabel->mapRectToItem(
+                      loadingButton, QRectF(0, 0, loadingLabel->width(), loadingLabel->height()))),
+             "the loading spinner overlaps the label");
     QVERIFY(loadingButton->property("styleVariations")
                 .toStringList()
                 .contains(QStringLiteral("loading")));
