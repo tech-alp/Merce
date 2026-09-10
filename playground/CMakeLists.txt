@@ -15,7 +15,6 @@ set(MERCE_PLAYGROUND_VIEW_QML
     view/PlaygroundPagesExport.qml
     view/ShadowsShowcase.qml
     view/SpacingRadiusPage.qml
-    view/StatesShowcase.qml
     view/ThemeGalleryExport.qml
     view/ThemeGallery.qml
     view/ThemeBuilderShowcase.qml
