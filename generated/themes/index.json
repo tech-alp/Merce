@@ -10,6 +10,13 @@
         "dark": "algit.dark.json"
       }
     },
+    "algit-setup": {
+      "displayName": "AlGit Setup",
+      "defaultMode": "light",
+      "modes": {
+        "light": "algit-setup.light.json"
+      }
+    },
     "happy-center": {
       "displayName": "Happy Center",
       "defaultMode": "light",

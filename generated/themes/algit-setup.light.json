@@ -1,0 +1,102 @@
+{
+  "kind": "resolved-theme",
+  "resolvedThemeSchemaVersion": 1,
+  "brandId": "algit-setup",
+  "mode": "light",
+  "identity": {
+    "mark": "#CC785C"
+  },
+  "typography": {
+    "displayFont": "Source Serif 4",
+    "bodyFont": "Inter",
+    "monoFont": "JetBrains Mono"
+  },
+  "fonts": [
+    "fonts/core/JetBrainsMono[wght].ttf",
+    "fonts/core/Lexend[wght].ttf",
+    "fonts/algit-setup/Inter[opsz,wght].ttf",
+    "fonts/algit-setup/SourceSerif4[opsz,wght].ttf"
+  ],
+  "colors": {
+    "surface": {
+      "canvas": "#F5F4ED",
+      "container": "#FAF9F5",
+      "containerRaised": "#FFFFFF",
+      "containerSunken": "#EDEAE2",
+      "containerTinted": "#F0EEE6",
+      "floating": "#FFFFFF",
+      "scrim": "#99000000",
+      "inverse": "#151A19",
+      "shadow": "#151A19"
+    },
+    "content": {
+      "primary": "#141413",
+      "secondary": "#5E5D59",
+      "tertiary": "#87867F",
+      "inverse": "#FFFFFF",
+      "disabled": "#7A847F",
+      "link": "#A9583E"
+    },
+    "action": {
+      "primary": {
+        "container": "#BD5938",
+        "content": "#FFFFFF",
+        "outline": "#BD5938"
+      },
+      "secondary": {
+        "container": "#65716D",
+        "content": "#FFFFFF",
+        "outline": "#65716D"
+      },
+      "destructive": {
+        "container": "#B3261E",
+        "content": "#FFFFFF",
+        "outline": "#B3261E"
+      }
+    },
+    "status": {
+      "success": {
+        "container": "#ECFDF3",
+        "content": "#166B3B",
+        "outline": "#166B3B"
+      },
+      "warning": {
+        "container": "#FFFBEB",
+        "content": "#8A4B00",
+        "outline": "#8A4B00"
+      },
+      "error": {
+        "container": "#FEF2F2",
+        "content": "#B3261E",
+        "outline": "#B3261E"
+      },
+      "info": {
+        "container": "#EFF4FC",
+        "content": "#245EA8",
+        "outline": "#245EA8"
+      },
+      "neutral": {
+        "container": "#EFF1F0",
+        "content": "#4E5B58",
+        "outline": "#65716D"
+      }
+    },
+    "outline": {
+      "subtle": "#E8E6DC",
+      "strong": "#A9B2AE",
+      "focus": "#A9583E"
+    }
+  },
+  "state": {
+    "layer": {
+      "hover": 0.08,
+      "focus": 0.1,
+      "pressed": 0.1,
+      "selected": 0.12
+    },
+    "disabled": {
+      "containerOpacity": 0.12,
+      "contentOpacity": 0.38
+    }
+  }
+}

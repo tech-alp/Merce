@@ -73,6 +73,7 @@ class tst_merce_theme_manifest_loader : public QObject
 
 private slots:
     void generatedResourceComposesColorAndProfileRegistries();
+    void modeMissingFromABrandFallsBackToItsDefault();
     void bareTenantBrandSourceIsDiscoverable();
     void tenantSchemaVersionRejectsOlderAndNewer_data();
     void tenantSchemaVersionRejectsOlderAndNewer();
@@ -157,6 +158,31 @@ void tst_merce_theme_manifest_loader::
     QCOMPARE(ops.profile, QStringLiteral("ops"));
     QVERIFY(ops.finalManifest.value(QStringLiteral("colors")).toObject()
                 != QJsonObject{});
+}
+
+void tst_merce_theme_manifest_loader::modeMissingFromABrandFallsBackToItsDefault()
+{
+    // Migros ships light only, and a config that asks it for dark is a
+    // plausible mistake. Refusing would drop the device profile with the
+    // colours, leaving a kiosk with desktop-sized touch targets, so the brand's
+    // own default answers instead and the resolved mode says what happened.
+    const MerceThemeLoadResult result =
+        MerceThemeManifestLoader().load(QStringLiteral("migros"),
+                                        QStringLiteral("dark"),
+                                        QStringLiteral("cart"));
+
+    QVERIFY2(result.ok, qPrintable(result.errors.join(QLatin1Char('\n'))));
+    QCOMPARE(result.brandId, QStringLiteral("migros"));
+    QCOMPARE(result.mode, QStringLiteral("light"));
+    QCOMPARE(result.profile, QStringLiteral("cart"));
+
+    // An unregistered brand is still a failure: there is nothing to fall back to
+    // that would not be another tenant's colours.
+    const MerceThemeLoadResult unknown =
+        MerceThemeManifestLoader().load(QStringLiteral("no-such-brand"),
+                                        QStringLiteral("light"),
+                                        QStringLiteral("cart"));
+    QVERIFY(!unknown.ok);
 }
 
 void tst_merce_theme_manifest_loader::bareTenantBrandSourceIsDiscoverable()
