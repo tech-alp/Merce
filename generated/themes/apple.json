@@ -23,16 +23,16 @@
       "containerSunken": "#EDEAE2",
       "containerTinted": "#EFF5F3",
       "floating": "#FFFFFF",
-      "scrim": "#99000000",
-      "inverse": "#151A19",
+      "scrim": "#A3000000",
+      "inverse": "#0E1514",
       "shadow": "#151A19"
     },
     "content": {
       "primary": "#151A19",
       "secondary": "#4E5B58",
-      "tertiary": "#6D7874",
+      "tertiary": "#606D69",
       "inverse": "#FFFFFF",
-      "disabled": "#7A847F",
+      "disabled": "#7D8783",
       "link": "#0066CC"
     },
     "action": {
@@ -42,9 +42,9 @@
         "outline": "#0071E3"
       },
       "secondary": {
-        "container": "#65716D",
+        "container": "#53615D",
         "content": "#FFFFFF",
-        "outline": "#65716D"
+        "outline": "#53615D"
       },
       "destructive": {
         "container": "#B3261E",
@@ -60,13 +60,13 @@
       },
       "warning": {
         "container": "#FFFBEB",
-        "content": "#8A4B00",
-        "outline": "#8A4B00"
+        "content": "#7A4200",
+        "outline": "#7A4200"
       },
       "error": {
         "container": "#FEF2F2",
-        "content": "#B3261E",
-        "outline": "#B3261E"
+        "content": "#A61B14",
+        "outline": "#A61B14"
       },
       "info": {
         "container": "#EFF4FC",
@@ -74,14 +74,14 @@
         "outline": "#245EA8"
       },
       "neutral": {
-        "container": "#EFF1F0",
-        "content": "#4E5B58",
-        "outline": "#65716D"
+        "container": "#F1F3F2",
+        "content": "#39413F",
+        "outline": "#39413F"
       }
     },
     "outline": {
       "subtle": "#CBD2CF",
-      "strong": "#A9B2AE",
+      "strong": "#87928E",
       "focus": "#0071E3"
     }
   },

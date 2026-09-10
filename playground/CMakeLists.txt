@@ -73,6 +73,38 @@ qt_add_resources(MercePlayground merce_playground_icon_data
         "${MERCE_MATERIAL_SYMBOLS_DIR}/MaterialSymbolsRounded.codepoints"
 )
 
+# Reference palettes belong to the playground, not to the theme library: they
+# exist to be looked at, and an application should not be able to resolve one.
+# addThemeSource takes a filesystem path by design, so they are copied beside
+# the binary rather than compiled into it.
+set(MERCE_REFERENCE_INDEX "${CMAKE_CURRENT_SOURCE_DIR}/../generated/themes/reference-index.json")
+if(EXISTS "${MERCE_REFERENCE_INDEX}")
+    set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${MERCE_REFERENCE_INDEX}")
+    file(READ "${MERCE_REFERENCE_INDEX}" MERCE_REFERENCE_JSON)
+    set(MERCE_REFERENCE_FILES "reference-index.json")
+    string(JSON REF_BRAND_COUNT LENGTH "${MERCE_REFERENCE_JSON}" brands)
+    math(EXPR REF_BRAND_LAST "${REF_BRAND_COUNT} - 1")
+    foreach(REF_INDEX RANGE 0 ${REF_BRAND_LAST})
+        string(JSON REF_BRAND MEMBER "${MERCE_REFERENCE_JSON}" brands ${REF_INDEX})
+        string(JSON REF_MODE_COUNT LENGTH "${MERCE_REFERENCE_JSON}" brands "${REF_BRAND}" modes)
+        math(EXPR REF_MODE_LAST "${REF_MODE_COUNT} - 1")
+        foreach(REF_MODE_INDEX RANGE 0 ${REF_MODE_LAST})
+            string(JSON REF_MODE MEMBER
+                "${MERCE_REFERENCE_JSON}" brands "${REF_BRAND}" modes ${REF_MODE_INDEX})
+            string(JSON REF_FILE GET
+                "${MERCE_REFERENCE_JSON}" brands "${REF_BRAND}" modes "${REF_MODE}")
+            list(APPEND MERCE_REFERENCE_FILES "${REF_FILE}")
+        endforeach()
+    endforeach()
+    list(REMOVE_DUPLICATES MERCE_REFERENCE_FILES)
+    foreach(REF_FILE IN LISTS MERCE_REFERENCE_FILES)
+        add_custom_command(TARGET MercePlayground POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${CMAKE_CURRENT_SOURCE_DIR}/../generated/themes/${REF_FILE}"
+                "$<TARGET_FILE_DIR:MercePlayground>/themes/${REF_FILE}")
+    endforeach()
+endif()
+
 target_link_libraries(MercePlayground
     PRIVATE
         Qt6::Core

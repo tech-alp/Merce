@@ -19,20 +19,20 @@
     "surface": {
       "canvas": "#0E1514",
       "container": "#191F1E",
-      "containerRaised": "#222927",
+      "containerRaised": "#242B29",
       "containerSunken": "#0A100F",
-      "containerTinted": "#14231F",
-      "floating": "#222927",
-      "scrim": "#B3000000",
-      "inverse": "#F2F5F3",
+      "containerTinted": "#162421",
+      "floating": "#242B29",
+      "scrim": "#A3000000",
+      "inverse": "#F6F4EE",
       "shadow": "#000000"
     },
     "content": {
       "primary": "#F2F5F3",
       "secondary": "#B3BDB9",
-      "tertiary": "#8F9A96",
+      "tertiary": "#949E9A",
       "inverse": "#151A19",
-      "disabled": "#7C8783",
+      "disabled": "#78817E",
       "link": "#9A4F34"
     },
     "action": {
@@ -42,46 +42,46 @@
         "outline": "#C4785A"
       },
       "secondary": {
-        "container": "#AEBAB6",
-        "content": "#151A19",
-        "outline": "#AEBAB6"
+        "container": "#AAB5B1",
+        "content": "#16201D",
+        "outline": "#AAB5B1"
       },
       "destructive": {
         "container": "#FFB4AB",
-        "content": "#3C0907",
+        "content": "#3B0907",
         "outline": "#FFB4AB"
       }
     },
     "status": {
       "success": {
-        "container": "#103922",
+        "container": "#153322",
         "content": "#6EDB91",
         "outline": "#6EDB91"
       },
       "warning": {
-        "container": "#402D05",
+        "container": "#3A2A0A",
         "content": "#F4C15D",
         "outline": "#F4C15D"
       },
       "error": {
-        "container": "#4B1714",
+        "container": "#3B1716",
         "content": "#FFB4AB",
         "outline": "#FFB4AB"
       },
       "info": {
-        "container": "#183153",
+        "container": "#172A46",
         "content": "#A8C7FA",
         "outline": "#A8C7FA"
       },
       "neutral": {
-        "container": "#29312F",
-        "content": "#C2CBC8",
-        "outline": "#8F9A96"
+        "container": "#242B29",
+        "content": "#CBD3D0",
+        "outline": "#CBD3D0"
       }
     },
     "outline": {
       "subtle": "#35423F",
-      "strong": "#52605C",
+      "strong": "#697572",
       "focus": "#9A4F34"
     }
   },

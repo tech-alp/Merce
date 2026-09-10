@@ -42,13 +42,25 @@ export function profileEntries(registry) {
   ));
 }
 
-export function generatedIndex(registry) {
+// A brand marked runtime:false is generated but kept out of the index the
+// applications read. It is a reference palette for the playground, not
+// something a cart can be configured onto.
+export function isRuntimeBrand([, brand]) {
+  return brand.runtime !== false;
+}
+
+export function generatedIndex(registry, include = isRuntimeBrand, withProfiles = true) {
+  const brands = Object.entries(registry.brands).filter(include);
   return {
     schemaVersion: 1,
-    defaultBrand: registry.defaultBrand,
+    // The reference index carries no product default; whichever brand it lists
+    // first is only a starting point for a gallery.
+    defaultBrand: Object.prototype.hasOwnProperty.call(
+      Object.fromEntries(brands), registry.defaultBrand)
+      ? registry.defaultBrand
+      : brands[0][0],
     brands: Object.fromEntries(
-      Object.entries(registry.brands)
-        .filter(([, brand]) => brand.runtime !== false)
+      brands
         .map(([brandId, brand]) => [
         brandId,
         {
@@ -63,16 +75,20 @@ export function generatedIndex(registry) {
         },
         ]),
     ),
-    defaultProfile: registry.defaultProfile,
-    profiles: Object.fromEntries(
-      Object.entries(registry.profiles).map(([profileId, profile]) => [
-        profileId,
-        {
-          displayName: nonEmptyString(profile.displayName, `Profile '${profileId}' displayName`),
-          path: validateManifestPath(profile.path, `Profile '${profileId}' path`),
-        },
-      ]),
-    ),
+    // A secondary index adds brands to an already-loaded runtime, so repeating
+    // the profiles would collide with the ones the primary index installed.
+    ...(withProfiles ? {
+      defaultProfile: registry.defaultProfile,
+      profiles: Object.fromEntries(
+        Object.entries(registry.profiles).map(([profileId, profile]) => [
+          profileId,
+          {
+            displayName: nonEmptyString(profile.displayName, `Profile '${profileId}' displayName`),
+            path: validateManifestPath(profile.path, `Profile '${profileId}' path`),
+          },
+        ]),
+      ),
+    } : {}),
   };
 }
 

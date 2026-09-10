@@ -26,22 +26,6 @@
         }
       }
     },
-    "algit-setup": {
-      "displayName": "AlGit Setup",
-      "defaultMode": "light",
-      "modes": {
-        "light": {
-          "displayName": "Light",
-          "path": "algit-setup.light.json",
-          "source": [
-            "tokens/core/font-families.json",
-            "tokens/themes/algit-setup/typography.json",
-            "tokens/core/state.json",
-            "tokens/themes/algit-setup/variants/light.json"
-          ]
-        }
-      }
-    },
     "happy-center": {
       "displayName": "Happy Center",
       "defaultMode": "light",
@@ -113,7 +97,8 @@
             "tokens/themes/apple/resolved.json"
           ]
         }
-      }
+      },
+      "runtime": false
     },
     "claude": {
       "displayName": "Claude Reference",
@@ -129,7 +114,8 @@
             "tokens/themes/claude/resolved.json"
           ]
         }
-      }
+      },
+      "runtime": false
     },
     "airbnb": {
       "displayName": "Airbnb Reference",
@@ -145,7 +131,8 @@
             "tokens/themes/airbnb/resolved.json"
           ]
         }
-      }
+      },
+      "runtime": false
     },
     "stripe": {
       "displayName": "Stripe Reference",
@@ -161,7 +148,8 @@
             "tokens/themes/stripe/resolved.json"
           ]
         }
-      }
+      },
+      "runtime": false
     },
     "linear": {
       "displayName": "Linear Reference",
@@ -187,7 +175,8 @@
             "tokens/themes/linear/resolved.json"
           ]
         }
-      }
+      },
+      "runtime": false
     }
   },
   "defaultProfile": "cart",

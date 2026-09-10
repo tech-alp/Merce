@@ -15,7 +15,7 @@ QtObject {
 
         if (backgroundBase !== "#f6f4ee"
                 || textPrimary !== "#151a19"
-                || actionPrimary !== "#006b63"
+                || actionPrimary !== "#f55800"
                 || Theme.spacing.md !== 16
                 || Theme.radius.button !== 6
                 || bodyFont !== "Lexend"

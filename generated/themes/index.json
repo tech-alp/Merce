@@ -10,13 +10,6 @@
         "dark": "algit.dark.json"
       }
     },
-    "algit-setup": {
-      "displayName": "AlGit Setup",
-      "defaultMode": "light",
-      "modes": {
-        "light": "algit-setup.light.json"
-      }
-    },
     "happy-center": {
       "displayName": "Happy Center",
       "defaultMode": "light",
@@ -37,42 +30,6 @@
       "modes": {
         "light": "merce.light.json",
         "dark": "merce.dark.json"
-      }
-    },
-    "apple": {
-      "displayName": "Apple Reference",
-      "defaultMode": "light",
-      "modes": {
-        "light": "apple.json"
-      }
-    },
-    "claude": {
-      "displayName": "Claude Reference",
-      "defaultMode": "light",
-      "modes": {
-        "light": "claude.json"
-      }
-    },
-    "airbnb": {
-      "displayName": "Airbnb Reference",
-      "defaultMode": "light",
-      "modes": {
-        "light": "airbnb.json"
-      }
-    },
-    "stripe": {
-      "displayName": "Stripe Reference",
-      "defaultMode": "light",
-      "modes": {
-        "light": "stripe.json"
-      }
-    },
-    "linear": {
-      "displayName": "Linear Reference",
-      "defaultMode": "dark",
-      "modes": {
-        "dark": "linear.dark.json",
-        "light": "linear.light.json"
       }
     }
   },
