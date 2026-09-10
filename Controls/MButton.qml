@@ -50,12 +50,6 @@ Button {
     Layout.fillWidth: root.fullWidth
     StyleVariation.variations: root.styleVariations
 
-    Binding {
-        target: root.contentItem
-        property: "mirrored"
-        value: root.iconPosition === MButton.IconRight
-    }
-
     LoadingIndicator {
         objectName: "loadingIndicator"
         anchors.left: root.iconPosition === MButton.IconOnly ? undefined : parent.left
@@ -140,6 +134,14 @@ Button {
     // rather than recomputed, so hover, press, focus and disabled stay in one
     // place instead of being reimplemented here as they were before StyleKit.
     contentItem: Item {
+        // The row below always builds icon then label. Asking for the icon on
+        // the right flips the row rather than reordering it, so one layout
+        // serves both and the icon keeps its spacing and alignment either way.
+        readonly property bool mirrored: root.iconPosition === MButton.IconRight
+
+        LayoutMirroring.enabled: mirrored
+        LayoutMirroring.childrenInherit: true
+
         implicitWidth: contentRow.implicitWidth
         implicitHeight: contentRow.implicitHeight
 
@@ -179,6 +181,7 @@ Button {
             columnSpacing: root.spacing
 
             AppIcon {
+                objectName: "buttonIcon"
                 visible: contentRow.showIcon
                 Layout.alignment: Qt.AlignCenter
                 Layout.preferredWidth: root.iconSizeFor(root.size)
@@ -189,6 +192,7 @@ Button {
             }
 
             Text {
+                objectName: "buttonLabel"
                 visible: contentRow.showText
                 Layout.alignment: Qt.AlignCenter
                 Layout.fillWidth: true

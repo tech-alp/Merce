@@ -132,6 +132,13 @@ void tst_merce_style_runtime_switch::existingStyleKitControlsRepaintAfterContext
         rightIconButton->property("contentItem").value<QObject *>();
     QVERIFY(rightIconContent);
     QVERIFY(rightIconContent->property("mirrored").toBool());
+    // The property only matters if it moves the glyph. Assert the placement so a
+    // flag nothing reads cannot pass for a working icon position again.
+    auto *rightIcon = rightIconButton->findChild<QQuickItem *>(QStringLiteral("buttonIcon"));
+    auto *rightLabel = rightIconButton->findChild<QQuickItem *>(QStringLiteral("buttonLabel"));
+    QVERIFY(rightIcon && rightLabel);
+    QTRY_VERIFY2(rightIcon->x() > rightLabel->x(),
+                 "IconRight should place the glyph after the label");
     auto *loadingIndicator =
         loadingButton->findChild<QQuickItem *>(QStringLiteral("loadingIndicator"));
     QVERIFY(loadingIndicator);
