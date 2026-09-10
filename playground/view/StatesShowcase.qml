@@ -330,6 +330,16 @@ Item {
                     text: "Component state matrix"
                 }
 
+                AppLabel {
+                    width: parent.width
+                    wrapMode: Text.WordWrap
+                    textType: AppLabel.Caption
+                    color: Theme.colors.content.secondary
+                    text: "Drawn from the active tokens, not built from the components: "
+                          + "hover, pressed and focus cannot be shown at once by real "
+                          + "controls. The live section below uses them."
+                }
+
                 Item {
                     width: parent.width
                     height: 28

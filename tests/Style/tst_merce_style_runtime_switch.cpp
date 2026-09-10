@@ -182,6 +182,22 @@ void tst_merce_style_runtime_switch::existingStyleKitControlsRepaintAfterContext
                   .intersects(loadingLabel->mapRectToItem(
                       loadingButton, QRectF(0, 0, loadingLabel->width(), loadingLabel->height()))),
              "the loading spinner overlaps the label");
+
+    // Default keeps the label; opting out leaves the spinner alone. Asserting
+    // both directions so the default cannot change without a test noticing.
+    QVERIFY(loadingLabel->isVisible());
+    auto *spinnerOnly = window->findChild<QQuickItem *>(QStringLiteral("spinnerOnlyButton"));
+    QVERIFY(spinnerOnly);
+    auto *spinnerOnlyLabel = spinnerOnly->findChild<QQuickItem *>(QStringLiteral("buttonLabel"));
+    auto *spinnerOnlyIndicator =
+        spinnerOnly->findChild<QQuickItem *>(QStringLiteral("loadingIndicator"));
+    QVERIFY(spinnerOnlyLabel && spinnerOnlyIndicator);
+    QVERIFY(!spinnerOnlyLabel->isVisible());
+    QVERIFY(spinnerOnlyIndicator->isVisible());
+    // implicitWidth, not width: the probe pins both buttons to 200, and what is
+    // being asserted is what the component asks for, not what the fixture gives it.
+    QVERIFY2(spinnerOnly->implicitWidth() < loadingButton->implicitWidth(),
+             "a spinner-only button should not ask for the width its label needed");
     QVERIFY(loadingButton->property("styleVariations")
                 .toStringList()
                 .contains(QStringLiteral("loading")));

@@ -36,6 +36,13 @@ Button {
     property string iconName: ""
     property bool loading: false
     property bool isLoading: root.loading
+    /**
+     * Keeps the label beside the spinner while loading. Set false for a button
+     * that should shrink to the spinner alone. iconPosition would do this too,
+     * but it describes what the button is rather than what it is doing, so
+     * flipping it for the duration of a request loses the button's own shape.
+     */
+    property bool loadingLabelVisible: true
     property bool fullWidth: false
     property var extraVariations: []
 
@@ -159,6 +166,8 @@ Button {
                                              && root.iconName.length > 0
             readonly property bool showText: root.iconPosition !== MButton.IconOnly
                                              && root.text.length > 0
+                                             && (root.loadingLabelVisible
+                                                 || !root.effectiveLoading)
 
             // Centred at its natural width, clamped to the plate. Without the
             // clamp the row keeps its implicit width and a button narrower than

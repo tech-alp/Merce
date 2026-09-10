@@ -195,6 +195,16 @@ SK.ApplicationWindow {
     }
 
     MButton {
+        objectName: "spinnerOnlyButton"
+        x: 456
+        y: 510
+        width: 200
+        text: "Loading"
+        loading: true
+        loadingLabelVisible: false
+    }
+
+    MButton {
         id: loadingButton
 
         objectName: "loadingButton"
