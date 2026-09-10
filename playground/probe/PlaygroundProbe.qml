@@ -131,7 +131,7 @@ Main {
                 if (root.objectName !== "merce.playground.window"
                         || root.selectedPage !== "theme"
                         || root.pageTitle(root.selectedPage) !== "Overview"
-                        || Theme.availableThemes.length !== 9
+                        || Theme.availableThemes.length !== 10
                         || Theme.availableProfiles.length !== 3
                         || !galleryPrimaryButton) {
                     root.fail("default shell state", [

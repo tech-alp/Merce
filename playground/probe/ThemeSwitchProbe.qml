@@ -20,7 +20,7 @@ QtObject {
         if (Theme.activeBrand !== "algit"
                 || Theme.activeMode !== "light"
                 || Theme.activeProfile !== "cart"
-                || Theme.availableThemes.length !== 9
+                || Theme.availableThemes.length !== 10
                 || String(observedBackground).toLowerCase() !== "#f6f4ee") {
             fail("default state",
                  [Theme.activeBrand, Theme.activeMode, Theme.activeProfile,
