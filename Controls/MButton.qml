@@ -39,6 +39,7 @@ Button {
     property bool fullWidth: false
     property var extraVariations: []
 
+    readonly property bool effectiveLoading: root.loading || root.isLoading
     readonly property var styleVariations: variationNames()
 
     // Type scales with the box. This belongs in the size StyleVariation next to
@@ -48,8 +49,20 @@ Button {
     focusPolicy: Qt.TabFocus
 
     Layout.fillWidth: root.fullWidth
-    LayoutMirroring.enabled: root.iconPosition === MButton.IconRight
     StyleVariation.variations: root.styleVariations
+
+    LoadingIndicator {
+        objectName: "loadingIndicator"
+        anchors.left: root.iconPosition === MButton.IconOnly ? undefined : parent.left
+        anchors.leftMargin: root.leftPadding
+        anchors.horizontalCenter: root.iconPosition === MButton.IconOnly
+                                  ? parent.horizontalCenter
+                                  : undefined
+        anchors.verticalCenter: parent.verticalCenter
+        color: root.icon.color
+        running: root.effectiveLoading && root.visible
+        visible: root.effectiveLoading
+    }
 
     function variationNames() {
         const names = []
@@ -60,7 +73,7 @@ Button {
             names.push(variantName)
         if (sizeName.length > 0)
             names.push(sizeName)
-        if (root.loading || root.isLoading)
+        if (root.effectiveLoading)
             names.push("loading")
 
         for (let i = 0; i < root.extraVariations.length; ++i) {
@@ -122,6 +135,14 @@ Button {
     // rather than recomputed, so hover, press, focus and disabled stay in one
     // place instead of being reimplemented here as they were before StyleKit.
     contentItem: Item {
+        // The row below always builds icon then label. Asking for the icon on
+        // the right flips the row rather than reordering it, so one layout
+        // serves both and the icon keeps its spacing and alignment either way.
+        readonly property bool mirrored: root.iconPosition === MButton.IconRight
+
+        LayoutMirroring.enabled: mirrored
+        LayoutMirroring.childrenInherit: true
+
         implicitWidth: contentRow.implicitWidth
         implicitHeight: contentRow.implicitHeight
 
@@ -161,6 +182,7 @@ Button {
             columnSpacing: root.spacing
 
             AppIcon {
+                objectName: "buttonIcon"
                 visible: contentRow.showIcon
                 Layout.alignment: Qt.AlignCenter
                 Layout.preferredWidth: root.iconSizeFor(root.size)
@@ -171,6 +193,7 @@ Button {
             }
 
             Text {
+                objectName: "buttonLabel"
                 visible: contentRow.showText
                 Layout.alignment: Qt.AlignCenter
                 Layout.fillWidth: true

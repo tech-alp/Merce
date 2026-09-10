@@ -89,6 +89,8 @@ void tst_merce_style_runtime_switch::existingStyleKitControlsRepaintAfterContext
     QQuickItem *disabledCheckedSwitch = nullptr;
     QQuickItem *disabledCheckedItemDelegate = nullptr;
     QQuickItem *merceButton = nullptr;
+    QQuickItem *rightIconButton = nullptr;
+    QQuickItem *loadingButton = nullptr;
     QQuickItem *checkedOutlineButton = nullptr;
     QTRY_VERIFY(button = window->findChild<QQuickItem *>(QStringLiteral("styleButton")));
     QTRY_VERIFY(textField = window->findChild<QQuickItem *>(QStringLiteral("styleTextField")));
@@ -112,6 +114,10 @@ void tst_merce_style_runtime_switch::existingStyleKitControlsRepaintAfterContext
                     window->findChild<QQuickItem *>(
                         QStringLiteral("disabledCheckedItemDelegate")));
     QTRY_VERIFY(merceButton = window->findChild<QQuickItem *>(QStringLiteral("merceButton")));
+    QTRY_VERIFY(rightIconButton =
+                    window->findChild<QQuickItem *>(QStringLiteral("rightIconButton")));
+    QTRY_VERIFY(loadingButton =
+                    window->findChild<QQuickItem *>(QStringLiteral("loadingButton")));
     QTRY_VERIFY(checkedOutlineButton =
                     window->findChild<QQuickItem *>(QStringLiteral("checkedOutlineButton")));
     auto *theme = engine.singletonInstance<MerceTheme *>("Merce.Theme", "Theme");
@@ -150,6 +156,25 @@ void tst_merce_style_runtime_switch::existingStyleKitControlsRepaintAfterContext
     QCOMPARE(window->property("merceButtonVariations").toStringList(),
              QStringList({QStringLiteral("secondary"), QStringLiteral("small")}));
     QTRY_COMPARE(qRound(merceButton->implicitHeight()), theme->size()->control()->small());
+    auto *rightIconContent =
+        rightIconButton->property("contentItem").value<QObject *>();
+    QVERIFY(rightIconContent);
+    QVERIFY(rightIconContent->property("mirrored").toBool());
+    // The property only matters if it moves the glyph. Assert the placement so a
+    // flag nothing reads cannot pass for a working icon position again.
+    auto *rightIcon = rightIconButton->findChild<QQuickItem *>(QStringLiteral("buttonIcon"));
+    auto *rightLabel = rightIconButton->findChild<QQuickItem *>(QStringLiteral("buttonLabel"));
+    QVERIFY(rightIcon && rightLabel);
+    QTRY_VERIFY2(rightIcon->x() > rightLabel->x(),
+                 "IconRight should place the glyph after the label");
+    auto *loadingIndicator =
+        loadingButton->findChild<QQuickItem *>(QStringLiteral("loadingIndicator"));
+    QVERIFY(loadingIndicator);
+    QVERIFY(loadingIndicator->isVisible());
+    QVERIFY(loadingIndicator->property("running").toBool());
+    QVERIFY(loadingButton->property("styleVariations")
+                .toStringList()
+                .contains(QStringLiteral("loading")));
 
     const QColor lightButton = renderedCenter(window, button);
     const QColor lightField = renderedCenter(window, textField);

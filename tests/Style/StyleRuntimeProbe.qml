@@ -183,6 +183,29 @@ SK.ApplicationWindow {
     }
 
     MButton {
+        id: rightIconButton
+
+        objectName: "rightIconButton"
+        x: 240
+        y: 440
+        width: 200
+        text: "Right icon"
+        iconName: "go-next"
+        iconPosition: MButton.IconRight
+    }
+
+    MButton {
+        id: loadingButton
+
+        objectName: "loadingButton"
+        x: 456
+        y: 440
+        width: 200
+        text: "Loading"
+        loading: true
+    }
+
+    MButton {
         objectName: "checkedOutlineButton"
         x: 260
         y: 510
