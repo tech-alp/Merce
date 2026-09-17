@@ -70,6 +70,10 @@ file(GLOB_RECURSE MERCE_THEME_FONT_FILES CONFIGURE_DEPENDS
     "${MERCE_GENERATED_DIR}/themes/fonts/*.otf")
 list(APPEND MERCE_THEME_MANIFEST_FILES ${MERCE_THEME_FONT_FILES})
 
+# Backing target first: qt_add_library honours BUILD_SHARED_LIBS (policy QTP0003),
+# while qt_add_qml_module deliberately does not when it creates the target itself.
+qt_add_library(MerceTheme)
+
 qt_add_qml_module(MerceTheme
     URI "Merce.Theme"
     VERSION 1.0
