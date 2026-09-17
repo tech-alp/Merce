@@ -7,6 +7,7 @@ set(MERCE_CORE_SOURCES
 )
 
 qt_add_qml_module(MerceCore
+    ${MERCE_QML_MODULE_TYPE}
     URI "Merce.Core"
     VERSION 1.0
     SOURCES

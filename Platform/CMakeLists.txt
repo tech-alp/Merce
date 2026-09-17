@@ -1,4 +1,5 @@
 qt_add_qml_module(MercePlatform
+    ${MERCE_QML_MODULE_TYPE}
     URI "Merce.Platform"
     VERSION 1.0
     SOURCES

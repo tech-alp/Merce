@@ -4,6 +4,7 @@ set_source_files_properties(
 )
 
 qt_add_qml_module(MerceNotifications
+    ${MERCE_QML_MODULE_TYPE}
     URI "Merce.Notifications"
     VERSION 1.0
     QML_FILES

@@ -12,6 +12,15 @@ option(MERCE_ENABLE_FONTAWESOME "Build the optional Font Awesome SVG QML module"
 option(MERCE_BUILD_NOTIFICATIONS "Build the notification and dialog QML module" OFF)
 option(MERCE_BUILD_TESTS "Build Merce tests" ${PROJECT_IS_TOP_LEVEL})
 option(BUILD_MERCE_PLAYGROUND "Build Merce playground application" OFF)
+option(MERCE_BUILD_STATIC
+    "Build Merce's QML modules as static libraries for an application that embeds them" OFF)
+if(MERCE_BUILD_STATIC)
+    # qt_add_qml_module ignores BUILD_SHARED_LIBS and follows Qt's own build type,
+    # so staticness has to be requested per module.
+    set(MERCE_QML_MODULE_TYPE STATIC)
+else()
+    set(MERCE_QML_MODULE_TYPE)
+endif()
 
 if(MERCE_ENABLE_TOKEN_BUILD)
     find_program(NPM_EXECUTABLE npm)

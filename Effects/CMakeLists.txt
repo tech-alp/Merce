@@ -1,4 +1,5 @@
 qt_add_qml_module(MerceEffects
+    ${MERCE_QML_MODULE_TYPE}
     URI "Merce.Effects"
     VERSION 1.0
     QML_FILES

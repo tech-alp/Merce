@@ -5,6 +5,7 @@ set_source_files_properties(
 )
 
 qt_add_qml_module(MerceFoundation
+    ${MERCE_QML_MODULE_TYPE}
     URI "Merce.Foundation"
     VERSION 1.0
     QML_FILES

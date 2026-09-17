@@ -1,4 +1,5 @@
 qt_add_qml_module(MerceControls
+    ${MERCE_QML_MODULE_TYPE}
     URI "Merce.Controls"
     VERSION 1.0
     QML_FILES
