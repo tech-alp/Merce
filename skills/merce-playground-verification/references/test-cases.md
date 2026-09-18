@@ -23,7 +23,6 @@ After gallery export, verify these files are non-empty:
 ```bash
 test -s docs/assets/theme-gallery/merce-light.png
 test -s docs/assets/theme-gallery/merce-dark.png
-test -s docs/assets/theme-gallery/stripe-reference.png
 ```
 
 ## Targeted Selection
@@ -56,7 +55,6 @@ Visual review is still human-facing:
 
 - Open or inspect `docs/assets/theme-gallery/merce-light.png`.
 - Open or inspect `docs/assets/theme-gallery/merce-dark.png`.
-- Open or inspect `docs/assets/theme-gallery/stripe-reference.png`.
 - Confirm they are readable, non-overlapping, and visibly distinct.
 
 Optional qmlagent inspection:

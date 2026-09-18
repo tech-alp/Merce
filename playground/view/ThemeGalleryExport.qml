@@ -15,8 +15,7 @@ SK.ApplicationWindow {
     property int exportIndex: 0
     readonly property var exportStates: [
         { "brand": "merce", "mode": "light", "fileName": "merce-light.png" },
-        { "brand": "merce", "mode": "dark", "fileName": "merce-dark.png" },
-        { "brand": "stripe", "mode": "", "fileName": "stripe-reference.png" }
+        { "brand": "merce", "mode": "dark", "fileName": "merce-dark.png" }
     ]
 
     Rectangle {
@@ -43,8 +42,6 @@ SK.ApplicationWindow {
     }
 
     function switchTheme(state) {
-        if (state.brand === "stripe")
-            return Theme.setTheme("stripe")
         return Theme.setTheme(state.brand, state.mode)
     }
 

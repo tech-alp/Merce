@@ -81,10 +81,6 @@ Item {
         return root.applyTheme("merce", "dark")
     }
 
-    function setStripeReference() {
-        return root.applyTheme("stripe", "")
-    }
-
     function colorLabel(value) {
         return String(value).toUpperCase()
     }

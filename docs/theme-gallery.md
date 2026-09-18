@@ -29,10 +29,6 @@ The export command writes fixed filenames under `docs/assets/theme-gallery`.
 
 ![Merce dark gallery](assets/theme-gallery/merce-dark.png)
 
-### Stripe Reference
-
-![Stripe reference gallery](assets/theme-gallery/stripe-reference.png)
-
 ## Optional qmlagent Inspection
 
 qmlagent is an optional inspect/debug workflow, not a CI gate.

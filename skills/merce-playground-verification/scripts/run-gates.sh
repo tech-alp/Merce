@@ -48,7 +48,7 @@ run_playground --theme-gallery-probe
 run_playground --playground-probe
 run_playground --export-theme-gallery "${gallery_dir}"
 
-for image in merce-light merce-dark stripe-reference; do
+for image in merce-light merce-dark; do
     path="${gallery_dir}/${image}.png"
     if [[ ! -s "${path}" ]]; then
         echo "Missing or empty gallery artifact: ${path}" >&2
