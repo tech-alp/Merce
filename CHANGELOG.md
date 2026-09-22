@@ -7,6 +7,8 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-22
+
 ### Added
 
 - WebAssembly playground build and GitHub Pages deployment at the public live
@@ -70,6 +72,7 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
   surface minimal
 - Linear reference theme uses the bundled OFL-licensed JetBrains Mono font
 
-[Unreleased]: https://github.com/tech-alp/Merce/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/tech-alp/Merce/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/tech-alp/Merce/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/tech-alp/Merce/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/tech-alp/Merce/releases/tag/v1.0.0

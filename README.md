@@ -72,7 +72,7 @@ block(SCOPE_FOR VARIABLES)
 
     FetchContent_Declare(Merce
         GIT_REPOSITORY https://github.com/tech-alp/Merce.git
-        GIT_TAG v1.1.0
+        GIT_TAG v1.2.0
         GIT_SHALLOW TRUE
         EXCLUDE_FROM_ALL
     )
@@ -180,7 +180,7 @@ EMSDK_ROOT=/path/to/emsdk \
 
 ## Install
 
-The v1.1 installed package contains the core design-system modules and optional
+The v1.2 installed package contains the core design-system modules and optional
 Font Awesome module. Merce.Notifications is source-integration only because
 QtToastify currently ships as static QML modules.
 
