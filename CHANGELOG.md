@@ -27,6 +27,7 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
   read-only Theme Builder color cards visible in page exports
 - Captured playground pages on the semantic canvas color instead of a
   transparent black background
+- Vertically aligned badge icons and labels
 
 ## [1.1.0] - 2026-08-27
 

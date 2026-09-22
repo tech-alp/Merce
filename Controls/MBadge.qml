@@ -120,6 +120,8 @@ Item {
             textType: root.labelType
             text: root.text
             color: root.badgeForegroundColor
+            lineHeightMode: Text.ProportionalHeight
+            lineHeight: 1.0
             wrapMode: Text.NoWrap
             maximumLineCount: 1
         }
