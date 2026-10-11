@@ -27,9 +27,11 @@ CMake integration, examples and verification; add no AI provider to the runtime.
 
 - Keep rendering in `Effects/M<Name>.qml` and
   `Effects/shaders/<name>.frag`. Reuse `MSheen` when only its parameters differ.
-- Bind semantic colors, resolved corners, state and animation lifetime in a
+- Bind relevant semantic colors, resolved corners, state and animation lifetime in a
   `Style/Effects/` adapter. Preserve the host's layout, text, loading, focus and
   input. Do not add a MouseArea to a decorative effect or replace MButton behavior.
+  Choose colors for the visual role: sheen uses neutral white light over the
+  theme-provided surface, so dark text colors cannot turn it into a shadow.
 - Keep the StyleKit delegate factory **Unbound and free of outer-ID captures**
   on Qt 6.11. StyleKit creates it in the control's context. Resolve the active
   style's typed policy inside the separate delegate QML file, as

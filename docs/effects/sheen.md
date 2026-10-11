@@ -8,9 +8,9 @@ Select `MerceEffectsStyle` from `Merce.Style.Effects`, then set
 
 The background remains a StyleKit `StyledItem`. Its resolved fill, border,
 implicit dimensions, transforms and loading opacity remain in place. The
-overlay takes its color from the button's resolved text color and is inset by
-the border width, keeping the focus border clear. Corner radii are passed
-individually, with the inset subtracted. MButton's variant, size and loading
+overlay uses a neutral white highlight to brighten the theme-provided surface
+and is inset by the border width, keeping the focus border clear. Corner radii
+are passed individually, with the inset subtracted. MButton's variant, size and loading
 variations retain their usual priority.
 
 | Event or condition | Result |
@@ -72,7 +72,6 @@ Rectangle {
 
     MSheen {
         anchors.fill: parent
-        color: Theme.colors.action.primary.content
         radius: surface.radius
         progress: 0.5
     }

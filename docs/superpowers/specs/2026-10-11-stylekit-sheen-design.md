@@ -32,7 +32,9 @@ source capture. It does not animate or handle input itself.
 `Merce.Style.Effects.MerceEffectsStyle` extends `MerceStyle`. Its `sheen`
 StyleVariation replaces only a button's background delegate. `SheenBackground`
 extends `StyledItem`, preserving the resolved plate, border, sizing, opacity,
-and transforms. It passes resolved geometry and theme-aware color to MSheen.
+and transforms. It passes resolved geometry and opacity to MSheen. The neutral
+white highlight brightens the theme-provided surface; it does not inherit a
+dark text color that would turn the sheen into a shadow.
 
 `EffectPolicy` exposes `enabled` (true) and `reducedMotion` (false).
 `MerceEffectsStyle.effectPolicy` owns the policy instance. These are explicit

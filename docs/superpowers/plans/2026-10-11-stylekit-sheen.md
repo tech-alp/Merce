@@ -41,16 +41,16 @@ CMakeLists.txt, tests/Effects/*, tests/CMakeLists.txt.
 MerceEffectsStyle.effectPolicy { enabled, reducedMotion }; consume existing
 MButton.extraVariations and Merce Theme/StyleKit state.
 
-- [x] Add a Qt Test probe that requests the new style and verifies the sheen
+- Add a Qt Test probe that requests the new style and verifies the sheen
   background and packaged shader. Run before implementation: expect failure
   because Merce.Style.Effects is not available.
-- [x] Add the primitive and shader; register qsb in MerceEffects.
-- [x] Add policy, background delegate and the sheen StyleVariation. Implement
+- Add the primitive and shader; register qsb in MerceEffects.
+- Add policy, background delegate and the sheen StyleVariation. Implement
   one finite hover sweep and conditional shader creation.
-- [ ] Verify fallback, themes, variant/size/loading, focus/click behavior, parameter
+- Verify fallback, themes, variant/size/loading, focus/click behavior, parameter
   bounds and animation interruptions. Add direct rendering checks for a graphics
   backend instead of relying on the default software test environment.
-- [x] Run `cmake --build build --parallel 2` and
+- Run `cmake --build build --parallel 2` and
   `ctest --test-dir build --output-on-failure`; expect the new and existing tests
   to pass. Preserve actual evidence and environment limitations in the ledger.
 
@@ -65,14 +65,14 @@ relevant playground navigation/probe files.
 Effects page through the existing navigation/theme selection. The OFF build
 has neither adapter imports nor adapter-only pages.
 
-- [ ] Extend consumer checks first; expect missing StyleEffects target/resource
+- Extend consumer checks first; expect missing StyleEffects target/resource
   before the packaging changes.
-- [x] Install/export the module and alias; use the qrc shader URL in installed
+- Install/export the module and alias; use the qrc shader URL in installed
   QML. Build and run both consumer paths.
-- [x] Add the real Effects page, finite interactive controls and scrubbable
+- Add the real Effects page, finite interactive controls and scrubbable
   primitive; wire navigation, lint and page export conditionally.
-- [x] Configure an OFF build and verify existing modules/playground still load.
-- [x] Run the complete playground verification gates and collect visual evidence.
+- Configure an OFF build and verify existing modules/playground still load.
+- Run the complete playground verification gates and collect visual evidence.
 
 ## Task 3: Usage, AI authoring contract and PR
 
@@ -82,24 +82,28 @@ skills/merce-effects/SKILL.md and references/effect-contract.md.
 **Interfaces:** Document only the implemented API; make the skill refer to real
 commands, source locations, build resources and existing verification tooling.
 
-- [x] Document use, policy controls, dependencies, limits, and canonical shader
+- Document use, policy controls, dependencies, limits, and canonical shader
   sources. Explain QQEM exports without inventing an automatic exporter.
-- [x] Add the small provider-independent authoring skill and validate its links
+- Add the small provider-independent authoring skill and validate its links
   and code examples against the implementation.
-- [ ] Run module/playground lint, the full relevant suite, consumer verification
+- Run module/playground lint, the full relevant suite, consumer verification
   and `git diff --check`. Have a fresh reviewer inspect the whole branch.
-- [ ] Resolve material findings, commit focused changes, publish the feature
+- Resolve material findings, commit focused changes, publish the feature
   branch and open the requested PR. Report actual checks and any missing native
   hardware validation; do not merge.
 
-## Verification status
+## Execution record
 
-Qt 6.11.1 software run: all eight CTests and the full playground verification
-gates pass. The source and installed-package consumers both load the adapter
-and its packaged shader. The authoring skill passes validation. An independent
-review found and resolved a timing-dependent visibility recovery assertion.
-The clean adapter-OFF playground also builds and passes its probe. PR #10 is
-open as a draft. The initial CI configure exposed the missing ShaderTools addon
-in the Qt installation steps; native, release and WASM workflows now request
-it explicitly. Required OpenGL/Mesa pixel/lifecycle CI and rendered screenshot
-inspection remain before marking the PR ready.
+Qt 6.11.1 verification covers all eight CTests, the full playground gates,
+source and installed-package consumers, and a clean adapter-OFF playground.
+The separate OpenGL/Mesa CTest checks real pixels and finite sweep lifetime;
+WebAssembly builds also verify static QML plugins. Qt installations explicitly
+include the ShaderTools addon for native and cross builds.
+
+Independent review resolved a timing-dependent visibility recovery assertion.
+Inspection of the first OpenGL screenshots revealed that a dark text tint
+made the band resemble a shadow, so the adapter and showcase use the primitive's
+neutral white highlight. The reusable primitive still exposes its color input.
+
+[PR #10](https://github.com/tech-alp/Merce/pull/10) records the current CI results
+and the `merce-effects-opengl` screenshot artifact used for visual review.

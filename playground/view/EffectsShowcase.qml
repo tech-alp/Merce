@@ -142,7 +142,6 @@ Item {
                             progress: positionSlider.value
                             intensity: 0.4
                             bandWidth: 0.3
-                            color: Theme.colors.action.primary.content
                             topLeftRadius: Theme.radius.large
                             topRightRadius: 0
                             bottomLeftRadius: Theme.radius.small

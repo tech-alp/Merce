@@ -24,7 +24,9 @@ manifest or an implied automatic validator. Keep answers specific to the effect.
 The existing implementation uses MSheen in Merce.Effects and a named `sheen`
 variation in Merce.Style.Effects. It is one procedural pass, with no source
 capture or texture reads. The adapter uses the active style's EffectPolicy,
-the button's resolved text color and four corner radii, and Merce motion tokens.
+the button's four corner radii and opacity, and Merce motion tokens. Its neutral
+white highlight brightens the theme-provided surface. The primitive's color
+property remains available for independently authored tinted effects.
 It draws inside the resolved border and applies background opacity to the
 overlay without applying it to the base plate a second time.
 

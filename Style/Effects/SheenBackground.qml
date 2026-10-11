@@ -37,19 +37,6 @@ StyledItem {
 
     // Keep the base StyledItem's plate, border, implicit sizes and transforms.
     // Its delegateStyle.opacity affects the plate, not added visual children.
-    StyleReader {
-        id: contentStyle
-        controlType: root.control.flat ? StyleReader.FlatButton : StyleReader.Button
-        StyleVariation.variations: root.control.StyleVariation.variations
-        enabled: root.control.enabled
-        focused: root.control.visualFocus
-        hovered: root.control.hovered
-        pressed: root.control.down
-        checked: root.control.checked
-        highlighted: root.control.highlighted
-        palette: root.control.palette
-    }
-
     Connections {
         target: root.control
         function onHoveredChanged() {
@@ -92,7 +79,6 @@ StyledItem {
 
         sourceComponent: MSheen {
             progress: root.sweepProgress
-            color: contentStyle.text.color
             opacity: root.delegateStyle.opacity
             topLeftRadius: Math.max(0, root.delegateStyle.topLeftRadius - sheenLoader.inset)
             topRightRadius: Math.max(0, root.delegateStyle.topRightRadius - sheenLoader.inset)
