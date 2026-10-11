@@ -210,7 +210,8 @@ ctest --test-dir build-full --output-on-failure
 ~~~
 
 Build the WebAssembly site with a matching Qt host kit, Qt for WebAssembly, and
-Emscripten environment:
+Emscripten environment. Include Qt ShaderTools in both Qt kits so the host's
+`qsb` can bake resources for the WebAssembly target:
 
 ~~~sh
 QT_HOST_PATH=/path/to/Qt/6.11.1/host \

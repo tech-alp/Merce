@@ -67,6 +67,7 @@ jobs:
         uses: jurplel/install-qt-action@48d3ad6db93f3627c8ee7a0454bc6f3744f7e730 # v4.3.1
         with:
           version: ${{ env.QT_VERSION }}
+          modules: qtshadertools
           cache: true
 
       - name: Configure
@@ -145,7 +146,7 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release -DMERCE_BUILD_STYLE_EFFECTS=OFF \
             -DMERCE_BUILD_NOTIFICATIONS=ON -DMERCE_ENABLE_FONTAWESOME=ON \
             -DBUILD_MERCE_PLAYGROUND=ON -DMERCE_BUILD_TESTS=OFF
-          cmake --build build-without-effects --target MercePlayground --parallel 2
+          cmake --build build-without-effects --parallel 2
           QML_IMPORT_PATH="$PWD/build-without-effects/qml" \
             build-without-effects/playground/MercePlayground --playground-probe
 
@@ -161,6 +162,7 @@ jobs:
         uses: jurplel/install-qt-action@48d3ad6db93f3627c8ee7a0454bc6f3744f7e730 # v4.3.1
         with:
           version: ${{ env.QT_VERSION }}
+          modules: qtshadertools
           cache: true
 
       - name: Verify source-tree targets

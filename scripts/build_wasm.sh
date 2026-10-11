@@ -105,6 +105,10 @@ qml_plugins=(
     QtQuickVectorImageHelpersPlugin
 )
 
+if grep -q '^MERCE_BUILD_STYLE_EFFECTS:BOOL=ON$' "${build_dir}/CMakeCache.txt"; then
+    qml_plugins+=(Merce_Style_EffectsPlugin)
+fi
+
 for qml_plugin in "${qml_plugins[@]}"; do
     if ! grep -aFq "${qml_plugin}" "${wasm_output}"; then
         echo "Missing static QML plugin in WebAssembly output: ${qml_plugin}" >&2

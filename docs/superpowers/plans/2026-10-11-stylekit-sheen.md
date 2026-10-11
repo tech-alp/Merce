@@ -71,7 +71,7 @@ has neither adapter imports nor adapter-only pages.
   QML. Build and run both consumer paths.
 - [x] Add the real Effects page, finite interactive controls and scrubbable
   primitive; wire navigation, lint and page export conditionally.
-- [ ] Configure an OFF build and verify existing modules/playground still load.
+- [x] Configure an OFF build and verify existing modules/playground still load.
 - [x] Run the complete playground verification gates and collect visual evidence.
 
 ## Task 3: Usage, AI authoring contract and PR
@@ -98,5 +98,8 @@ Qt 6.11.1 software run: all eight CTests and the full playground verification
 gates pass. The source and installed-package consumers both load the adapter
 and its packaged shader. The authoring skill passes validation. An independent
 review found and resolved a timing-dependent visibility recovery assertion.
-The clean adapter-OFF playground build and required OpenGL/Mesa pixel/lifecycle
-CI gate are the remaining checks before marking the PR ready.
+The clean adapter-OFF playground also builds and passes its probe. PR #10 is
+open as a draft. The initial CI configure exposed the missing ShaderTools addon
+in the Qt installation steps; native, release and WASM workflows now request
+it explicitly. Required OpenGL/Mesa pixel/lifecycle CI and rendered screenshot
+inspection remain before marking the PR ready.
