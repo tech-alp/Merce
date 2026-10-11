@@ -7,6 +7,20 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## [Unreleased]
 
+### Added
+
+- Source-free `MSheen` shader primitive and optional `Merce.Style.Effects`
+  adapter, selected with `MButton.extraVariations: ["sheen"]`
+- Explicit effect/reduced-motion policy, one sweep per hover entry, and normal
+  button fallback on unsupported renderers
+- Real playground Effects page, source/package consumer coverage, shader pixel
+  and lifecycle tests on OpenGL RHI, and AI-assisted effect authoring guidance
+
+### Changed
+
+- Source builds require Qt ShaderTools to bake shaders into Merce.Effects;
+  installed consumers do not need a runtime shader compiler
+
 ## [1.2.0] - 2026-09-22
 
 ### Added

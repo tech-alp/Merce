@@ -40,6 +40,10 @@ if(NOT TARGET Merce::Effects)
     add_library(Merce::Effects ALIAS MerceEffects)
 endif()
 
+if(TARGET MerceStyleEffects AND NOT TARGET Merce::StyleEffects)
+    add_library(Merce::StyleEffects ALIAS MerceStyleEffects)
+endif()
+
 if(NOT TARGET Merce::Controls)
     add_library(Merce::Controls ALIAS MerceControls)
 endif()

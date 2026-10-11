@@ -23,7 +23,7 @@ Main {
         "feedback",
         "forms",
         "states"
-    ]
+    ].concat(root.effectsAvailable ? ["effects"] : [])
     readonly property var auditWidths: [1180, 760]
     readonly property var auditHeights: [760, 620]
     property int widthIndex: 0

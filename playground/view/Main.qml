@@ -3,13 +3,13 @@ import QtQuick.Controls.Basic as Basic
 import Qt.labs.StyleKit
 import QtQml.Models
 import Merce.Notifications
-import Merce.Style
 import Merce.Theme
 
 ApplicationWindow {
     id: root
 
     property string selectedPage: "theme"
+    readonly property bool effectsAvailable: playgroundStyle.effectsPage !== null
     readonly property var materialIcons: playgroundMaterialIcons
     readonly property var themeSourcePaths: playgroundThemeSourcePaths
     readonly property Item notificationLayer: Basic.Overlay.overlay
@@ -20,7 +20,7 @@ ApplicationWindow {
     visible: true
     title: "Merce Playground"
 
-    StyleKit.style: MerceStyle {}
+    StyleKit.style: PlaygroundStyle { id: playgroundStyle }
 
     NotificationHost {
         parent: root.notificationLayer
@@ -109,6 +109,8 @@ ApplicationWindow {
     }
 
     function pageComponent(key) {
+        if (key === "effects" && effectsAvailable)
+            return playgroundStyle.effectsPage
         if (key === "palette")
             return palettePage
         if (key === "typography")
@@ -201,7 +203,12 @@ ApplicationWindow {
 
     onSelectedPageChanged: replaceCurrentPage()
 
-    Component.onCompleted: loadThemeSources()
+    Component.onCompleted: {
+        loadThemeSources()
+        if (effectsAvailable)
+            pageModel.insert(6, { key: "effects", label: qsTr("Effects"),
+                                 category: qsTr("Foundations"), icon: "material:auto_awesome" })
+    }
 
     header: PlaygroundHeader {
         objectName: "merce.playground.header"

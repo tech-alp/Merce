@@ -31,16 +31,29 @@ jobs:
             notifications: "OFF"
             fontawesome: "OFF"
             playground: "OFF"
+            style_effects: "ON"
+            rendering: "OFF"
           - name: macOS / Core
             os: macos-15
             notifications: "OFF"
             fontawesome: "OFF"
             playground: "OFF"
+            style_effects: "ON"
+            rendering: "OFF"
           - name: Ubuntu / Full playground
             os: ubuntu-24.04
             notifications: "ON"
             fontawesome: "ON"
             playground: "ON"
+            style_effects: "ON"
+            rendering: "ON"
+          - name: Ubuntu / Base style
+            os: ubuntu-24.04
+            notifications: "OFF"
+            fontawesome: "OFF"
+            playground: "OFF"
+            style_effects: "OFF"
+            rendering: "OFF"
 
     env:
       QT_QPA_PLATFORM: offscreen
@@ -66,6 +79,7 @@ jobs:
           -DBUILD_TESTING=ON
           -DBUILD_MERCE_PLAYGROUND=${{ matrix.playground }}
           -DMERCE_ENABLE_TOKEN_BUILD=OFF
+          -DMERCE_BUILD_STYLE_EFFECTS=${{ matrix.style_effects }}
 
       - name: Build
         run: cmake --build build --config Release --parallel 2
@@ -92,6 +106,49 @@ jobs:
           MERCE_GALLERY_DIR: ${{ runner.temp }}/merce-gallery
         run: skills/merce-playground-verification/scripts/run-gates.sh
 
+      - name: Install headless OpenGL test dependencies
+        if: matrix.rendering == 'ON'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb libxcb-cursor0 libxkbcommon-x11-0 libgl1-mesa-dri
+
+      - name: Verify shader pixels and finite hover animation
+        if: matrix.rendering == 'ON'
+        run: |
+          cmake -S . -B build -DMERCE_TEST_EFFECTS_RENDERING=ON
+          xvfb-run -a env QT_QPA_PLATFORM=xcb QT_QUICK_BACKEND=rhi \
+            QSG_RHI_BACKEND=opengl LIBGL_ALWAYS_SOFTWARE=1 \
+            ctest --test-dir build --output-on-failure --timeout 180 \
+            -R '^tst_merce_effects_rendering$'
+
+      - name: Export playground with OpenGL effects
+        if: matrix.rendering == 'ON'
+        run: >-
+          xvfb-run -a env QT_QPA_PLATFORM=xcb QT_QUICK_BACKEND=rhi
+          QSG_RHI_BACKEND=opengl LIBGL_ALWAYS_SOFTWARE=1
+          QML_IMPORT_PATH="$PWD/build/qml"
+          build/playground/MercePlayground
+          --export-playground-pages "${{ runner.temp }}/merce-effects"
+
+      - name: Upload effects previews
+        if: matrix.rendering == 'ON'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: merce-effects-opengl
+          path: ${{ runner.temp }}/merce-effects/*-effects.png
+          if-no-files-found: error
+
+      - name: Verify playground without the adapter
+        if: matrix.playground == 'ON'
+        run: |
+          cmake -S . -B build-without-effects -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DMERCE_BUILD_STYLE_EFFECTS=OFF \
+            -DMERCE_BUILD_NOTIFICATIONS=ON -DMERCE_ENABLE_FONTAWESOME=ON \
+            -DBUILD_MERCE_PLAYGROUND=ON -DMERCE_BUILD_TESTS=OFF
+          cmake --build build-without-effects --target MercePlayground --parallel 2
+          QML_IMPORT_PATH="$PWD/build-without-effects/qml" \
+            build-without-effects/playground/MercePlayground --playground-probe
+
   package:
     name: Installed package
     runs-on: ubuntu-24.04
@@ -110,6 +167,10 @@ jobs:
         run: |
           cmake -S tests/source-consumer -B build-source-consumer -G Ninja \
             -DCMAKE_BUILD_TYPE=Release
+          cmake --build build-source-consumer --parallel 2
+          QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software \
+            QML_IMPORT_PATH="$PWD/build-source-consumer/merce/qml" \
+            build-source-consumer/consumer/merce_package_consumer
 
       - name: Build and install Merce
         run: |
@@ -137,6 +198,7 @@ jobs:
       - name: Run package consumer
         env:
           QT_QPA_PLATFORM: offscreen
+          QT_QUICK_BACKEND: software
           QML_IMPORT_PATH: ${{ runner.temp }}/merce-install/lib/qml
           LD_LIBRARY_PATH: ${{ runner.temp }}/merce-install/lib
         run: build-package-consumer/merce_package_consumer

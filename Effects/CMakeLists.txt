@@ -7,6 +7,12 @@ qt_add_qml_module(MerceEffects
     VERSION 1.0
     QML_FILES
         MShadow.qml
+        MSheen.qml
+)
+
+qt_add_shaders(MerceEffects merce_effects_shaders
+    PREFIX "/qt/qml/Merce/Effects"
+    FILES shaders/sheen.frag
 )
 
 target_link_libraries(MerceEffects PRIVATE MerceTheme Qt6::Quick Qt6::Qml Qt6::QuickEffects)

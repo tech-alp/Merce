@@ -193,8 +193,12 @@ int main(int argc, char *argv[])
             QCoreApplication::exit(3);
         });
     } else if (playgroundProbe) {
-        QTimer::singleShot(6000, &app, []() {
-            qCritical().noquote() << "Playground probe timed out";
+        // The full route also instantiates the optional Effects page. Leave
+        // room for cold QML/font caches while still bounding a stalled probe.
+        QTimer::singleShot(10000, &app, [&engine]() {
+            qCritical().noquote() << "Playground probe timed out on page"
+                                 << (engine.rootObjects().isEmpty() ? QVariant()
+                                     : engine.rootObjects().constFirst()->property("selectedPage"));
             QCoreApplication::exit(3);
         });
     } else if (fontAwesomeIconProbe) {

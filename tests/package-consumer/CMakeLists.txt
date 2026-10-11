@@ -11,7 +11,16 @@ find_package(Qt6 6.11 REQUIRED COMPONENTS
     LabsStyleKit
     QuickEffects
 )
-find_package(Merce 1.0 CONFIG REQUIRED)
+if(NOT TARGET Merce::Core)
+    find_package(Merce 1.0 CONFIG REQUIRED)
+endif()
+
+option(MERCE_EXPECT_STYLE_EFFECTS "Expect the optional StyleEffects package" ON)
+if(MERCE_EXPECT_STYLE_EFFECTS AND NOT TARGET Merce::StyleEffects)
+    message(FATAL_ERROR "Missing consumer target: Merce::StyleEffects")
+elseif(NOT MERCE_EXPECT_STYLE_EFFECTS AND TARGET Merce::StyleEffects)
+    message(FATAL_ERROR "Disabled StyleEffects must not expose a target")
+endif()
 
 qt_standard_project_setup(REQUIRES 6.11)
 
@@ -38,11 +47,18 @@ qt_add_executable(merce_package_consumer
     main.cpp
 )
 
+set(consumer_qml Main.qml)
+if(MERCE_EXPECT_STYLE_EFFECTS)
+    list(APPEND consumer_qml EffectsProbe.qml)
+    target_compile_definitions(merce_package_consumer PRIVATE MERCE_CONSUMER_STYLE_EFFECTS)
+    target_link_libraries(merce_package_consumer PRIVATE Merce::StyleEffects)
+endif()
+
 qt_add_qml_module(merce_package_consumer
     URI Merce.PackageConsumer
     VERSION 1.0
     QML_FILES
-        Main.qml
+        ${consumer_qml}
 )
 
 target_link_libraries(merce_package_consumer PRIVATE
