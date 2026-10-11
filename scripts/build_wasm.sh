@@ -105,6 +105,14 @@ qml_plugins=(
     QtQuickVectorImageHelpersPlugin
 )
 
+# Match CMake's false constants, including when callers use TRUE, YES or 1.
+style_effects="$(sed -n 's/^MERCE_BUILD_STYLE_EFFECTS:BOOL=//p' "${build_dir}/CMakeCache.txt" \
+    | tr '[:lower:]' '[:upper:]')"
+case "${style_effects}" in
+    ''|0|OFF|NO|FALSE|N|IGNORE|NOTFOUND|*-NOTFOUND) ;;
+    *) qml_plugins+=(Merce_Style_EffectsPlugin) ;;
+esac
+
 for qml_plugin in "${qml_plugins[@]}"; do
     if ! grep -aFq "${qml_plugin}" "${wasm_output}"; then
         echo "Missing static QML plugin in WebAssembly output: ${qml_plugin}" >&2

@@ -45,6 +45,9 @@ set(MERCE_QML_MODULE_TARGETS
 if(MERCE_ENABLE_FONTAWESOME)
     list(APPEND MERCE_QML_MODULE_TARGETS MerceIconsFontAwesome)
 endif()
+if(MERCE_BUILD_STYLE_EFFECTS)
+    list(APPEND MERCE_QML_MODULE_TARGETS MerceStyleEffects)
+endif()
 
 # Merce.Notifications imports the source-integrated static Toastify modules.
 # Until QtToastify provides an installable QML package, keep Notifications out

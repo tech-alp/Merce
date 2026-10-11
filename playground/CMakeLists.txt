@@ -33,6 +33,16 @@ set(MERCE_PLAYGROUND_COMPONENT_QML
     component/PlaygroundPage.qml
 )
 
+# Both builds expose PlaygroundStyle, but only the enabled build imports the
+# adapter or compiles the Effects page. Resource aliases already flatten views.
+if(MERCE_BUILD_STYLE_EFFECTS)
+    list(APPEND MERCE_PLAYGROUND_COMPONENT_QML component/effects/PlaygroundStyle.qml)
+    list(APPEND MERCE_PLAYGROUND_VIEW_QML view/EffectsShowcase.qml)
+    target_link_libraries(MercePlayground PRIVATE MerceStyleEffects)
+else()
+    list(APPEND MERCE_PLAYGROUND_COMPONENT_QML component/PlaygroundStyle.qml)
+endif()
+
 set(MERCE_PLAYGROUND_PROBE_QML
     probe/FontAwesomeGridProbe.qml
     probe/FontAwesomeIconProbe.qml

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Merce Effects"
+  short_description: "Author and verify Qt Quick effects for Merce"
+  default_prompt: "Use $merce-effects to add a theme-aware effect to a Merce component and verify its behavior."

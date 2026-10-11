@@ -27,6 +27,7 @@ build succeeds.
   breakpoint, and z-index tokens
 - Runtime theme and profile switching through the Theme singleton
 - Centralized styling for Qt.labs.StyleKit controls
+- Opt-in shader variations, starting with a finite, theme-aware button sheen
 - Built-in Material Symbols support
 - Reusable controls including MButton, MBadge, and LoadingIndicator
 - Optional Font Awesome module
@@ -38,7 +39,7 @@ build succeeds.
 
 - CMake 3.30 or newer
 - Qt 6.11 or newer with Core, Gui, Qml, Quick, QuickControls2, LabsStyleKit,
-  and QuickEffects
+  QuickEffects, and ShaderTools (build-time shader baking)
 - A C++20-capable compiler
 
 Notifications additionally require Qt Quick Vector Image and Vector Image
@@ -53,7 +54,8 @@ Helpers. Node.js 22+ and npm are required only for design-token generation.
 | Merce.Theme | Semantic tokens and runtime theme/profile selection |
 | Merce.Foundation | Surfaces, labels, Material icons, and font helpers |
 | Merce.Style | Maps Merce tokens to Qt.labs.StyleKit |
-| Merce.Effects | Token-aware effects such as MShadow |
+| Merce.Effects | MShadow and the source-free MSheen shader primitive |
+| Merce.Style.Effects | Optional MerceEffectsStyle and shader variations |
 | Merce.Controls | MButton, MBadge, and LoadingIndicator |
 | Merce.Icons.FontAwesome | Optional Font Awesome QML module |
 | Merce.Notifications | Optional toast, dialog, and notification orchestration |
@@ -145,6 +147,45 @@ Theme.setContext("merce", "light", "ops")
 
 ## Build
 
+### Button sheen (Unreleased)
+
+The effect API requires a revision containing this change; it is not in v1.2.0.
+Link `Merce::StyleEffects` alongside `Merce::Controls`, select the extended
+style, and opt individual buttons in:
+
+~~~qml
+import QtQuick
+import Qt.labs.StyleKit as SK
+import Merce.Controls
+import Merce.Style.Effects
+
+SK.ApplicationWindow {
+    width: 400
+    height: 240
+    visible: true
+    SK.StyleKit.style: MerceEffectsStyle {
+        effectPolicy.enabled: true
+        effectPolicy.reducedMotion: false
+    }
+
+    MButton {
+        anchors.centerIn: parent
+        text: qsTr("Continue")
+        extraVariations: ["sheen"]
+    }
+}
+~~~
+
+Each hover entry plays one sweep. The normal button remains usable when effects
+are disabled, reduced motion is requested, or a shader-capable renderer is
+unavailable. These policy flags are application settings, not automatic OS
+preference detection. The base `MerceStyle` and `MButton` behavior stay intact.
+
+See [effects and AI-assisted authoring](docs/effects.md), the
+[sheen API](docs/effects/sheen.md), and the real playground's **Effects** page.
+
+### Configure and build
+
 The default build keeps optional applications and QtToastify disabled:
 
 ~~~sh
@@ -169,7 +210,8 @@ ctest --test-dir build-full --output-on-failure
 ~~~
 
 Build the WebAssembly site with a matching Qt host kit, Qt for WebAssembly, and
-Emscripten environment:
+Emscripten environment. Include Qt ShaderTools in both Qt kits so the host's
+`qsb` can bake resources for the WebAssembly target:
 
 ~~~sh
 QT_HOST_PATH=/path/to/Qt/6.11.1/host \
@@ -180,8 +222,8 @@ EMSDK_ROOT=/path/to/emsdk \
 
 ## Install
 
-The v1.2 installed package contains the core design-system modules and optional
-Font Awesome module. Merce.Notifications is source-integration only because
+The installed package contains the core design-system modules and the enabled
+optional Font Awesome and StyleEffects modules. Merce.Notifications is source-integration only because
 QtToastify currently ships as static QML modules.
 
 ~~~sh
@@ -216,6 +258,8 @@ target_link_libraries(MyApp PRIVATE
 | MERCE_BUILD_NOTIFICATIONS | OFF | Builds Merce.Notifications and fetches the pinned QtToastify release |
 | MERCE_QTTOASTIFY_GIT_TAG | v2.0.0 | QtToastify release tag used by the notifications module |
 | MERCE_ENABLE_FONTAWESOME | ON | Builds Merce.Icons.FontAwesome |
+| MERCE_BUILD_STYLE_EFFECTS | ON | Builds Merce.Style.Effects; OFF also removes the playground Effects page |
+| MERCE_TEST_EFFECTS_RENDERING | OFF | Adds required RHI shader pixel and sweep tests; needs a working graphics backend |
 | MERCE_BUILD_TESTS | Top-level only | Builds the test suite |
 | BUILD_MERCE_PLAYGROUND | OFF | Builds the playground; requires notifications and Font Awesome |
 | MERCE_ENABLE_TOKEN_BUILD | OFF | Adds the npm-backed merce_tokens target |

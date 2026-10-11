@@ -516,6 +516,33 @@ Main {
                 }
 
                 root.width = 1180
+                root.selectedPage = root.effectsAvailable ? "effects" : "theme-builder"
+                step = root.effectsAvailable ? 71 : 8
+                interval = 160
+                restart()
+                return
+            }
+
+            if (step === 71) {
+                if (!root.verifyShowcasePage("effects", "Effects",
+                                             "merce.playground.effectsShowcase",
+                                             "merce.playground.effects.buttons"))
+                    return
+                const effects = root.findNamed("merce.playground.effectsShowcase")
+                const position = root.findNamed("merce.playground.effects.progress")
+                if (!effects.effectPolicy || !position || position.value !== 0.5) {
+                    root.fail("effects policy and scrubber", [effects.effectPolicy, position])
+                    return
+                }
+                effects.effectPolicy.enabled = false
+                effects.effectPolicy.reducedMotion = true
+                const toggle = root.findNamed("merce.playground.effects.enabled")
+                if (!toggle || toggle.checked) {
+                    root.fail("effects policy binding", [toggle ? toggle.checked : null])
+                    return
+                }
+                effects.effectPolicy.enabled = true
+                effects.effectPolicy.reducedMotion = false
                 root.selectedPage = "theme-builder"
                 step = 8
                 interval = 160
