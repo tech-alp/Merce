@@ -177,12 +177,14 @@ QtObject {
 
         root.m_registerRequest(request)
 
+        let result = ""
         const command = {
             request: request,
-            result: ""
+            // QML var signal arguments are copied, so return through a callback.
+            resolve: function(value) { result = value }
         }
         root.dialogRequested(command)
-        return command.result
+        return result
     }
 
     function cancelActive() {

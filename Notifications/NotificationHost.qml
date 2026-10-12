@@ -256,7 +256,7 @@ Item {
         }
 
         function onDialogRequested(command) {
-            command.result = host.m_ask(command.request)
+            command.resolve(host.m_ask(command.request))
         }
 
         function onCancelActiveRequested() {

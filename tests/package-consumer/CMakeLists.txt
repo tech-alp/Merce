@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.30)
 
 project(MercePackageConsumer LANGUAGES CXX)
 
-find_package(Qt6 6.11 REQUIRED COMPONENTS
+find_package(Qt6 6.12 REQUIRED COMPONENTS
     Core
     Gui
     Quick
@@ -13,7 +13,7 @@ find_package(Qt6 6.11 REQUIRED COMPONENTS
 )
 find_package(Merce 1.0 CONFIG REQUIRED)
 
-qt_standard_project_setup(REQUIRES 6.11)
+qt_standard_project_setup(REQUIRES 6.12)
 
 foreach(required_target IN ITEMS
     Merce::Core

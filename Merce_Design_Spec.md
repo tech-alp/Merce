@@ -4,7 +4,7 @@ Merce artik merkezi bir QML control kutuphanesi degil; Qt Labs StyleKit uzerine 
 
 ## Hedef
 
-- Qt 6.11+ `Qt.labs.StyleKit` core dependency.
+- Qt 6.12+ `Qt.labs.StyleKit` core dependency.
 - Kontrol davranisi Qt Labs StyleKit tarafinda kalir.
 - Merce semantic token, runtime theme, StyleKit mapping, notification ve dialog orkestrasyonu saglar.
 - Uygulama katmani kendi componentlerini ve gerekirse kendi StyleKit variation sozlugunu genisletir.
@@ -108,10 +108,10 @@ Bir uygulama Merce kullanirken ihtiyac duydugu minimum parcalar:
 
 ## CMake Konumu
 
-Core Qt dependency seti Qt 6.11+ ve StyleKit'i icerir:
+Core Qt dependency seti Qt 6.12+ ve StyleKit'i icerir:
 
 ```cmake
-find_package(Qt6 6.11 REQUIRED COMPONENTS Core Gui Quick Qml QuickControls2 LabsStyleKit)
+find_package(Qt6 6.12 REQUIRED COMPONENTS Core Gui Quick Qml QuickControls2 LabsStyleKit)
 ```
 
 `Merce.Style`, `Merce.Theme` ve `Qt6::LabsStyleKit` uzerine kurulur. `Merce.Notifications`, `Merce.Controls`'a baglanmaz.

@@ -2,6 +2,7 @@
 
 #include <QImage>
 #include <QQmlApplicationEngine>
+#include <QQmlProperty>
 #include <QQuickItem>
 #include <QQuickWindow>
 #include <QtTest>
@@ -67,6 +68,8 @@ class tst_merce_style_runtime_switch : public QObject
 private slots:
     void existingStyleKitControlsRepaintAfterContextSwitch();
     void spinBoxValuesFitOpsProfile();
+private:
+    void verifyDisabledComboBoxArrow(QQuickWindow *window, MerceTheme *theme);
 };
 
 void tst_merce_style_runtime_switch::existingStyleKitControlsRepaintAfterContextSwitch()
@@ -83,6 +86,7 @@ void tst_merce_style_runtime_switch::existingStyleKitControlsRepaintAfterContext
     QQuickItem *comboBox = nullptr;
     QQuickItem *spinBox = nullptr;
     QQuickItem *textArea = nullptr;
+    QQuickItem *verticalSlider = nullptr;
     QQuickItem *disabledCheckedButton = nullptr;
     QQuickItem *disabledCheckedCheckBox = nullptr;
     QQuickItem *disabledCheckedRadio = nullptr;
@@ -102,6 +106,13 @@ void tst_merce_style_runtime_switch::existingStyleKitControlsRepaintAfterContext
                     window->findChild<QQuickItem *>(QStringLiteral("styleSpinBox")));
     QTRY_VERIFY(textArea =
                     window->findChild<QQuickItem *>(QStringLiteral("styleTextArea")));
+    QTRY_VERIFY(verticalSlider =
+                    window->findChild<QQuickItem *>(QStringLiteral("verticalStyleSlider")));
+    QObject *sliderBackground = verticalSlider->property("background").value<QObject *>();
+    QVERIFY(sliderBackground);
+    auto *sliderTrack = qobject_cast<QQuickItem *>(
+        sliderBackground->property("indicator").value<QObject *>());
+    QVERIFY(sliderTrack);
     QTRY_VERIFY(disabledCheckedButton =
                     window->findChild<QQuickItem *>(QStringLiteral("disabledCheckedButton")));
     QTRY_VERIFY(disabledCheckedCheckBox =
@@ -383,16 +394,30 @@ void tst_merce_style_runtime_switch::existingStyleKitControlsRepaintAfterContext
     QVERIFY(lightTextArea != darkTextArea);
     QVERIFY(lightMerceButton != darkMerceButton);
 
-    QVERIFY(theme->setContext(QStringLiteral("algit"),
-                              QStringLiteral("dark"),
-                              QStringLiteral("ops")));
-    QCOMPARE(qRound(window->property("styleSwitchHeight").toReal()),
-             theme->size()->control()->medium());
-    QEXPECT_FAIL("",
-                 "Qt 6.11.1 StyleReader leaves an existing Switch's "
-                 "implicitBackgroundHeight at its construction-time profile",
-                 Continue);
-    QCOMPARE(qRound(switchControl->implicitHeight()), theme->size()->control()->medium());
+    for (const auto &profile : {QStringLiteral("ops"), QStringLiteral("cart"),
+                               QStringLiteral("ops")}) {
+        QVERIFY(theme->setContext(QStringLiteral("algit"), QStringLiteral("dark"), profile));
+        QCOMPARE(theme->activeProfile(), profile);
+        QCOMPARE(window->property("activeStyle").value<QObject *>(), styleBefore);
+        const int controlHeight = theme->size()->control()->medium();
+        QCOMPARE(qRound(window->property("styleSwitchHeight").toReal()), controlHeight);
+        QTRY_COMPARE(qRound(button->implicitHeight()), controlHeight);
+        QTRY_COMPARE(qRound(switchControl->implicitHeight()), controlHeight);
+        QTRY_COMPARE(qRound(switchControl->property("implicitBackgroundHeight").toReal()),
+                     controlHeight);
+        QTRY_COMPARE(qRound(switchControl->property("implicitIndicatorWidth").toReal()),
+                     controlHeight);
+        QTRY_COMPARE(qRound(comboBox->implicitHeight()), controlHeight);
+        QTRY_COMPARE(qRound(spinBox->implicitHeight()), controlHeight);
+        QTRY_COMPARE(qRound(textArea->implicitHeight()), controlHeight * 2);
+        QTRY_COMPARE(qRound(merceButton->implicitHeight()), theme->size()->control()->small());
+        QTRY_COMPARE(qRound(sliderBackground->property("implicitWidth").toReal()), controlHeight);
+        QTRY_VERIFY(verticalSlider->implicitWidth() >= controlHeight);
+        QTRY_COMPARE(qRound(verticalSlider->implicitHeight()), theme->size()->control()->large() * 3);
+        QTRY_COMPARE(qRound(sliderTrack->width()), theme->size()->outline()->strong() * 2);
+        QTRY_VERIFY(sliderTrack->height() > sliderTrack->width());
+    }
+    verifyDisabledComboBoxArrow(window, theme);
 }
 
 void tst_merce_style_runtime_switch::spinBoxValuesFitOpsProfile()
@@ -435,6 +460,33 @@ void tst_merce_style_runtime_switch::spinBoxValuesFitOpsProfile()
              qPrintable(QStringLiteral("compact spin box content width %1, required %2")
                             .arg(compactSpinBoxContent->width())
                             .arg(compactSpinBoxContent->implicitWidth())));
+}
+
+void tst_merce_style_runtime_switch::verifyDisabledComboBoxArrow(QQuickWindow *window,
+                                                               MerceTheme *theme)
+{
+    auto *combo = window->findChild<QQuickItem *>("styleComboBox");
+    QVERIFY(combo);
+    auto *indicator = combo->property("indicator").value<QObject *>();
+    QVERIFY(indicator);
+    QObject *style = window->property("activeStyle").value<QObject *>();
+    QVERIFY(style);
+
+    for (const auto &mode : {QStringLiteral("light"), QStringLiteral("dark")}) {
+        QVERIFY(theme->setContext("algit", mode, "ops"));
+        combo->setEnabled(false);
+        QVariant disabledColor;
+        QVERIFY(QMetaObject::invokeMethod(style, "disabledContent",
+            Q_RETURN_ARG(QVariant, disabledColor),
+            Q_ARG(QVariant, theme->colors()->surface()->container()),
+            Q_ARG(QVariant, theme->colors()->content()->secondary())));
+        QTRY_COMPARE(QQmlProperty::read(indicator, "indicatorStyle.foreground.image.color").value<QColor>(),
+                     disabledColor.value<QColor>());
+        combo->setEnabled(true);
+        QTRY_COMPARE(QQmlProperty::read(indicator, "indicatorStyle.foreground.image.color").value<QColor>(),
+                     theme->colors()->content()->secondary());
+        combo->setEnabled(false);
+    }
 }
 
 QTEST_MAIN(tst_merce_style_runtime_switch)

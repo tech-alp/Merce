@@ -27,14 +27,14 @@ if(MERCE_ENABLE_TOKEN_BUILD)
     )
 endif()
 
-# Qt 6.11+ / Qt.labs.StyleKit baseline required
-find_package(Qt6 6.11 REQUIRED COMPONENTS Core Gui Quick Qml QuickControls2 LabsStyleKit QuickEffects)
+# Qt 6.12+ / Qt.labs.StyleKit baseline required
+find_package(Qt6 6.12 REQUIRED COMPONENTS Core Gui Quick Qml QuickControls2 LabsStyleKit QuickEffects)
 
 if(MERCE_BUILD_NOTIFICATIONS)
-    find_package(Qt6 6.11 REQUIRED COMPONENTS QuickVectorImage QuickVectorImageHelpers)
+    find_package(Qt6 6.12 REQUIRED COMPONENTS QuickVectorImage QuickVectorImageHelpers)
 endif()
 
-qt_standard_project_setup(REQUIRES 6.11)
+qt_standard_project_setup(REQUIRES 6.12)
 qt_policy(SET QTP0005 NEW)
 if(MERCE_BUILD_TESTS)
     include(CTest)
@@ -98,7 +98,7 @@ if(MERCE_BUILD_NOTIFICATIONS)
 endif()
 
 if(MERCE_BUILD_TESTS AND BUILD_TESTING)
-    find_package(Qt6 6.11 REQUIRED COMPONENTS Test)
+    find_package(Qt6 6.12 REQUIRED COMPONENTS Test)
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests/CMakeLists.txt")
         add_subdirectory(tests)
     endif()

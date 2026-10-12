@@ -19,7 +19,7 @@ if [ -n "${QT_CMAKE:-}" ]; then
 elif command -v qt-cmake >/dev/null 2>&1; then
     qt_cmake=$(command -v qt-cmake)
 else
-    echo "qt-cmake not found. Set QT_CMAKE=/path/to/Qt/6.11.x/<platform>/bin/qt-cmake" >&2
+    echo "qt-cmake not found. Set QT_CMAKE=/path/to/Qt/6.12.0/<platform>/bin/qt-cmake" >&2
     exit 1
 fi
 

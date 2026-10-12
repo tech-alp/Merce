@@ -14,10 +14,22 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - Device table playground pattern with search, sorting, stable row selection,
   status badges, and device details using sample data.
 
+### Changed
+
+- Require Qt 6.12 or newer and migrate StyleKit geometry to width/height and
+  fill properties. CI and WebAssembly builds use Qt 6.12.0; WebAssembly uses
+  the matching Emscripten 5.0.5 SDK.
+
 ### Fixed
 
+- Existing controls update their geometry during ops/cart profile switches
+  without recreating the style, including vertical Slider token geometry.
 - Wrapped kiosk page titles stay within the playground header at compact and
   intermediate window widths.
+- Dialog requests preserve their returned IDs across Qt 6.12 QML signal
+  argument copying.
+- Disabled ComboBox arrows now follow Merce semantic
+  colors, including runtime light/dark switching.
 
 ## [1.2.0] - 2026-09-22
 

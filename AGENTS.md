@@ -2,7 +2,7 @@
 
 ## Architecture Boundaries
 
-Merce is a Qt 6.11+ theme, StyleKit mapping, and feedback runtime, not a general-purpose control library. Prefer this order for new UI needs: semantic token, `Merce.Style` mapping, StyleKit variation, Foundation primitive, then a custom control only when behavior differs. Keep the CMake 3.30, C++20, and Qt 6.11 baseline explicit.
+Merce is a Qt 6.12+ theme, StyleKit mapping, and feedback runtime, not a general-purpose control library. Prefer this order for new UI needs: semantic token, `Merce.Style` mapping, StyleKit variation, Foundation primitive, then a custom control only when behavior differs. Keep the CMake 3.30, C++20, and Qt 6.12 baseline explicit.
 
 Optional modules must stay isolated. `MERCE_BUILD_NOTIFICATIONS=OFF` must avoid fetching QtToastify. `BUILD_MERCE_PLAYGROUND=OFF` must avoid building the demo. `Merce.Notifications` remains source-only; installed packages contain the core design-system modules and optional Font Awesome module.
 
