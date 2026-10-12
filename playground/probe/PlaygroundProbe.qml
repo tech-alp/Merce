@@ -6,6 +6,29 @@ import Merce.Icons.FontAwesome
 Main {
     id: root
 
+    TableShowcase {
+        visible: false
+        width: 900
+        Component.onCompleted: {
+            const firstId = visibleDevices[0].deviceId
+            selectDevice(firstId, true)
+            descending = true
+            if (!selectedIds.includes(firstId) || visibleDevices[0].deviceId === firstId)
+                root.fail("device sorting preserves selection", [])
+            query = "  k-002  "
+            if (visibleDevices.length !== 1 || visibleDevices[0].deviceId !== "K-002")
+                root.fail("device search by ID", [])
+            selectVisible(true)
+            selectVisible(false)
+            if (!selectedIds.includes(firstId) || selectedIds.includes("K-002"))
+                root.fail("filtered selection preserves hidden rows", [])
+            query = "no such device"
+            selectVisible(true)
+            if (visibleDevices.length !== 0 || selectedIds.length !== 1)
+                root.fail("empty device search", [])
+        }
+    }
+
 
     // Counting brands fails on the number every time one is added, which says
     // nothing about whether the brands a probe needs are present. Name them.
@@ -121,10 +144,74 @@ Main {
         running: true
         repeat: false
 
-        property int step: 0
+        property int step: -3
+        property size previousSize
+        property string previousPage
+        property string previousProfile
 
         onTriggered: {
+            if (step === -3) {
+                previousSize = Qt.size(root.width, root.height)
+                previousPage = root.selectedPage
+                previousProfile = Theme.activeProfile
+                if (!Theme.setContext(Theme.activeBrand, Theme.activeMode, "cart")) {
+                    root.fail("header profile setup", [])
+                    return
+                }
+                root.width = 960
+                root.selectedPage = "spacing"
+                step = -2
+                interval = 120
+                restart()
+                return
+            }
+
+            if (step === -2 || step === -1) {
+                const header = root.header as PlaygroundHeader
+                const title = root.findNamed("merce.playground.header.title")
+                if (Theme.activeProfile !== "cart"
+                        || root.selectedPage !== "spacing"
+                        || root.width !== (step === -2 ? 960 : 760)
+                        || !header || header.compact !== (step === -1)
+                        || !root.fitsHorizontally(title, header)
+                        || !root.fitsVertically(title, header)) {
+                    root.fail("profile header title bounds", [root.width,
+                              Theme.activeProfile, root.rectInContent(title),
+                              root.rectInContent(header)])
+                    return
+                }
+                if (step === -2) {
+                    root.width = 760
+                    step = -1
+                } else {
+                    root.width = previousSize.width
+                    root.height = previousSize.height
+                    root.selectedPage = previousPage
+                    if (!Theme.setContext(Theme.activeBrand, Theme.activeMode, previousProfile)) {
+                        root.fail("header profile restore", [])
+                        return
+                    }
+                    step = 0
+                }
+                interval = 120
+                restart()
+                return
+            }
+
             if (step === 0) {
+                const profileSelect = root.findNamed("merce.playground.header.profileSelect")
+                const brand = Theme.activeBrand
+                const mode = Theme.activeMode
+                const profile = Theme.activeProfile
+                if (!profileSelect || !root.activateComboValue(profileSelect, "ops")
+                        || Theme.activeProfile !== "ops" || Theme.size.control.medium !== 48
+                        || !root.activateComboValue(profileSelect, "cart")
+                        || Theme.activeProfile !== "cart" || Theme.size.control.medium !== 72
+                        || Theme.activeBrand !== brand || Theme.activeMode !== mode
+                        || !profileSelect.selectProfile(profile)) {
+                    root.fail("profile selection preserves brand and mode", [])
+                    return
+                }
                 const themeSelect = root.findNamed("merce.playground.header.themeSelect")
                 if (!themeSelect) {
                     root.fail("header theme select lookup", [])

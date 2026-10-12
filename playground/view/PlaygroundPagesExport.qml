@@ -12,6 +12,7 @@ Main {
                                               : String(playgroundPagesOutputDir)
     readonly property var pageKeys: [
         "theme",
+        "profiles",
         "palette",
         "typography",
         "spacing",
@@ -22,6 +23,7 @@ Main {
         "icons",
         "feedback",
         "forms",
+        "devices",
         "states"
     ]
     readonly property var auditWidths: [1180, 760]

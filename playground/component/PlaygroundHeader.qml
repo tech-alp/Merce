@@ -14,15 +14,21 @@ Rectangle {
     signal modeSelected(var value)
 
     color: Theme.colors.surface.canvas
+    readonly property bool compact: width < 960
+    implicitHeight: compact ? titleText.implicitHeight + selectorRow.height + 32
+                            : Math.max(76, selectorRow.height + 24, titleText.implicitHeight + 24)
 
     AppLabel {
         id: titleText
+        objectName: "merce.playground.header.title"
         anchors {
             left: parent.left
             leftMargin: Theme.spacing.xl
-            verticalCenter: parent.verticalCenter
+            top: root.compact ? parent.top : undefined
+            topMargin: 8
+            verticalCenter: root.compact ? undefined : parent.verticalCenter
         }
-        width: Math.max(160, parent.width - selectorRow.width - Theme.spacing.xl * 3)
+        width: root.compact ? parent.width - Theme.spacing.xl * 2 : Math.max(160, parent.width - selectorRow.width - Theme.spacing.xl * 3)
         textType: AppLabel.H3
         text: root.pageTitle
         color: Theme.colors.content.primary
@@ -34,9 +40,17 @@ Rectangle {
         anchors {
             right: parent.right
             rightMargin: Theme.spacing.xl
-            verticalCenter: parent.verticalCenter
+            bottom: root.compact ? parent.bottom : undefined
+            bottomMargin: 12
+            verticalCenter: root.compact ? undefined : parent.verticalCenter
         }
         spacing: Theme.spacing.sm
+
+        ProfileSelector {
+            objectName: "merce.playground.header.profileSelect"
+            width: 190
+            StyleVariation.variations: ["small"]
+        }
 
         ComboBox {
             objectName: "merce.playground.header.themeSelect"
