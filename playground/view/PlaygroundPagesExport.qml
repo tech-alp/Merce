@@ -23,7 +23,6 @@ Main {
         "icons",
         "feedback",
         "forms",
-        "devices",
         "states"
     ]
     readonly property var auditWidths: [1180, 760]

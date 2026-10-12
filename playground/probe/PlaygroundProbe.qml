@@ -6,30 +6,6 @@ import Merce.Icons.FontAwesome
 Main {
     id: root
 
-    TableShowcase {
-        visible: false
-        width: 900
-        Component.onCompleted: {
-            const firstId = visibleDevices[0].deviceId
-            selectDevice(firstId, true)
-            descending = true
-            if (!selectedIds.includes(firstId) || visibleDevices[0].deviceId === firstId)
-                root.fail("device sorting preserves selection", [])
-            query = "  k-002  "
-            if (visibleDevices.length !== 1 || visibleDevices[0].deviceId !== "K-002")
-                root.fail("device search by ID", [])
-            selectVisible(true)
-            selectVisible(false)
-            if (!selectedIds.includes(firstId) || selectedIds.includes("K-002"))
-                root.fail("filtered selection preserves hidden rows", [])
-            query = "no such device"
-            selectVisible(true)
-            if (visibleDevices.length !== 0 || selectedIds.length !== 1)
-                root.fail("empty device search", [])
-        }
-    }
-
-
     // Counting brands fails on the number every time one is added, which says
     // nothing about whether the brands a probe needs are present. Name them.
     function hasBrands(names) {

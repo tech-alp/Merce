@@ -10,7 +10,6 @@ set(MERCE_PLAYGROUND_VIEW_QML
     view/ControlsShowcase.qml
     view/FeedbackShowcase.qml
     view/FormsShowcase.qml
-    view/TableShowcase.qml
     view/IconsShowcase.qml
     view/MotionShowcase.qml
     view/PaletteShowcase.qml

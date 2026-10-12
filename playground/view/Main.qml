@@ -103,12 +103,6 @@ ApplicationWindow {
             category: "Patterns"
             icon: "material:check_circle"
         }
-        ListElement {
-            key: "devices"
-            label: "Devices"
-            category: "Patterns"
-            icon: "material:devices"
-        }
     }
 
     function pageTitle(key) {
@@ -123,8 +117,6 @@ ApplicationWindow {
     function pageComponent(key) {
         if (key === "profiles")
             return profilesPage
-        if (key === "devices")
-            return devicesPage
         if (key === "palette")
             return palettePage
         if (key === "typography")
@@ -296,14 +288,6 @@ ApplicationWindow {
         PlaygroundPage {
             objectName: "merce.playground.stack.theme"
             sourceComponent: themeShowcase
-        }
-    }
-
-    Component {
-        id: devicesPage
-        PlaygroundPage {
-            objectName: "merce.playground.stack.devices"
-            sourceComponent: Component { TableShowcase {} }
         }
     }
 

@@ -11,8 +11,6 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 - Playground Desktop/Kiosk profile selector and Profiles page with live control
   previews and active metrics, reusing the existing ops/cart runtime profiles.
-- Device table playground pattern with search, sorting, stable row selection,
-  status badges, and device details using sample data.
 
 ### Changed
 
