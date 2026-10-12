@@ -7,17 +7,17 @@ SK.ApplicationWindow {
     id: root
 
     property alias activeStyle: merceStyle
-    readonly property real styleButtonHeight: merceStyle.button.background.implicitHeight
+    readonly property real styleButtonHeight: merceStyle.button.background.height
     readonly property color styleButtonColor: merceStyle.button.background.color
-    readonly property real styleSwitchHeight: merceStyle.switchControl.background.implicitHeight
-    readonly property real styleSwitchWidth: merceStyle.switchControl.indicator.implicitWidth
-    readonly property real styleSpinBoxHeight: merceStyle.spinBox.background.implicitHeight
+    readonly property real styleSwitchHeight: merceStyle.switchControl.background.height
+    readonly property real styleSwitchWidth: merceStyle.switchControl.indicator.width
+    readonly property real styleSpinBoxHeight: merceStyle.spinBox.background.height
     readonly property color styleSpinBoxColor: merceStyle.spinBox.background.color
     readonly property real styleSpinBoxIndicatorSize:
-        merceStyle.spinBox.indicator.foreground.implicitWidth
+        merceStyle.spinBox.indicator.foreground.width
     readonly property color styleSpinBoxIndicatorColor:
         merceStyle.spinBox.indicator.foreground.image.color
-    readonly property real styleTextAreaHeight: merceStyle.textArea.background.implicitHeight
+    readonly property real styleTextAreaHeight: merceStyle.textArea.background.height
     readonly property color styleTextAreaColor: merceStyle.textArea.background.color
     readonly property color disabledCheckedButtonColor:
         merceStyle.button.disabled.checked.background.color
@@ -72,6 +72,14 @@ SK.ApplicationWindow {
         width: 160
         text: ""
         checked: false
+    }
+
+    SK.Slider {
+        objectName: "verticalStyleSlider"
+        x: 550
+        y: 20
+        orientation: Qt.Vertical
+        value: 0.4
     }
 
     SK.ComboBox {

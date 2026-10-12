@@ -7,6 +7,28 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## [Unreleased]
 
+### Added
+
+- Playground Desktop/Kiosk profile selector and Profiles page with live control
+  previews and active metrics, reusing the existing ops/cart runtime profiles.
+
+### Changed
+
+- Require Qt 6.12 or newer and migrate StyleKit geometry to width/height and
+  fill properties. CI and WebAssembly builds use Qt 6.12.0; WebAssembly uses
+  the matching Emscripten 5.0.5 SDK.
+
+### Fixed
+
+- Existing controls update their geometry during ops/cart profile switches
+  without recreating the style, including vertical Slider token geometry.
+- Wrapped kiosk page titles stay within the playground header at compact and
+  intermediate window widths.
+- Dialog requests preserve their returned IDs across Qt 6.12 QML signal
+  argument copying.
+- Disabled ComboBox arrows now follow Merce semantic
+  colors, including runtime light/dark switching.
+
 ## [1.2.0] - 2026-09-22
 
 ### Added

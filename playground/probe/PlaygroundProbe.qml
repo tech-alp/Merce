@@ -6,7 +6,6 @@ import Merce.Icons.FontAwesome
 Main {
     id: root
 
-
     // Counting brands fails on the number every time one is added, which says
     // nothing about whether the brands a probe needs are present. Name them.
     function hasBrands(names) {
@@ -121,10 +120,74 @@ Main {
         running: true
         repeat: false
 
-        property int step: 0
+        property int step: -3
+        property size previousSize
+        property string previousPage
+        property string previousProfile
 
         onTriggered: {
+            if (step === -3) {
+                previousSize = Qt.size(root.width, root.height)
+                previousPage = root.selectedPage
+                previousProfile = Theme.activeProfile
+                if (!Theme.setContext(Theme.activeBrand, Theme.activeMode, "cart")) {
+                    root.fail("header profile setup", [])
+                    return
+                }
+                root.width = 960
+                root.selectedPage = "spacing"
+                step = -2
+                interval = 120
+                restart()
+                return
+            }
+
+            if (step === -2 || step === -1) {
+                const header = root.header as PlaygroundHeader
+                const title = root.findNamed("merce.playground.header.title")
+                if (Theme.activeProfile !== "cart"
+                        || root.selectedPage !== "spacing"
+                        || root.width !== (step === -2 ? 960 : 760)
+                        || !header || header.compact !== (step === -1)
+                        || !root.fitsHorizontally(title, header)
+                        || !root.fitsVertically(title, header)) {
+                    root.fail("profile header title bounds", [root.width,
+                              Theme.activeProfile, root.rectInContent(title),
+                              root.rectInContent(header)])
+                    return
+                }
+                if (step === -2) {
+                    root.width = 760
+                    step = -1
+                } else {
+                    root.width = previousSize.width
+                    root.height = previousSize.height
+                    root.selectedPage = previousPage
+                    if (!Theme.setContext(Theme.activeBrand, Theme.activeMode, previousProfile)) {
+                        root.fail("header profile restore", [])
+                        return
+                    }
+                    step = 0
+                }
+                interval = 120
+                restart()
+                return
+            }
+
             if (step === 0) {
+                const profileSelect = root.findNamed("merce.playground.header.profileSelect")
+                const brand = Theme.activeBrand
+                const mode = Theme.activeMode
+                const profile = Theme.activeProfile
+                if (!profileSelect || !root.activateComboValue(profileSelect, "ops")
+                        || Theme.activeProfile !== "ops" || Theme.size.control.medium !== 48
+                        || !root.activateComboValue(profileSelect, "cart")
+                        || Theme.activeProfile !== "cart" || Theme.size.control.medium !== 72
+                        || Theme.activeBrand !== brand || Theme.activeMode !== mode
+                        || !profileSelect.selectProfile(profile)) {
+                    root.fail("profile selection preserves brand and mode", [])
+                    return
+                }
                 const themeSelect = root.findNamed("merce.playground.header.themeSelect")
                 if (!themeSelect) {
                     root.fail("header theme select lookup", [])

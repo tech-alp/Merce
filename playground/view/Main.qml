@@ -74,6 +74,12 @@ ApplicationWindow {
             icon: "material:design_services"
         }
         ListElement {
+            key: "profiles"
+            label: "Profiles"
+            category: "Tools"
+            icon: "material:tune"
+        }
+        ListElement {
             key: "controls"
             label: "Controls"
             category: "Components"
@@ -109,6 +115,8 @@ ApplicationWindow {
     }
 
     function pageComponent(key) {
+        if (key === "profiles")
+            return profilesPage
         if (key === "palette")
             return palettePage
         if (key === "typography")
@@ -205,7 +213,7 @@ ApplicationWindow {
 
     header: PlaygroundHeader {
         objectName: "merce.playground.header"
-        height: 76
+        height: implicitHeight
         pageTitle: root.pageTitle(root.selectedPage)
         themeOptions: Theme.availableThemes
         modeOptions: root.modeOptionsFor(Theme.activeBrand)
@@ -264,6 +272,14 @@ ApplicationWindow {
             }
             clip: true
             initialItem: root.pageComponent(root.selectedPage)
+        }
+    }
+
+    Component {
+        id: profilesPage
+        PlaygroundPage {
+            objectName: "merce.playground.stack.profiles"
+            sourceComponent: Component { ProfilesPage {} }
         }
     }
 

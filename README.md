@@ -5,12 +5,12 @@
 [![Live Demo](https://img.shields.io/badge/live_demo-WebAssembly-654FF0?logo=webassembly)](https://tech-alp.github.io/Merce/wasm/)
 [![Release](https://img.shields.io/github/v/release/tech-alp/Merce)](https://github.com/tech-alp/Merce/releases)
 
-Merce is a Qt 6.11+ design-system runtime for QML applications. It provides
+Merce is a Qt 6.12+ design-system runtime for QML applications. It provides
 semantic design tokens, runtime brand/mode/profile switching, a centralized
 Qt.labs.StyleKit mapping, and reusable QML primitives.
 
 > [!IMPORTANT]
-> Merce depends on Qt.labs.StyleKit, which is a Technology Preview in Qt 6.11.
+> Merce depends on Qt.labs.StyleKit.
 > Its API and behavior may change between Qt releases. See the
 > [Qt StyleKit documentation](https://doc.qt.io/qt-6/qtlabsstylekit-index.html).
 
@@ -37,7 +37,7 @@ build succeeds.
 ## Requirements
 
 - CMake 3.30 or newer
-- Qt 6.11 or newer with Core, Gui, Qml, Quick, QuickControls2, LabsStyleKit,
+- Qt 6.12 or newer with Core, Gui, Qml, Quick, QuickControls2, LabsStyleKit,
   and QuickEffects
 - A C++20-capable compiler
 
@@ -61,7 +61,11 @@ Helpers. Node.js 22+ and npm are required only for design-token generation.
 ## Consume with FetchContent
 
 Merce exposes matching namespaced CMake targets for its installable modules in
-source builds and installed packages. Merce.Notifications remains source-only:
+source builds and installed packages. Merce.Notifications remains source-only.
+
+The Qt 6.12 migration is unreleased. Published `v1.2.0` targets Qt 6.11;
+use this checkout with `add_subdirectory` for Qt 6.12 until a compatible tag
+is released. The FetchContent tag below will be updated with that release:
 
 ~~~cmake
 include(FetchContent)
@@ -169,11 +173,11 @@ ctest --test-dir build-full --output-on-failure
 ~~~
 
 Build the WebAssembly site with a matching Qt host kit, Qt for WebAssembly, and
-Emscripten environment:
+Emscripten 5.0.5 environment for Qt 6.12.0:
 
 ~~~sh
-QT_HOST_PATH=/path/to/Qt/6.11.1/host \
-QT_WASM_PATH=/path/to/Qt/6.11.1/wasm_singlethread \
+QT_HOST_PATH=/path/to/Qt/6.12.0/host \
+QT_WASM_PATH=/path/to/Qt/6.12.0/wasm_singlethread \
 EMSDK_ROOT=/path/to/emsdk \
 ./scripts/build_wasm.sh
 ~~~

@@ -6,6 +6,7 @@ qt_add_executable(MercePlayground
 
 set(MERCE_PLAYGROUND_VIEW_QML
     view/Main.qml
+    view/ProfilesPage.qml
     view/ControlsShowcase.qml
     view/FeedbackShowcase.qml
     view/FormsShowcase.qml
@@ -30,6 +31,7 @@ set(MERCE_PLAYGROUND_COMPONENT_QML
     component/NavigationButton.qml
     component/PlaygroundFooter.qml
     component/PlaygroundHeader.qml
+    component/ProfileSelector.qml
     component/PlaygroundPage.qml
 )
 

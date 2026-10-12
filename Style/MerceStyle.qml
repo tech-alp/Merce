@@ -97,7 +97,7 @@ Style {
             }
         }
         background {
-            implicitHeight: style.sizeTokens.control.medium
+            height: style.sizeTokens.control.medium
             radius: style.radiusTokens.medium
             border.width: style.sizeTokens.outline.hairline
             border.color: style.colors.outline.subtle
@@ -160,8 +160,8 @@ Style {
         leftPadding: style.spacingTokens.xl
         rightPadding: style.spacingTokens.xl
         background {
-            implicitWidth: style.sizeTokens.control.medium
-            implicitHeight: style.sizeTokens.control.medium
+            width: style.sizeTokens.control.medium
+            height: style.sizeTokens.control.medium
             radius: style.radiusTokens.button
             border.width: style.sizeTokens.outline.hairline
             border.color: style.colors.action.primary.outline
@@ -214,8 +214,8 @@ Style {
 
     comboBox {
         background {
-            implicitWidth: style.sizeTokens.control.large * 3
-            implicitHeight: style.sizeTokens.control.medium
+            width: style.sizeTokens.control.large * 3
+            height: style.sizeTokens.control.medium
             radius: style.radiusTokens.input
             border.width: style.sizeTokens.outline.hairline
             border.color: style.colors.outline.subtle
@@ -223,8 +223,8 @@ Style {
         }
         text.color: style.colors.content.primary
         indicator {
-            implicitWidth: style.sizeTokens.icon.small
-            implicitHeight: style.sizeTokens.icon.small
+            width: style.sizeTokens.icon.small
+            height: style.sizeTokens.icon.small
             color: Qt.alpha(style.colors.surface.container, 0)
             border.width: 0
             foreground {
@@ -259,6 +259,9 @@ Style {
                                           style.colors.content.primary,
                                           style.stateTokens.layer.selected)
         disabled {
+            indicator.foreground.image.color: style.disabledContent(
+                                                  style.colors.surface.container,
+                                                  style.colors.content.secondary)
             background.color: style.disabledContainer(style.colors.surface.container,
                                                       style.colors.content.primary)
             text.color: style.disabledContent(style.colors.surface.container,
@@ -267,7 +270,7 @@ Style {
     }
 
     popup {
-        // Qt 6.11 ComboBox fixes popup height to content implicitHeight and
+        // Qt 6.12 ComboBox fixes popup height to content implicitHeight and
         // does not add popup padding. Delegates own the required inset.
         padding: 0
         background {
@@ -293,7 +296,7 @@ Style {
         leftPadding: style.spacingTokens.md
         rightPadding: style.spacingTokens.md
         background {
-            implicitHeight: style.sizeTokens.control.minimum
+            height: style.sizeTokens.control.minimum
             radius: style.radiusTokens.small
             border.width: 0
             color: style.colors.surface.floating
@@ -348,10 +351,10 @@ Style {
         padding: 0
         background {
             visible: false
-            implicitHeight: style.sizeTokens.icon.small
+            height: style.sizeTokens.icon.small
         }
         indicator {
-            implicitHeight: style.sizeTokens.icon.small
+            height: style.sizeTokens.icon.small
             radius: style.radiusTokens.full
             border.width: 0
             foreground {
@@ -360,8 +363,8 @@ Style {
             }
         }
         vertical {
-            background.implicitWidth: style.sizeTokens.icon.small
-            indicator.implicitWidth: style.sizeTokens.icon.small
+            background.width: style.sizeTokens.icon.small
+            indicator.width: style.sizeTokens.icon.small
         }
         hovered.indicator.foreground.color: style.stateLayer(
                                                 style.colors.outline.strong,
@@ -392,10 +395,10 @@ Style {
         padding: 0
         background {
             visible: false
-            implicitHeight: style.sizeTokens.outline.strong * 2
+            height: style.sizeTokens.outline.strong * 2
         }
         indicator {
-            implicitHeight: style.sizeTokens.outline.strong * 2
+            height: style.sizeTokens.outline.strong * 2
             radius: style.radiusTokens.full
             border.width: 0
             foreground {
@@ -405,8 +408,8 @@ Style {
             }
         }
         vertical {
-            background.implicitWidth: style.sizeTokens.outline.strong * 2
-            indicator.implicitWidth: style.sizeTokens.outline.strong * 2
+            background.width: style.sizeTokens.outline.strong * 2
+            indicator.width: style.sizeTokens.outline.strong * 2
         }
         hovered.indicator.foreground.color: style.stateLayer(
                                                 style.colors.outline.strong,
@@ -435,8 +438,8 @@ Style {
 
     textField {
         background {
-            implicitWidth: style.sizeTokens.control.large * 3
-            implicitHeight: style.sizeTokens.control.medium
+            width: style.sizeTokens.control.large * 3
+            height: style.sizeTokens.control.medium
             radius: style.radiusTokens.input
             border.width: style.sizeTokens.outline.hairline
             border.color: style.colors.outline.subtle
@@ -482,8 +485,8 @@ Style {
         topPadding: style.spacingTokens.sm
         bottomPadding: style.spacingTokens.sm
         background {
-            implicitWidth: style.sizeTokens.control.large * 3
-            implicitHeight: style.sizeTokens.control.medium * 2
+            width: style.sizeTokens.control.large * 3
+            height: style.sizeTokens.control.medium * 2
             radius: style.radiusTokens.input
             border.width: style.sizeTokens.outline.hairline
             border.color: style.colors.outline.subtle
@@ -517,11 +520,11 @@ Style {
     checkBox {
         background {
             visible: false
-            implicitHeight: style.sizeTokens.control.medium
+            height: style.sizeTokens.control.medium
         }
         indicator {
-            implicitWidth: style.sizeTokens.icon.medium
-            implicitHeight: style.sizeTokens.icon.medium
+            width: style.sizeTokens.icon.medium
+            height: style.sizeTokens.icon.medium
             radius: style.radiusTokens.small
             border.width: style.sizeTokens.outline.hairline
             border.color: style.colors.outline.strong
@@ -580,11 +583,11 @@ Style {
     radioButton {
         background {
             visible: false
-            implicitHeight: style.sizeTokens.control.medium
+            height: style.sizeTokens.control.medium
         }
         indicator {
-            implicitWidth: style.sizeTokens.icon.medium
-            implicitHeight: style.sizeTokens.icon.medium
+            width: style.sizeTokens.icon.medium
+            height: style.sizeTokens.icon.medium
             radius: style.radiusTokens.full
             border.width: style.sizeTokens.outline.hairline
             border.color: style.colors.outline.strong
@@ -639,11 +642,11 @@ Style {
         bottomPadding: 0
         background {
             visible: false
-            implicitHeight: style.sizeTokens.control.medium
+            height: style.sizeTokens.control.medium
         }
         indicator {
-            implicitWidth: style.sizeTokens.control.medium
-            implicitHeight: style.sizeTokens.icon.medium
+            width: style.sizeTokens.control.medium
+            height: style.sizeTokens.icon.medium
             radius: style.radiusTokens.full
             border.width: style.sizeTokens.outline.hairline
             border.color: style.colors.outline.subtle
@@ -651,8 +654,8 @@ Style {
             foreground.visible: false
         }
         handle {
-            implicitWidth: style.sizeTokens.icon.small
-            implicitHeight: style.sizeTokens.icon.small
+            width: style.sizeTokens.icon.small
+            height: style.sizeTokens.icon.small
             leftMargin: style.spacingTokens.xxs
             rightMargin: style.spacingTokens.xxs
             radius: style.radiusTokens.full
@@ -705,11 +708,11 @@ Style {
     progressBar {
         background {
             visible: false
-            implicitHeight: style.sizeTokens.icon.small
+            height: style.sizeTokens.icon.small
         }
         indicator {
-            implicitWidth: style.sizeTokens.control.large * 3
-            implicitHeight: style.sizeTokens.icon.small
+            width: style.sizeTokens.control.large * 3
+            height: style.sizeTokens.icon.small
             radius: style.radiusTokens.full
             color: style.colors.surface.containerSunken
             foreground {
@@ -731,12 +734,12 @@ Style {
     slider {
         background {
             visible: false
-            implicitWidth: style.sizeTokens.control.large * 3
-            implicitHeight: style.sizeTokens.control.medium
+            width: style.sizeTokens.control.large * 3
+            height: style.sizeTokens.control.medium
         }
         indicator {
-            implicitWidth: Style.Stretch
-            implicitHeight: style.sizeTokens.outline.strong * 2
+            fillWidth: true
+            height: style.sizeTokens.outline.strong * 2
             radius: style.radiusTokens.full
             color: style.colors.surface.containerSunken
             foreground {
@@ -745,12 +748,23 @@ Style {
             }
         }
         handle {
-            implicitWidth: style.sizeTokens.icon.medium
-            implicitHeight: style.sizeTokens.icon.medium
+            width: style.sizeTokens.icon.medium
+            height: style.sizeTokens.icon.medium
             radius: style.radiusTokens.full
             border.width: style.sizeTokens.outline.hairline
             border.color: style.colors.action.primary.outline
             color: style.colors.action.primary.container
+        }
+        vertical {
+            background {
+                width: style.sizeTokens.control.medium
+                height: style.sizeTokens.control.large * 3
+            }
+            indicator {
+                width: style.sizeTokens.outline.strong * 2
+                fillWidth: false
+                fillHeight: true
+            }
         }
         hovered.handle.color: style.stateLayer(
                                   style.colors.action.primary.container,
@@ -790,8 +804,8 @@ Style {
         leftPadding: 0
         rightPadding: 0
         background {
-            implicitWidth: style.sizeTokens.control.large * 3
-            implicitHeight: style.sizeTokens.control.medium
+            width: style.sizeTokens.control.large * 3
+            height: style.sizeTokens.control.medium
             radius: style.radiusTokens.input
             border.width: style.sizeTokens.outline.hairline
             border.color: style.colors.outline.subtle
@@ -802,14 +816,14 @@ Style {
             alignment: Qt.AlignHCenter | Qt.AlignVCenter
         }
         indicator {
-            implicitWidth: style.sizeTokens.control.small
-            implicitHeight: Style.Stretch
+            width: style.sizeTokens.control.small
+            fillHeight: true
             margins: 0
             border.width: 0
             color: Qt.alpha(style.colors.surface.container, 0)
             foreground {
-                implicitWidth: style.sizeTokens.icon.small
-                implicitHeight: style.sizeTokens.icon.small
+                width: style.sizeTokens.icon.small
+                height: style.sizeTokens.icon.small
                 alignment: Qt.AlignCenter
                 color: Qt.alpha(style.colors.surface.container, 0)
                 image.color: style.colors.content.secondary
@@ -854,8 +868,8 @@ Style {
     label {
         background {
             visible: false
-            implicitWidth: 0
-            implicitHeight: 0
+            width: 0
+            height: 0
         }
         text.color: style.colors.content.primary
         disabled.text.color: style.colors.content.disabled
@@ -1080,7 +1094,7 @@ Style {
     StyleVariation {
         name: "small"
         control {
-            background.implicitHeight: style.sizeTokens.control.small
+            background.height: style.sizeTokens.control.small
             leftPadding: style.spacingTokens.md
             rightPadding: style.spacingTokens.md
         }
@@ -1089,11 +1103,11 @@ Style {
     StyleVariation {
         name: "large"
         control {
-            background.implicitHeight: style.sizeTokens.control.large
+            background.height: style.sizeTokens.control.large
             leftPadding: style.spacingTokens.xl2
             rightPadding: style.spacingTokens.xl2
         }
-        control.background.implicitWidth: style.sizeTokens.control.large
+        control.background.width: style.sizeTokens.control.large
     }
 
     StyleVariation {

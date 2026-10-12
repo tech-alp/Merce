@@ -12,6 +12,7 @@ Main {
                                               : String(playgroundPagesOutputDir)
     readonly property var pageKeys: [
         "theme",
+        "profiles",
         "palette",
         "typography",
         "spacing",

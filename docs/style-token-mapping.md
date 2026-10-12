@@ -17,7 +17,7 @@ Qt.tint(container, Qt.alpha(content, Theme.state.layer.<state>))
 
 The base `container` is opaque, so this source-over operation produces the
 opaque colour StyleKit needs. It remains a live QML binding: a brand, mode or
-profile switch re-evaluates the same `Style` object. Qt 6.11 repaints existing
+profile switch re-evaluates the same `Style` object. Qt 6.12 repaints existing
 controls for colour changes.
 
 This composition belongs in `Merce.Style`, rather than in generated brand
@@ -56,14 +56,24 @@ active checked colours.
 
 Control geometry is profile-owned. No brand manifest may set it.
 
-Profile values are live on `MerceStyle`, but Qt 6.11.1 does not propagate
-every changed implicit-size property to an already-created control. The
-runtime test records the concrete Switch failure as an expected failure:
-`switchControl.background.implicitHeight` changes from cart to ops while the
-existing Switch's `implicitBackgroundHeight` remains at cart. A hot profile
-switch therefore requires recreating/reassigning the StyleKit style (or
-recreating the affected controls) until Qt exposes a reliable reader reset.
-Normal brand/mode colour switches do not require recreation.
+Merce uses the Qt 6.12 `DelegateStyle.height` and `width` channels in place
+of the former StyleKit `implicitHeight` and `implicitWidth` properties.
+For root background/indicator delegates, these dimensions also contribute to
+the control's implicit size, including when `fillHeight` or `fillWidth` is true.
+The control itself still exposes the usual Qt Quick implicit-size properties.
+
+`fillHeight` and `fillWidth` stretch a delegate to its parent's available size.
+Fixed indicator/handle dimensions require disabling fill on the fixed axis,
+including fill inherited from the fallback style. Backgrounds and tracks may
+retain fill on their expanding axis. These are renderer geometry decisions;
+they do not add brand tokens.
+
+Profile values remain live on the same `MerceStyle` instance. The runtime
+test switches `ops → cart → ops` on existing controls and checks their implicit
+sizes, Switch background/indicator geometry and vertical Slider geometry while
+preserving the style object's identity. Hot profile switches do not require
+recreating the style or the controls. Brand/mode colour switches also repaint
+existing controls.
 
 | Profile | `control.small` | `control.medium` | `control.large` |
 |---|---:|---:|---:|
@@ -80,7 +90,7 @@ Normal brand/mode colour switches do not require recreation.
 - Normal border: `size.outline.hairline`; focus border:
   `size.outline.focus`. Borderless channels explicitly use `0`.
 - Padding/spacing comes from the active profile's `spacing` tokens.
-- Popup has no global padding because Qt 6.11 ComboBox fixes its popup height
+- Popup has no global padding because Qt 6.12 ComboBox fixes its popup height
   to the content implicit height without adding padding. Item delegates own
   the profile inset; standalone popups may override padding.
 - Fonts use `typography.fontBody`, `sizeMedium`/`sizeSmall`,
@@ -182,7 +192,7 @@ with `outline.strong` as container and `content.primary` as the layer colour.
 | `indicator.foreground.color` | `outline.strong` |
 | indicator border | none |
 
-Qt 6.11 ComboBox uses `ScrollIndicator`, not `ScrollBar`, for its popup.
+Qt 6.12 ComboBox uses `ScrollIndicator`, not `ScrollBar`, for its popup.
 Horizontal thickness and the `vertical` state's width come from
 `size.outline.strong * 2`. The thumb resolves the same six state slots as
 ScrollBar; the current StyleKit implementation selects enabled, focused,
@@ -275,6 +285,9 @@ five state slots follow the common policy but have no runtime selector here.
 | text | not rendered |
 
 All six states resolve on the handle. Disabled also resolves the filled track.
+The vertical state fixes groove width to `size.outline.strong * 2`, disables
+`fillWidth`, enables `fillHeight`, and supplies profile dimensions for the
+vertical control's background.
 
 ### Label
 
@@ -301,7 +314,7 @@ check and highlight have no runtime selector.
 | text background/border/shadow | StyleKit controls render text directly and do not consume these delegate channels |
 | non-popup shadow geometry | shadow disabled; no depth boundary |
 | popup shadow opacity/scale/offset/blur/visible/delegate | opacity/offset/blur come from existing `Theme.shadows.dropdown`; scale remains `1`, visibility is structural, custom delegate stays unset |
-| implicit/minimum widths and heights, alignment, margins | active profile tokens or structural values; no brand role added |
+| `width`/`height`, minimum dimensions, fill, alignment, margins | active profile tokens or structural values; no brand role added |
 | unused QPalette roles (`base`, `button`, visited link, tooltip and 3D shade roles) | inherit StyleKit/system fallback; bound controls either use delegate colours or the explicitly mapped text/selection roles |
 | `light`, `dark`, custom themes and fallback-style plumbing | no brand role; `themeName: "Light"` only bootstraps one StyleKit axis while `Merce.Theme` owns mode |
 
